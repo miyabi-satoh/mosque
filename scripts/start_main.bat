@@ -1,4 +1,3 @@
 pushd "%~dp0.."
-
 .venv\Scripts\activate.bat
-python.exe backend\main.py
+uvicorn --host 0.0.0.0 --app-dir backend app.main:app
