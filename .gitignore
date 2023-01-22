@@ -1,0 +1,7 @@
+.vscode
+.venv
+.mypy_cache
+.DS_Store
+.env
+backend.pid
+__pycache__
