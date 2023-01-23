@@ -5,7 +5,9 @@ volumes:
 services:
   nginx:
     container_name: mosque-web
-    build: ./Dockerfile.nginx
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
     restart: always
     volumes:
       - ./nginx/mosque-prod.conf:/etc/nginx/conf.d/default.conf
