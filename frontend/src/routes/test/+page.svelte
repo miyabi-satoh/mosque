@@ -1,13 +1,20 @@
 <script lang="ts">
+	import { mainState } from '$lib/stores';
 	import { Heading, P, A } from 'flowbite-svelte';
-  import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-  let data: {message: string};
-  onMount(async () => {
-    const res = await fetch(`/api/v1/tests/`)
-    data = await res.json()
-    console.log(data)
-  })
+	let data: { message: string };
+	onMount(async () => {
+		const res = await fetch(`/api/v1/tests/`);
+		data = await res.json();
+		console.log(data);
+	});
 </script>
 
-<P>{data?.message}</P>
+<P class="w-full">{data?.message}</P>
+{#if $mainState.isLoggedIn}
+	<P class="w-full">id = {$mainState.userProfile?.id}</P>
+	<P class="w-full">email = {$mainState.userProfile?.email}</P>
+	<P class="w-full">active = {$mainState.userProfile?.is_active}</P>
+	<P class="w-full">superuser = {$mainState.userProfile?.is_superuser}</P>
+{/if}
