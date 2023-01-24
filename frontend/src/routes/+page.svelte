@@ -1,26 +1,37 @@
 <script lang="ts">
+  import { page } from '$app/stores';
 	import { api } from '$lib/api';
-	import type { IMenuItem } from '$lib/interfaces';
+	import type { IPage } from '$lib/interfaces';
 	import { Heading, P } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 
-	let menuItems: IMenuItem[] = [];
+	let menuItems: IPage[] = [];
+  let thisPageInfo: IPage|undefined = undefined;
 
 	onMount(async () => {
 		try {
-			const response = await api.getMenus();
+			const response = await api.getMenuItems();
 			if (response.data) {
 				menuItems = response.data;
 			}
 		} catch (error) {
 			console.log(`getMenus() error`, error);
 		}
-	});
+
+		try {
+			const response = await api.getPage($page.url.pathname);
+			if (response.data) {
+				thisPageInfo = response.data;
+			}
+		} catch (error) {
+			console.log(`getMenus() error`, error);
+		}
+});
 </script>
 
 <div class="mt-24">
-	<Heading tag="h1">Welcome to MOSQUE</Heading>
-	<P class="w-full my-8">MOSQUEEは茂原スクエア校のポータルサイトです。</P>
+	<Heading tag="h1">{thisPageInfo?.title}</Heading>
+	<P class="w-full my-8">{thisPageInfo?.description}</P>
 	<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
 		{#each menuItems as menuItem (menuItem.id)}
 			<a

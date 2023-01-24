@@ -19,9 +19,10 @@ export interface IUserProfileCreate {
 	is_superuser?: boolean;
 }
 
-export interface IMenuItem {
+export interface IPage {
 	id: number;
 	url: string;
 	title: string;
 	description: string;
+	is_menuitem: boolean;
 }

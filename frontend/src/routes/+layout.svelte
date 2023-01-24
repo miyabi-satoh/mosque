@@ -26,10 +26,10 @@
 	import { getLocalToken, removeLocalToken } from '$lib/utils';
 	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
-	import type { IMenuItem } from '$lib/interfaces';
+	import type { IPage } from '$lib/interfaces';
 
 	let openLoginModal = false;
-	let menuItems: IMenuItem[] = [];
+	let menuItems: IPage[] = [];
 
 	$: activeUrl = $page.url.pathname;
 
@@ -66,7 +66,7 @@
 	onMount(async () => {
 		await checkLoggedIn();
 		try {
-			const response = await api.getMenus();
+			const response = await api.getMenuItems();
 			if (response.data) {
 				menuItems = response.data;
 			}

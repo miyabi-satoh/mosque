@@ -23,3 +23,27 @@ def init_db(db: Session) -> None:
             is_superuser=True,
         )
         user = crud.user.create(db, obj_in=user_in)  # noqa: F841
+
+    page_in = schemas.PageCreate(
+        url='/',
+        title=settings.ROOT_TITLE,
+        description=settings.ROOT_DESCRIPTION,
+        is_menuitem=False
+    )
+    page = crud.page.get_by_url(db, url=page_in.url)
+    if not page:
+        page = crud.page.create(db, obj_in=page_in)
+    else:
+        page = crud.page.update(db, db_obj=page, obj_in=page_in)
+
+    page_in = schemas.PageCreate(
+        url='/links',
+        title='リンク集',
+        description='よくアクセスするサイトや、授業で使えるサイトへのリンクをまとめました。(ガルーン、GDLS, ちびむす, 大学入試過去問, MugenPなど)',
+        is_menuitem=True
+    )
+    page = crud.page.get_by_url(db, url=page_in.url)
+    if not page:
+        page = crud.page.create(db, obj_in=page_in)
+    else:
+        page = crud.page.update(db, db_obj=page, obj_in=page_in)

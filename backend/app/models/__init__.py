@@ -1,3 +1,3 @@
 # from .item import Item
 from .user import User  # noqa
-from .menu import Menu  # noqa
+from .page import Page  # noqa

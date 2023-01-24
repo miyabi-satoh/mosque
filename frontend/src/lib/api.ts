@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { IMenuItem, IUserProfile } from './interfaces';
+import type { IPage, IUserProfile } from './interfaces';
 
 function authHeaders(token: string) {
 	return {
@@ -22,7 +22,15 @@ export const api = {
 		return axios.get<IUserProfile>(`/api/v1/users/me`, authHeaders(token));
 	},
 
-	async getMenus() {
-		return axios.get<IMenuItem[]>(`/api/v1/menus`);
+	async getMenuItems() {
+		return axios.get<IPage[]>(`/api/v1/pages/menuitems`);
+	},
+
+	async getPage(url: string) {
+		return axios.get<IPage>(`/api/v1/pages/`, {
+			params: {
+				url
+			}
+		});
 	}
 };

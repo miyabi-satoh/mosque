@@ -5,7 +5,8 @@ from pydantic import AnyHttpUrl, BaseSettings, HttpUrl, validator
 # from pydantic import AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, validator
 
 
-envPath = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir, os.pardir, '.env'))
+envPath = os.path.abspath(os.path.join(
+    __file__, os.pardir, os.pardir, os.pardir, os.pardir, '.env'))
 # print(envPath)
 
 
@@ -30,6 +31,9 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     PROJECT_NAME: str = "project"
+    ROOT_TITLE: str = "Title"
+    ROOT_DESCRIPTION: str = "Description"
+
     SENTRY_DSN: Optional[HttpUrl] = None
 
     @validator("SENTRY_DSN", pre=True)
@@ -75,7 +79,8 @@ class Settings(BaseSettings):
     @validator("EMAILS_ENABLED", pre=True)
     def get_emails_enabled(cls, v: bool, values: Dict[str, Any]) -> bool:
         return bool(
-            values.get("SMTP_HOST") and values.get("SMTP_PORT") and values.get("EMAILS_FROM_EMAIL")
+            values.get("SMTP_HOST") and values.get(
+                "SMTP_PORT") and values.get("EMAILS_FROM_EMAIL")
         )
 
     EMAIL_TEST_USER: str = "test@example.com"  # type: ignore
