@@ -103,7 +103,7 @@
 				<Button size="sm" on:click={() => (openLoginModal = true)}>ログイン</Button>
 			{/if}
 			<LoginModal bind:open={openLoginModal} />
-			<DarkMode />
+			<DarkMode class="ml-2" />
 			<NavHamburger on:click={toggle} />
 		</div>
 		<!-- <NavUl {hidden} class="order-1">
@@ -116,7 +116,7 @@
 	</Navbar>
 	<div
 		id="sidebar"
-		class="overflow-y-auto z-20 p-4 bg-white dark:bg-gray-800 w-64 fixed lg:top-14 h-screen lg:left-0 overflow-scroll pb-32"
+		class="overflow-y-auto z-20 p-4 bg-gray-50 dark:bg-gray-800 w-64 fixed lg:top-14 h-screen lg:left-0 overflow-scroll pb-32"
 		tabindex="-1"
 		aria-controls="sidebar"
 		aria-labelledby="sidebar"
