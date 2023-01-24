@@ -1,6 +1,7 @@
 # from .crud_item import item
 from .crud_user import user  # noqa
 from .crud_page import page  # noqa
+from .crud_link import link  # noqa
 
 # For a new basic set of CRUD operations you could just do
 

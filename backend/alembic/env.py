@@ -1,4 +1,4 @@
-from app.models import User, Page   # noqa
+from app.models import User, Page, Link   # noqa
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
