@@ -1,0 +1,9 @@
+alembic revision --autogenerate -m ""
+
+alembic upgrade head
+
+alembic downgrade base
+
+alembic history
+
+alembic current
