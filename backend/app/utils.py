@@ -1,8 +1,5 @@
 # import logging
 from datetime import datetime, timedelta
-# from pathlib import Path
-# from typing import Any, Dict, Optional
-from typing import Optional
 
 # import emails
 # from emails.template import JinjaTemplate
@@ -99,9 +96,10 @@ def generate_password_reset_token(email: str) -> str:
     return encoded_jwt
 
 
-def verify_password_reset_token(token: str) -> Optional[str]:
+def verify_password_reset_token(token: str) -> str | None:
     try:
-        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        decoded_token = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=["HS256"])
         return decoded_token["email"]
     except jwt.JWTError:
         return None

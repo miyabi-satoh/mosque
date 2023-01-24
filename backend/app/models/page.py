@@ -1,18 +1,32 @@
-# from typing import TYPE_CHECKING
+from datetime import datetime
+from sqlmodel import Field, SQLModel
 
-from sqlalchemy import Boolean, Column, Integer, String
-# from sqlalchemy.orm import relationship
-
-from app.db.base_class import Base
-
-# if TYPE_CHECKING:
-#     from .item import Item  # noqa: F401
+from app.models.base import SQLModelWithDate
 
 
-class Page(Base):
-    id = Column(Integer, primary_key=True, index=True)
-    url = Column(String(255), nullable=False)
-    title = Column(String(20), nullable=False)
-    description = Column(String(150))
-    is_menuitem = Column(Boolean(), default=False)
-    # items = relationship("Item", back_populates="owner")
+class PageBase(SQLModelWithDate):
+    url: str = Field(index=True)
+    title: str
+    description: str
+    is_menuitem: bool = Field(index=True)
+
+
+class Page(PageBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+
+
+class PageCreate(PageBase):
+    pass
+
+
+class PageRead(PageBase):
+    id: int
+
+
+class PageUpdate(SQLModel):
+    url: str | None
+    title: str | None
+    description: str | None
+    is_menuitem: bool | None
+    created_at: datetime | None
+    updated_at: datetime | None
