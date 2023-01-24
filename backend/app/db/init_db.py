@@ -1,3 +1,5 @@
+import json
+import os
 from sqlmodel import Session
 from app import crud, models
 from app.core.config import settings
@@ -8,9 +10,14 @@ from app.core.config import settings
 
 
 def init_db(db: Session) -> None:
+    baseDir = os.path.abspath(os.path.join(
+        __file__, os.pardir, os.pardir, os.pardir, settings.OVERRIDE_JSON_DIR))
+    if not os.path.isdir(baseDir):
+        baseDir = settings.OVERRIDE_JSON_DIR
+
     # Tables should be created with Alembic migrations
     # But if you don't want to use migrations, create
-    # the tables un-commenting the next line
+    # the tables un-baseDir the next line
     # Base.metadata.create_all(bind=engine)
 
     user = crud.user.get_by_login_id(db, login_id=settings.FIRST_SUPERUSER)
@@ -37,7 +44,7 @@ def init_db(db: Session) -> None:
     page_in = models.PageCreate(
         url='/links',
         title='リンク集',
-        description='よくアクセスするサイトや、授業で使えるサイトへのリンクをまとめました。(ガルーン、GDLS, ちびむす, 大学入試過去問, MugenPなど)',
+        description='よくアクセスするサイトをまとめました。',
         is_menuitem=True
     )
     page = crud.page.get_by_url(db, url=page_in.url)
@@ -45,3 +52,37 @@ def init_db(db: Session) -> None:
         page = crud.page.create(db, obj_in=page_in)
     else:
         page = crud.page.update(db, db_obj=page, obj_in=page_in)
+
+    jsonPath = os.path.join(baseDir, "pages.json")
+    if os.path.isfile(jsonPath):
+        with open(jsonPath, mode='r') as f:
+            for page in json.load(f):
+                db_page = crud.page.get_by_url(db, url=page.get("url", ""))
+                if db_page:
+                    page_in = models.PageUpdate(
+                        title=page.get('title', db_page.title),
+                        description=page.get(
+                            'description', db_page.description)
+                    )
+                    crud.page.update(db, db_obj=db_page, obj_in=page_in)
+
+    jsonPath = os.path.join(baseDir, "links.json")
+    if os.path.isfile(jsonPath):
+        with open(jsonPath, mode='r') as f:
+            for link in json.load(f):
+                db_link = crud.link.get_by_url(db, url=link.get("url", ""))
+                if db_link:
+                    link_in = models.LinkUpdate(
+                        title=link.get('title', db_link.title),
+                        description=link.get(
+                            'description', db_link.description)
+                    )
+                    crud.link.update(db, db_obj=db_link, obj_in=link_in)
+                else:
+                    link_in = models.LinkCreate(
+                        url=link.get('url', None),
+                        title=link.get('title', None),
+                        description=link.get(
+                            'description', None)
+                    )
+                    crud.link.create(db, obj_in=link_in)

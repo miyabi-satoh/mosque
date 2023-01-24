@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "project"
     ROOT_TITLE: str = "Title"
     ROOT_DESCRIPTION: str = "Description"
+    OVERRIDE_JSON_DIR: str = "jsons"
 
     SENTRY_DSN: HttpUrl | None
 

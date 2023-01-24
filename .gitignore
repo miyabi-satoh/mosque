@@ -5,3 +5,4 @@
 .env
 backend.pid
 __pycache__
+*secret*
