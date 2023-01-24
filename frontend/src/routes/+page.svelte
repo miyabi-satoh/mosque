@@ -1,6 +1,43 @@
 <script lang="ts">
-	import { Heading, P, A } from 'flowbite-svelte';
+	import { api } from '$lib/api';
+	import type { IMenuItem } from '$lib/interfaces';
+	import { Heading, P } from 'flowbite-svelte';
+	import { onMount } from 'svelte';
+
+	let menuItems: IMenuItem[] = [];
+
+	onMount(async () => {
+		try {
+			const response = await api.getMenus();
+			if (response.data) {
+				menuItems = response.data;
+			}
+		} catch (error) {
+			console.log(`getMenus() error`, error);
+		}
+	});
 </script>
 
-<Heading tag="h1">Welcome to SvelteKit</Heading>
-<P>Visit <A href="https://kit.svelte.dev">kit.svelte.dev</A> to read the documentation</P>
+<div class="mt-24">
+	<Heading tag="h1">Welcome to MOSQUE</Heading>
+	<P class="w-full my-8">MOSQUEEは茂原スクエア校のポータルサイトです。</P>
+	<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+		{#each menuItems as menuItem (menuItem.id)}
+			<a
+				href={menuItem.url}
+				class="flex flex-col h-64 bg-white rounded-lg border border-gray-100 hover:border-white dark:border-gray-700 dark:hover:border-gray-600 hover:shadow-lg dark:hover:shadow-lg-light dark:bg-gray-900"
+			>
+				<div
+					class="w-full bg-gray-50 dark:bg-gray-700 rounded-t-md py-2.5 px-5 flex justify-between items-center border-b border-gray-200 dark:border-gray-700"
+				>
+					<Heading tag="h5" class="text-gray-500 dark:text-gray-400">{menuItem.title}</Heading>
+				</div>
+				<div class="my-6 mx-4">
+					<P>
+						{menuItem.description}
+					</P>
+				</div>
+			</a>
+		{/each}
+	</div>
+</div>

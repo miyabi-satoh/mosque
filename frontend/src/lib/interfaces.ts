@@ -18,3 +18,10 @@ export interface IUserProfileCreate {
 	is_active?: boolean;
 	is_superuser?: boolean;
 }
+
+export interface IMenuItem {
+	id: number;
+	url: string;
+	title: string;
+	description: string;
+}

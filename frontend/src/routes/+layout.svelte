@@ -11,11 +11,8 @@
 		SidebarGroup,
 		SidebarItem,
 		SidebarWrapper,
-		SidebarDropdownWrapper,
-		SidebarDropdownItem,
 		Footer,
 		FooterCopyright,
-		A,
 		Button,
 		Dropdown,
 		DropdownItem,
@@ -29,8 +26,10 @@
 	import { getLocalToken, removeLocalToken } from '$lib/utils';
 	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
+	import type { IMenuItem } from '$lib/interfaces';
 
 	let openLoginModal = false;
+	let menuItems: IMenuItem[] = [];
 
 	$: activeUrl = $page.url.pathname;
 
@@ -66,6 +65,14 @@
 
 	onMount(async () => {
 		await checkLoggedIn();
+		try {
+			const response = await api.getMenus();
+			if (response.data) {
+				menuItems = response.data;
+			}
+		} catch (error) {
+			console.log(`getMenus() error`, error);
+		}
 	});
 </script>
 
@@ -77,7 +84,7 @@
 		navDivClass="mx-auto flex flex-wrap justify-between items-center h-14"
 	>
 		<NavBrand href="/">
-			<Span class="self-center whitespace-nowrap text-xl font-semibold">Mosque</Span>
+			<Span class="self-center whitespace-nowrap text-xl font-semibold">MOSQUE</Span>
 		</NavBrand>
 		<div class="flex md:order-2">
 			{#if $mainState.isLoggedIn}
@@ -95,7 +102,7 @@
 			{:else}
 				<Button size="sm" on:click={() => (openLoginModal = true)}>ログイン</Button>
 			{/if}
-      <LoginModal bind:open={openLoginModal} />
+			<LoginModal bind:open={openLoginModal} />
 			<DarkMode />
 			<NavHamburger on:click={toggle} />
 		</div>
@@ -140,8 +147,13 @@
 			<SidebarWrapper>
 				<SidebarGroup>
 					<SidebarItem label="Test" href="/test" active={activeUrl === '/test'} />
-					<SidebarItem label="リンク集" href="/test" active={activeUrl === '/test'} />
-					<SidebarItem label="印刷" href="/test" active={activeUrl === '/test'} />
+					{#each menuItems as menuItem (menuItem.id)}
+						<SidebarItem
+							label={menuItem.title}
+							href={menuItem.url}
+							active={activeUrl === menuItem.url}
+						/>
+					{/each}
 					<!-- <SidebarDropdownWrapper label="E-commerce" isOpen={activeUrl.includes('/components/')}>
 					<SidebarDropdownItem
 						label="Products"
@@ -172,9 +184,9 @@
 	</div>
 	<div class="flex px-4 mx-auto w-full">
 		<main class="lg:ml-72 w-full mx-auto">
-			<div class="container flex flex-wrap max-auto mt-20">
-				<slot />
-			</div>
+			<!-- <div class="container flex flex-wrap max-auto mt-20"> -->
+			<slot />
+			<!-- </div> -->
 		</main>
 		<slot name="sub" />
 	</div>

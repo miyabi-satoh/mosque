@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { IUserProfile } from './interfaces';
+import type { IMenuItem, IUserProfile } from './interfaces';
 
 function authHeaders(token: string) {
 	return {
@@ -20,5 +20,9 @@ export const api = {
 
 	async getMe(token: string) {
 		return axios.get<IUserProfile>(`/api/v1/users/me`, authHeaders(token));
+	},
+
+	async getMenus() {
+		return axios.get<IMenuItem[]>(`/api/v1/menus`);
 	}
 };

@@ -3,12 +3,11 @@
 	import { api } from './api';
 	import { mainState } from './stores';
 	import type { AxiosError } from 'axios';
-  import { onMount } from 'svelte';
 
 	export let open = false;
 	let username = '';
 	let password = '';
-  let elInput: Input
+	let elInput: Input;
 
 	async function handleSubmitLogin() {
 		try {
@@ -42,15 +41,14 @@
 	}
 
 	function actionCheckApiError(payload: AxiosError) {
-		if (payload.response!.status === 401) {
+		if (payload.response && payload.response.status === 401) {
 			mainState.setLoggedIn(false);
 		}
 	}
 
-  $: if (elInput) {
-    document.getElementById('username')?.focus();
-  }
-
+	$: if (elInput) {
+		document.getElementById('username')?.focus();
+	}
 </script>
 
 <Modal bind:open size="xs" autoclose={false} class="w-full">
@@ -58,7 +56,7 @@
 		<Heading tag="h3" class="p-0" customSize="text-xl font-medium">ログイン</Heading>
 		<Label class="space-y-2">
 			<Span>ログイン名</Span>
-			<Input bind:this={elInput} id="username" type="text" required bind:value={username}/>
+			<Input bind:this={elInput} id="username" type="text" required bind:value={username} />
 		</Label>
 		<Label class="space-y-2">
 			<Span>パスワード</Span>
