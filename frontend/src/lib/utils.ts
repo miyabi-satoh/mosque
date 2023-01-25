@@ -9,3 +9,7 @@ export function saveLocalToken(token: string) {
 export function removeLocalToken() {
 	return localStorage.removeItem('token');
 }
+
+export function apiUrl(url: string) {
+	return `//localhost/api/v1/${url}`;
+}

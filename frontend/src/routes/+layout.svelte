@@ -27,9 +27,10 @@
 	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
 	import type { IPage } from '$lib/interfaces';
+	import type { LayoutData } from './$types';
 
 	let openLoginModal = false;
-	let menuItems: IPage[] = [];
+	export let data: LayoutData;
 
 	$: activeUrl = $page.url.pathname;
 
@@ -65,14 +66,6 @@
 
 	onMount(async () => {
 		await checkLoggedIn();
-		try {
-			const response = await api.getMenuItems();
-			if (response.data) {
-				menuItems = response.data;
-			}
-		} catch (error) {
-			console.log(`getMenus() error`, error);
-		}
 	});
 </script>
 
@@ -146,8 +139,7 @@
 		<Sidebar asideClass="w-54">
 			<SidebarWrapper>
 				<SidebarGroup>
-					<SidebarItem label="Test" href="/test" active={activeUrl === '/test'} />
-					{#each menuItems as menuItem (menuItem.id)}
+					{#each data.menuItems as menuItem (menuItem.id)}
 						<SidebarItem
 							label={menuItem.title}
 							href={menuItem.url}

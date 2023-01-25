@@ -6,34 +6,14 @@
 	import Icon from '@iconify/svelte';
 	import { Heading, P, Span } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
-	let menuItems: IPage[] = [];
-	let thisPageInfo: IPage | undefined = undefined;
-
-	onMount(async () => {
-		try {
-			const response = await api.getMenuItems();
-			if (response.data) {
-				menuItems = response.data;
-			}
-		} catch (error) {
-			console.log(`getMenus() error`, error);
-		}
-
-		try {
-			const response = await api.getPage($page.url.pathname);
-			if (response.data) {
-				thisPageInfo = response.data;
-			}
-		} catch (error) {
-			console.log(`getMenus() error`, error);
-		}
-	});
+	export let data: PageData;
 </script>
 
-<Page>
+<Page info={data.pgInfo}>
 	<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-		{#each menuItems as menuItem (menuItem.id)}
+		{#each data.menuItems as menuItem (menuItem.id)}
 			<a
 				href={menuItem.url}
 				class="flex flex-col h-64 bg-white rounded-lg border border-gray-100 hover:border-white dark:border-gray-700 dark:hover:border-gray-600 hover:shadow-lg dark:hover:shadow-lg-light dark:bg-gray-900"
