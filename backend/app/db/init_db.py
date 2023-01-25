@@ -29,29 +29,32 @@ def init_db(db: Session) -> None:
         )
         user = crud.user.create(db, obj_in=user_in)  # noqa: F841
 
-    page_in = models.PageCreate(
-        url='/',
-        title=settings.ROOT_TITLE,
-        description=settings.ROOT_DESCRIPTION,
-        is_menuitem=False
-    )
-    page = crud.page.get_by_url(db, url=page_in.url)
-    if not page:
-        page = crud.page.create(db, obj_in=page_in)
-    else:
-        page = crud.page.update(db, db_obj=page, obj_in=page_in)
-
-    page_in = models.PageCreate(
-        url='/links',
-        title='リンク集',
-        description='よくアクセスするサイトをまとめました。',
-        is_menuitem=True
-    )
-    page = crud.page.get_by_url(db, url=page_in.url)
-    if not page:
-        page = crud.page.create(db, obj_in=page_in)
-    else:
-        page = crud.page.update(db, db_obj=page, obj_in=page_in)
+    pages = [
+        models.Page(
+            url='/',
+            title=settings.ROOT_TITLE,
+            description=settings.ROOT_DESCRIPTION,
+            is_menuitem=False
+        ),
+        models.Page(
+            url='/links',
+            title='リンク集',
+            description='よくアクセスするサイト。',
+            is_menuitem=True
+        ),
+        models.Page(
+            url='/test',
+            title='テスト',
+            description='テストページ。',
+            is_menuitem=True
+        )
+    ]
+    for page_in in pages:
+        page = crud.page.get_by_url(db, url=page_in.url)
+        if not page:
+            page = crud.page.create(db, obj_in=page_in)
+        else:
+            page = crud.page.update(db, db_obj=page, obj_in=page_in)
 
     jsonPath = os.path.join(baseDir, "pages.json")
     if os.path.isfile(jsonPath):
