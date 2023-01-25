@@ -58,7 +58,7 @@ def init_db(db: Session) -> None:
 
     jsonPath = os.path.join(baseDir, "pages.json")
     if os.path.isfile(jsonPath):
-        with open(jsonPath, mode='r') as f:
+        with open(jsonPath, mode='r', encoding='utf-8') as f:
             for page in json.load(f):
                 db_page = crud.page.get_by_url(db, url=page.get("url", ""))
                 if db_page:
@@ -71,7 +71,7 @@ def init_db(db: Session) -> None:
 
     jsonPath = os.path.join(baseDir, "links.json")
     if os.path.isfile(jsonPath):
-        with open(jsonPath, mode='r') as f:
+        with open(jsonPath, mode='r', encoding='utf-8') as f:
             for link in json.load(f):
                 db_link = crud.link.get_by_url(db, url=link.get("url", ""))
                 if db_link:
