@@ -4,11 +4,11 @@ volumes:
 
 services:
   nginx:
-    container_name: mosque-web-dev
+    container_name: mosque-web
     image: nginx:alpine
-    restart: always
     volumes:
       - ./nginx/mosque.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - pma_data:/var/www/html/phpmyadmin:ro
     ports:
       - "80:80"
@@ -16,7 +16,6 @@ services:
   db:
     container_name: mosque-db
     image: mariadb:latest
-    restart: always
     env_file:
       - .env
     environment:
@@ -30,7 +29,6 @@ services:
   phpmyadmin:
     container_name: mosque-pma
     image: phpmyadmin:fpm-alpine
-    restart: always
     tty: true
     expose:
       - "9000"

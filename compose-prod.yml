@@ -3,11 +3,20 @@ volumes:
   pma_data:
 
 services:
-  nginx:
-    container_name: mosque-web
+  node:
+    container_name: mosque-node
+    restart: always
     build:
       context: .
-      dockerfile: Dockerfile.nginx
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+
+  nginx:
+    container_name: mosque-web
+    image: nginx:alpine
     restart: always
     volumes:
       - ./nginx/mosque-prod.conf:/etc/nginx/conf.d/default.conf
