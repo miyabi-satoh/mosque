@@ -16,7 +16,7 @@ elseif ($IsWindows) {
   Select-Object ProcessId
 }
 
-foreach ($id in $procs) {
+foreach ($id in $pid_array) {
   Write-Host "kill $id"
   Stop-Process -Id $id
 }
