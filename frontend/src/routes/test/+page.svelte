@@ -2,6 +2,7 @@
 	import { mainState } from '$lib/stores';
 	import { P } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
+	import Page from '$lib/Page.svelte';
 
 	let data: { message: string };
 	onMount(async () => {
@@ -11,10 +12,12 @@
 	});
 </script>
 
-<P class="w-full">{data?.message}</P>
-{#if $mainState.isLoggedIn}
-	<P class="w-full">id = {$mainState.userProfile?.id}</P>
-	<P class="w-full">email = {$mainState.userProfile?.email}</P>
-	<P class="w-full">active = {$mainState.userProfile?.is_active}</P>
-	<P class="w-full">superuser = {$mainState.userProfile?.is_superuser}</P>
-{/if}
+<Page>
+	<P class="w-full">{data?.message}</P>
+	{#if $mainState.isLoggedIn}
+		<P class="w-full">id = {$mainState.userProfile?.id}</P>
+		<P class="w-full">email = {$mainState.userProfile?.email}</P>
+		<P class="w-full">active = {$mainState.userProfile?.is_active}</P>
+		<P class="w-full">superuser = {$mainState.userProfile?.is_superuser}</P>
+	{/if}
+</Page>
