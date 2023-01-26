@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { api } from '$lib/api';
-	import type { IPage } from '$lib/interfaces';
 	import { Heading, P } from 'flowbite-svelte';
-	import { onMount } from 'svelte';
+	import type { IPage } from '$lib/interfaces';
 
 	export let info: IPage | undefined = undefined;
 </script>

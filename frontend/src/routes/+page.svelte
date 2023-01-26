@@ -1,11 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { api } from '$lib/api';
-	import type { IPage } from '$lib/interfaces';
 	import Page from '$lib/Page.svelte';
 	import Icon from '@iconify/svelte';
 	import { Heading, P, Span } from 'flowbite-svelte';
-	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
