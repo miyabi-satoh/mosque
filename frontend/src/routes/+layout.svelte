@@ -142,9 +142,9 @@
 				<SidebarGroup>
 					{#each data.menuItems as menuItem (menuItem.id)}
 						<SidebarItem
-							label={menuItem.title}
-							href={menuItem.url}
-							active={activeUrl === menuItem.url}
+							label={menuItem.attributes?.title}
+							href={menuItem.attributes?.url}
+							active={activeUrl === menuItem.attributes?.url}
 						/>
 					{/each}
 					<!-- <SidebarDropdownWrapper label="E-commerce" isOpen={activeUrl.includes('/components/')}>
@@ -178,8 +178,8 @@
 	<div class="flex px-4 mx-auto w-full">
 		<main class="lg:ml-72 w-full mx-auto">
 			<div class="mt-24">
-				<Heading tag="h1">{data.thisPageInfo.title}</Heading>
-				<P class="w-full my-8">{data.thisPageInfo.description}</P>
+				<Heading tag="h1">{data.thisPageInfo.attributes?.title}</Heading>
+				<P class="w-full my-8">{data.thisPageInfo.attributes?.description}</P>
 				<slot />
 			</div>
 		</main>

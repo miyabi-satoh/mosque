@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { IPage, IUserProfile } from './interfaces';
+import type { IPage, IUserProfile } from '$models/interfaces';
 
 function authHeaders(token: string) {
 	return {

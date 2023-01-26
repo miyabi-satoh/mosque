@@ -1,3 +1,8 @@
+// npx openapi-typescript src/extensions/documentation/documentation/1.0.0/full_documentation.json --output ../frontend/src/lib/strapi_schemas.ts
+import type { components } from '../models/strapi_models';
+
+export type IPage = components['schemas']['PageListResponseDataItem'];
+
 export interface IUserProfile {
 	email: string;
 	is_active: boolean;
@@ -17,12 +22,4 @@ export interface IUserProfileCreate {
 	password?: string;
 	is_active?: boolean;
 	is_superuser?: boolean;
-}
-
-export interface IPage {
-	id: number;
-	url: string;
-	title: string;
-	description: string;
-	is_menuitem: boolean;
 }

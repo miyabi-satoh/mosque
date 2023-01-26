@@ -19,6 +19,16 @@ RUN chown -R node:node .
 
 RUN echo "WORKDIR is $WORKDIR . HOME is $HOME . LANG is $LANG ." && npm config list
 
+
+###############
+#     dev     #
+###############
+FROM base as dev
+ENV NODE_ENV=development
+COPY --chown=node ./frontend .
+RUN npm i && npm run check
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
+
 ###############
 #   builder   #
 ###############

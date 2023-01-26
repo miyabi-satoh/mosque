@@ -1,5 +1,4 @@
-import type { IPage } from '$lib/interfaces';
-import { apiUrl } from '$lib/utils';
+import type { IPage } from '$models/interfaces';
 import type { LayoutServerLoad } from './$types';
 
 interface ILayoutFetchData {
@@ -11,23 +10,25 @@ const defaultData: ILayoutFetchData = {
 	menuItems: [],
 	thisPageInfo: {
 		id: 0,
-		url: '',
-		title: '',
-		description: '',
-		is_menuitem: false
+		attributes: {
+			url: '',
+			title: '',
+			description: '',
+			is_menuitem: false
+		}
 	}
 };
 
 export const load = (async ({ route, fetch }): Promise<ILayoutFetchData> => {
 	try {
-		let res = await fetch(apiUrl(`pages/menuitems`));
-		const menuItems = await res.json();
+		let res = await fetch(`//mosque-strapi:1337/api/pages?filters[is_menuitem][$eq]=true`);
+		let json = await res.json();
+		const menuItems = json.data as IPage[];
 
-		const params = new URLSearchParams({
-			url: route.id as string
-		});
-		res = await fetch(apiUrl(`pages/?${params}`));
-		const thisPageInfo = await res.json();
+		res = await fetch(`//mosque-strapi:1337/api/pages?filters[url][$eq]=${route.id}`);
+		json = await res.json();
+		const thisPageInfo = json.data[0] as IPage;
+		console.log(thisPageInfo);
 
 		return {
 			menuItems,
