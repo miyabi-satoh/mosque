@@ -1,7 +1,7 @@
 import os
 import secrets
 from typing import Any, Dict, List, Union
-from pydantic import AnyHttpUrl, BaseSettings, HttpUrl, validator
+from pydantic import AnyHttpUrl, BaseSettings, HttpUrl, PostgresDsn, validator
 # from pydantic import AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, validator
 
 
@@ -43,21 +43,26 @@ class Settings(BaseSettings):
             return None
         return v
 
-    MYSQL_SERVER: str
-    MYSQL_USER: str
-    MYSQL_PASSWORD: str
-    MYSQL_DATABASE: str
+    DATABASE_CLIENT: str
+    DATABASE_HOST: str
+    DATABASE_PORT: str
+    DATABASE_NAME: str
+    DATABASE_USERNAME: str
+    DATABASE_PASSWORD: str
     SQLALCHEMY_DATABASE_URI: str | None
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: str | None, values: Dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
-        user = values.get("MYSQL_USER")
-        password = values.get("MYSQL_PASSWORD")
-        host = values.get("MYSQL_SERVER")
-        path = f"/{values.get('MYSQL_DATABASE') or ''}"
-        return f'mysql+pymysql://{user}:{password}@{host}{path}'
+        return PostgresDsn.build(
+            scheme=values.get("DATABASE_CLIENT"),
+            user=values.get("DATABASE_USERNAME"),
+            password=values.get("DATABASE_PASSWORD"),
+            host=values.get("DATABASE_HOST"),
+            port=values.get("DATABASE_PORT"),
+            path=f"/{values.get('DATABASE_NAME') or ''}",
+        )
 
     SMTP_TLS: bool = True
     SMTP_PORT: int | None = None
@@ -67,7 +72,7 @@ class Settings(BaseSettings):
     EMAILS_FROM_EMAIL: str | None = None
     EMAILS_FROM_NAME: str | None = None
 
-    @validator("EMAILS_FROM_NAME")
+    @ validator("EMAILS_FROM_NAME")
     def get_project_name(cls, v: str | None, values: Dict[str, Any]) -> str:
         if not v:
             return values["PROJECT_NAME"]
@@ -77,7 +82,7 @@ class Settings(BaseSettings):
     EMAIL_TEMPLATES_DIR: str = "/app/app/email-templates/build"
     EMAILS_ENABLED: bool = False
 
-    @validator("EMAILS_ENABLED", pre=True)
+    @ validator("EMAILS_ENABLED", pre=True)
     def get_emails_enabled(cls, v: bool, values: Dict[str, Any]) -> bool:
         return bool(
             values.get("SMTP_HOST") and values.get(
