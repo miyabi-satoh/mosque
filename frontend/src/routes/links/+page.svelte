@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { mainState } from '$lib/stores';
+	import { apiUrl } from '$lib/utils';
 	import { P } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 
 	let data: { message: string };
 	onMount(async () => {
-		const res = await fetch(`/api/v1/tests/`);
+		const res = await fetch(apiUrl(`tests/`));
 		data = await res.json();
 		console.log(data);
 	});

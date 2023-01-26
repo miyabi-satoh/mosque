@@ -2,22 +2,20 @@
 	import { mainState } from '$lib/stores';
 	import { P } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
-	import Page from '$lib/Page.svelte';
+	import { apiUrl } from '$lib/utils';
 
 	let data: { message: string };
 	onMount(async () => {
-		const res = await fetch(`/api/v1/tests/`);
+		const res = await fetch(apiUrl(`tests/`));
 		data = await res.json();
 		console.log(data);
 	});
 </script>
 
-<Page>
-	<P class="w-full">{data?.message}</P>
-	{#if $mainState.isLoggedIn}
-		<P class="w-full">id = {$mainState.userProfile?.id}</P>
-		<P class="w-full">email = {$mainState.userProfile?.email}</P>
-		<P class="w-full">active = {$mainState.userProfile?.is_active}</P>
-		<P class="w-full">superuser = {$mainState.userProfile?.is_superuser}</P>
-	{/if}
-</Page>
+<P class="w-full">{data?.message}</P>
+{#if $mainState.isLoggedIn}
+	<P class="w-full">id = {$mainState.userProfile?.id}</P>
+	<P class="w-full">email = {$mainState.userProfile?.email}</P>
+	<P class="w-full">active = {$mainState.userProfile?.is_active}</P>
+	<P class="w-full">superuser = {$mainState.userProfile?.is_superuser}</P>
+{/if}

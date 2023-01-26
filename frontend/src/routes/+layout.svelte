@@ -16,7 +16,9 @@
 		Button,
 		Dropdown,
 		DropdownItem,
-		DropdownDivider
+		DropdownDivider,
+		Heading,
+		P
 	} from 'flowbite-svelte';
 	import Icon from '@iconify/svelte';
 	import '../app.postcss';
@@ -26,11 +28,10 @@
 	import { getLocalToken, removeLocalToken } from '$lib/utils';
 	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
-	import type { IPage } from '$lib/interfaces';
-	import type { LayoutData } from './$types';
+	import type { LayoutServerData } from './$types';
 
 	let openLoginModal = false;
-	export let data: LayoutData;
+	export let data: LayoutServerData;
 
 	$: activeUrl = $page.url.pathname;
 
@@ -176,9 +177,11 @@
 	</div>
 	<div class="flex px-4 mx-auto w-full">
 		<main class="lg:ml-72 w-full mx-auto">
-			<!-- <div class="container flex flex-wrap max-auto mt-20"> -->
-			<slot />
-			<!-- </div> -->
+			<div class="mt-24">
+				<Heading tag="h1">{data.thisPageInfo.title}</Heading>
+				<P class="w-full my-8">{data.thisPageInfo.description}</P>
+				<slot />
+			</div>
 		</main>
 		<slot name="sub" />
 	</div>

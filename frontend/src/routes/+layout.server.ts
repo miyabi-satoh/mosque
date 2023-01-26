@@ -4,8 +4,19 @@ import type { LayoutServerLoad } from './$types';
 
 interface ILayoutFetchData {
 	menuItems: IPage[];
-	pgInfo: IPage;
+	thisPageInfo: IPage;
 }
+
+const defaultData: ILayoutFetchData = {
+	menuItems: [],
+	thisPageInfo: {
+		id: 0,
+		url: '',
+		title: '',
+		description: '',
+		is_menuitem: false
+	}
+};
 
 export const load = (async ({ route, fetch }): Promise<ILayoutFetchData> => {
 	try {
@@ -16,17 +27,14 @@ export const load = (async ({ route, fetch }): Promise<ILayoutFetchData> => {
 			url: route.id as string
 		});
 		res = await fetch(apiUrl(`pages/?${params}`));
-		const pgInfo = await res.json();
+		const thisPageInfo = await res.json();
 
 		return {
 			menuItems,
-			pgInfo
+			thisPageInfo
 		};
 	} catch (err) {
 		console.log(err);
 	}
-	return {
-		menuItems: [],
-		pgInfo: {} as IPage
-	};
-}) satisfies LayoutServerLoad;
+	return defaultData;
+}) satisfies LayoutServerLoad<ILayoutFetchData>;
