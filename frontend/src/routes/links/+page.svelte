@@ -1,21 +1,39 @@
 <script lang="ts">
-	import { mainState } from '$lib/stores';
-	import { apiUrl } from '$lib/utils';
-	import { P } from 'flowbite-svelte';
-	import { onMount } from 'svelte';
+	import {
+		A,
+		P,
+		Table,
+		TableBody,
+		TableBodyCell,
+		TableBodyRow,
+		TableHead,
+		TableHeadCell
+	} from 'flowbite-svelte';
+	import type { PageServerData } from './$types';
 
-	let data: { message: string };
-	onMount(async () => {
-		const res = await fetch(apiUrl(`tests/`));
-		data = await res.json();
-		console.log(data);
-	});
+	export let data: PageServerData;
 </script>
 
-<P class="w-full">{data?.message}</P>
-{#if $mainState.isLoggedIn}
-	<P class="w-full">id = {$mainState.userProfile?.id}</P>
-	<P class="w-full">email = {$mainState.userProfile?.email}</P>
-	<P class="w-full">active = {$mainState.userProfile?.is_active}</P>
-	<P class="w-full">superuser = {$mainState.userProfile?.is_superuser}</P>
-{/if}
+<div class="w-full">
+	{#if data.links.length > 0}
+		<Table striped={true}>
+			<TableHead>
+				<TableHeadCell>Title</TableHeadCell>
+				<TableHeadCell>Description</TableHeadCell>
+			</TableHead>
+			<TableBody>
+				{#each data.links as link (link?.id)}
+					<TableBodyRow>
+						<TableBodyCell
+							><A target="_blank" href={link?.attributes?.url}>{link?.attributes?.title}</A
+							></TableBodyCell
+						>
+						<TableBodyCell>{link?.attributes?.description}</TableBodyCell>
+					</TableBodyRow>
+				{/each}
+			</TableBody>
+		</Table>
+	{:else}
+		<P class="w-full">データがありません</P>
+	{/if}
+</div>

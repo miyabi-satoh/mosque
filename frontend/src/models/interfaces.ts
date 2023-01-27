@@ -1,7 +1,10 @@
-// npx openapi-typescript src/extensions/documentation/documentation/1.0.0/full_documentation.json --output ../frontend/src/lib/strapi_schemas.ts
-import type { components } from '../models/strapi_models';
+// npx openapi-typescript strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json --output frontend/src/models/strapi_schemas.ts
+import type { paths } from './strapi_schemas';
 
-export type IPage = components['schemas']['PageListResponseDataItem'];
+export type IPage =
+	paths['/pages/{id}']['get']['responses']['200']['content']['application/json']['data'];
+export type ILink =
+	paths['/links/{id}']['get']['responses']['200']['content']['application/json']['data'];
 
 export interface IUserProfile {
 	email: string;
