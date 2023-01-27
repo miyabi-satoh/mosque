@@ -4,25 +4,26 @@ volumes:
   strapi_dist:
 
 services:
-  mosque-node:
-    container_name: mosque-node
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: dev
-    image: mosque-node:latest
-    tty: true
-    volumes:
-      - ./frontend/:/home/node/app/
-      - /home/node/app/.svelte-kit
-      - /home/node/app/build
-      - /home/node/app/node_modules
-    ports:
-      - "3000:3000"
-    depends_on:
-      - mosque-strapi
+  # mosque-node:
+  #   container_name: mosque-node
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: dev
+  #   image: mosque-node:latest
+  #   tty: true
+  #   volumes:
+  #     - ./frontend/:/home/node/app/
+  #     - /home/node/app/.svelte-kit
+  #     - /home/node/app/build
+  #     - /home/node/app/node_modules
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - mosque-strapi
 
   mosque-strapi:
+    # tty: true
     container_name: mosque-strapi
     build:
       context: .
@@ -30,7 +31,7 @@ services:
       target: dev
     image: mosque-strapi:latest
     environment:
-      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_CLIENT: postgres
       DATABASE_HOST: mosque-db
       DATABASE_PORT: ${DATABASE_PORT}
       DATABASE_NAME: ${DATABASE_NAME}
