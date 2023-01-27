@@ -1,3 +1,4 @@
+import { strapiUrl } from '$lib/utils';
 import type { IPage } from '$models/interfaces';
 import type { LayoutServerLoad } from './$types';
 
@@ -21,14 +22,14 @@ const defaultData: ILayoutFetchData = {
 
 export const load = (async ({ route, fetch }): Promise<ILayoutFetchData> => {
 	try {
-		let res = await fetch(`//mosque-strapi:1337/api/pages?filters[is_menuitem][$eq]=true`);
+		let res = await fetch(strapiUrl(`pages?filters[is_menuitem][$eq]=true`));
 		let json = await res.json();
 		const menuItems = json.data as IPage[];
 
-		res = await fetch(`//mosque-strapi:1337/api/pages?filters[url][$eq]=${route.id}`);
+		res = await fetch(strapiUrl(`pages?filters[url][$eq]=${route.id}`));
 		json = await res.json();
 		const thisPageInfo = json.data[0] as IPage;
-		console.log(thisPageInfo);
+		// console.log(thisPageInfo);
 
 		return {
 			menuItems,

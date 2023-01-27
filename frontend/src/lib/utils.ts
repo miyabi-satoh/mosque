@@ -13,3 +13,7 @@ export function removeLocalToken() {
 export function apiUrl(url: string) {
 	return `//localhost/api/v1/${url}`;
 }
+
+export function strapiUrl(url: string) {
+	return `//localhost/strapi/${url}`;
+}
