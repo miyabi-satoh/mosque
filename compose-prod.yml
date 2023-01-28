@@ -19,9 +19,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.strapi
-    image: mosque-strapi:latest
     environment:
-      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_CLIENT: postgres
       DATABASE_HOST: mosque-db
       DATABASE_PORT: ${DATABASE_PORT}
       DATABASE_NAME: ${DATABASE_NAME}

@@ -29,7 +29,6 @@ services:
       context: .
       dockerfile: Dockerfile.strapi
       target: dev
-    image: mosque-strapi:latest
     environment:
       DATABASE_CLIENT: postgres
       DATABASE_HOST: mosque-db
