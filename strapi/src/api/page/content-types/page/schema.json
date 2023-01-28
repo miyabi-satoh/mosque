@@ -4,7 +4,8 @@
   "info": {
     "singularName": "page",
     "pluralName": "pages",
-    "displayName": "Page"
+    "displayName": "Page",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -21,11 +22,16 @@
       "required": true
     },
     "description": {
-      "type": "string"
+      "type": "text"
     },
     "is_menuitem": {
       "type": "boolean",
-      "default": false,
+      "default": true,
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
       "required": true
     }
   }

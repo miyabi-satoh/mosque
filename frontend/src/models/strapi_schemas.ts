@@ -681,6 +681,7 @@ export interface components {
 			data: {
 				title: string;
 				description?: string;
+				order: number;
 			};
 		};
 		FormatListResponseDataItem: {
@@ -688,6 +689,7 @@ export interface components {
 			attributes?: {
 				title?: string;
 				description?: string;
+				order?: number;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -805,6 +807,7 @@ export interface components {
 			attributes?: {
 				title?: string;
 				description?: string;
+				order?: number;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -933,6 +936,7 @@ export interface components {
 			attributes?: {
 				title?: string;
 				description?: string;
+				order?: number;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -1050,6 +1054,7 @@ export interface components {
 			attributes?: {
 				title?: string;
 				description?: string;
+				order?: number;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */

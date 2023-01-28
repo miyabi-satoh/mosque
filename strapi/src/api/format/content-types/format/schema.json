@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "links",
+  "collectionName": "formats",
   "info": {
-    "singularName": "link",
-    "pluralName": "links",
-    "displayName": "Link",
+    "singularName": "format",
+    "pluralName": "formats",
+    "displayName": "Format",
     "description": ""
   },
   "options": {
@@ -12,11 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "url": {
-      "type": "string",
-      "required": true,
-      "unique": true
-    },
     "title": {
       "type": "string",
       "required": true
