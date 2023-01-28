@@ -5,6 +5,8 @@ export type IPage =
 	paths['/pages/{id}']['get']['responses']['200']['content']['application/json']['data'];
 export type ILink =
 	paths['/links/{id}']['get']['responses']['200']['content']['application/json']['data'];
+export type IFormat =
+	paths['/formats/{id}']['get']['responses']['200']['content']['application/json']['data'];
 
 export interface IUserProfile {
 	email: string;
