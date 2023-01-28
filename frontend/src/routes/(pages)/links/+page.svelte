@@ -1,7 +1,10 @@
 <script lang="ts">
+	import type { ILink } from '$models/interfaces';
+	import Icon from '@iconify/svelte';
 	import {
 		A,
 		P,
+		Span,
 		TableBody,
 		TableBodyCell,
 		TableBodyRow,
@@ -9,18 +12,18 @@
 		TableHeadCell,
 		TableSearch
 	} from 'flowbite-svelte';
-	import type { PageServerData } from './$types';
+	import type { PageData } from './$types';
 
 	let searchTerm = '';
-	export let data: PageServerData;
+	export let data: PageData;
 
 	$: filterdItems =
 		searchTerm.length > 0
 			? data.links.filter(
-					(link) =>
-						link?.attributes?.title?.includes(searchTerm) ||
-						link?.attributes?.url?.includes(searchTerm) ||
-						link?.attributes?.description?.includes(searchTerm)
+					(link: ILink) =>
+						link?.title?.includes(searchTerm) ||
+						link?.url?.includes(searchTerm) ||
+						link?.description?.includes(searchTerm)
 			  )
 			: data.links;
 </script>
@@ -30,23 +33,26 @@
 		<TableSearch
 			striped={true}
 			placeholder="Search keywords..."
-			hoverable={true}
 			bind:inputValue={searchTerm}
 			divClass="relative overflow-x-auto"
 		>
-			<TableHead>
+			<TableHead
+				class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400"
+			>
 				<TableHeadCell>Title</TableHeadCell>
 				<TableHeadCell>Description</TableHeadCell>
 			</TableHead>
 			<TableBody tableBodyClass="divide-y">
 				{#each filterdItems as link (link?.id)}
 					<TableBodyRow>
-						<TableBodyCell
-							><A target="_blank" href={link?.attributes?.url}>{link?.attributes?.title}</A
-							></TableBodyCell
+						<TableBodyCell>
+							<A target="_blank" href={link?.url}>
+								<span class="mr-2">{link?.title}</span>
+								<Icon icon="mdi:external-link" height="auto" />
+							</A></TableBodyCell
 						>
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{link?.attributes?.description}</TableBodyCell
+							>{link?.description}</TableBodyCell
 						>
 					</TableBodyRow>
 				{/each}

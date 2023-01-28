@@ -10,17 +10,16 @@
 		TableHeadCell,
 		TableSearch
 	} from 'flowbite-svelte';
-	import type { PageServerData } from './$types';
+	import type { PageData } from './$types';
 
 	let searchTerm = '';
-	export let data: PageServerData;
+	export let data: PageData;
 
 	$: filterdItems =
 		searchTerm.length > 0
 			? data.formats.filter(
 					(format) =>
-						format?.attributes?.title?.includes(searchTerm) ||
-						format?.attributes?.description?.includes(searchTerm)
+						format?.title?.includes(searchTerm) || format?.description?.includes(searchTerm)
 			  )
 			: data.formats;
 </script>
@@ -39,14 +38,13 @@
 				<TableHeadCell>Description</TableHeadCell>
 			</TableHead>
 			<TableBody tableBodyClass="divide-y">
-				{#each filterdItems as link (link?.id)}
+				{#each filterdItems as format}
 					<TableBodyRow>
 						<TableBodyCell
-							><A href="{$page.url.pathname}/{link?.id}">{link?.attributes?.title}</A
-							></TableBodyCell
+							><A href="{$page.url.pathname}/{format?.id}">{format?.title}</A></TableBodyCell
 						>
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{link?.attributes?.description}</TableBodyCell
+							>{format?.description}</TableBodyCell
 						>
 					</TableBodyRow>
 				{/each}

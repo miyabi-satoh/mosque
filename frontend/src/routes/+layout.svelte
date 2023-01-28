@@ -17,8 +17,6 @@
 		Dropdown,
 		DropdownItem,
 		DropdownDivider,
-		Heading,
-		P,
 		Drawer,
 		CloseButton
 	} from 'flowbite-svelte';
@@ -30,9 +28,8 @@
 	import { getLocalToken, removeLocalToken } from '$lib/utils';
 	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
-	import type { LayoutServerData } from './$types';
+	import type { LayoutData } from './$types';
 	import { createMediaQueryStore, mainStore } from '$stores';
-	import Breadcrumb from '$lib/Breadcrumb.svelte';
 
 	let openLoginModal = false;
 	let hiddenMainMenu = true;
@@ -44,7 +41,8 @@
 		easing: sineIn
 	};
 
-	export let data: LayoutServerData;
+	export let data: LayoutData;
+	// console.log(data);
 
 	$: activeUrl = $page.url.pathname;
 	$: handleChangeMinWidth($mql !== undefined);
@@ -167,9 +165,9 @@
 				<SidebarGroup>
 					{#each data.menuItems as menuItem (menuItem?.id)}
 						<SidebarItem
-							label={menuItem?.attributes?.title}
-							href={menuItem?.attributes?.url}
-							active={activeUrl === menuItem?.attributes?.url}
+							label={menuItem?.title}
+							href={menuItem?.url}
+							active={activeUrl === menuItem?.url}
 							on:click={() => (hiddenMainMenu = fixedMainMenu ? false : true)}
 						/>
 					{/each}
@@ -203,17 +201,9 @@
 	</Drawer>
 	<!-- </div> -->
 	<div class="flex px-4 mx-auto w-full">
-		<main class="lg:ml-64 w-full mx-auto">
-			<div class="max-w-3xl 2xl:max-w-4xl mx-auto mt-8">
-				<div class="container flex flex-wrap mx-auto">
-					<Breadcrumb params={data.breadcrumbParams} navClass="flex pt-16 py-8" />
-					<Heading tag="h1">{data.thisPageInfo?.attributes?.title}</Heading>
-					<P class="w-full my-8">{data.thisPageInfo?.attributes?.description}</P>
-					<slot />
-				</div>
-			</div>
+		<main class="lg:ml-72 w-full mx-auto">
+			<slot />
 		</main>
-		<slot name="sub" />
 	</div>
 	<div class="mx-auto mb-4 pt-4 lg:pl-64">
 		<Footer footerType="socialmedia" class="dark:!bg-gray-900">

@@ -1,13 +1,13 @@
 <script lang="ts" context="module">
+	import type { LayoutLoadEvent } from '../routes/(pages)/$types';
 	import { strapiUrl } from './utils';
-	import type { IPage } from '$models/interfaces';
 
 	export interface IBreadcrumbItemParam {
 		url: string;
 		name: string;
 	}
 
-	type fetchType = LayoutServerLoadEvent['fetch'];
+	type fetchType = LayoutLoadEvent['fetch'];
 
 	export async function createBreadcrumbParams(fetch: fetchType, url: string) {
 		const paths = url.split('/');
@@ -22,8 +22,17 @@
 				param.url = joinedPath == '/' ? joinedPath + path : joinedPath + '/' + path;
 				let res = await fetch(strapiUrl(`pages?filters[url][$eq]=${param.url}`));
 				let json = await res.json();
-				// console.log(json);
-				param.name = (json.data[0] as IPage)?.attributes?.title ?? '';
+				if (json.data[0]) {
+					param.name = json.data[0].attributes?.title;
+				} else {
+					res = await fetch(strapiUrl(param.url.slice(1)));
+					json = await res.json();
+					if (json.data && json.data.attributes?.title) {
+						param.name = json.data.attributes.title;
+					} else {
+						// console.log(json);
+					}
+				}
 			}
 
 			joinedPath = param.url;
@@ -35,8 +44,6 @@
 
 <script lang="ts">
 	import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
-	import type { LoadEvent } from '@sveltejs/kit';
-	import type { LayoutServerLoadEvent } from '../routes/$types';
 
 	export let navClass = 'flex';
 	export let params: IBreadcrumbItemParam[];

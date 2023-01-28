@@ -1,27 +1,29 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { Card, Heading, P, Span } from 'flowbite-svelte';
-	import type { LayoutServerData } from './$types';
+	import type { PageData } from './$types';
 
-	export let data: LayoutServerData;
+	export let data: PageData;
 </script>
 
+<div
+	class="relative bg-white overflow-hidden mt-24 lg:mb-8 mx-auto dark:bg-gray-900 2xl:px-8 text-center lg:text-left"
+>
+	<Heading tag="h1">{data.pageInfo?.title}</Heading>
+	<P class="w-full my-8">{data.pageInfo?.description}</P>
+</div>
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
 	{#each data.menuItems as menuItem (menuItem?.id)}
-		<Card padding="none" href={menuItem?.attributes?.url}>
-			<div
-				class="w-full bg-gray-50 dark:bg-gray-700 rounded-t-md py-2.5 px-5 flex justify-between items-center border-b border-gray-200 dark:border-gray-700"
+		<Card padding="none" href={menuItem?.url} size="xl">
+			<P
+				class="rounded-t-md py-2.5 px-5 flex justify-between items-center border-b border-gray-200 dark:border-gray-600"
 			>
-				<Heading tag="h5" class="text-gray-500 dark:text-white"
-					>{menuItem?.attributes?.title}</Heading
-				>
+				<Heading tag="h5" class="text-gray-500 dark:text-white">{menuItem?.title}</Heading>
 				<Span><Icon icon="mdi:external-link" height="auto" /></Span>
-			</div>
-			<div class="my-6 mx-4">
-				<P>
-					{menuItem?.attributes?.description}
-				</P>
-			</div>
+			</P>
+			<P class="m-4">
+				{menuItem?.description}
+			</P>
 		</Card>
 	{/each}
 </div>
