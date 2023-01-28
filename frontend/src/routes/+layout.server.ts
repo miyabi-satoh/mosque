@@ -22,7 +22,7 @@ const defaultData: ILayoutFetchData = {
 
 export const load = (async ({ route, fetch }): Promise<ILayoutFetchData> => {
 	try {
-		let res = await fetch(strapiUrl(`pages?filters[is_menuitem][$eq]=true`));
+		let res = await fetch(strapiUrl(`pages?filters[is_menuitem][$eq]=true&sort=order:desc`));
 		let json = await res.json();
 		const menuItems = json.data as IPage[];
 

@@ -12,7 +12,7 @@ const defaultData: IPageFetchData = {
 
 export const load = (async ({ fetch }): Promise<IPageFetchData> => {
 	try {
-		const res = await fetch(strapiUrl(`links`));
+		const res = await fetch(strapiUrl(`links/?sort=order:desc`));
 		const json = await res.json();
 		if (json.error) {
 			console.log(json);
