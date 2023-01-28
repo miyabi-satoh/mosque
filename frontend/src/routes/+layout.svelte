@@ -27,11 +27,11 @@
 	import '../app.postcss';
 	import { page } from '$app/stores';
 	import LoginModal from '$lib/LoginModal.svelte';
-	import { mainState } from '$lib/stores';
 	import { getLocalToken, removeLocalToken } from '$lib/utils';
 	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
 	import type { LayoutServerData } from './$types';
+	import { createMediaQueryStore, mainStore } from '$stores';
 
 	let openLoginModal = false;
 	let hideMainMenu = true;
@@ -45,22 +45,25 @@
 	export let data: LayoutServerData;
 
 	$: activeUrl = $page.url.pathname;
+	$: if ($mql !== undefined) {
+		hideMainMenu = !$mql;
+	}
 
 	async function checkLoggedIn() {
-		if (!$mainState.isLoggedIn) {
-			let token = $mainState.token;
+		if (!$mainStore.isLoggedIn) {
+			let token = $mainStore.token;
 			if (!token) {
 				const localToken = getLocalToken();
 				if (localToken) {
-					mainState.setToken(localToken);
+					mainStore.setToken(localToken);
 					token = localToken;
 				}
 			}
 			if (token) {
 				try {
 					const response = await api.getMe(token);
-					mainState.setLoggedIn(true);
-					mainState.setUserProfile(response.data);
+					mainStore.setLoggedIn(true);
+					mainStore.setUserProfile(response.data);
 				} catch (error) {
 					removeLogin();
 				}
@@ -72,16 +75,12 @@
 
 	function removeLogin() {
 		removeLocalToken();
-		mainState.setToken('');
-		mainState.setLoggedIn(false);
+		mainStore.setToken('');
+		mainStore.setLoggedIn(false);
 	}
 
 	onMount(async () => {
-		mql = window.matchMedia('(min-width: 1024px)');
-		hideMainMenu = !mql.matches;
-		mql.addEventListener('change', (e: MediaQueryListEvent) => {
-			hideMainMenu = !e.matches;
-		});
+		mql = createMediaQueryStore('(min-width: 1024px)');
 
 		await checkLoggedIn();
 	});
@@ -107,11 +106,11 @@
 		</NavBrand>
 		<div class="flex-1" />
 		<div class="flex md:order-2">
-			{#if $mainState.isLoggedIn}
+			{#if $mainStore.isLoggedIn}
 				<NavUl>
 					<NavLi id="account-menu" class="flex items-center cursor-pointer">
 						<Icon icon="mdi:user-circle" height="auto" />
-						{$mainState.userProfile?.email}
+						{$mainStore.userProfile?.email}
 					</NavLi>
 				</NavUl>
 				<Dropdown placement="bottom" triggeredBy="#account-menu">

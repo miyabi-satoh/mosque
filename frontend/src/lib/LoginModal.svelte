@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Button, Modal, Label, Input, Heading, Span } from 'flowbite-svelte';
 	import { api } from './api';
-	import { mainState } from './stores';
 	import type { AxiosError } from 'axios';
+	import { mainStore } from '$stores';
 
 	export let open = false;
 	let username = '';
@@ -14,26 +14,26 @@
 			const response = await api.getAccessToken(username, password);
 			const token = response.data.access_token;
 			if (token) {
-				mainState.setToken(token);
-				mainState.setLoggedIn(true);
-				mainState.setLogInError(false);
+				mainStore.setToken(token);
+				mainStore.setLoggedIn(true);
+				mainStore.setLogInError(false);
 				await actionGetUserProfile();
-				mainState.addNotification({ content: 'Logged in', color: 'success' });
+				mainStore.addNotification({ content: 'Logged in', color: 'success' });
 				open = false;
 			} else {
-				mainState.setLoggedIn(false);
+				mainStore.setLoggedIn(false);
 			}
 		} catch (err) {
-			mainState.setLogInError(true);
-			mainState.setLoggedIn(false);
+			mainStore.setLogInError(true);
+			mainStore.setLoggedIn(false);
 		}
 	}
 
 	async function actionGetUserProfile() {
 		try {
-			const response = await api.getMe($mainState.token);
+			const response = await api.getMe($mainStore.token);
 			if (response.data) {
-				mainState.setUserProfile(response.data);
+				mainStore.setUserProfile(response.data);
 			}
 		} catch (error) {
 			actionCheckApiError(error as AxiosError);
@@ -42,7 +42,7 @@
 
 	function actionCheckApiError(payload: AxiosError) {
 		if (payload.response && payload.response.status === 401) {
-			mainState.setLoggedIn(false);
+			mainStore.setLoggedIn(false);
 		}
 	}
 

@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { IUserProfile } from '$models/interfaces';
-import { removeLocalToken, saveLocalToken } from './utils';
+import { removeLocalToken, saveLocalToken } from '$lib/utils';
 
 export interface AppNotification {
 	content: string;
@@ -8,7 +8,7 @@ export interface AppNotification {
 	showProgress?: boolean;
 }
 
-export interface MainState {
+export interface MainStore {
 	token: string;
 	isLoggedIn: boolean | null;
 	logInError: boolean;
@@ -18,7 +18,7 @@ export interface MainState {
 	notifications: AppNotification[];
 }
 
-const defaultState: MainState = {
+const defaultStore: MainStore = {
 	isLoggedIn: null,
 	token: '',
 	logInError: false,
@@ -28,8 +28,8 @@ const defaultState: MainState = {
 	notifications: []
 };
 
-function createMainState() {
-	const { subscribe, update } = writable<MainState>(defaultState);
+function createMainStore() {
+	const { subscribe, update } = writable<MainStore>(defaultStore);
 
 	const setToken = (token: string) => {
 		if (token) {
@@ -37,32 +37,32 @@ function createMainState() {
 		} else {
 			removeLocalToken();
 		}
-		update((state) => {
-			return { ...state, token };
+		update((store) => {
+			return { ...store, token };
 		});
 	};
 
 	const setLoggedIn = (isLoggedIn: boolean) => {
-		update((state) => {
-			return { ...state, isLoggedIn };
+		update((store) => {
+			return { ...store, isLoggedIn };
 		});
 	};
 
 	const setLogInError = (logInError: boolean) => {
-		update((state) => {
-			return { ...state, logInError };
+		update((store) => {
+			return { ...store, logInError };
 		});
 	};
 
 	const setUserProfile = (userProfile: IUserProfile) => {
-		update((state) => {
-			return { ...state, userProfile };
+		update((store) => {
+			return { ...store, userProfile };
 		});
 	};
 
 	const addNotification = (payload: AppNotification) => {
-		update((state) => {
-			return { ...state, notifications: [...state.notifications, payload] };
+		update((store) => {
+			return { ...store, notifications: [...store.notifications, payload] };
 		});
 	};
 
@@ -76,4 +76,4 @@ function createMainState() {
 	};
 }
 
-export const mainState = createMainState();
+export const mainStore = createMainStore();
