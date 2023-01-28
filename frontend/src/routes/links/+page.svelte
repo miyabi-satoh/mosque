@@ -2,7 +2,6 @@
 	import {
 		A,
 		P,
-		Table,
 		TableBody,
 		TableBodyCell,
 		TableBodyRow,
@@ -33,6 +32,7 @@
 			placeholder="Search keywords..."
 			hoverable={true}
 			bind:inputValue={searchTerm}
+			divClass="relative overflow-x-auto"
 		>
 			<TableHead>
 				<TableHeadCell>Title</TableHeadCell>
