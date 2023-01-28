@@ -4,7 +4,7 @@
 		NavBrand,
 		NavLi,
 		NavUl,
-		NavHamburger,
+		// NavHamburger,
 		Span,
 		DarkMode,
 		Sidebar,
@@ -18,8 +18,11 @@
 		DropdownItem,
 		DropdownDivider,
 		Heading,
-		P
+		P,
+		Drawer,
+		CloseButton
 	} from 'flowbite-svelte';
+	import { sineIn } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
 	import '../app.postcss';
 	import { page } from '$app/stores';
@@ -31,6 +34,14 @@
 	import type { LayoutServerData } from './$types';
 
 	let openLoginModal = false;
+	let hideMainMenu = true;
+	let mql;
+	let transitionParams = {
+		x: -320,
+		duration: 200,
+		easing: sineIn
+	};
+
 	export let data: LayoutServerData;
 
 	$: activeUrl = $page.url.pathname;
@@ -66,6 +77,12 @@
 	}
 
 	onMount(async () => {
+		mql = window.matchMedia('(min-width: 1024px)');
+		hideMainMenu = !mql.matches;
+		mql.addEventListener('change', (e: MediaQueryListEvent) => {
+			hideMainMenu = !e.matches;
+		});
+
 		await checkLoggedIn();
 	});
 </script>
@@ -74,12 +91,21 @@
 	<Navbar
 		let:hidden
 		let:toggle
-		navClass="px-2 py-0.5 fixed w-full mx-auto z-50 top-0 left-0 border-b"
-		navDivClass="mx-auto flex flex-wrap justify-between items-center h-14"
+		navClass="px-2 py-2 fixed w-full mx-auto z-20 top-0 left-0 border-b"
+		navDivClass="mx-auto flex flex-wrap items-center"
 	>
+		<button
+			class="mx-2 hover:text-gray-900 text-gray-500 dark:text-gray-400 dark:hover:text-white  hover:bg-gray-100 dark:hover:bg-gray-600 ml-3 lg:hidden"
+			on:click={() => (hideMainMenu = false)}
+		>
+			<span class="sr-only">Open main menu</span>
+			<Icon icon="mdi:apps" height="46" />
+		</button>
+
 		<NavBrand href="/">
 			<Span class="self-center whitespace-nowrap text-xl font-semibold">MOSQUE</Span>
 		</NavBrand>
+		<div class="flex-1" />
 		<div class="flex md:order-2">
 			{#if $mainState.isLoggedIn}
 				<NavUl>
@@ -98,7 +124,7 @@
 			{/if}
 			<LoginModal bind:open={openLoginModal} />
 			<DarkMode class="ml-2" />
-			<NavHamburger on:click={toggle} />
+			<!-- <NavHamburger on:click={toggle} /> -->
 		</div>
 		<!-- <NavUl {hidden} class="order-1">
 			<NavLi href="/" active={true}>Home</NavLi>
@@ -108,43 +134,35 @@
 			<NavLi href="/contact">Contact</NavLi>
 		</NavUl> -->
 	</Navbar>
-	<div
+	<!-- <div
 		id="sidebar"
-		class="overflow-y-auto z-20 p-4 bg-gray-50 dark:bg-gray-800 w-64 fixed lg:top-14 h-screen lg:left-0 overflow-scroll pb-32"
+		class="overflow-y-auto z-50 p-4 bg-gray-50 dark:bg-gray-800 w-64 fixed lg:top-14 h-screen lg:left-0 overflow-scroll pb-32"
 		tabindex="-1"
 		aria-controls="sidebar"
 		aria-labelledby="sidebar"
 		style=""
+	> -->
+	<Drawer
+		transitionType="fly"
+		{transitionParams}
+		bind:hidden={hideMainMenu}
+		id="sidebar"
+		divClass="overflow-y-auto z-50 p-4 bg-gray-50 dark:bg-gray-800"
+		leftOffset="left-0 lg:top-14 h-screen pb-32"
+		width="w-64"
+		backdrop={false}
 	>
 		<div class="flex items-center">
-			<button
-				type="button"
-				class="ml-auto focus:outline-none whitespace-normal rounded-lg focus:ring-2 p-1.5 focus:ring-gray-300  hover:bg-gray-100 dark:hover:bg-gray-700 mb-4 dark:text-white lg:hidden"
-				aria-label="Close"
-			>
-				<span class="sr-only">Close</span>
-				<svg
-					class="w-5 h-5"
-					fill="currentColor"
-					viewBox="0 0 20 20"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						fill-rule="evenodd"
-						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-						clip-rule="evenodd"
-					/>
-				</svg>
-			</button>
+			<CloseButton on:click={() => (hideMainMenu = true)} class="dark:text-white lg:hidden" />
 		</div>
 		<Sidebar asideClass="w-54">
 			<SidebarWrapper>
 				<SidebarGroup>
-					{#each data.menuItems as menuItem (menuItem.id)}
+					{#each data.menuItems as menuItem (menuItem?.id)}
 						<SidebarItem
-							label={menuItem.attributes?.title}
-							href={menuItem.attributes?.url}
-							active={activeUrl === menuItem.attributes?.url}
+							label={menuItem?.attributes?.title}
+							href={menuItem?.attributes?.url}
+							active={activeUrl === menuItem?.attributes?.url}
 						/>
 					{/each}
 					<!-- <SidebarDropdownWrapper label="E-commerce" isOpen={activeUrl.includes('/components/')}>
@@ -174,12 +192,13 @@
 				</SidebarGroup>
 			</SidebarWrapper>
 		</Sidebar>
-	</div>
+	</Drawer>
+	<!-- </div> -->
 	<div class="flex px-4 mx-auto w-full">
-		<main class="lg:ml-72 w-full mx-auto">
+		<main class="lg:ml-64 w-full mx-auto">
 			<div class="mt-24">
-				<Heading tag="h1">{data.thisPageInfo.attributes?.title}</Heading>
-				<P class="w-full my-8">{data.thisPageInfo.attributes?.description}</P>
+				<Heading tag="h1">{data.thisPageInfo?.attributes?.title}</Heading>
+				<P class="w-full my-8">{data.thisPageInfo?.attributes?.description}</P>
 				<slot />
 			</div>
 		</main>
