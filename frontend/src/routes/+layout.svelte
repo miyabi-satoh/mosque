@@ -32,6 +32,7 @@
 	import { onMount } from 'svelte';
 	import type { LayoutServerData } from './$types';
 	import { createMediaQueryStore, mainStore } from '$stores';
+	import Breadcrumb from '$lib/Breadcrumb.svelte';
 
 	let openLoginModal = false;
 	let hiddenMainMenu = true;
@@ -169,6 +170,7 @@
 							label={menuItem?.attributes?.title}
 							href={menuItem?.attributes?.url}
 							active={activeUrl === menuItem?.attributes?.url}
+							on:click={() => (hiddenMainMenu = fixedMainMenu ? false : true)}
 						/>
 					{/each}
 					<!-- <SidebarDropdownWrapper label="E-commerce" isOpen={activeUrl.includes('/components/')}>
@@ -202,10 +204,13 @@
 	<!-- </div> -->
 	<div class="flex px-4 mx-auto w-full">
 		<main class="lg:ml-64 w-full mx-auto">
-			<div class="mt-24">
-				<Heading tag="h1">{data.thisPageInfo?.attributes?.title}</Heading>
-				<P class="w-full my-8">{data.thisPageInfo?.attributes?.description}</P>
-				<slot />
+			<div class="max-w-3xl 2xl:max-w-4xl mx-auto mt-8">
+				<div class="container flex flex-wrap mx-auto">
+					<Breadcrumb params={data.breadcrumbParams} navClass="flex pt-16 py-8" />
+					<Heading tag="h1">{data.thisPageInfo?.attributes?.title}</Heading>
+					<P class="w-full my-8">{data.thisPageInfo?.attributes?.description}</P>
+					<slot />
+				</div>
 			</div>
 		</main>
 		<slot name="sub" />
