@@ -34,7 +34,8 @@
 	import { createMediaQueryStore, mainStore } from '$stores';
 
 	let openLoginModal = false;
-	let hideMainMenu = true;
+	let hiddenMainMenu = true;
+	let fixedMainMenu = false;
 	let mql;
 	let transitionParams = {
 		x: -320,
@@ -45,8 +46,13 @@
 	export let data: LayoutServerData;
 
 	$: activeUrl = $page.url.pathname;
-	$: if ($mql !== undefined) {
-		hideMainMenu = !$mql;
+	$: handleChangeMinWidth($mql !== undefined);
+	function handleChangeMinWidth(changed: boolean) {
+		if (changed) {
+			hiddenMainMenu = !$mql;
+			fixedMainMenu = !hiddenMainMenu;
+			// console.log(fixedMainMenu);
+		}
 	}
 
 	async function checkLoggedIn() {
@@ -95,14 +101,14 @@
 	>
 		<button
 			class="mx-2 hover:text-gray-900 text-gray-500 dark:text-gray-400 dark:hover:text-white  hover:bg-gray-100 dark:hover:bg-gray-600 ml-3 lg:hidden"
-			on:click={() => (hideMainMenu = false)}
+			on:click={() => (hiddenMainMenu = false)}
 		>
 			<span class="sr-only">Open main menu</span>
 			<Icon icon="mdi:apps" height="46" />
 		</button>
 
 		<NavBrand href="/">
-			<Span class="self-center whitespace-nowrap text-xl font-semibold">MOSQUE</Span>
+			<Span class="self-center whitespace-nowrap text-xl font-semibold lg:ml-4">MOSQUE</Span>
 		</NavBrand>
 		<div class="flex-1" />
 		<div class="flex md:order-2">
@@ -144,7 +150,8 @@
 	<Drawer
 		transitionType="fly"
 		{transitionParams}
-		bind:hidden={hideMainMenu}
+		activateClickOutside={!fixedMainMenu}
+		bind:hidden={hiddenMainMenu}
 		id="sidebar"
 		divClass="overflow-y-auto z-50 p-4 bg-gray-50 dark:bg-gray-800"
 		leftOffset="left-0 lg:top-14 h-screen pb-32"
@@ -152,7 +159,7 @@
 		backdrop={false}
 	>
 		<div class="flex items-center">
-			<CloseButton on:click={() => (hideMainMenu = true)} class="dark:text-white lg:hidden" />
+			<CloseButton on:click={() => (hiddenMainMenu = true)} class="dark:text-white lg:hidden" />
 		</div>
 		<Sidebar asideClass="w-54">
 			<SidebarWrapper>
