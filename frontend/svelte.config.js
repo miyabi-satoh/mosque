@@ -17,7 +17,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
-      // npm run check すること
+			// npm run check すること
 			$lib: path.resolve('./src/lib'),
 			$models: path.resolve('./src/models'),
 			$stores: path.resolve('./src/stores')
