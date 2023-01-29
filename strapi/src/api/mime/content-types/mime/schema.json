@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mimes",
+  "info": {
+    "singularName": "mime",
+    "pluralName": "mimes",
+    "displayName": "Mime"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "mime": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "text",
+        "img",
+        "audio",
+        "video",
+        "pdf"
+      ]
+    }
+  }
+}

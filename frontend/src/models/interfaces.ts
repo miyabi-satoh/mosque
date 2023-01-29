@@ -7,6 +7,8 @@ export type IStrapiLink =
 	paths['/links/{id}']['get']['responses']['200']['content']['application/json']['data'];
 export type IStrapiFormat =
 	paths['/formats/{id}']['get']['responses']['200']['content']['application/json']['data'];
+export type IStrapiMime =
+	paths['/mimes/{id}']['get']['responses']['200']['content']['application/json']['data'];
 
 export interface IPage {
 	id: number;
@@ -54,3 +56,5 @@ export interface IBreadcrumbItemParam {
 	href: string;
 	name: string;
 }
+
+export type BlobType = 'text' | 'img' | 'audio' | 'video' | 'pdf' | 'unknown' | 'error';

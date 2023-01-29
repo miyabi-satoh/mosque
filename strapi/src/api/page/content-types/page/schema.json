@@ -33,6 +33,9 @@
       "type": "integer",
       "default": 0,
       "required": true
+    },
+    "content": {
+      "type": "richtext"
     }
   }
 }

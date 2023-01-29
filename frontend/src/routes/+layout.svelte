@@ -47,7 +47,6 @@
 		if (changed) {
 			hiddenMainMenu = !$mql;
 			fixedMainMenu = !hiddenMainMenu;
-			// console.log(fixedMainMenu);
 		}
 	}
 

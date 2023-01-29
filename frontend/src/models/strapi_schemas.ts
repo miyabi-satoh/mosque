@@ -22,6 +22,15 @@ export interface paths {
 		put: operations['put/links/{id}'];
 		delete: operations['delete/links/{id}'];
 	};
+	'/mimes': {
+		get: operations['get/mimes'];
+		post: operations['post/mimes'];
+	};
+	'/mimes/{id}': {
+		get: operations['get/mimes/{id}'];
+		put: operations['put/mimes/{id}'];
+		delete: operations['delete/mimes/{id}'];
+	};
 	'/pages': {
 		get: operations['get/pages'];
 		post: operations['post/pages'];
@@ -1673,6 +1682,500 @@ export interface components {
 		};
 		LinkResponse: {
 			data?: components['schemas']['LinkResponseDataObject'];
+			meta?: Record<string, never>;
+		};
+		MimeRequest: {
+			data: {
+				mime: string;
+				/** @enum {string} */
+				type?: 'text' | 'img' | 'audio' | 'video' | 'pdf';
+			};
+		};
+		MimeListResponseDataItem: {
+			id?: number;
+			attributes?: {
+				mime?: string;
+				/** @enum {string} */
+				type?: 'text' | 'img' | 'audio' | 'video' | 'pdf';
+				/** Format: date-time */
+				createdAt?: string;
+				/** Format: date-time */
+				updatedAt?: string;
+				/** Format: date-time */
+				publishedAt?: string;
+				createdBy?: {
+					data?: {
+						id?: number;
+						attributes?: {
+							firstname?: string;
+							lastname?: string;
+							username?: string;
+							/** Format: email */
+							email?: string;
+							resetPasswordToken?: string;
+							registrationToken?: string;
+							isActive?: boolean;
+							roles?: {
+								data?: {
+									id?: number;
+									attributes?: {
+										name?: string;
+										code?: string;
+										description?: string;
+										users?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											}[];
+										};
+										permissions?: {
+											data?: {
+												id?: number;
+												attributes?: {
+													action?: string;
+													subject?: string;
+													properties?: Record<string, never>;
+													conditions?: Record<string, never>;
+													role?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													/** Format: date-time */
+													createdAt?: string;
+													/** Format: date-time */
+													updatedAt?: string;
+													createdBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													updatedBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+												};
+											}[];
+										};
+										/** Format: date-time */
+										createdAt?: string;
+										/** Format: date-time */
+										updatedAt?: string;
+										createdBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+										updatedBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+									};
+								}[];
+							};
+							blocked?: boolean;
+							preferedLanguage?: string;
+							/** Format: date-time */
+							createdAt?: string;
+							/** Format: date-time */
+							updatedAt?: string;
+							createdBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+							updatedBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+						};
+					};
+				};
+				updatedBy?: {
+					data?: {
+						id?: number;
+						attributes?: Record<string, never>;
+					};
+				};
+			};
+		};
+		MimeListResponseDataItemLocalized: {
+			id?: number;
+			attributes?: {
+				mime?: string;
+				/** @enum {string} */
+				type?: 'text' | 'img' | 'audio' | 'video' | 'pdf';
+				/** Format: date-time */
+				createdAt?: string;
+				/** Format: date-time */
+				updatedAt?: string;
+				/** Format: date-time */
+				publishedAt?: string;
+				createdBy?: {
+					data?: {
+						id?: number;
+						attributes?: {
+							firstname?: string;
+							lastname?: string;
+							username?: string;
+							/** Format: email */
+							email?: string;
+							resetPasswordToken?: string;
+							registrationToken?: string;
+							isActive?: boolean;
+							roles?: {
+								data?: {
+									id?: number;
+									attributes?: {
+										name?: string;
+										code?: string;
+										description?: string;
+										users?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											}[];
+										};
+										permissions?: {
+											data?: {
+												id?: number;
+												attributes?: {
+													action?: string;
+													subject?: string;
+													properties?: Record<string, never>;
+													conditions?: Record<string, never>;
+													role?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													/** Format: date-time */
+													createdAt?: string;
+													/** Format: date-time */
+													updatedAt?: string;
+													createdBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													updatedBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+												};
+											}[];
+										};
+										/** Format: date-time */
+										createdAt?: string;
+										/** Format: date-time */
+										updatedAt?: string;
+										createdBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+										updatedBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+									};
+								}[];
+							};
+							blocked?: boolean;
+							preferedLanguage?: string;
+							/** Format: date-time */
+							createdAt?: string;
+							/** Format: date-time */
+							updatedAt?: string;
+							createdBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+							updatedBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+						};
+					};
+				};
+				updatedBy?: {
+					data?: {
+						id?: number;
+						attributes?: Record<string, never>;
+					};
+				};
+			};
+		};
+		MimeListResponse: {
+			data?: components['schemas']['MimeListResponseDataItem'][];
+			meta?: {
+				pagination?: {
+					page?: number;
+					pageSize?: number;
+					pageCount?: number;
+					total?: number;
+				};
+			};
+		};
+		MimeResponseDataObject: {
+			id?: number;
+			attributes?: {
+				mime?: string;
+				/** @enum {string} */
+				type?: 'text' | 'img' | 'audio' | 'video' | 'pdf';
+				/** Format: date-time */
+				createdAt?: string;
+				/** Format: date-time */
+				updatedAt?: string;
+				/** Format: date-time */
+				publishedAt?: string;
+				createdBy?: {
+					data?: {
+						id?: number;
+						attributes?: {
+							firstname?: string;
+							lastname?: string;
+							username?: string;
+							/** Format: email */
+							email?: string;
+							resetPasswordToken?: string;
+							registrationToken?: string;
+							isActive?: boolean;
+							roles?: {
+								data?: {
+									id?: number;
+									attributes?: {
+										name?: string;
+										code?: string;
+										description?: string;
+										users?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											}[];
+										};
+										permissions?: {
+											data?: {
+												id?: number;
+												attributes?: {
+													action?: string;
+													subject?: string;
+													properties?: Record<string, never>;
+													conditions?: Record<string, never>;
+													role?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													/** Format: date-time */
+													createdAt?: string;
+													/** Format: date-time */
+													updatedAt?: string;
+													createdBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													updatedBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+												};
+											}[];
+										};
+										/** Format: date-time */
+										createdAt?: string;
+										/** Format: date-time */
+										updatedAt?: string;
+										createdBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+										updatedBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+									};
+								}[];
+							};
+							blocked?: boolean;
+							preferedLanguage?: string;
+							/** Format: date-time */
+							createdAt?: string;
+							/** Format: date-time */
+							updatedAt?: string;
+							createdBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+							updatedBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+						};
+					};
+				};
+				updatedBy?: {
+					data?: {
+						id?: number;
+						attributes?: Record<string, never>;
+					};
+				};
+			};
+		};
+		MimeResponseDataObjectLocalized: {
+			id?: number;
+			attributes?: {
+				mime?: string;
+				/** @enum {string} */
+				type?: 'text' | 'img' | 'audio' | 'video' | 'pdf';
+				/** Format: date-time */
+				createdAt?: string;
+				/** Format: date-time */
+				updatedAt?: string;
+				/** Format: date-time */
+				publishedAt?: string;
+				createdBy?: {
+					data?: {
+						id?: number;
+						attributes?: {
+							firstname?: string;
+							lastname?: string;
+							username?: string;
+							/** Format: email */
+							email?: string;
+							resetPasswordToken?: string;
+							registrationToken?: string;
+							isActive?: boolean;
+							roles?: {
+								data?: {
+									id?: number;
+									attributes?: {
+										name?: string;
+										code?: string;
+										description?: string;
+										users?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											}[];
+										};
+										permissions?: {
+											data?: {
+												id?: number;
+												attributes?: {
+													action?: string;
+													subject?: string;
+													properties?: Record<string, never>;
+													conditions?: Record<string, never>;
+													role?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													/** Format: date-time */
+													createdAt?: string;
+													/** Format: date-time */
+													updatedAt?: string;
+													createdBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													updatedBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+												};
+											}[];
+										};
+										/** Format: date-time */
+										createdAt?: string;
+										/** Format: date-time */
+										updatedAt?: string;
+										createdBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+										updatedBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+									};
+								}[];
+							};
+							blocked?: boolean;
+							preferedLanguage?: string;
+							/** Format: date-time */
+							createdAt?: string;
+							/** Format: date-time */
+							updatedAt?: string;
+							createdBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+							updatedBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+						};
+					};
+				};
+				updatedBy?: {
+					data?: {
+						id?: number;
+						attributes?: Record<string, never>;
+					};
+				};
+			};
+		};
+		MimeResponse: {
+			data?: components['schemas']['MimeResponseDataObject'];
 			meta?: Record<string, never>;
 		};
 		PageRequest: {
@@ -7174,6 +7677,255 @@ export interface operations {
 		};
 	};
 	'delete/links/{id}': {
+		parameters: {
+			path: {
+				id: number;
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': number;
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'get/mimes': {
+		parameters?: {
+			/** @description Sort by attributes ascending (asc) or descending (desc) */
+			/** @description Return page/pageSize (default: true) */
+			/** @description Page number (default: 0) */
+			/** @description Page size (default: 25) */
+			/** @description Offset value (default: 0) */
+			/** @description Number of entities to return (default: 25) */
+			/** @description Fields to return (ex: title,author) */
+			/** @description Relations to return */
+			/** @description Filters to apply */
+			/** @description Locale to apply */
+			query?: {
+				sort?: string;
+				'pagination[withCount]'?: boolean;
+				'pagination[page]'?: number;
+				'pagination[pageSize]'?: number;
+				'pagination[start]'?: number;
+				'pagination[limit]'?: number;
+				fields?: string;
+				populate?: string;
+				filters?: Record<string, never>;
+				locale?: string;
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': components['schemas']['MimeListResponse'];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'post/mimes': {
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['MimeRequest'];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': components['schemas']['MimeResponse'];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'get/mimes/{id}': {
+		parameters: {
+			path: {
+				id: number;
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': components['schemas']['MimeResponse'];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'put/mimes/{id}': {
+		parameters: {
+			path: {
+				id: number;
+			};
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['MimeRequest'];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': components['schemas']['MimeResponse'];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'delete/mimes/{id}': {
 		parameters: {
 			path: {
 				id: number;

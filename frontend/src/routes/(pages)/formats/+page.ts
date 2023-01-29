@@ -6,7 +6,6 @@ export const load = (async ({ fetch }) => {
 	const res = await fetch(strapiUrl(`formats/?sort=order:desc`));
 	const json = await res.json();
 	if (json.error) {
-		// console.log(json);
 		throw new Error(json.error.message);
 	}
 

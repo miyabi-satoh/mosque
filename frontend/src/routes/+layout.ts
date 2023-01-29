@@ -44,7 +44,6 @@ export const load = (async ({ url, fetch }) => {
 		description: page?.attributes?.description
 	} as IPage;
 
-	console.log(`/ server load complete`);
 	return {
 		menuItems,
 		pageInfo

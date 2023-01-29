@@ -2,47 +2,43 @@
 	import { page } from '$app/stores';
 	import { invalidate } from '$app/navigation';
 	import { Alert, Button } from 'flowbite-svelte';
-
-	type BlobType = 'text' | 'image' | 'unknown' | 'error';
+	import type { BlobType } from '$models/interfaces';
 
 	$: data = $page.data;
-	let text: string;
+	let text = '';
+	let blobUrl = '';
 	let promise: Promise<BlobType>;
 
 	function reload() {
-		console.log('reload');
 		invalidate('app:formats');
 	}
 
 	$: if (data) promise = getBlobType();
 	async function getBlobType(): Promise<BlobType> {
-		if (data.status !== 200) {
-			text = '';
-			if (data.blob) {
-				const json = JSON.parse(await data.blob.text());
-				text += json.detail;
-			}
-			switch (data.status) {
-				case 404:
-					text += `ファイルが存在しません`;
-					break;
-				case 500:
-					text += `ファイルの取得に失敗しました`;
-			}
-			return 'error';
-		}
-		if (data.blob) {
-			const type = data.blob.type;
-			if (type.includes('text/') || type.includes('application/json')) {
+		text = '';
+		blobUrl = '';
+		switch (data.type) {
+			case 'text':
 				text = await data.blob.text();
-				return 'text';
-			}
-			if (type.includes('image/')) {
-				return 'image';
-			}
-			return 'unknown';
+				break;
+			case 'img':
+				blobUrl = URL.createObjectURL(data.blob);
+				break;
+			case 'error':
+				text = '';
+				if (data.blob) {
+					const json = JSON.parse(await data.blob.text());
+					text += json.detail;
+				}
+				switch (data.status) {
+					case 404:
+						text += `ファイルが存在しません`;
+						break;
+					case 500:
+						text += `ファイルの取得に失敗しました`;
+				}
 		}
-		return 'error';
+		return data.type;
 	}
 </script>
 
@@ -51,6 +47,13 @@
 	{#if blobType == 'text'}
 		<pre
 			class="text-sm w-full border p-4 whitespace-pre-wrap max-h-80 overflow-y-scroll">{text}</pre>
+	{:else if blobType == 'img'}
+		<img
+			class="w-full border"
+			alt="preview"
+			src={blobUrl}
+			on:load={() => URL.revokeObjectURL(blobUrl)}
+		/>
 	{:else if blobType == 'error'}
 		<Alert color="red" class="w-full">
 			エラー：{data.status}<br />
