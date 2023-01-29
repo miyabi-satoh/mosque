@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { ILink } from '$models/interfaces';
 	import Icon from '@iconify/svelte';
 	import {
@@ -11,10 +12,10 @@
 		TableHeadCell,
 		TableSearch
 	} from 'flowbite-svelte';
-	import type { PageData } from './$types';
 
 	let searchTerm = '';
-	export let data: PageData;
+
+	$: data = $page.data;
 
 	$: filterdItems =
 		searchTerm.length > 0

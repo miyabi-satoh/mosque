@@ -16,7 +16,7 @@ export const load = (async ({ fetch }) => {
 			id: format?.id,
 			title: format?.attributes?.title,
 			description: format?.attributes?.description
-		} as IFormat;
-	});
+		};
+	}) as IFormat[];
 	return { formats };
 }) satisfies PageLoad;

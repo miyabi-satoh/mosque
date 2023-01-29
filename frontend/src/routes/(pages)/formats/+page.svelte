@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import type { IFormat } from '$models/interfaces';
 	import {
 		A,
 		P,
@@ -10,15 +11,14 @@
 		TableHeadCell,
 		TableSearch
 	} from 'flowbite-svelte';
-	import type { PageData } from './$types';
 
 	let searchTerm = '';
-	export let data: PageData;
+	$: data = $page.data;
 
 	$: filterdItems =
 		searchTerm.length > 0
 			? data.formats.filter(
-					(format) =>
+					(format: IFormat) =>
 						format?.title?.includes(searchTerm) || format?.description?.includes(searchTerm)
 			  )
 			: data.formats;

@@ -28,7 +28,6 @@
 	import { getLocalToken, removeLocalToken } from '$lib/utils';
 	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
-	import type { LayoutData } from './$types';
 	import { createMediaQueryStore, mainStore } from '$stores';
 
 	let openLoginModal = false;
