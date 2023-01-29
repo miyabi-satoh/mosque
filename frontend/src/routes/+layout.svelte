@@ -41,9 +41,7 @@
 		easing: sineIn
 	};
 
-	export let data: LayoutData;
-	// console.log(data);
-
+	$: data = $page.data;
 	$: activeUrl = $page.url.pathname;
 	$: handleChangeMinWidth($mql !== undefined);
 	function handleChangeMinWidth(changed: boolean) {

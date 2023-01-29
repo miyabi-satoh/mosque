@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
 	import { Card, Heading, P, Span } from 'flowbite-svelte';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	$: data = $page.data;
 </script>
 
 <div

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { Heading, P } from 'flowbite-svelte';
 	// import { getLocalToken, removeLocalToken } from '$lib/utils';
 	// import { api } from '$lib/api';
@@ -11,7 +12,7 @@
 	// let fixedMainMenu = false;
 	// let mql;
 
-	export let data: LayoutData;
+	$: data = $page.data;
 
 	// $: handleChangeMinWidth($mql !== undefined);
 	// function handleChangeMinWidth(changed: boolean) {

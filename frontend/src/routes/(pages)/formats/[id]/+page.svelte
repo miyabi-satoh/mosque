@@ -16,28 +16,32 @@
 
 	$: if (data) promise = getBlobType();
 	async function getBlobType(): Promise<BlobType> {
-		if (data.status !== 200) {
-			text = '';
-			switch (data.status) {
-				case 404:
-					text += `ファイルが存在しません\n`;
-					break;
-				case 500:
-					text += `サーバーエラー\n`;
+		if (data.blob) {
+			if (data.status !== 200) {
+				text = '';
+				switch (data.status) {
+					case 404:
+						text += `ファイルが存在しません\n`;
+						break;
+					case 500:
+						text += `サーバーエラー\n`;
+				}
+				const json = JSON.parse(await data.blob.text());
+				text += json.detail;
+				return 'error';
 			}
-			const json = JSON.parse(await data.blob.text());
-			text += json.detail;
-			return 'error';
+			const type = data.blob.type;
+			if (type.includes('text/') || type.includes('application/json')) {
+				text = await data.blob.text();
+				return 'text';
+			}
+			if (type.includes('image/')) {
+				return 'image';
+			}
+			return 'unknown';
 		}
-		const type = data.blob.type;
-		if (type.includes('text/') || type.includes('application/json')) {
-			text = await data.blob.text();
-			return 'text';
-		}
-		if (type.includes('image/')) {
-			return 'image';
-		}
-		return 'unknown';
+		text = 'ご指定のページは見つかりません';
+		return 'error';
 	}
 </script>
 
@@ -56,7 +60,7 @@
 	{:else}
 		<Alert color="yellow" class="w-full">
 			この形式のファイルはプレビューを表示できません。<br />
-			形式：{data.blob.type}
+			形式：{data.blob?.type}
 		</Alert>
 	{/if}
 {/await}

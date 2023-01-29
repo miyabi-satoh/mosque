@@ -1,9 +1,8 @@
-import type { Handle } from '@sveltejs/kit';
+import type { HandleFetch } from '@sveltejs/kit';
 
-export const handle = (async ({ event, resolve }) => {
-	const response = await resolve(event, {
-		filterSerializedResponseHeaders: (name) => name == 'content-type'
-	});
+export const handleFetch = (({ request, fetch }) => {
+	const dt = new Date();
+	console.log(`${dt.toJSON()}\t${request.url}\n`);
 
-	return response;
-}) satisfies Handle;
+	return fetch(request);
+}) satisfies HandleFetch;
