@@ -1,4 +1,4 @@
-// npx openapi-typescript ../strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json --output src/models/strapi_schemas.ts
+// npx openapi-typescript strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json --output frontend/src/models/strapi_schemas.ts
 import type { paths } from './strapi_schemas';
 
 export type IStrapiPage =
@@ -26,6 +26,7 @@ export interface IFormat {
 	id: number;
 	title: string;
 	description: string;
+	realPath: string;
 }
 
 export interface IUserProfile {

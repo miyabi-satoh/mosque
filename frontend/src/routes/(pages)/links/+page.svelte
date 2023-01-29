@@ -4,7 +4,6 @@
 	import {
 		A,
 		P,
-		Span,
 		TableBody,
 		TableBodyCell,
 		TableBodyRow,
