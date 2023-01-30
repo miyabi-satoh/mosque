@@ -35,7 +35,7 @@ export const load = (async ({ params, fetch, depends }) => {
 	retObj = { ...retObj, format };
 
 	// 実ファイル情報を取得する
-	res = await fetch(apiUrl(`formats/${params.id}`));
+	res = await fetch(apiUrl(`formats/${params.id}/${format.title}`));
 	if (!res.ok) {
 		console.log('FastAPI server is down?');
 		retObj = { ...retObj, status: 500 };

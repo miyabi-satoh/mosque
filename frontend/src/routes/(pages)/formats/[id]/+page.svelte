@@ -3,6 +3,7 @@
 	import { invalidate } from '$app/navigation';
 	import { Alert, Button } from 'flowbite-svelte';
 	import type { BlobType } from '$models/interfaces';
+	import { apiUrl } from '$lib/utils';
 
 	$: data = $page.data;
 	let text = '';
@@ -22,7 +23,10 @@
 				text = await data.blob.text();
 				break;
 			case 'img':
-				blobUrl = URL.createObjectURL(data.blob);
+				blobUrl = apiUrl(`formats/${$page.params.id}`);
+				break;
+			case 'pdf':
+				blobUrl = apiUrl(`formats/${$page.params.id}/${data.pageInfo?.title}`);
 				break;
 			case 'error':
 				text = '';
@@ -43,28 +47,37 @@
 </script>
 
 <Button class="mb-4" on:click={reload}>再読み込み</Button>
-{#await promise then blobType}
-	{#if blobType == 'text'}
-		<pre
-			class="text-sm w-full border p-4 whitespace-pre-wrap max-h-80 overflow-y-scroll">{text}</pre>
-	{:else if blobType == 'img'}
-		<img
-			class="w-full border"
-			alt="preview"
-			src={blobUrl}
-			on:load={() => URL.revokeObjectURL(blobUrl)}
-		/>
-	{:else if blobType == 'error'}
-		<Alert color="red" class="w-full">
-			エラー：{data.status}<br />
-			{#each text.split('\n') as line}
-				{line}<br />
-			{/each}
-		</Alert>
-	{:else}
-		<Alert color="yellow" class="w-full">
-			この形式のファイルはプレビューを表示できません。<br />
-			形式：{data.blob?.type}
-		</Alert>
-	{/if}
-{/await}
+<div class="w-full">
+	{#await promise then blobType}
+		{#if blobType == 'text'}
+			<pre
+				class="text-sm w-full border p-4 whitespace-pre-wrap max-h-80 overflow-y-scroll">{text}</pre>
+		{:else if blobType == 'img'}
+			<img class="w-full border" alt="preview" src={blobUrl} />
+		{:else if blobType == 'pdf'}
+			<object title="pdf" type="application/pdf" data={blobUrl} class="h-[400px] md:h-[800px]">
+				<Alert color="yellow" class="w-full">プレビューを表示できません。</Alert>
+			</object>
+		{:else if blobType == 'error'}
+			<Alert color="red" class="w-full">
+				エラー：{data.status}<br />
+				{#each text.split('\n') as line}
+					{line}<br />
+				{/each}
+			</Alert>
+		{:else}
+			<Alert color="yellow" class="w-full">
+				この形式のファイルはプレビューを表示できません。<br />
+				形式：{data.blob?.type}
+			</Alert>
+		{/if}
+	{/await}
+</div>
+
+<style>
+	object {
+		border: none;
+		width: 100%;
+		/* height: 80vh; */
+	}
+</style>

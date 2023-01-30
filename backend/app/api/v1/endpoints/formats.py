@@ -9,11 +9,13 @@ from app.db.session import get_db
 router = APIRouter()
 
 
-@router.get("/{format_id}")
+@router.get("/{format_id}/{title}")
 async def read_file(
     format_id: int,
+    title: str,
     db: Session = Depends(get_db)
 ):
+    # titleはPDF表示のタイトル
     format = crud.format.get(db, id=format_id)
     if not format:
         raise HTTPException(
@@ -26,4 +28,6 @@ async def read_file(
             detail="The format with this path does not exist in the system",
         )
 
-    return FileResponse(format.real_path)
+    filename = os.path.basename(format.real_path)
+    # filename = urllib.parse.quote(filename)
+    return FileResponse(format.real_path, filename=filename, content_disposition_type="inline")
