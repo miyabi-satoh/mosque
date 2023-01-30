@@ -6,3 +6,4 @@
 backend.pid
 __pycache__
 *secret*
+mosque.xml
