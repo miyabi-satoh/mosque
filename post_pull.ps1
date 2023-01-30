@@ -7,7 +7,7 @@ if ($IsWindows) {
 elseif ($IsMacOS) {
   .venv\bin\activate.ps1
 }
-pip install -r ./requirements.txt | grep -v 'already satisfied'
+pip install -r ./requirements.txt | Select-String -NotMatch 'already satisfied'
 
 Set-Location (Join-Path $PSScriptRoot frontend)
 npm i
