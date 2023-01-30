@@ -40,8 +40,10 @@ export const load = (async ({ url, fetch }) => {
 
 	const pageInfo = {
 		id: page?.id,
+		url: page?.attributes?.url,
 		title: page?.attributes?.title,
-		description: page?.attributes?.description
+		description: page?.attributes?.description,
+		content: page?.attributes?.content
 	} as IPage;
 
 	return {

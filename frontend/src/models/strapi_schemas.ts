@@ -2185,6 +2185,7 @@ export interface components {
 				description?: string;
 				is_menuitem: boolean;
 				order: number;
+				content?: string;
 			};
 		};
 		PageListResponseDataItem: {
@@ -2195,6 +2196,7 @@ export interface components {
 				description?: string;
 				is_menuitem?: boolean;
 				order?: number;
+				content?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -2315,6 +2317,7 @@ export interface components {
 				description?: string;
 				is_menuitem?: boolean;
 				order?: number;
+				content?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -2446,6 +2449,7 @@ export interface components {
 				description?: string;
 				is_menuitem?: boolean;
 				order?: number;
+				content?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -2566,6 +2570,7 @@ export interface components {
 				description?: string;
 				is_menuitem?: boolean;
 				order?: number;
+				content?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -7185,8 +7190,8 @@ export interface components {
 				| undefined;
 		};
 	};
-	responses: object;
-	parameters: object;
+	responses: {};
+	parameters: {};
 	requestBodies: {
 		'Users-Permissions-RoleRequest': {
 			content: {
