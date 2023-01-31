@@ -11,14 +11,16 @@ interface IPageLoadData {
 }
 
 export const load = (async ({ params, fetch, depends }) => {
-	let content = {} as IPageLoadData;
-	content = { ...content, type: 'error' };
+	let content = {
+		status: 404,
+		type: 'error'
+	} as IPageLoadData;
 
 	// 文書情報を取得する
 	let res = await fetch(strapiUrl(`formats/${params.id}`));
 	if (!res.ok) {
 		console.log('Strapi server is down?');
-		throw error(404, 'Not Found');
+		throw error(404, '404 Not Found');
 	}
 	let json = await res.json();
 	if (json.error) {
@@ -36,18 +38,24 @@ export const load = (async ({ params, fetch, depends }) => {
 
 	// 実ファイル情報を取得する
 	res = await fetch(apiUrl(`formats/${params.id}/${format.title}`));
+	const status = res.status;
+	const blob = await res.blob();
+	content = { ...content, status, blob };
 	if (!res.ok) {
-		console.log('FastAPI server is down?');
-		content = { ...content, status: 500 };
+		content = { ...content };
 	} else {
-		const status = res.status;
-		const blob = await res.blob();
-		content = { ...content, status, blob };
 		// ファイルの種類を判定
 		res = await fetch(strapiUrl('mimes'));
 		if (!res.ok) {
-			console.log('Strapi server is down?');
-			content = { ...content, type: 'unknown' };
+			const json = await res.json();
+			const errObj = {
+				detail: json.error.message
+			};
+			content = {
+				...content,
+				status: json.error.status,
+				blob: new Blob([JSON.stringify(errObj)], { type: 'text/plain' })
+			};
 		} else {
 			json = await res.json();
 			const found = json.data.find((mime: IStrapiMime) =>
@@ -65,6 +73,6 @@ export const load = (async ({ params, fetch, depends }) => {
 	depends('app:formats');
 
 	return {
-		content
+		content: content
 	};
 }) satisfies PageLoad;

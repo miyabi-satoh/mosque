@@ -32,18 +32,23 @@
 				blobUrl = apiUrl(`formats/${$page.params.id}/${content.format.title}`);
 				break;
 			case 'error':
-				text = '';
-				if (content.blob) {
-					const json = JSON.parse(await content.blob.text());
-					text += json.detail;
+				{
+					let lines: string[] = [];
+					switch (content.status) {
+						case 404:
+							lines.push(`ファイルが存在しません`);
+							break;
+						case 500:
+							lines.push(`ファイルの取得に失敗しました`);
+					}
+					if (content.blob) {
+						const blobText = await content.blob.text();
+						const json = JSON.parse(blobText);
+						lines.push(json.detail);
+					}
+					text = lines.join('\n');
 				}
-				switch (content.status) {
-					case 404:
-						text += `ファイルが存在しません`;
-						break;
-					case 500:
-						text += `ファイルの取得に失敗しました`;
-				}
+				break;
 		}
 		return content.type;
 	}
