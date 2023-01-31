@@ -20,4 +20,4 @@ foreach ($id in $pid_array) {
 
 
 Set-Location $PSScriptRoot
-docker compose -f compose-prod.yml down
+docker compose -f compose.yml -f compose-prod.yml down
