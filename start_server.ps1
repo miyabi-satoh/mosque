@@ -3,5 +3,6 @@
 Set-Location $PSScriptRoot
 ./stop_server.ps1
 
-docker compose -f compose.yml -f compose-prod.yml up -d --build
-./winsw start mosque.xml
+./winsw start mosque-backend.xml
+./winsw start mosque-strapi.xml
+./winsw start mosque-frontend.xml

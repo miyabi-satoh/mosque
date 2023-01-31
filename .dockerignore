@@ -1,6 +1,0 @@
-**/.npmrc
-**/.svelte-kit
-**/node_modules
-**/build/
-**/npm-debug.log
-**/data

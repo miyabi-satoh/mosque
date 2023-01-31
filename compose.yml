@@ -1,40 +1,7 @@
 volumes:
   db_data:
-  strapi_node_modules:
-  strapi_dist:
 
 services:
-  mosque-strapi:
-    container_name: mosque-strapi
-    build:
-      context: .
-      dockerfile: Dockerfile.strapi
-      target: dev
-    environment:
-      DATABASE_CLIENT: postgres
-      DATABASE_HOST: mosque-db
-      DATABASE_PORT: ${DATABASE_PORT}
-      DATABASE_NAME: ${DATABASE_NAME}
-      DATABASE_USERNAME: ${DATABASE_USERNAME}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
-      APP_KEYS: ${APP_KEYS}
-      NODE_ENV: development
-    volumes:
-      - strapi_dist:/opt/app/dist
-      - strapi_node_modules:/opt/node_modules
-      - ./strapi/config:/opt/app/config
-      - ./strapi/src:/opt/app/src
-      - ./strapi/package.json:/opt/package.json
-      - ./strapi/yarn.lock:/opt/yarn.lock
-      - ./strapi/public/uploads:/opt/app/public/uploads
-      - ./.env:/opt/app/.env
-    ports:
-      - '1337:1337'
-    depends_on:
-      - mosque-db
-
   mosque-web:
     container_name: mosque-web
     image: nginx:alpine
@@ -43,8 +10,6 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
-    depends_on:
-      - mosque-strapi
 
   mosque-db:
     container_name: mosque-db
