@@ -24,8 +24,11 @@
       "default": 0,
       "required": true
     },
-    "realPath": {
-      "type": "string"
+    "resources": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::resource.resource",
+      "mappedBy": "format"
     }
   }
 }

@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resources",
+  "info": {
+    "singularName": "resource",
+    "pluralName": "resources",
+    "displayName": "Resource"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "path": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "format": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::format.format",
+      "inversedBy": "resources"
+    }
+  }
+}
