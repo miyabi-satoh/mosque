@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { invalidate } from '$app/navigation';
-	import { Alert, Button } from 'flowbite-svelte';
+	import { Alert, Button, P } from 'flowbite-svelte';
 	import type { BlobType } from '$models/interfaces';
 	import { apiUrl } from '$lib/utils';
+	import type { PageData } from './$types';
 
-	$: data = $page.data;
+	// $: data = $page.data;
+	export let data: PageData;
 	let text = '';
 	let blobUrl = '';
 	let promise: Promise<BlobType>;
@@ -16,25 +18,26 @@
 
 	$: if (data) promise = getBlobType();
 	async function getBlobType(): Promise<BlobType> {
+		const content = data.content;
 		text = '';
 		blobUrl = '';
-		switch (data.type) {
+		switch (content.type) {
 			case 'text':
-				text = await data.blob.text();
+				text = await content.blob.text();
 				break;
 			case 'img':
-				blobUrl = apiUrl(`formats/${$page.params.id}`);
+				blobUrl = apiUrl(`formats/${$page.params.id}/${content.format.title}`);
 				break;
 			case 'pdf':
-				blobUrl = apiUrl(`formats/${$page.params.id}/${data.pageInfo?.title}`);
+				blobUrl = apiUrl(`formats/${$page.params.id}/${content.format.title}`);
 				break;
 			case 'error':
 				text = '';
-				if (data.blob) {
-					const json = JSON.parse(await data.blob.text());
+				if (content.blob) {
+					const json = JSON.parse(await content.blob.text());
 					text += json.detail;
 				}
-				switch (data.status) {
+				switch (content.status) {
 					case 404:
 						text += `ファイルが存在しません`;
 						break;
@@ -42,10 +45,11 @@
 						text += `ファイルの取得に失敗しました`;
 				}
 		}
-		return data.type;
+		return content.type;
 	}
 </script>
 
+<P class="w-full">{data.content.format.realPath}</P>
 <Button class="mb-4" on:click={reload}>再読み込み</Button>
 <div class="w-full">
 	{#await promise then blobType}
@@ -60,7 +64,7 @@
 			</object>
 		{:else if blobType == 'error'}
 			<Alert color="red" class="w-full">
-				エラー：{data.status}<br />
+				エラー：{data.content.status}<br />
 				{#each text.split('\n') as line}
 					{line}<br />
 				{/each}
@@ -68,7 +72,7 @@
 		{:else}
 			<Alert color="yellow" class="w-full">
 				この形式のファイルはプレビューを表示できません。<br />
-				形式：{data.blob?.type}
+				形式：{data.content.blob.type}
 			</Alert>
 		{/if}
 	{/await}

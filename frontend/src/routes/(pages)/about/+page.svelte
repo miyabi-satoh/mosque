@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import { P } from 'flowbite-svelte';
+	// import { page } from '$app/stores';
 	import SvelteMarkdown from 'svelte-markdown';
+	import type { PageData } from './$types';
 
-	let source = $page?.data?.pageInfo?.content;
+	export let data: PageData;
+	let source = data.pageInfo.content;
 </script>
 
 <div class="markdown">

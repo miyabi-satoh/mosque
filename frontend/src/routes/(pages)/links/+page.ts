@@ -15,8 +15,8 @@ export const load = (async ({ fetch }) => {
 			url: data?.attributes?.url,
 			title: data?.attributes?.title,
 			description: data?.attributes?.description
-		} as ILink;
-	});
+		};
+	}) as ILink[];
 
 	return {
 		links

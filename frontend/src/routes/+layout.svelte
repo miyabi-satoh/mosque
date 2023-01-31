@@ -29,6 +29,7 @@
 	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
 	import { createMediaQueryStore, mainStore } from '$stores';
+	import type { LayoutData } from './$types';
 
 	let openLoginModal = false;
 	let hiddenMainMenu = true;
@@ -40,7 +41,9 @@
 		easing: sineIn
 	};
 
-	$: data = $page.data;
+	// $: data = $page.data;
+	export let data: LayoutData;
+
 	$: activeUrl = $page.url.pathname;
 	$: handleChangeMinWidth($mql !== undefined);
 	function handleChangeMinWidth(changed: boolean) {
@@ -159,11 +162,11 @@
 		<Sidebar asideClass="w-54">
 			<SidebarWrapper>
 				<SidebarGroup>
-					{#each data.menuItems as menuItem (menuItem?.id)}
+					{#each data.menuItems as menuItem (menuItem.id)}
 						<SidebarItem
-							label={menuItem?.title}
-							href={menuItem?.url}
-							active={activeUrl === menuItem?.url}
+							label={menuItem.title}
+							href={menuItem.url}
+							active={activeUrl === menuItem.url}
 							on:click={() => (hiddenMainMenu = fixedMainMenu ? false : true)}
 						/>
 					{/each}

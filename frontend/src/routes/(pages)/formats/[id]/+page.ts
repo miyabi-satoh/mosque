@@ -4,15 +4,15 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
 interface IPageLoadData {
-	format: IFormat | undefined;
+	format: IFormat;
 	status: number;
-	blob: Blob | undefined;
+	blob: Blob;
 	type: BlobType;
 }
 
 export const load = (async ({ params, fetch, depends }) => {
-	let retObj = {} as IPageLoadData;
-	retObj = { ...retObj, type: 'error' };
+	let content = {} as IPageLoadData;
+	content = { ...content, type: 'error' };
 
 	// 文書情報を取得する
 	let res = await fetch(strapiUrl(`formats/${params.id}`));
@@ -32,31 +32,31 @@ export const load = (async ({ params, fetch, depends }) => {
 		description: data?.attributes?.description,
 		realPath: data?.attributes?.realPath
 	} as IFormat;
-	retObj = { ...retObj, format };
+	content = { ...content, format };
 
 	// 実ファイル情報を取得する
 	res = await fetch(apiUrl(`formats/${params.id}/${format.title}`));
 	if (!res.ok) {
 		console.log('FastAPI server is down?');
-		retObj = { ...retObj, status: 500 };
+		content = { ...content, status: 500 };
 	} else {
 		const status = res.status;
 		const blob = await res.blob();
-		retObj = { ...retObj, status, blob };
+		content = { ...content, status, blob };
 		// ファイルの種類を判定
 		res = await fetch(strapiUrl('mimes'));
 		if (!res.ok) {
 			console.log('Strapi server is down?');
-			retObj = { ...retObj, type: 'unknown' };
+			content = { ...content, type: 'unknown' };
 		} else {
 			json = await res.json();
 			const found = json.data.find((mime: IStrapiMime) =>
 				blob.type.includes(mime?.attributes?.mime || 'error')
 			) as IStrapiMime;
 			if (found) {
-				retObj = { ...retObj, type: found.attributes?.type as BlobType };
+				content = { ...content, type: found.attributes?.type as BlobType };
 			} else {
-				retObj = { ...retObj, type: 'unknown' };
+				content = { ...content, type: 'unknown' };
 			}
 		}
 	}
@@ -64,5 +64,7 @@ export const load = (async ({ params, fetch, depends }) => {
 	// 再読み込み可能にする
 	depends('app:formats');
 
-	return retObj;
+	return {
+		content
+	};
 }) satisfies PageLoad;

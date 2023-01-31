@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { IFormat } from '$models/interfaces';
+	// import type { IFormat } from '$models/interfaces';
 	import {
 		A,
 		P,
@@ -11,15 +11,16 @@
 		TableHeadCell,
 		TableSearch
 	} from 'flowbite-svelte';
+	import type { PageData } from './$types';
 
 	let searchTerm = '';
-	$: data = $page.data;
+	// $: data = $page.data;
+	export let data: PageData;
 
 	$: filterdItems =
 		searchTerm.length > 0
 			? data.formats.filter(
-					(format: IFormat) =>
-						format?.title?.includes(searchTerm) || format?.description?.includes(searchTerm)
+					(format) => format.title.includes(searchTerm) || format.description.includes(searchTerm)
 			  )
 			: data.formats;
 </script>
@@ -41,10 +42,10 @@
 				{#each filterdItems as format}
 					<TableBodyRow>
 						<TableBodyCell
-							><A href="{$page.url.pathname}/{format?.id}">{format?.title}</A></TableBodyCell
+							><A href="{$page.url.pathname}/{format.id}">{format.title}</A></TableBodyCell
 						>
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{format?.description}</TableBodyCell
+							>{format.description}</TableBodyCell
 						>
 					</TableBodyRow>
 				{/each}
