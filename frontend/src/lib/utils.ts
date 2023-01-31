@@ -13,11 +13,11 @@ export function removeLocalToken() {
 }
 
 export function apiUrl(url: string) {
-	return `//localhost/api/v1/${wrapDev(url)}`;
+	return `/api/v1/${wrapDev(url)}`;
 }
 
 export function strapiUrl(url: string) {
-	return `//localhost/strapi/${wrapDev(url)}`;
+	return `/strapi/${wrapDev(url)}`;
 }
 
 function wrapDev(url: string) {
