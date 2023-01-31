@@ -7190,8 +7190,8 @@ export interface components {
 				| undefined;
 		};
 	};
-	responses: {};
-	parameters: {};
+	responses: object;
+	parameters: object;
 	requestBodies: {
 		'Users-Permissions-RoleRequest': {
 			content: {
