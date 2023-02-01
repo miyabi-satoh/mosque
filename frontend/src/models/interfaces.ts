@@ -11,6 +11,8 @@ export type IStrapiResource =
 	paths['/resources/{id}']['get']['responses']['200']['content']['application/json']['data'];
 export type IStrapiMime =
 	paths['/mimes/{id}']['get']['responses']['200']['content']['application/json']['data'];
+export type IStrapiInfo =
+	paths['/infos/{id}']['get']['responses']['200']['content']['application/json']['data'];
 
 export interface IPage {
 	id: number;

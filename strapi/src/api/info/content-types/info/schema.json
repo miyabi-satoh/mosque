@@ -4,7 +4,8 @@
   "info": {
     "singularName": "info",
     "pluralName": "infos",
-    "displayName": "Info"
+    "displayName": "Info",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -13,6 +14,10 @@
   "attributes": {
     "text": {
       "type": "richtext",
+      "required": true
+    },
+    "title": {
+      "type": "string",
       "required": true
     }
   }

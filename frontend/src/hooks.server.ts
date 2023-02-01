@@ -9,9 +9,12 @@ export const handleFetch = (async ({ request, fetch }) => {
 		const sep = request.url.includes('?') ? '&' : '?';
 		request = new Request(`${request.url}${sep}dev=${dt.toJSON()}`, request);
 		const res = await fetch(request);
+		const json = await res.json();
 		if (!res.ok) {
 			console.log(`Response is not OK: ${request.url}`);
-			const json = await res.json();
+			console.log(json);
+		} else if (json.error) {
+			console.log(`Response has error field: ${request.url}`);
 			console.log(json);
 		}
 	}

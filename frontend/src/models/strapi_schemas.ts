@@ -13,6 +13,15 @@ export interface paths {
 		put: operations['put/formats/{id}'];
 		delete: operations['delete/formats/{id}'];
 	};
+	'/infos': {
+		get: operations['get/infos'];
+		post: operations['post/infos'];
+	};
+	'/infos/{id}': {
+		get: operations['get/infos/{id}'];
+		put: operations['put/infos/{id}'];
+		delete: operations['delete/infos/{id}'];
+	};
 	'/links': {
 		get: operations['get/links'];
 		post: operations['post/links'];
@@ -1432,6 +1441,495 @@ export interface components {
 		};
 		FormatResponse: {
 			data?: components['schemas']['FormatResponseDataObject'];
+			meta?: Record<string, never>;
+		};
+		InfoRequest: {
+			data: {
+				text: string;
+				title: string;
+			};
+		};
+		InfoListResponseDataItem: {
+			id?: number;
+			attributes?: {
+				text?: string;
+				title?: string;
+				/** Format: date-time */
+				createdAt?: string;
+				/** Format: date-time */
+				updatedAt?: string;
+				/** Format: date-time */
+				publishedAt?: string;
+				createdBy?: {
+					data?: {
+						id?: number;
+						attributes?: {
+							firstname?: string;
+							lastname?: string;
+							username?: string;
+							/** Format: email */
+							email?: string;
+							resetPasswordToken?: string;
+							registrationToken?: string;
+							isActive?: boolean;
+							roles?: {
+								data?: {
+									id?: number;
+									attributes?: {
+										name?: string;
+										code?: string;
+										description?: string;
+										users?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											}[];
+										};
+										permissions?: {
+											data?: {
+												id?: number;
+												attributes?: {
+													action?: string;
+													subject?: string;
+													properties?: Record<string, never>;
+													conditions?: Record<string, never>;
+													role?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													/** Format: date-time */
+													createdAt?: string;
+													/** Format: date-time */
+													updatedAt?: string;
+													createdBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													updatedBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+												};
+											}[];
+										};
+										/** Format: date-time */
+										createdAt?: string;
+										/** Format: date-time */
+										updatedAt?: string;
+										createdBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+										updatedBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+									};
+								}[];
+							};
+							blocked?: boolean;
+							preferedLanguage?: string;
+							/** Format: date-time */
+							createdAt?: string;
+							/** Format: date-time */
+							updatedAt?: string;
+							createdBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+							updatedBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+						};
+					};
+				};
+				updatedBy?: {
+					data?: {
+						id?: number;
+						attributes?: Record<string, never>;
+					};
+				};
+			};
+		};
+		InfoListResponseDataItemLocalized: {
+			id?: number;
+			attributes?: {
+				text?: string;
+				title?: string;
+				/** Format: date-time */
+				createdAt?: string;
+				/** Format: date-time */
+				updatedAt?: string;
+				/** Format: date-time */
+				publishedAt?: string;
+				createdBy?: {
+					data?: {
+						id?: number;
+						attributes?: {
+							firstname?: string;
+							lastname?: string;
+							username?: string;
+							/** Format: email */
+							email?: string;
+							resetPasswordToken?: string;
+							registrationToken?: string;
+							isActive?: boolean;
+							roles?: {
+								data?: {
+									id?: number;
+									attributes?: {
+										name?: string;
+										code?: string;
+										description?: string;
+										users?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											}[];
+										};
+										permissions?: {
+											data?: {
+												id?: number;
+												attributes?: {
+													action?: string;
+													subject?: string;
+													properties?: Record<string, never>;
+													conditions?: Record<string, never>;
+													role?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													/** Format: date-time */
+													createdAt?: string;
+													/** Format: date-time */
+													updatedAt?: string;
+													createdBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													updatedBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+												};
+											}[];
+										};
+										/** Format: date-time */
+										createdAt?: string;
+										/** Format: date-time */
+										updatedAt?: string;
+										createdBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+										updatedBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+									};
+								}[];
+							};
+							blocked?: boolean;
+							preferedLanguage?: string;
+							/** Format: date-time */
+							createdAt?: string;
+							/** Format: date-time */
+							updatedAt?: string;
+							createdBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+							updatedBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+						};
+					};
+				};
+				updatedBy?: {
+					data?: {
+						id?: number;
+						attributes?: Record<string, never>;
+					};
+				};
+			};
+		};
+		InfoListResponse: {
+			data?: components['schemas']['InfoListResponseDataItem'][];
+			meta?: {
+				pagination?: {
+					page?: number;
+					pageSize?: number;
+					pageCount?: number;
+					total?: number;
+				};
+			};
+		};
+		InfoResponseDataObject: {
+			id?: number;
+			attributes?: {
+				text?: string;
+				title?: string;
+				/** Format: date-time */
+				createdAt?: string;
+				/** Format: date-time */
+				updatedAt?: string;
+				/** Format: date-time */
+				publishedAt?: string;
+				createdBy?: {
+					data?: {
+						id?: number;
+						attributes?: {
+							firstname?: string;
+							lastname?: string;
+							username?: string;
+							/** Format: email */
+							email?: string;
+							resetPasswordToken?: string;
+							registrationToken?: string;
+							isActive?: boolean;
+							roles?: {
+								data?: {
+									id?: number;
+									attributes?: {
+										name?: string;
+										code?: string;
+										description?: string;
+										users?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											}[];
+										};
+										permissions?: {
+											data?: {
+												id?: number;
+												attributes?: {
+													action?: string;
+													subject?: string;
+													properties?: Record<string, never>;
+													conditions?: Record<string, never>;
+													role?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													/** Format: date-time */
+													createdAt?: string;
+													/** Format: date-time */
+													updatedAt?: string;
+													createdBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													updatedBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+												};
+											}[];
+										};
+										/** Format: date-time */
+										createdAt?: string;
+										/** Format: date-time */
+										updatedAt?: string;
+										createdBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+										updatedBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+									};
+								}[];
+							};
+							blocked?: boolean;
+							preferedLanguage?: string;
+							/** Format: date-time */
+							createdAt?: string;
+							/** Format: date-time */
+							updatedAt?: string;
+							createdBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+							updatedBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+						};
+					};
+				};
+				updatedBy?: {
+					data?: {
+						id?: number;
+						attributes?: Record<string, never>;
+					};
+				};
+			};
+		};
+		InfoResponseDataObjectLocalized: {
+			id?: number;
+			attributes?: {
+				text?: string;
+				title?: string;
+				/** Format: date-time */
+				createdAt?: string;
+				/** Format: date-time */
+				updatedAt?: string;
+				/** Format: date-time */
+				publishedAt?: string;
+				createdBy?: {
+					data?: {
+						id?: number;
+						attributes?: {
+							firstname?: string;
+							lastname?: string;
+							username?: string;
+							/** Format: email */
+							email?: string;
+							resetPasswordToken?: string;
+							registrationToken?: string;
+							isActive?: boolean;
+							roles?: {
+								data?: {
+									id?: number;
+									attributes?: {
+										name?: string;
+										code?: string;
+										description?: string;
+										users?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											}[];
+										};
+										permissions?: {
+											data?: {
+												id?: number;
+												attributes?: {
+													action?: string;
+													subject?: string;
+													properties?: Record<string, never>;
+													conditions?: Record<string, never>;
+													role?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													/** Format: date-time */
+													createdAt?: string;
+													/** Format: date-time */
+													updatedAt?: string;
+													createdBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+													updatedBy?: {
+														data?: {
+															id?: number;
+															attributes?: Record<string, never>;
+														};
+													};
+												};
+											}[];
+										};
+										/** Format: date-time */
+										createdAt?: string;
+										/** Format: date-time */
+										updatedAt?: string;
+										createdBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+										updatedBy?: {
+											data?: {
+												id?: number;
+												attributes?: Record<string, never>;
+											};
+										};
+									};
+								}[];
+							};
+							blocked?: boolean;
+							preferedLanguage?: string;
+							/** Format: date-time */
+							createdAt?: string;
+							/** Format: date-time */
+							updatedAt?: string;
+							createdBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+							updatedBy?: {
+								data?: {
+									id?: number;
+									attributes?: Record<string, never>;
+								};
+							};
+						};
+					};
+				};
+				updatedBy?: {
+					data?: {
+						id?: number;
+						attributes?: Record<string, never>;
+					};
+				};
+			};
+		};
+		InfoResponse: {
+			data?: components['schemas']['InfoResponseDataObject'];
 			meta?: Record<string, never>;
 		};
 		LinkRequest: {
@@ -8417,6 +8915,255 @@ export interface operations {
 		};
 	};
 	'delete/formats/{id}': {
+		parameters: {
+			path: {
+				id: number;
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': number;
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'get/infos': {
+		parameters?: {
+			/** @description Sort by attributes ascending (asc) or descending (desc) */
+			/** @description Return page/pageSize (default: true) */
+			/** @description Page number (default: 0) */
+			/** @description Page size (default: 25) */
+			/** @description Offset value (default: 0) */
+			/** @description Number of entities to return (default: 25) */
+			/** @description Fields to return (ex: title,author) */
+			/** @description Relations to return */
+			/** @description Filters to apply */
+			/** @description Locale to apply */
+			query?: {
+				sort?: string;
+				'pagination[withCount]'?: boolean;
+				'pagination[page]'?: number;
+				'pagination[pageSize]'?: number;
+				'pagination[start]'?: number;
+				'pagination[limit]'?: number;
+				fields?: string;
+				populate?: string;
+				filters?: Record<string, never>;
+				locale?: string;
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': components['schemas']['InfoListResponse'];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'post/infos': {
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['InfoRequest'];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': components['schemas']['InfoResponse'];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'get/infos/{id}': {
+		parameters: {
+			path: {
+				id: number;
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': components['schemas']['InfoResponse'];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'put/infos/{id}': {
+		parameters: {
+			path: {
+				id: number;
+			};
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['InfoRequest'];
+			};
+		};
+		responses: {
+			/** @description OK */
+			200: {
+				content: {
+					'application/json': components['schemas']['InfoResponse'];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+			/** @description Internal Server Error */
+			500: {
+				content: {
+					'application/json': components['schemas']['Error'];
+				};
+			};
+		};
+	};
+	'delete/infos/{id}': {
 		parameters: {
 			path: {
 				id: number;
