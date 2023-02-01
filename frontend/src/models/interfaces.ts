@@ -7,6 +7,8 @@ export type IStrapiLink =
 	paths['/links/{id}']['get']['responses']['200']['content']['application/json']['data'];
 export type IStrapiFormat =
 	paths['/formats/{id}']['get']['responses']['200']['content']['application/json']['data'];
+export type IStrapiResource =
+	paths['/resources/{id}']['get']['responses']['200']['content']['application/json']['data'];
 export type IStrapiMime =
 	paths['/mimes/{id}']['get']['responses']['200']['content']['application/json']['data'];
 

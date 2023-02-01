@@ -1,23 +1,25 @@
 import { apiUrl, strapiUrl } from '$lib/utils';
-import type { BlobType, IFormat, IStrapiFormat, IStrapiMime } from '$models/interfaces';
+import type { BlobType, IStrapiFormat, IStrapiMime } from '$models/interfaces';
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
-interface IPageLoadData {
-	format: IFormat;
+interface IResource {
+	slug: string | undefined;
+	path: string | undefined;
 	status: number;
-	blob: Blob;
 	type: BlobType;
+	text: string;
+	blobUrl: string;
+	mimeType: string;
 }
+// interface IPageLoadData {
+// 	format: IStrapiFormat;
+// 	resources: IResource[];
+// }
 
 export const load = (async ({ params, fetch, depends }) => {
-	let content = {
-		status: 404,
-		type: 'error'
-	} as IPageLoadData;
-
 	// 文書情報を取得する
-	let res = await fetch(strapiUrl(`formats/${params.id}`));
+	let res = await fetch(strapiUrl(`formats/${params.id}?populate=*`));
 	if (!res.ok) {
 		console.log('Strapi server is down?');
 		throw error(404, '404 Not Found');
@@ -27,52 +29,88 @@ export const load = (async ({ params, fetch, depends }) => {
 		console.log(`Format data is not found`);
 		throw error(404, '404 Not Found');
 	}
-	const data = json.data as IStrapiFormat;
-	const format = {
-		id: data?.id,
-		title: data?.attributes?.title,
-		description: data?.attributes?.description,
-		realPath: data?.attributes?.realPath
-	} as IFormat;
-	content = { ...content, format };
+	const format = json.data as IStrapiFormat;
 
 	// 実ファイル情報を取得する
-	res = await fetch(apiUrl(`formats/${params.id}/${format.title}`));
-	const status = res.status;
-	const blob = await res.blob();
-	content = { ...content, status, blob };
-	if (!res.ok) {
-		content = { ...content };
-	} else {
-		// ファイルの種類を判定
-		res = await fetch(strapiUrl('mimes'));
-		if (!res.ok) {
-			const json = await res.json();
-			const errObj = {
-				detail: json.error.message
-			};
-			content = {
-				...content,
-				status: json.error.status,
-				blob: new Blob([JSON.stringify(errObj)], { type: 'text/plain' })
-			};
-		} else {
-			json = await res.json();
-			const found = json.data.find((mime: IStrapiMime) =>
-				blob.type.includes(mime?.attributes?.mime || 'error')
-			) as IStrapiMime;
-			if (found) {
-				content = { ...content, type: found.attributes?.type as BlobType };
-			} else {
-				content = { ...content, type: 'unknown' };
-			}
-		}
-	}
+	const resources: IResource[] = [];
+	if (format?.attributes?.resources?.data) {
+		format.attributes.resources.data.forEach(async (resource) => {
+			if (resource.attributes) {
+				const blobUrl = apiUrl(`formats/${params.id}/${resource.attributes.slug}`);
+				res = await fetch(blobUrl);
+				let status = res.status;
+				let blob = await res.blob();
+				let type = 'error';
+				let mimeType = '';
+				if (res.ok) {
+					// ファイルの種類を判定
+					res = await fetch(strapiUrl('mimes'));
+					if (!res.ok) {
+						const json = await res.json();
+						const errObj = {
+							detail: json.error.message
+						};
+						status = json.error.status;
+						blob = new Blob([JSON.stringify(errObj)], { type: 'text/plain' });
+					} else {
+						json = await res.json();
+						mimeType = blob.type;
+						const found = json.data.find((mime: IStrapiMime) =>
+							mimeType.includes(mime?.attributes?.mime || 'error')
+						) as IStrapiMime;
+						if (found) {
+							type = found.attributes?.type || 'unknown';
+						} else {
+							('unknown');
+						}
+					}
+				}
 
+				let text = '';
+				switch (type) {
+					case 'error':
+						{
+							const lines: string[] = [];
+							switch (status) {
+								case 404:
+									lines.push(`ファイルが存在しません`);
+									break;
+								case 500:
+									lines.push(`ファイルの取得に失敗しました`);
+							}
+							if (blob) {
+								const blobText = await blob.text();
+								const json = JSON.parse(blobText);
+								lines.push(json.detail);
+							}
+							text = lines.join('\n');
+						}
+						break;
+					case 'text':
+						text = await blob.text();
+						break;
+					// case 'img':
+					// case 'pdf':
+					//   break;
+				}
+
+				resources.push({
+					slug: resource.attributes.slug,
+					path: resource.attributes.path,
+					status,
+					type: type as BlobType,
+					text,
+					blobUrl,
+					mimeType
+				});
+			}
+		});
+	}
 	// 再読み込み可能にする
 	depends('app:formats');
 
 	return {
-		content: content
+		format,
+		resources
 	};
 }) satisfies PageLoad;
