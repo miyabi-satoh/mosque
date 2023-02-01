@@ -36,7 +36,7 @@ export const load = (async ({ params, fetch, depends }) => {
 	if (format?.attributes?.resources?.data) {
 		format.attributes.resources.data.forEach(async (resource) => {
 			if (resource.attributes) {
-				const blobUrl = apiUrl(`formats/${params.id}/${resource.attributes.slug}`);
+				const blobUrl = apiUrl(`resources/${resource.id}/${resource.attributes.slug}`);
 				res = await fetch(blobUrl);
 				let status = res.status;
 				let blob = await res.blob();
