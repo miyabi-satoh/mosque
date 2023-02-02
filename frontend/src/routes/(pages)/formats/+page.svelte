@@ -20,7 +20,9 @@
 	$: filterdItems =
 		searchTerm.length > 0
 			? data.formats.filter(
-					(format) => format.title.includes(searchTerm) || format.description.includes(searchTerm)
+					(format) =>
+						format.attributes.title.includes(searchTerm) ||
+						format.attributes.description.includes(searchTerm)
 			  )
 			: data.formats;
 </script>
@@ -42,10 +44,11 @@
 				{#each filterdItems as format}
 					<TableBodyRow>
 						<TableBodyCell
-							><A href="{$page.url.pathname}/{format.id}">{format.title}</A></TableBodyCell
+							><A href="{$page.url.pathname}/{format.id}">{format.attributes.title}</A
+							></TableBodyCell
 						>
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{format.description}</TableBodyCell
+							>{format.attributes.description}</TableBodyCell
 						>
 					</TableBodyRow>
 				{/each}

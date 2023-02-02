@@ -41,8 +41,8 @@
 		easing: sineIn
 	};
 
-	// $: data = $page.data;
 	export let data: LayoutData;
+	const menuItems = data.menuItems;
 
 	$: activeUrl = $page.url.pathname;
 	$: handleChangeMinWidth($mql !== undefined);
@@ -162,11 +162,11 @@
 		<Sidebar asideClass="w-54">
 			<SidebarWrapper>
 				<SidebarGroup>
-					{#each data.menuItems as menuItem (menuItem.id)}
+					{#each menuItems as menuItem (menuItem.id)}
 						<SidebarItem
-							label={menuItem.title}
-							href={menuItem.url}
-							active={activeUrl === menuItem.url}
+							label={menuItem.attributes.title}
+							href={menuItem.attributes.url}
+							active={activeUrl === menuItem.attributes.url}
 							on:click={() => (hiddenMainMenu = fixedMainMenu ? false : true)}
 						/>
 					{/each}

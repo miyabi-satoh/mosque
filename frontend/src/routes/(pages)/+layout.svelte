@@ -11,9 +11,11 @@
 <div class="max-w-3xl 2xl:max-w-4xl mx-auto mt-8">
 	<div class="container flex flex-wrap mx-auto">
 		<Breadcrumb params={data.breadcrumbParams} navClass="flex pt-16 py-8" />
-		{#if data.pageInfo.title}
-			<Heading tag="h1" customSize="text-3xl" class="w-full mb-2">{data.pageInfo.title}</Heading>
-			<P class="w-full mb-8">{data.pageInfo.description}</P>
+		{#if data.pageInfo?.attributes.title}
+			<Heading tag="h1" customSize="text-3xl" class="w-full mb-2"
+				>{data.pageInfo.attributes.title}</Heading
+			>
+			<P class="w-full mb-8">{data.pageInfo.attributes.description}</P>
 		{/if}
 		<slot />
 	</div>

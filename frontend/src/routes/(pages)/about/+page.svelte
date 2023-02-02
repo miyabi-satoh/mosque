@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	let source = data.pageInfo.content;
+	let source = data.pageInfo.attributes.content;
 </script>
 
 <div class="markdown">

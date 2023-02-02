@@ -1,5 +1,5 @@
 import { strapiUrl } from '$lib/utils';
-import type { IFormat, IStrapiFormat } from '$models/interfaces';
+import type { IStrapiFormat } from '$models/interfaces';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ fetch }) => {
@@ -9,13 +9,6 @@ export const load = (async ({ fetch }) => {
 		throw new Error(json.error.message);
 	}
 
-	const data = json.data as IStrapiFormat[];
-	const formats = data.map((format) => {
-		return {
-			id: format?.id,
-			title: format?.attributes?.title,
-			description: format?.attributes?.description
-		};
-	}) as IFormat[];
+	const formats = json.data as IStrapiFormat[];
 	return { formats };
 }) satisfies PageLoad;

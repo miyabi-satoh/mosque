@@ -1,7 +1,4 @@
 <script lang="ts">
-	// import { page } from '$app/stores';
-	// import type { ILink } from '$models/interfaces';
-	import Icon from '@iconify/svelte';
 	import {
 		A,
 		P,
@@ -14,15 +11,18 @@
 	} from 'flowbite-svelte';
 	import type { PageData } from './$types';
 
+	export let data: PageData;
 	let searchTerm = '';
 
-	// $: data = $page.data;
-	export let data: PageData;
-
-	$: filterdItems =
-		searchTerm.length > 0
-			? data.infos.filter((info) => info?.attributes?.text?.includes(searchTerm))
-			: data.infos;
+	$: filterdItems = getFilterdItems(searchTerm);
+	function getFilterdItems(term: string) {
+		if (term.length > 0) {
+			return data.infos.filter(
+				(info) => info.attributes.text.includes(term) || info.attributes.title.includes(term)
+			);
+		}
+		return data.infos;
+	}
 </script>
 
 <div class="w-full">
@@ -36,20 +36,18 @@
 			<TableHead
 				class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400"
 			>
+				<TableHeadCell>Date</TableHeadCell>
 				<TableHeadCell>Title</TableHeadCell>
-				<TableHeadCell>Description</TableHeadCell>
 			</TableHead>
 			<TableBody tableBodyClass="divide-y">
-				{#each filterdItems as info (info?.id)}
+				{#each filterdItems as info (info.id)}
 					<TableBodyRow>
-						<TableBodyCell>
-							<A target="_blank" href="./{info?.id}">
-								<span class="mr-2">{info?.attributes?.title}</span>
-								<Icon icon="mdi:external-link" height="auto" />
-							</A></TableBodyCell
-						>
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{info?.attributes?.updatedAt}</TableBodyCell
+							>{info.attributes.updatedAt}</TableBodyCell
+						><TableBodyCell>
+							<A target="_blank" href="./{info?.id}">
+								{info.attributes.title}
+							</A></TableBodyCell
 						>
 					</TableBodyRow>
 				{/each}

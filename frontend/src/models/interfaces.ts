@@ -1,41 +1,33 @@
 // npx openapi-typescript strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json --output frontend/src/models/strapi_schemas.ts
 import type { paths } from './strapi_schemas';
 
-export type IStrapiPage =
+type Primitive = number | string | boolean | bigint | symbol | undefined | null;
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Builtin = Primitive | Function | Date | Error | RegExp;
+
+type DeepNonNullable<T> = T extends Builtin
+	? NonNullable<T>
+	: { [key in keyof T]-?: DeepNonNullable<T[key]> };
+
+type IStrapiPageBase =
 	paths['/pages/{id}']['get']['responses']['200']['content']['application/json']['data'];
-export type IStrapiLink =
+type IStrapiLinkBase =
 	paths['/links/{id}']['get']['responses']['200']['content']['application/json']['data'];
-export type IStrapiFormat =
+type IStrapiFormatBase =
 	paths['/formats/{id}']['get']['responses']['200']['content']['application/json']['data'];
-export type IStrapiResource =
+type IStrapiResourceBase =
 	paths['/resources/{id}']['get']['responses']['200']['content']['application/json']['data'];
-export type IStrapiMime =
+type IStrapiMimeBase =
 	paths['/mimes/{id}']['get']['responses']['200']['content']['application/json']['data'];
-export type IStrapiInfo =
+type IStrapiInfoBase =
 	paths['/infos/{id}']['get']['responses']['200']['content']['application/json']['data'];
 
-export interface IPage {
-	id: number;
-	url: string;
-	title: string;
-	description: string;
-	content: string;
-}
-
-export interface ILink {
-	id: number;
-	url: string;
-	title: string;
-	description: string;
-}
-
-export interface IFormat {
-	id: number;
-	title: string;
-	description: string;
-	realPath: string;
-}
-
+export type IStrapiPage = DeepNonNullable<IStrapiPageBase>;
+export type IStrapiLink = DeepNonNullable<IStrapiLinkBase>;
+export type IStrapiFormat = DeepNonNullable<IStrapiFormatBase>;
+export type IStrapiResource = DeepNonNullable<IStrapiResourceBase>;
+export type IStrapiMime = DeepNonNullable<IStrapiMimeBase>;
+export type IStrapiInfo = DeepNonNullable<IStrapiInfoBase>;
 export interface IUserProfile {
 	email: string;
 	is_active: boolean;

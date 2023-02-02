@@ -23,9 +23,9 @@
 		searchTerm.length > 0
 			? data.links.filter(
 					(link) =>
-						link.title.includes(searchTerm) ||
-						link.url.includes(searchTerm) ||
-						link.description.includes(searchTerm)
+						link?.attributes.title.includes(searchTerm) ||
+						link?.attributes.url.includes(searchTerm) ||
+						link?.attributes.description.includes(searchTerm)
 			  )
 			: data.links;
 </script>
@@ -48,13 +48,13 @@
 				{#each filterdItems as link (link.id)}
 					<TableBodyRow>
 						<TableBodyCell>
-							<A target="_blank" href={link.url}>
-								<span class="mr-2">{link.title}</span>
-								<Icon icon="mdi:external-link" height="auto" />
+							<A target="_blank" href={link?.attributes.url}>
+								<span class="mr-2">{link?.attributes.title}</span>
+								<Icon icon="mdi:external-link" />
 							</A></TableBodyCell
 						>
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{link.description}</TableBodyCell
+							>{link?.attributes.description}</TableBodyCell
 						>
 					</TableBodyRow>
 				{/each}
