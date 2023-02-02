@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { Card, Heading, P, Span } from 'flowbite-svelte';
+	import SvelteMarkdown from 'svelte-markdown';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -15,6 +16,17 @@
 	{#if pageMeta.description}
 		<P class="w-full my-8">{pageMeta.description}</P>
 	{/if}
+</div>
+<div class="my-8 rounded-xl border border-gray-200 dark:border-gray-700 p-2 sm:p-6">
+	<Heading tag="h2" class="text-center" customSize="text-xl font-bold"
+		>{info.attributes.title}</Heading
+	>
+	<P color="text-gray-500 dark:text-gray-400" align="right" size="sm"
+		>最終更新日：{info.attributes.updatedAt.slice(0, 10)}</P
+	>
+	<div class="markdown mt-2">
+		<SvelteMarkdown source={info.attributes.text} />
+	</div>
 </div>
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
 	{#each menuItems as menuItem (menuItem.id)}

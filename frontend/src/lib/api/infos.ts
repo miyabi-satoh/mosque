@@ -10,5 +10,15 @@ export const apiInfos = {
 		}
 
 		throw new Error('apiLinks.getMulti');
+	},
+
+	async getLatest(fetch: Fetch): Promise<IStrapiInfo> {
+		const res = await fetch(strapiUrl(`infos/?pagination[limit]=1&sort=updatedAt:desc`));
+		if (res.ok) {
+			const json = await res.json();
+			return json.data[0];
+		}
+
+		throw new Error('apiLinks.getLatest');
 	}
 };
