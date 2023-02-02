@@ -6,7 +6,7 @@
 backend.pid
 __pycache__
 *secret*
-mosque.xml
+mosque*.xml
 WinSW.exe
 logs
 export_*.json

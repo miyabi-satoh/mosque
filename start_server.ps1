@@ -6,3 +6,4 @@ Set-Location $PSScriptRoot
 ./winsw start mosque-backend.xml
 ./winsw start mosque-strapi.xml
 ./winsw start mosque-frontend.xml
+./winsw start mosque-nginx.xml
