@@ -1,15 +1,8 @@
-import os
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from app.api.v1.api import api_router
 from app.core.config import settings
 
-pidPath = os.path.abspath(os.path.join(
-    __file__, os.pardir, os.pardir, os.pardir, 'backend.pid'))
-# print(pidPath)
-
-with open(pidPath, "w") as o:
-    print(os.getpid(), file=o)
 
 app = FastAPI(
     title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
@@ -19,8 +12,9 @@ app = FastAPI(
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[str(origin)
-                       for origin in settings.BACKEND_CORS_ORIGINS],
+        allow_origins=[
+            str(origin) for origin in settings.BACKEND_CORS_ORIGINS
+        ],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
