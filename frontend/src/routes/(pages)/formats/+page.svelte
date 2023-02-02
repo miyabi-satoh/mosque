@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	// import type { IFormat } from '$models/interfaces';
 	import {
 		A,
 		P,
@@ -12,19 +10,21 @@
 		TableSearch
 	} from 'flowbite-svelte';
 	import type { PageData } from './$types';
+	import { page } from '$app/stores';
 
-	let searchTerm = '';
-	// $: data = $page.data;
 	export let data: PageData;
+	let searchTerm = '';
 
-	$: filterdItems =
-		searchTerm.length > 0
-			? data.formats.filter(
-					(format) =>
-						format.attributes.title.includes(searchTerm) ||
-						format.attributes.description.includes(searchTerm)
-			  )
-			: data.formats;
+	$: filterdItems = getFilterdItems(searchTerm);
+	function getFilterdItems(term: string) {
+		if (term.length == 0) {
+			return data.formats;
+		}
+		return data.formats.filter(
+			(format) =>
+				format.attributes.title.includes(term) || format.attributes.description.includes(term)
+		);
+	}
 </script>
 
 <div class="w-full">

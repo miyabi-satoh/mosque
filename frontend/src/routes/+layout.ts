@@ -1,5 +1,5 @@
-import { apiPages } from '$lib/api/pages';
 import type { LayoutLoad } from './$types';
+import { apiPages } from '$lib/api';
 
 export const load = (async ({ url, fetch }) => {
 	// サイドメニューの項目を読み込み

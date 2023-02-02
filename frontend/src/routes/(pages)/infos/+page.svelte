@@ -16,12 +16,12 @@
 
 	$: filterdItems = getFilterdItems(searchTerm);
 	function getFilterdItems(term: string) {
-		if (term.length > 0) {
-			return data.infos.filter(
-				(info) => info.attributes.text.includes(term) || info.attributes.title.includes(term)
-			);
+		if (term.length == 0) {
+			return data.infos;
 		}
-		return data.infos;
+		return data.infos.filter(
+			(info) => info.attributes.text.includes(term) || info.attributes.title.includes(term)
+		);
 	}
 </script>
 
@@ -45,7 +45,7 @@
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
 							>{info.attributes.updatedAt}</TableBodyCell
 						><TableBodyCell>
-							<A target="_blank" href="./{info?.id}">
+							<A target="_blank" href="./{info.id}">
 								{info.attributes.title}
 							</A></TableBodyCell
 						>

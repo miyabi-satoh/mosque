@@ -1,7 +1,6 @@
-import { apiPages } from '$lib/api/pages';
-import { strapiUrl } from '$lib/utils';
-import type { IBreadcrumbItemParam } from '$models/interfaces';
 import type { LayoutLoad } from './$types';
+import { apiPages, strapiUrl } from '$lib/api';
+import type { IBreadcrumbItemParam } from '$models/interfaces';
 
 export const load = (async ({ url, fetch }) => {
 	const paths = url.pathname.split('/');

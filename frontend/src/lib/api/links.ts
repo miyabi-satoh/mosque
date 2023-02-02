@@ -1,5 +1,5 @@
-import type { IStrapiLink } from '$models/interfaces';
 import { strapiUrl, type Fetch } from './utils';
+import type { IStrapiLink } from '$models/interfaces';
 
 export const apiLinks = {
 	async getMulti(fetch: Fetch): Promise<IStrapiLink[]> {

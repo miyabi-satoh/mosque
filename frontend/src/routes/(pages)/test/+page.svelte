@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { mainStore } from '$stores';
 	import { P } from 'flowbite-svelte';
+	import { mainStore } from '$stores';
 </script>
 
 {#if $mainStore.isLoggedIn}

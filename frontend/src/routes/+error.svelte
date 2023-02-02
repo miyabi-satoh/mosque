@@ -1,6 +1,6 @@
 <script>
-	import { page } from '$app/stores';
 	import { A, Heading, P } from 'flowbite-svelte';
+	import { page } from '$app/stores';
 
 	console.log($page);
 </script>

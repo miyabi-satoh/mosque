@@ -19,15 +19,18 @@
 	// $: data = $page.data;
 	export let data: PageData;
 
-	$: filterdItems =
-		searchTerm.length > 0
-			? data.links.filter(
-					(link) =>
-						link?.attributes.title.includes(searchTerm) ||
-						link?.attributes.url.includes(searchTerm) ||
-						link?.attributes.description.includes(searchTerm)
-			  )
-			: data.links;
+	$: filterdItems = getFilterdItems(searchTerm);
+	function getFilterdItems(term: string) {
+		if (term.length == 0) {
+			return data.links;
+		}
+		return data.links.filter(
+			(link) =>
+				link.attributes.title.includes(searchTerm) ||
+				link.attributes.url.includes(searchTerm) ||
+				link.attributes.description.includes(searchTerm)
+		);
+	}
 </script>
 
 <div class="w-full">
@@ -48,13 +51,13 @@
 				{#each filterdItems as link (link.id)}
 					<TableBodyRow>
 						<TableBodyCell>
-							<A target="_blank" href={link?.attributes.url}>
-								<span class="mr-2">{link?.attributes.title}</span>
+							<A target="_blank" href={link.attributes.url}>
+								<span class="mr-2">{link.attributes.title}</span>
 								<Icon icon="mdi:external-link" />
 							</A></TableBodyCell
 						>
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{link?.attributes.description}</TableBodyCell
+							>{link.attributes.description}</TableBodyCell
 						>
 					</TableBodyRow>
 				{/each}

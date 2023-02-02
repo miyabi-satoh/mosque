@@ -1,5 +1,5 @@
-import type { IStrapiPage } from '$models/interfaces';
 import { strapiUrl, type Fetch } from './utils';
+import type { IStrapiPage } from '$models/interfaces';
 
 export const apiPages = {
 	async getMenuItems(fetch: Fetch): Promise<IStrapiPage[]> {

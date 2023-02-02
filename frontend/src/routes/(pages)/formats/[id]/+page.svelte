@@ -1,16 +1,10 @@
 <script lang="ts">
-	// import { page } from '$app/stores';
-	import { invalidate } from '$app/navigation';
 	import { Alert, Button, P } from 'flowbite-svelte';
-	// import type { BlobType } from '$models/interfaces';
-	// import { apiUrl } from '$lib/utils';
 	import type { PageData } from './$types';
+	import { invalidate } from '$app/navigation';
 
-	// $: data = $page.data;
 	export let data: PageData;
-	// const format = data.format?.attributes;
 	const resources = data.resources;
-	// let promise: Promise<BlobType>;
 
 	function reload() {
 		invalidate('app:formats');
