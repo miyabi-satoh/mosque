@@ -22,14 +22,14 @@
 	} from 'flowbite-svelte';
 	import { sineIn } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
-	import '../app.postcss';
+	import { onMount } from 'svelte';
+	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import LoginModal from '$lib/LoginModal.svelte';
 	import { getLocalToken, removeLocalToken } from '$lib/utils';
-	import { api } from '$lib/api';
-	import { onMount } from 'svelte';
 	import { createMediaQueryStore, mainStore } from '$stores';
-	import type { LayoutData } from './$types';
+	import { apiAuth } from '$lib/api';
+	import '../app.postcss';
 
 	let openLoginModal = false;
 	let hiddenMainMenu = true;
@@ -65,9 +65,9 @@
 			}
 			if (token) {
 				try {
-					const response = await api.getMe(token);
+					const profile = await apiAuth.getMe(fetch, token);
 					mainStore.setLoggedIn(true);
-					mainStore.setUserProfile(response.data);
+					mainStore.setUserProfile(profile);
 				} catch (error) {
 					removeLogin();
 				}

@@ -1,16 +1,9 @@
-import { strapiUrl } from '$lib/utils';
-import type { IStrapiInfo } from '$models/interfaces';
-import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
+import { apiInfos } from '$lib/api';
 
 export const load = (async ({ fetch }) => {
-	const res = await fetch(strapiUrl(`infos/?sort=updatedAt:desc`));
-	if (res.ok) {
-		const json = await res.json();
-		return {
-			infos: json.data as IStrapiInfo[]
-		};
-	}
-
-	throw error(404, 'error');
+	const infos = await apiInfos.getMulti(fetch);
+	return {
+		infos
+	};
 }) satisfies PageLoad;

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Button, Modal, Label, Input, Heading, Span } from 'flowbite-svelte';
-	import { api } from './api';
-	import type { AxiosError } from 'axios';
+	import { apiAuth } from './api/auth';
 	import { mainStore } from '$stores';
 
 	export let open = false;
@@ -11,8 +10,7 @@
 
 	async function handleSubmitLogin() {
 		try {
-			const response = await api.getAccessToken(username, password);
-			const token = response.data.access_token;
+			const token = await apiAuth.getAccessToken(fetch, username, password);
 			if (token) {
 				mainStore.setToken(token);
 				mainStore.setLoggedIn(true);
@@ -31,17 +29,9 @@
 
 	async function actionGetUserProfile() {
 		try {
-			const response = await api.getMe($mainStore.token);
-			if (response.data) {
-				mainStore.setUserProfile(response.data);
-			}
+			const profile = await apiAuth.getMe(fetch, $mainStore.token);
+			mainStore.setUserProfile(profile);
 		} catch (error) {
-			actionCheckApiError(error as AxiosError);
-		}
-	}
-
-	function actionCheckApiError(payload: AxiosError) {
-		if (payload.response && payload.response.status === 401) {
 			mainStore.setLoggedIn(false);
 		}
 	}

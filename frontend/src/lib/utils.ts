@@ -9,11 +9,3 @@ export function saveLocalToken(token: string) {
 export function removeLocalToken() {
 	return localStorage.removeItem('token');
 }
-
-export function apiUrl(url: string) {
-	return `/api/v1/${url}`;
-}
-
-export function strapiUrl(url: string) {
-	return `/strapi/${url}`;
-}
