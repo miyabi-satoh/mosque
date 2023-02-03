@@ -7,6 +7,7 @@
 	export let data: PageData;
 	$: pageMeta = data.pageMeta;
 	$: menuItems = data.menuItems;
+	$: info = data.info;
 </script>
 
 <div
