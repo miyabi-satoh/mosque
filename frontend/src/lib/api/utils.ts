@@ -1,9 +1,10 @@
+import { PUBLIC_SERVER_HOST } from '$env/static/public';
 export type Fetch = typeof fetch;
 
 export function apiUrl(url: string) {
-	return `http://localhost/api/v1/${url}`;
+	return `${PUBLIC_SERVER_HOST}/api/v1/${url}`;
 }
 
 export function strapiUrl(url: string) {
-	return `http://localhost/strapi/${url}`;
+	return `${PUBLIC_SERVER_HOST}/strapi/${url}`;
 }

@@ -21,7 +21,10 @@ const config = {
 			$lib: path.resolve('./src/lib'),
 			$models: path.resolve('./src/models'),
 			$stores: path.resolve('./src/stores')
-		}
+		},
+    env: {
+      dir: '..'
+    }
 	}
 };
 
