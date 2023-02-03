@@ -22,9 +22,9 @@ const config = {
 			$models: path.resolve('./src/models'),
 			$stores: path.resolve('./src/stores')
 		},
-    env: {
-      dir: '..'
-    }
+		env: {
+			dir: '..'
+		}
 	}
 };
 
