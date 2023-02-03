@@ -42,8 +42,7 @@
 	};
 
 	export let data: LayoutData;
-	const menuItems = data.menuItems;
-
+	$: menuItems = data.menuItems;
 	$: activeUrl = $page.url.pathname;
 	$: handleChangeMinWidth($mql !== undefined);
 	function handleChangeMinWidth(changed: boolean) {
