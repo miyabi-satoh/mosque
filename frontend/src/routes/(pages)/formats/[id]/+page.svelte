@@ -4,7 +4,7 @@
 	import { invalidate } from '$app/navigation';
 
 	export let data: PageData;
-	const resources = data.resources;
+	$: resources = data.resources;
 
 	function reload() {
 		invalidate('app:formats');

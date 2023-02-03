@@ -16,7 +16,9 @@ export const apiPages = {
 		const res = await fetch(strapiUrl(`pages?pagination[limit]=1&filters[url][$eq]=${pathname}`));
 		if (res.ok) {
 			const json = await res.json();
-			return json.data[0];
+			if (json.meta.pagination.total > 0) {
+				return json.data[0];
+			}
 		}
 
 		throw new Error('apiPages.getByPathname');

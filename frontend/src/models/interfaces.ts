@@ -28,6 +28,13 @@ export type IStrapiFormat = DeepNonNullable<IStrapiFormatBase>;
 export type IStrapiResource = DeepNonNullable<IStrapiResourceBase>;
 export type IStrapiMime = DeepNonNullable<IStrapiMimeBase>;
 export type IStrapiInfo = DeepNonNullable<IStrapiInfoBase>;
+
+export interface IPageMeta {
+	title: string;
+	description?: string | undefined;
+	content?: string | undefined;
+}
+
 export interface IUserProfile {
 	email: string;
 	is_active: boolean;

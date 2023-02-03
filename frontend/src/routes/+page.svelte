@@ -4,16 +4,16 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	const pageInfo = data.pageInfo;
-	const menuItems = data.menuItems;
+	$: pageMeta = data.pageMeta;
+	$: menuItems = data.menuItems;
 </script>
 
 <div
 	class="relative bg-white overflow-hidden mt-24 lg:mb-8 mx-auto dark:bg-gray-900 2xl:px-8 text-center lg:text-left"
 >
-	<Heading tag="h1" customSize="text-4xl font-extrabold">{pageInfo.attributes.title}</Heading>
-	{#if pageInfo.attributes.description}
-		<P class="w-full my-8">{pageInfo.attributes.description}</P>
+	<Heading tag="h1" customSize="text-4xl font-extrabold">{pageMeta.title}</Heading>
+	{#if pageMeta.description}
+		<P class="w-full my-8">{pageMeta.description}</P>
 	{/if}
 </div>
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
