@@ -11,8 +11,8 @@
 		SidebarGroup,
 		SidebarItem,
 		SidebarWrapper,
-		Footer,
-		FooterCopyright,
+		// Footer,
+		// FooterCopyright,
 		Button,
 		Dropdown,
 		DropdownItem,
@@ -24,6 +24,7 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import type { LayoutData } from './$types';
+	import Footer from './footer.svelte';
 	import { page } from '$app/stores';
 	import LoginModal from '$lib/LoginModal.svelte';
 	import { getLocalToken, removeLocalToken } from '$lib/utils';
@@ -197,18 +198,10 @@
 			</SidebarWrapper>
 		</Sidebar>
 	</Drawer>
-	<!-- </div> -->
 	<div class="flex px-4 mx-auto w-full">
 		<main class="lg:ml-72 w-full mx-auto">
 			<slot />
 		</main>
 	</div>
-	<div class="mx-auto mb-4 pt-4 lg:pl-64">
-		<Footer footerType="socialmedia" class="dark:!bg-gray-900">
-			<hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-			<div class="sm:flex sm:items-center sm:justify-between">
-				<FooterCopyright href="/" by="miyabi-satoh" year={2023} />
-			</div>
-		</Footer>
-	</div>
+	<Footer />
 </div>
