@@ -1,9 +1,9 @@
 import type { PageLoad } from './$types';
-import { apiLinks } from '$lib/api';
+import { updatePage } from './paginate';
 
-export const load = (async ({ fetch }) => {
-	const links = await apiLinks.getMulti(fetch);
+export const load = (async ({ url, fetch }) => {
+	const links = await updatePage(fetch, url.searchParams);
 	return {
-		links: links
+		links
 	};
 }) satisfies PageLoad;

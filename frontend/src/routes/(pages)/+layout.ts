@@ -14,7 +14,7 @@ export const load = (async ({ url, fetch }) => {
 			const href = joinedPath == '/' ? joinedPath + path : joinedPath + '/' + path;
 			let name = 'Not Found';
 			try {
-				const data = await apiPages.getByPathname(fetch, href);
+				const data = await apiPages.getByUrl(fetch, href);
 				name = data.attributes.title;
 			} catch (err) {
 				const res = await fetch(strapiUrl(href.slice(1)));

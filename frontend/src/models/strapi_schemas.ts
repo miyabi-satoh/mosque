@@ -1938,6 +1938,10 @@ export interface components {
 				title: string;
 				description?: string;
 				order: number;
+				forStaff: boolean;
+				forTeacher: boolean;
+				forStudent: boolean;
+				keyword?: string;
 			};
 		};
 		LinkListResponseDataItem: {
@@ -1947,6 +1951,10 @@ export interface components {
 				title?: string;
 				description?: string;
 				order?: number;
+				forStaff?: boolean;
+				forTeacher?: boolean;
+				forStudent?: boolean;
+				keyword?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -2066,6 +2074,10 @@ export interface components {
 				title?: string;
 				description?: string;
 				order?: number;
+				forStaff?: boolean;
+				forTeacher?: boolean;
+				forStudent?: boolean;
+				keyword?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -2196,6 +2208,10 @@ export interface components {
 				title?: string;
 				description?: string;
 				order?: number;
+				forStaff?: boolean;
+				forTeacher?: boolean;
+				forStudent?: boolean;
+				keyword?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -2315,6 +2331,10 @@ export interface components {
 				title?: string;
 				description?: string;
 				order?: number;
+				forStaff?: boolean;
+				forTeacher?: boolean;
+				forStudent?: boolean;
+				keyword?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */

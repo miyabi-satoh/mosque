@@ -1,14 +1,5 @@
 <script lang="ts">
-	import {
-		A,
-		P,
-		TableBody,
-		TableBodyCell,
-		TableBodyRow,
-		TableHead,
-		TableHeadCell,
-		TableSearch
-	} from 'flowbite-svelte';
+	import { Card, Heading, P } from 'flowbite-svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -23,36 +14,30 @@
 			(info) => info.attributes.text.includes(term) || info.attributes.title.includes(term)
 		);
 	}
+
+	function formatDate(dateStr: string) {
+		const dt = new Date(dateStr);
+		return `${dt.getFullYear()}年${dt.getMonth()}月${dt.getDate()}日`;
+	}
 </script>
 
 <div class="w-full">
 	{#if data.infos.length > 0}
-		<TableSearch
-			striped={true}
-			placeholder="Search keywords..."
-			bind:inputValue={searchTerm}
-			divClass="relative overflow-x-auto"
-		>
-			<TableHead
-				class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400"
-			>
-				<TableHeadCell>Date</TableHeadCell>
-				<TableHeadCell>Title</TableHeadCell>
-			</TableHead>
-			<TableBody tableBodyClass="divide-y">
-				{#each filterdItems as info (info.id)}
-					<TableBodyRow>
-						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{info.attributes.updatedAt}</TableBodyCell
-						><TableBodyCell>
-							<A target="_blank" href="./{info.id}">
-								{info.attributes.title}
-							</A></TableBodyCell
-						>
-					</TableBodyRow>
-				{/each}
-			</TableBody>
-		</TableSearch>
+		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+			{#each filterdItems as item (item.id)}
+				<Card href="/infos/{item.id}">
+					<P size="sm" color="text-gray-500 dark:text-gray-400"
+						>{formatDate(item.attributes.updatedAt)}</P
+					>
+					<Heading tag="h3" customSize="text-2xl font-bold" class="mb-2"
+						>{item.attributes.title}</Heading
+					>
+					<div class="h-12 line-clamp-2">
+						{item.attributes.text}
+					</div>
+				</Card>
+			{/each}
+		</div>
 	{:else}
 		<P class="w-full">データがありません</P>
 	{/if}

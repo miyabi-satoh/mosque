@@ -11,7 +11,7 @@ export const load = (async ({ url, fetch }): Promise<ILayoutLoadData> => {
 	const menuItems = await apiPages.getMenuItems(fetch);
 	// ページ情報を読み込み
 	try {
-		const data = await apiPages.getByPathname(fetch, url.pathname);
+		const data = await apiPages.getByUrl(fetch, url.pathname);
 		return {
 			menuItems,
 			pageMeta: {

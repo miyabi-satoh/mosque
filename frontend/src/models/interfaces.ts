@@ -9,25 +9,27 @@ type DeepNonNullable<T> = T extends Builtin
 	? NonNullable<T>
 	: { [key in keyof T]-?: DeepNonNullable<T[key]> };
 
-type IStrapiPageBase =
-	paths['/pages/{id}']['get']['responses']['200']['content']['application/json']['data'];
-type IStrapiLinkBase =
-	paths['/links/{id}']['get']['responses']['200']['content']['application/json']['data'];
-type IStrapiFormatBase =
-	paths['/formats/{id}']['get']['responses']['200']['content']['application/json']['data'];
-type IStrapiResourceBase =
-	paths['/resources/{id}']['get']['responses']['200']['content']['application/json']['data'];
-type IStrapiMimeBase =
-	paths['/mimes/{id}']['get']['responses']['200']['content']['application/json']['data'];
-type IStrapiInfoBase =
-	paths['/infos/{id}']['get']['responses']['200']['content']['application/json']['data'];
-
-export type IStrapiPage = DeepNonNullable<IStrapiPageBase>;
-export type IStrapiLink = DeepNonNullable<IStrapiLinkBase>;
-export type IStrapiFormat = DeepNonNullable<IStrapiFormatBase>;
-export type IStrapiResource = DeepNonNullable<IStrapiResourceBase>;
-export type IStrapiMime = DeepNonNullable<IStrapiMimeBase>;
-export type IStrapiInfo = DeepNonNullable<IStrapiInfoBase>;
+export type IStrapiPage = DeepNonNullable<
+	paths['/pages/{id}']['get']['responses']['200']['content']['application/json']['data']
+>;
+export type IStrapiPageListResponse = DeepNonNullable<
+	paths['/pages']['get']['responses']['200']['content']['application/json']
+>;
+export type IStrapiLinksQuery = Partial<
+	DeepNonNullable<paths['/links']['get']['parameters']>['query']
+>;
+export type IStrapiFormat = DeepNonNullable<
+	paths['/formats/{id}']['get']['responses']['200']['content']['application/json']['data']
+>;
+export type IStrapiResource = DeepNonNullable<
+	paths['/resources/{id}']['get']['responses']['200']['content']['application/json']['data']
+>;
+export type IStrapiMime = DeepNonNullable<
+	paths['/mimes/{id}']['get']['responses']['200']['content']['application/json']['data']
+>;
+export type IStrapiInfo = DeepNonNullable<
+	paths['/infos/{id}']['get']['responses']['200']['content']['application/json']['data']
+>;
 
 export interface IPageMeta {
 	title: string;

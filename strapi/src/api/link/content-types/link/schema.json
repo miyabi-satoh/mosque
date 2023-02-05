@@ -28,6 +28,25 @@
       "type": "integer",
       "default": 0,
       "required": true
+    },
+    "forStaff": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "forTeacher": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "forStudent": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "keyword": {
+      "type": "text",
+      "private": true
     }
   }
 }
