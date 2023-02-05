@@ -61,7 +61,10 @@ DBMS ... PostgreSQL
 - Windows でバックエンドをサービス化する
 
   - winsw install mosque.xml --username <username> --password <password>
-  - winsw start mosque.xml
+  - winsw refresh mosque.xml --no-elevate
+  - winsw start mosque.xml --no-elevate
+  - winsw stop mosque.xml --no-elevate
+  - winsw restart mosque.xml --no-elevate
   - winsw status mosque.xml
   - winsw uninstall mosque.xml
 

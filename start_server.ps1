@@ -3,7 +3,7 @@
 Set-Location $PSScriptRoot
 ./stop_server.ps1
 
-docker compose up mosque-db
+docker compose up mosque-db -d
 if ($IsWindows) {
   Start-Service -Name mosque-backend
   Start-Service -Name mosque-strapi
@@ -12,4 +12,4 @@ if ($IsWindows) {
   # ./winsw start mosque-strapi.xml
   # ./winsw start mosque-frontend.xml
 }
-docker compose up
+docker compose up -d
