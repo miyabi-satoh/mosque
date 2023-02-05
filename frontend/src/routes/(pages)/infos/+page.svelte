@@ -20,7 +20,7 @@
 
 <div class="w-full">
 	{#if infos.data?.length && infos.data.length > 0}
-		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 			{#each filterdItems as item (item.id)}
 				<Card href="/infos/{item.id}">
 					<P size="sm" color="text-gray-500 dark:text-gray-400"
