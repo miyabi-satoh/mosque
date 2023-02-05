@@ -1,39 +1,40 @@
+import { error } from '@sveltejs/kit';
 import type { LayoutLoad } from './$types';
 import { apiPages, strapiUrl } from '$lib/api';
-import type { IPageMeta, IStrapiPage } from '$models/interfaces';
 
-interface ILayoutLoadData {
-	menuItems: IStrapiPage[];
-	pageMeta: IPageMeta;
-}
-export const load = (async ({ url, fetch }): Promise<ILayoutLoadData> => {
+export const load = (async ({ url, fetch }) => {
+	console.log(`load @ frontend/src/routes/+layout.ts`);
 	// サイドメニューの項目を読み込み
 	const menuItems = await apiPages.getMenuItems(fetch);
 	// ページ情報を読み込み
 	try {
-		const data = await apiPages.getByUrl(fetch, url.pathname);
-		return {
-			menuItems,
-			pageMeta: {
-				title: data.attributes.title,
-				description: data.attributes.description,
-				content: data.attributes.content
-			}
-		};
-	} catch (err) {
+		// console.log(url);
+		const pageJson = await apiPages.getByUrl(fetch, url.pathname);
+		if (pageJson.meta.pagination.total == 1) {
+			return {
+				menuItems,
+				pageMeta: {
+					title: pageJson.data[0].attributes.title,
+					description: pageJson.data[0].attributes.description,
+					content: pageJson.data[0].attributes.content
+				}
+			};
+		}
 		const res = await fetch(strapiUrl(url.pathname.slice(1)));
 		if (res.ok) {
 			const json = await res.json();
-			if (json.data?.attributes)
-				return {
-					menuItems,
-					pageMeta: {
-						title: json.data.attributes.title,
-						description: json.data.attributes.description
-					}
-				};
+			return {
+				menuItems,
+				pageMeta: {
+					title: (json.data?.attributes?.title ?? '') as string,
+					description: (json.data?.attributes?.description ?? '') as string,
+					content: (json.data?.attributes?.content ?? '') as string
+				}
+			};
 		}
+	} catch (err) {
+		// console.log(err);
 	}
 
-	throw new Error('LayoutLoad Error');
+	throw error(500, 'Internal Error @ /LayoutLoad');
 }) satisfies LayoutLoad;

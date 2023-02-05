@@ -36,7 +36,7 @@ DBMS ... PostgreSQL
 
 1. Docker で PstgreSQL と Nginx を起動
     ```sh
-    docker compose -f compose.yml up -d
+    docker compose up -d
     ```
 
 1. backend を起動
@@ -58,18 +58,5 @@ DBMS ... PostgreSQL
 
 ## TODO
 
-- Windows でバックエンドをサービス化する
-
-  - winsw install mosque.xml --username <username> --password <password>
-  - winsw refresh mosque.xml --no-elevate
-  - winsw start mosque.xml --no-elevate
-  - winsw stop mosque.xml --no-elevate
-  - winsw restart mosque.xml --no-elevate
-  - winsw status mosque.xml
-  - winsw uninstall mosque.xml
-
-- 起動・停止スクリプトを Win サービス起動・停止に変更する
-
 - バックエンドの API 整理
-  - /pages 不要
   - /login, /users を strapi に移譲

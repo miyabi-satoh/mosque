@@ -162,7 +162,7 @@
 		<Sidebar asideClass="w-54">
 			<SidebarWrapper>
 				<SidebarGroup>
-					{#each menuItems as menuItem (menuItem.id)}
+					{#each menuItems.data as menuItem (menuItem.id)}
 						<SidebarItem
 							label={menuItem.attributes.title}
 							href={menuItem.attributes.url}

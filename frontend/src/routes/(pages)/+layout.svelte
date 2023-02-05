@@ -10,10 +10,10 @@
 <div class="max-w-3xl 2xl:max-w-4xl mx-auto mt-8">
 	<div class="container flex flex-wrap mx-auto">
 		<Breadcrumb params={data.breadcrumbParams} navClass="flex pt-16 py-8" />
-		{#if pageMeta?.title}
+		{#if pageMeta.title}
 			<Heading tag="h1" customSize="text-3xl" class="w-full mb-2">{pageMeta.title}</Heading>
 		{/if}
-		{#if pageMeta?.description}
+		{#if pageMeta.description}
 			<P class="w-full mb-8">{pageMeta.description}</P>
 		{/if}
 		<slot />

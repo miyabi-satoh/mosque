@@ -2,7 +2,6 @@
 	import Icon from '@iconify/svelte';
 	import {
 		A,
-		Button,
 		ChevronLeft,
 		ChevronRight,
 		P,
@@ -16,6 +15,7 @@
 		TableHead,
 		TableHeadCell
 	} from 'flowbite-svelte';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -23,13 +23,15 @@
 	type ForType = '' | 'forStaff' | 'forTeacher' | 'forStudent';
 	export let data: PageData;
 
-	let inputSearchTerm = $page.url.searchParams.get('q') || '';
-	let inputFor = ($page.url.searchParams.get('f') || '') as ForType;
-	let stateSearchTerm = inputSearchTerm;
-	let stateFor = inputFor;
-	$: stateCurrentPageNumber = Number($page.url.searchParams.get('p')) || 1;
+	// let inputSearchTerm = $page.url.searchParams.get('q') ?? '';
+	// let inputFor = ($page.url.searchParams.get('f') ?? '') as ForType;
+	// let stateSearchTerm = inputSearchTerm;
+	// let stateFor = inputFor;
+	let stateSearchTerm = $page.url.searchParams.get('q') ?? '';
+	let stateFor = ($page.url.searchParams.get('f') ?? '') as ForType;
+	$: stateCurrentPageNumber = Number($page.url.searchParams.get('p')) ?? 1;
 	$: stateLinks = data.links.stateLinks;
-	$: statePageCount = data.links.stateMeta?.pagination?.pageCount || 0;
+	$: statePageCount = data.links.stateMeta?.pagination?.pageCount ?? 0;
 	$: statePages = data.links.statePages;
 
 	const filters: Array<{ value: ForType; name: string }> = [
@@ -39,9 +41,7 @@
 		{ value: 'forStudent', name: '生徒用' }
 	];
 
-	// $: movePage(stateCurrentPageNumber);
 	async function movePage(page: number) {
-		console.log(page, statePageCount);
 		if (page < 1) {
 			page = 1;
 		} else if (statePageCount < page) {
@@ -49,31 +49,36 @@
 		}
 		stateCurrentPageNumber = page;
 		const href = `/links?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
-		await goto(href);
+		await goto(href, {
+			keepFocus: true
+		});
 	}
 
-	async function handleSubmit() {
-		stateSearchTerm = inputSearchTerm;
-		stateFor = inputFor;
-		await movePage(1);
+	let mounted = false;
+	onMount(() => (mounted = true));
+	$: if (mounted) {
+		stateSearchTerm;
+		stateFor;
+		movePage(1);
 	}
+
+	// console.log(`frontend/src/routes/(pages)/links/+page.svelte`);
 </script>
 
 <div class="w-full">
-	<form class="py-4 flex flex-col md:flex-row gap-2" on:submit|preventDefault={handleSubmit}>
+	<div class="py-4 flex flex-col md:flex-row gap-2">
 		<Search
 			size="md"
 			class="flex flex-1 gap-2 items-center"
 			placeholder="Search keywords..."
-			bind:value={inputSearchTerm}
+			bind:value={stateSearchTerm}
 		/>
-		<Select class="!w-auto" placeholder="" bind:value={inputFor}>
+		<Select class="!w-auto" placeholder="" bind:value={stateFor}>
 			{#each filters as { value, name }}
-				<option selected={value == inputFor} {value}>{name}</option>
+				<option selected={value == stateFor} {value}>{name}</option>
 			{/each}
 		</Select>
-		<Button size="sm" class="flex-none" type="submit">検索</Button>
-	</form>
+	</div>
 	{#if stateLinks && stateLinks.length > 0}
 		<Table striped={true} divClass="relative overflow-x-auto">
 			<TableHead

@@ -1,14 +1,12 @@
-import { strapiUrl, type Fetch } from './utils';
-import type { IStrapiMime } from '$models/interfaces';
+import { StrapiBase } from './strapiBase';
+import type { IStrapiMimeListResponse, IStrapiMimeResponse } from '$models/interfaces';
 
-export const apiMimes = {
-	async getMulti(fetch: Fetch): Promise<IStrapiMime[]> {
-		const res = await fetch(strapiUrl(`mimes`));
-		if (res.ok) {
-			const json = await res.json();
-			return json.data;
-		}
-
-		throw new Error('apiMimes.getMulti');
+type ListResponse = IStrapiMimeListResponse;
+type SingleResponse = IStrapiMimeResponse;
+class StrapiMimes extends StrapiBase<ListResponse, SingleResponse> {
+	constructor() {
+		super('mimes');
 	}
-};
+}
+
+export const apiMimes = new StrapiMimes();

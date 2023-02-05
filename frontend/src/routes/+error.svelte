@@ -2,7 +2,7 @@
 	import { A, Heading, P } from 'flowbite-svelte';
 	import { page } from '$app/stores';
 
-	console.log($page);
+	// console.log($page);
 </script>
 
 <div class="max-w-3xl 2xl:max-w-4xl mx-auto mt-8">

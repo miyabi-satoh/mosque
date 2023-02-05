@@ -20,7 +20,7 @@ export const load = (async ({ params, fetch, depends }) => {
 
 	// 実ファイル情報を取得する
 	const resources: IResource[] = [];
-	format.attributes.resources.data.forEach(async (resource) => {
+	format.data.attributes.resources.data.forEach(async (resource) => {
 		if (resource.attributes) {
 			const blobUrl = apiUrl(`resources/${resource.id}/${resource.attributes.slug}`);
 			const res = await fetch(blobUrl);
@@ -32,7 +32,7 @@ export const load = (async ({ params, fetch, depends }) => {
 				// ファイルの種類を判定
 				const mimes = await apiMimes.getMulti(fetch);
 				mimeType = blob.type;
-				const found = mimes.find((mime) => mimeType.includes(mime.attributes.mime || 'error'));
+				const found = mimes.data.find((mime) => mimeType.includes(mime.attributes.mime || 'error'));
 				if (found) {
 					type = found.attributes.type || 'unknown';
 				} else {
@@ -83,7 +83,7 @@ export const load = (async ({ params, fetch, depends }) => {
 	depends('app:formats');
 
 	return {
-		format,
+		// format,
 		resources
 	};
 }) satisfies PageLoad;

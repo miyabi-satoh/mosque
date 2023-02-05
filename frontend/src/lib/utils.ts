@@ -10,6 +10,12 @@ export function removeLocalToken() {
 	return localStorage.removeItem('token');
 }
 
+export function formatDate(dateStr: string) {
+	const dayOfWeeks = '日月火水木金土'.split('');
+	const dt = new Date(dateStr);
+	return `${dt.getFullYear()}年${dt.getMonth()}月${dt.getDate()}日(${dayOfWeeks[dt.getDay()]})`;
+}
+
 export function normalizeSearch(search: string): string {
 	const hankakuToZenkakuKatakanaMap: Record<string, string> = {
 		ｧ: 'ァ',

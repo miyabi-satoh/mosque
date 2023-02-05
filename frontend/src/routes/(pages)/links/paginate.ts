@@ -2,7 +2,7 @@ import qs from 'qs';
 import { apiLinks } from '$lib/api';
 import type { Fetch } from '$lib/api/utils';
 import { normalizeSearch } from '$lib/utils';
-import type { IStrapiLinksQuery } from '$models/interfaces';
+import type { IStrapiLinkQuery } from '$models/interfaces';
 
 const pageSize = 10;
 const pageRange = 2;
@@ -12,7 +12,7 @@ export async function updatePage(fetch: Fetch, params: URLSearchParams) {
 	const stateSearchTerm = params.get('q') || '';
 	const stateFor = params.get('f') || '';
 
-	let objQuery: IStrapiLinksQuery = {};
+	let objQuery: IStrapiLinkQuery = {};
 	const terms = normalizeSearch(stateSearchTerm).split(' ');
 	terms.forEach((term) => {
 		const obj = {
@@ -28,7 +28,7 @@ export async function updatePage(fetch: Fetch, params: URLSearchParams) {
 		}
 		objQuery.filters['$and'] = [...objQuery.filters['$and'], obj] as never;
 	});
-	const objFor: IStrapiLinksQuery = {};
+	const objFor: IStrapiLinkQuery = {};
 	if (stateFor) {
 		objFor.filters = {};
 		objFor.filters[stateFor] = {

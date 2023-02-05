@@ -13,14 +13,17 @@
 	import { page } from '$app/stores';
 
 	export let data: PageData;
+	$: formatsData = data.formats.data;
+	$: formatsMeta = data.formats.meta;
+
 	let searchTerm = '';
 
 	$: filterdItems = getFilterdItems(searchTerm);
 	function getFilterdItems(term: string) {
 		if (term.length == 0) {
-			return data.formats;
+			return formatsData;
 		}
-		return data.formats.filter(
+		return formatsData.filter(
 			(format) =>
 				format.attributes.title.includes(term) || format.attributes.description.includes(term)
 		);
@@ -28,7 +31,7 @@
 </script>
 
 <div class="w-full">
-	{#if data.formats.length > 0}
+	{#if formatsMeta.pagination.total > 0}
 		<TableSearch
 			striped={true}
 			placeholder="Search keywords..."
@@ -41,7 +44,7 @@
 				<TableHeadCell>Description</TableHeadCell>
 			</TableHead>
 			<TableBody tableBodyClass="divide-y">
-				{#each filterdItems as format}
+				{#each filterdItems as format (format.id)}
 					<TableBodyRow>
 						<TableBodyCell
 							><A href="{$page.url.pathname}/{format.id}">{format.attributes.title}</A

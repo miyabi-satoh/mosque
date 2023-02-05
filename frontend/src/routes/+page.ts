@@ -3,12 +3,15 @@ import type { PageLoad } from './$types';
 import { apiInfos } from '$lib/api';
 
 export const load = (async ({ fetch }) => {
+	// console.log('load @ frontend/src/routes/+page.ts');
 	try {
-		const info = await apiInfos.getLatest(fetch);
+		const latestInfo = await apiInfos.getLatestOne(fetch);
 		return {
-			info
+			latestInfo
 		};
 	} catch (err) {
-		throw error(500, 'Internal Error @ RootPage');
+		// console.log(err);
 	}
+
+	throw error(500, 'Internal Error @ RootPage');
 }) satisfies PageLoad;
