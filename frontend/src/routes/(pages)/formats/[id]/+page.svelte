@@ -12,10 +12,22 @@
 </script>
 
 {#each resources as resource}
-	<P class="w-full">{resource.slug}</P>
+	<P class="w-full">{resource.data.attributes.slug}</P>
 	<Button class="mb-4" on:click={reload}>再読み込み</Button>
 	<div class="w-full">
-		{#if resource.type == 'text'}
+		{#if resource.type == 'error'}
+			<Alert color="red" class="w-full">
+				エラー：{resource.status}<br />
+				{#each resource.text.split('\n') as line}
+					{line}<br />
+				{/each}
+			</Alert>
+		{:else if resource.type == 'unknown'}
+			<Alert color="yellow" class="w-full">
+				この形式のファイルはプレビューを表示できません。<br />
+				形式：{resource.mimeType}
+			</Alert>
+		{:else if resource.type == 'text'}
 			<pre
 				class="text-sm w-full border p-4 whitespace-pre-wrap max-h-80 overflow-y-scroll">{resource.text}</pre>
 		{:else if resource.type == 'img'}
@@ -29,18 +41,15 @@
 			>
 				<Alert color="yellow" class="w-full">プレビューを表示できません。</Alert>
 			</object>
-		{:else if resource.type == 'error'}
-			<Alert color="red" class="w-full">
-				エラー：{resource.status}<br />
-				{#each resource.text.split('\n') as line}
-					{line}<br />
-				{/each}
-			</Alert>
-		{:else}
-			<Alert color="yellow" class="w-full">
-				この形式のファイルはプレビューを表示できません。<br />
-				形式：{resource.mimeType}
-			</Alert>
+		{:else if resource.type == 'audio'}
+			<audio controls src={resource.blobUrl}>
+				<Alert color="yellow" class="w-full">オーディオコントロールを表示できません。</Alert>
+			</audio>
+		{:else if resource.type == 'video'}
+			<!-- svelte-ignore a11y-media-has-caption -->
+			<video controls src={resource.blobUrl}>
+				<Alert color="yellow" class="w-full">オーディオコントロールを表示できません。</Alert>
+			</video>
 		{/if}
 	</div>
 {/each}
