@@ -21,11 +21,11 @@
 </div>
 {#if latestInfo.meta.pagination.total > 0}
 	<div class="my-8 rounded-xl border border-gray-200 dark:border-gray-700 p-2 sm:p-6">
+		<P color="text-gray-500 dark:text-gray-400" size="sm"
+			>{formatDate(latestInfo.data[0].attributes.updatedAt)}</P
+		>
 		<Heading tag="h2" class="text-center" customSize="text-xl font-bold"
 			>{latestInfo.data[0].attributes.title}</Heading
-		>
-		<P color="text-gray-500 dark:text-gray-400" align="right" size="sm"
-			>最終更新日：{formatDate(latestInfo.data[0].attributes.updatedAt)}</P
 		>
 		<div class="markdown mt-2">
 			<SvelteMarkdown source={latestInfo.data[0].attributes.text} />
