@@ -10,7 +10,7 @@ export const load = (async ({ url, fetch }) => {
 	try {
 		// console.log(url);
 		const pageJson = await apiPages.getByUrl(fetch, url.pathname);
-		if (pageJson.meta.pagination.total == 1) {
+		if (pageJson.meta.pagination.total > 0) {
 			return {
 				menuItems,
 				pageMeta: {

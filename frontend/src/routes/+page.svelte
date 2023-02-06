@@ -19,7 +19,7 @@
 		<P class="w-full my-8">{pageMeta.description}</P>
 	{/if}
 </div>
-{#if latestInfo.meta.pagination.total == 1}
+{#if latestInfo.meta.pagination.total > 0}
 	<div class="my-8 rounded-xl border border-gray-200 dark:border-gray-700 p-2 sm:p-6">
 		<Heading tag="h2" class="text-center" customSize="text-xl font-bold"
 			>{latestInfo.data[0].attributes.title}</Heading

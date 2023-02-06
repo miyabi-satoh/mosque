@@ -16,7 +16,7 @@ export const load = (async ({ url, fetch }) => {
 			let name = 'Not Found';
 			try {
 				const pageJson = await apiPages.getByUrl(fetch, href);
-				if (pageJson.meta.pagination.total == 1) {
+				if (pageJson.meta.pagination.total > 0) {
 					name = pageJson.data[0].attributes.title;
 				} else {
 					const res = await fetch(strapiUrl(href.slice(1)));
