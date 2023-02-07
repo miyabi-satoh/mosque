@@ -15,7 +15,7 @@
     "@strapi/plugin-i18n": "4.6.0",
     "@strapi/plugin-users-permissions": "4.6.0",
     "@strapi/strapi": "4.6.0",
-    "pg": "^8.8.0",
+    "pg": "^8.9.0",
     "strapi-plugin-import-export-entries": "^1.18.0"
   },
   "author": {
