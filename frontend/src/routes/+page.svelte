@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { Card, Heading, P, Span } from 'flowbite-svelte';
-	import SvelteMarkdown from 'svelte-markdown';
 	import type { PageData } from './$types';
 	import { formatDate } from '$lib/utils';
+	import Markdown from '$lib/Markdown.svelte';
 
 	export let data: PageData;
 	$: pageMeta = data.pageMeta;
@@ -24,12 +24,8 @@
 		<P color="text-gray-500 dark:text-gray-400" size="sm"
 			>{formatDate(latestInfo.data[0].attributes.updatedAt)}</P
 		>
-		<Heading tag="h2" class="text-center" customSize="text-xl font-bold"
-			>{latestInfo.data[0].attributes.title}</Heading
-		>
-		<div class="markdown mt-2">
-			<SvelteMarkdown source={latestInfo.data[0].attributes.text} />
-		</div>
+		<Heading tag="h2" customSize="text-xl font-bold">{latestInfo.data[0].attributes.title}</Heading>
+		<Markdown divClass="mt-2" source={latestInfo.data[0].attributes.text} />
 	</div>
 {/if}
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">

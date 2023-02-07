@@ -1,11 +1,9 @@
 <script lang="ts">
-	import SvelteMarkdown from 'svelte-markdown';
 	import type { PageData } from './$types';
+	import Markdown from '$lib/Markdown.svelte';
 
 	export let data: PageData;
 	$: source = data.info.data?.attributes?.text;
 </script>
 
-<div class="markdown">
-	<SvelteMarkdown {source} />
-</div>
+<Markdown {source} />

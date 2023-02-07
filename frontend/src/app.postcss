@@ -7,4 +7,22 @@
 	.markdown h2 {
 		@apply text-2xl w-full font-semibold mt-8 mb-4;
 	}
+	.markdown h3 {
+		@apply text-xl w-full font-semibold mt-8 mb-4;
+	}
+	.markdown p {
+		@apply my-4;
+	}
+	.markdown ol {
+		@apply my-4 pl-4 list-decimal list-inside;
+	}
+	.markdown ul {
+		@apply my-4 pl-4 list-disc list-inside;
+	}
+	.markdown li > ol {
+		@apply mt-0;
+	}
+	.markdown li > ul {
+		@apply mt-0;
+	}
 }
