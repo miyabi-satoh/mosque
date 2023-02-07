@@ -49,16 +49,6 @@ export type IStrapiResourceQuery = Partial<
 	DeepNonNullable<paths['/resources']['get']['parameters']>['query']
 >;
 
-export type IStrapiMimeResponse = DeepNonNullable<
-	paths['/mimes/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiMimeListResponse = DeepNonNullable<
-	paths['/mimes']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiMimeQuery = Partial<
-	DeepNonNullable<paths['/mimes']['get']['parameters']>['query']
->;
-
 export type IStrapiInfoResponse = DeepNonNullable<
 	paths['/infos/{id}']['get']['responses']['200']['content']['application/json']
 >;
