@@ -26,6 +26,12 @@
       "relation": "manyToOne",
       "target": "api::format.format",
       "inversedBy": "resources"
+    },
+    "resource_heads": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::resource-head.resource-head",
+      "mappedBy": "resources"
     }
   }
 }
