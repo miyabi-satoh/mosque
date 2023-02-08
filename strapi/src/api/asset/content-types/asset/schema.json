@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "formats",
+  "collectionName": "assets",
   "info": {
-    "singularName": "format",
-    "pluralName": "formats",
-    "displayName": "Format",
+    "singularName": "asset",
+    "pluralName": "assets",
+    "displayName": "Asset",
     "description": ""
   },
   "options": {
@@ -12,23 +12,24 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
+    "slug": {
       "type": "string",
       "required": true
     },
-    "description": {
-      "type": "text"
-    },
-    "order": {
-      "type": "integer",
-      "default": 0,
+    "uri": {
+      "type": "string",
       "required": true
     },
     "resources": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::resource.resource",
-      "mappedBy": "format"
+      "mappedBy": "assets"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "unique": true
     }
   }
 }

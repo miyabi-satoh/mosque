@@ -13,25 +13,22 @@
 	import { page } from '$app/stores';
 
 	export let data: PageData;
-	$: formatsData = data.formats.data;
-	$: formatsMeta = data.formats.meta;
+	$: resourcesData = data.resources.data;
+	$: resourcesMeta = data.resources.meta;
 
 	let searchTerm = '';
 
 	$: filterdItems = getFilterdItems(searchTerm);
 	function getFilterdItems(term: string) {
 		if (term.length == 0) {
-			return formatsData;
+			return resourcesData;
 		}
-		return formatsData.filter(
-			(format) =>
-				format.attributes.title.includes(term) || format.attributes.description.includes(term)
-		);
+		return resourcesData.filter((resource) => resource.attributes.keywords.includes(term));
 	}
 </script>
 
 <div class="w-full">
-	{#if formatsMeta.pagination.total > 0}
+	{#if resourcesMeta.pagination.total > 0}
 		<TableSearch
 			striped={true}
 			placeholder="Search keywords..."
@@ -41,17 +38,17 @@
 		>
 			<TableHead>
 				<TableHeadCell>Title</TableHeadCell>
-				<TableHeadCell>Description</TableHeadCell>
+				<TableHeadCell>Items</TableHeadCell>
 			</TableHead>
 			<TableBody tableBodyClass="divide-y">
-				{#each filterdItems as format (format.id)}
+				{#each filterdItems as resource (resource.id)}
 					<TableBodyRow>
 						<TableBodyCell
-							><A href="{$page.url.pathname}/{format.id}">{format.attributes.title}</A
+							><A href="{$page.url.pathname}/{resource.id}">{resource.attributes.title}</A
 							></TableBodyCell
 						>
 						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{format.attributes.description}</TableBodyCell
+							>{resource.attributes.assets.data.length}</TableBodyCell
 						>
 					</TableBodyRow>
 				{/each}

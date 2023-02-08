@@ -29,16 +29,6 @@ export type IStrapiLinkQuery = Partial<
 	DeepNonNullable<paths['/links']['get']['parameters']>['query']
 >;
 
-export type IStrapiFormatResponse = DeepNonNullable<
-	paths['/formats/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiFormatListResponse = DeepNonNullable<
-	paths['/formats']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiFormatQuery = Partial<
-	DeepNonNullable<paths['/formats']['get']['parameters']>['query']
->;
-
 export type IStrapiResourceResponse = DeepNonNullable<
 	paths['/resources/{id}']['get']['responses']['200']['content']['application/json']
 >;
@@ -47,6 +37,16 @@ export type IStrapiResourceListResponse = DeepNonNullable<
 >;
 export type IStrapiResourceQuery = Partial<
 	DeepNonNullable<paths['/resources']['get']['parameters']>['query']
+>;
+
+export type IStrapiAssetResponse = DeepNonNullable<
+	paths['/assets/{id}']['get']['responses']['200']['content']['application/json']
+>;
+export type IStrapiAssetListResponse = DeepNonNullable<
+	paths['/assets']['get']['responses']['200']['content']['application/json']
+>;
+export type IStrapiAssetQuery = Partial<
+	DeepNonNullable<paths['/assets']['get']['parameters']>['query']
 >;
 
 export type IStrapiInfoResponse = DeepNonNullable<

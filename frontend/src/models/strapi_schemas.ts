@@ -4,14 +4,14 @@
  */
 
 export interface paths {
-	'/formats': {
-		get: operations['get/formats'];
-		post: operations['post/formats'];
+	'/assets': {
+		get: operations['get/assets'];
+		post: operations['post/assets'];
 	};
-	'/formats/{id}': {
-		get: operations['get/formats/{id}'];
-		put: operations['put/formats/{id}'];
-		delete: operations['delete/formats/{id}'];
+	'/assets/{id}': {
+		get: operations['get/assets/{id}'];
+		put: operations['put/assets/{id}'];
+		delete: operations['delete/assets/{id}'];
 	};
 	'/infos': {
 		get: operations['get/infos'];
@@ -695,39 +695,39 @@ export interface components {
 				details?: Record<string, never>;
 			};
 		};
-		FormatRequest: {
+		AssetRequest: {
 			data: {
-				title: string;
-				description?: string;
-				order: number;
+				slug: string;
+				uri: string;
 				resources?: (number | string)[];
+				title: string;
 			};
 		};
-		FormatListResponseDataItem: {
+		AssetListResponseDataItem: {
 			id?: number;
 			attributes?: {
-				title?: string;
-				description?: string;
-				order?: number;
+				slug?: string;
+				uri?: string;
 				resources?: {
 					data?: {
 						id?: number;
 						attributes?: {
-							slug?: string;
-							path?: string;
-							format?: {
+							title?: string;
+							keywords?: string;
+							description?: string;
+							assets?: {
 								data?: {
 									id?: number;
 									attributes?: {
-										title?: string;
-										description?: string;
-										order?: number;
+										slug?: string;
+										uri?: string;
 										resources?: {
 											data?: {
 												id?: number;
 												attributes?: Record<string, never>;
 											}[];
 										};
+										title?: string;
 										/** Format: date-time */
 										createdAt?: string;
 										/** Format: date-time */
@@ -839,7 +839,7 @@ export interface components {
 											};
 										};
 									};
-								};
+								}[];
 							};
 							/** Format: date-time */
 							createdAt?: string;
@@ -862,6 +862,7 @@ export interface components {
 						};
 					}[];
 				};
+				title?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -882,31 +883,31 @@ export interface components {
 				};
 			};
 		};
-		FormatListResponseDataItemLocalized: {
+		AssetListResponseDataItemLocalized: {
 			id?: number;
 			attributes?: {
-				title?: string;
-				description?: string;
-				order?: number;
+				slug?: string;
+				uri?: string;
 				resources?: {
 					data?: {
 						id?: number;
 						attributes?: {
-							slug?: string;
-							path?: string;
-							format?: {
+							title?: string;
+							keywords?: string;
+							description?: string;
+							assets?: {
 								data?: {
 									id?: number;
 									attributes?: {
-										title?: string;
-										description?: string;
-										order?: number;
+										slug?: string;
+										uri?: string;
 										resources?: {
 											data?: {
 												id?: number;
 												attributes?: Record<string, never>;
 											}[];
 										};
+										title?: string;
 										/** Format: date-time */
 										createdAt?: string;
 										/** Format: date-time */
@@ -1018,7 +1019,7 @@ export interface components {
 											};
 										};
 									};
-								};
+								}[];
 							};
 							/** Format: date-time */
 							createdAt?: string;
@@ -1041,6 +1042,7 @@ export interface components {
 						};
 					}[];
 				};
+				title?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -1061,8 +1063,8 @@ export interface components {
 				};
 			};
 		};
-		FormatListResponse: {
-			data?: components['schemas']['FormatListResponseDataItem'][];
+		AssetListResponse: {
+			data?: components['schemas']['AssetListResponseDataItem'][];
 			meta?: {
 				pagination?: {
 					page?: number;
@@ -1072,31 +1074,31 @@ export interface components {
 				};
 			};
 		};
-		FormatResponseDataObject: {
+		AssetResponseDataObject: {
 			id?: number;
 			attributes?: {
-				title?: string;
-				description?: string;
-				order?: number;
+				slug?: string;
+				uri?: string;
 				resources?: {
 					data?: {
 						id?: number;
 						attributes?: {
-							slug?: string;
-							path?: string;
-							format?: {
+							title?: string;
+							keywords?: string;
+							description?: string;
+							assets?: {
 								data?: {
 									id?: number;
 									attributes?: {
-										title?: string;
-										description?: string;
-										order?: number;
+										slug?: string;
+										uri?: string;
 										resources?: {
 											data?: {
 												id?: number;
 												attributes?: Record<string, never>;
 											}[];
 										};
+										title?: string;
 										/** Format: date-time */
 										createdAt?: string;
 										/** Format: date-time */
@@ -1208,7 +1210,7 @@ export interface components {
 											};
 										};
 									};
-								};
+								}[];
 							};
 							/** Format: date-time */
 							createdAt?: string;
@@ -1231,6 +1233,7 @@ export interface components {
 						};
 					}[];
 				};
+				title?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -1251,31 +1254,31 @@ export interface components {
 				};
 			};
 		};
-		FormatResponseDataObjectLocalized: {
+		AssetResponseDataObjectLocalized: {
 			id?: number;
 			attributes?: {
-				title?: string;
-				description?: string;
-				order?: number;
+				slug?: string;
+				uri?: string;
 				resources?: {
 					data?: {
 						id?: number;
 						attributes?: {
-							slug?: string;
-							path?: string;
-							format?: {
+							title?: string;
+							keywords?: string;
+							description?: string;
+							assets?: {
 								data?: {
 									id?: number;
 									attributes?: {
-										title?: string;
-										description?: string;
-										order?: number;
+										slug?: string;
+										uri?: string;
 										resources?: {
 											data?: {
 												id?: number;
 												attributes?: Record<string, never>;
 											}[];
 										};
+										title?: string;
 										/** Format: date-time */
 										createdAt?: string;
 										/** Format: date-time */
@@ -1387,7 +1390,7 @@ export interface components {
 											};
 										};
 									};
-								};
+								}[];
 							};
 							/** Format: date-time */
 							createdAt?: string;
@@ -1410,6 +1413,7 @@ export interface components {
 						};
 					}[];
 				};
+				title?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -1430,8 +1434,8 @@ export interface components {
 				};
 			};
 		};
-		FormatResponse: {
-			data?: components['schemas']['FormatResponseDataObject'];
+		AssetResponse: {
+			data?: components['schemas']['AssetResponseDataObject'];
 			meta?: Record<string, never>;
 		};
 		InfoRequest: {
@@ -2953,35 +2957,36 @@ export interface components {
 		};
 		ResourceRequest: {
 			data: {
-				slug: string;
-				path: string;
-				/** @example string or id */
-				format?: number | string;
+				title: string;
+				keywords?: string;
+				description?: string;
+				assets?: (number | string)[];
 			};
 		};
 		ResourceListResponseDataItem: {
 			id?: number;
 			attributes?: {
-				slug?: string;
-				path?: string;
-				format?: {
+				title?: string;
+				keywords?: string;
+				description?: string;
+				assets?: {
 					data?: {
 						id?: number;
 						attributes?: {
-							title?: string;
-							description?: string;
-							order?: number;
+							slug?: string;
+							uri?: string;
 							resources?: {
 								data?: {
 									id?: number;
 									attributes?: {
-										slug?: string;
-										path?: string;
-										format?: {
+										title?: string;
+										keywords?: string;
+										description?: string;
+										assets?: {
 											data?: {
 												id?: number;
 												attributes?: Record<string, never>;
-											};
+											}[];
 										};
 										/** Format: date-time */
 										createdAt?: string;
@@ -3096,6 +3101,7 @@ export interface components {
 									};
 								}[];
 							};
+							title?: string;
 							/** Format: date-time */
 							createdAt?: string;
 							/** Format: date-time */
@@ -3115,7 +3121,7 @@ export interface components {
 								};
 							};
 						};
-					};
+					}[];
 				};
 				/** Format: date-time */
 				createdAt?: string;
@@ -3140,26 +3146,27 @@ export interface components {
 		ResourceListResponseDataItemLocalized: {
 			id?: number;
 			attributes?: {
-				slug?: string;
-				path?: string;
-				format?: {
+				title?: string;
+				keywords?: string;
+				description?: string;
+				assets?: {
 					data?: {
 						id?: number;
 						attributes?: {
-							title?: string;
-							description?: string;
-							order?: number;
+							slug?: string;
+							uri?: string;
 							resources?: {
 								data?: {
 									id?: number;
 									attributes?: {
-										slug?: string;
-										path?: string;
-										format?: {
+										title?: string;
+										keywords?: string;
+										description?: string;
+										assets?: {
 											data?: {
 												id?: number;
 												attributes?: Record<string, never>;
-											};
+											}[];
 										};
 										/** Format: date-time */
 										createdAt?: string;
@@ -3274,6 +3281,7 @@ export interface components {
 									};
 								}[];
 							};
+							title?: string;
 							/** Format: date-time */
 							createdAt?: string;
 							/** Format: date-time */
@@ -3293,7 +3301,7 @@ export interface components {
 								};
 							};
 						};
-					};
+					}[];
 				};
 				/** Format: date-time */
 				createdAt?: string;
@@ -3329,26 +3337,27 @@ export interface components {
 		ResourceResponseDataObject: {
 			id?: number;
 			attributes?: {
-				slug?: string;
-				path?: string;
-				format?: {
+				title?: string;
+				keywords?: string;
+				description?: string;
+				assets?: {
 					data?: {
 						id?: number;
 						attributes?: {
-							title?: string;
-							description?: string;
-							order?: number;
+							slug?: string;
+							uri?: string;
 							resources?: {
 								data?: {
 									id?: number;
 									attributes?: {
-										slug?: string;
-										path?: string;
-										format?: {
+										title?: string;
+										keywords?: string;
+										description?: string;
+										assets?: {
 											data?: {
 												id?: number;
 												attributes?: Record<string, never>;
-											};
+											}[];
 										};
 										/** Format: date-time */
 										createdAt?: string;
@@ -3463,6 +3472,7 @@ export interface components {
 									};
 								}[];
 							};
+							title?: string;
 							/** Format: date-time */
 							createdAt?: string;
 							/** Format: date-time */
@@ -3482,7 +3492,7 @@ export interface components {
 								};
 							};
 						};
-					};
+					}[];
 				};
 				/** Format: date-time */
 				createdAt?: string;
@@ -3507,26 +3517,27 @@ export interface components {
 		ResourceResponseDataObjectLocalized: {
 			id?: number;
 			attributes?: {
-				slug?: string;
-				path?: string;
-				format?: {
+				title?: string;
+				keywords?: string;
+				description?: string;
+				assets?: {
 					data?: {
 						id?: number;
 						attributes?: {
-							title?: string;
-							description?: string;
-							order?: number;
+							slug?: string;
+							uri?: string;
 							resources?: {
 								data?: {
 									id?: number;
 									attributes?: {
-										slug?: string;
-										path?: string;
-										format?: {
+										title?: string;
+										keywords?: string;
+										description?: string;
+										assets?: {
 											data?: {
 												id?: number;
 												attributes?: Record<string, never>;
-											};
+											}[];
 										};
 										/** Format: date-time */
 										createdAt?: string;
@@ -3641,6 +3652,7 @@ export interface components {
 									};
 								}[];
 							};
+							title?: string;
 							/** Format: date-time */
 							createdAt?: string;
 							/** Format: date-time */
@@ -3660,7 +3672,7 @@ export interface components {
 								};
 							};
 						};
-					};
+					}[];
 				};
 				/** Format: date-time */
 				createdAt?: string;
@@ -8227,7 +8239,7 @@ export interface components {
 export type external = Record<string, never>;
 
 export interface operations {
-	'get/formats': {
+	'get/assets': {
 		parameters?: {
 			/** @description Sort by attributes ascending (asc) or descending (desc) */
 			/** @description Return page/pageSize (default: true) */
@@ -8256,7 +8268,7 @@ export interface operations {
 			/** @description OK */
 			200: {
 				content: {
-					'application/json': components['schemas']['FormatListResponse'];
+					'application/json': components['schemas']['AssetListResponse'];
 				};
 			};
 			/** @description Bad Request */
@@ -8291,17 +8303,17 @@ export interface operations {
 			};
 		};
 	};
-	'post/formats': {
+	'post/assets': {
 		requestBody: {
 			content: {
-				'application/json': components['schemas']['FormatRequest'];
+				'application/json': components['schemas']['AssetRequest'];
 			};
 		};
 		responses: {
 			/** @description OK */
 			200: {
 				content: {
-					'application/json': components['schemas']['FormatResponse'];
+					'application/json': components['schemas']['AssetResponse'];
 				};
 			};
 			/** @description Bad Request */
@@ -8336,7 +8348,7 @@ export interface operations {
 			};
 		};
 	};
-	'get/formats/{id}': {
+	'get/assets/{id}': {
 		parameters: {
 			path: {
 				id: number;
@@ -8346,7 +8358,7 @@ export interface operations {
 			/** @description OK */
 			200: {
 				content: {
-					'application/json': components['schemas']['FormatResponse'];
+					'application/json': components['schemas']['AssetResponse'];
 				};
 			};
 			/** @description Bad Request */
@@ -8381,7 +8393,7 @@ export interface operations {
 			};
 		};
 	};
-	'put/formats/{id}': {
+	'put/assets/{id}': {
 		parameters: {
 			path: {
 				id: number;
@@ -8389,14 +8401,14 @@ export interface operations {
 		};
 		requestBody: {
 			content: {
-				'application/json': components['schemas']['FormatRequest'];
+				'application/json': components['schemas']['AssetRequest'];
 			};
 		};
 		responses: {
 			/** @description OK */
 			200: {
 				content: {
-					'application/json': components['schemas']['FormatResponse'];
+					'application/json': components['schemas']['AssetResponse'];
 				};
 			};
 			/** @description Bad Request */
@@ -8431,7 +8443,7 @@ export interface operations {
 			};
 		};
 	};
-	'delete/formats/{id}': {
+	'delete/assets/{id}': {
 		parameters: {
 			path: {
 				id: number;

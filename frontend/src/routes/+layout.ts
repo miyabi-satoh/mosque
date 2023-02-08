@@ -20,6 +20,7 @@ export const load = (async ({ url, fetch }) => {
 				}
 			};
 		}
+		console.log(`${url.pathname} is not in pages`);
 		const res = await fetch(strapiUrl(url.pathname.slice(1)));
 		if (res.ok) {
 			const json = await res.json();

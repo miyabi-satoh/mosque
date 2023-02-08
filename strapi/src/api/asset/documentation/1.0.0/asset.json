@@ -1,5 +1,5 @@
 {
-  "/resource-heads": {
+  "/assets": {
     "get": {
       "responses": {
         "200": {
@@ -7,7 +7,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ResourceHeadListResponse"
+                "$ref": "#/components/schemas/AssetListResponse"
               }
             }
           }
@@ -64,7 +64,7 @@
         }
       },
       "tags": [
-        "Resource-head"
+        "Asset"
       ],
       "parameters": [
         {
@@ -169,7 +169,7 @@
           }
         }
       ],
-      "operationId": "get/resource-heads"
+      "operationId": "get/assets"
     },
     "post": {
       "responses": {
@@ -178,7 +178,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ResourceHeadResponse"
+                "$ref": "#/components/schemas/AssetResponse"
               }
             }
           }
@@ -235,23 +235,23 @@
         }
       },
       "tags": [
-        "Resource-head"
+        "Asset"
       ],
       "parameters": [],
-      "operationId": "post/resource-heads",
+      "operationId": "post/assets",
       "requestBody": {
         "required": true,
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ResourceHeadRequest"
+              "$ref": "#/components/schemas/AssetRequest"
             }
           }
         }
       }
     }
   },
-  "/resource-heads/{id}": {
+  "/assets/{id}": {
     "get": {
       "responses": {
         "200": {
@@ -259,7 +259,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ResourceHeadResponse"
+                "$ref": "#/components/schemas/AssetResponse"
               }
             }
           }
@@ -316,7 +316,7 @@
         }
       },
       "tags": [
-        "Resource-head"
+        "Asset"
       ],
       "parameters": [
         {
@@ -330,7 +330,7 @@
           }
         }
       ],
-      "operationId": "get/resource-heads/{id}"
+      "operationId": "get/assets/{id}"
     },
     "put": {
       "responses": {
@@ -339,7 +339,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ResourceHeadResponse"
+                "$ref": "#/components/schemas/AssetResponse"
               }
             }
           }
@@ -396,7 +396,7 @@
         }
       },
       "tags": [
-        "Resource-head"
+        "Asset"
       ],
       "parameters": [
         {
@@ -410,13 +410,13 @@
           }
         }
       ],
-      "operationId": "put/resource-heads/{id}",
+      "operationId": "put/assets/{id}",
       "requestBody": {
         "required": true,
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ResourceHeadRequest"
+              "$ref": "#/components/schemas/AssetRequest"
             }
           }
         }
@@ -487,7 +487,7 @@
         }
       },
       "tags": [
-        "Resource-head"
+        "Asset"
       ],
       "parameters": [
         {
@@ -501,7 +501,7 @@
           }
         }
       ],
-      "operationId": "delete/resource-heads/{id}"
+      "operationId": "delete/assets/{id}"
     }
   }
 }

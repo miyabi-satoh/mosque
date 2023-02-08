@@ -4,34 +4,29 @@
   "info": {
     "singularName": "resource",
     "pluralName": "resources",
-    "displayName": "Resource"
+    "displayName": "Resource",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "slug": {
+    "title": {
       "type": "string",
-      "required": true,
-      "unique": true
+      "required": true
     },
-    "path": {
-      "type": "string",
-      "required": true,
-      "unique": true
+    "keywords": {
+      "type": "text"
     },
-    "format": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::format.format",
-      "inversedBy": "resources"
+    "description": {
+      "type": "text"
     },
-    "resource_heads": {
+    "assets": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::resource-head.resource-head",
-      "mappedBy": "resources"
+      "target": "api::asset.asset",
+      "inversedBy": "resources"
     }
   }
 }

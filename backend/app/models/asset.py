@@ -4,25 +4,27 @@ from sqlmodel import Field, SQLModel
 from app.models.base import SQLModelWithDate
 
 
-class ResourceBase(SQLModelWithDate):
+class AssetBase(SQLModelWithDate):
     slug: str | None
-    path: str | None
+    uri: str | None
+    title: str | None
 
 
-class Resources(ResourceBase, table=True):
+class Assets(AssetBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
 
-class ResourceCreate(ResourceBase):
+class AssetCreate(AssetBase):
     pass
 
 
-class ResourceRead(ResourceBase):
+class AssetRead(AssetBase):
     id: int
 
 
-class ResourceUpdate(SQLModel):
+class AssetUpdate(SQLModel):
     slug: str | None
-    path: str | None
+    uri: str | None
+    title: str | None
     created_at: datetime | None
     updated_at: datetime | None
