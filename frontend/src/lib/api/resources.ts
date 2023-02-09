@@ -19,7 +19,9 @@ class StrapiResources extends StrapiBase<ListResponse, SingleResponse> {
 	async getMulti(fetch: Fetch, args: object = {}) {
 		return super.getMulti(fetch, {
 			populate: '*',
-			sort: 'updatedAt:desc',
+			sort: {
+				updatedAt: 'desc'
+			},
 			...args
 		});
 	}

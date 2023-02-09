@@ -12,7 +12,9 @@ class StrapiInfos extends StrapiBase<ListResponse, SingleResponse> {
 
 	async getMulti(fetch: Fetch, args: object = {}) {
 		return super.getMulti(fetch, {
-			sort: 'updatedAt:desc',
+			sort: {
+				updatedAt: 'desc'
+			},
 			...args
 		});
 	}

@@ -18,6 +18,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { formatDate } from '$lib/utils';
+	import type { IStrapiScheduleResponse } from '$models/interfaces';
+	import { format, parse } from 'date-fns';
 
 	export let data: PageData;
 
@@ -48,6 +50,22 @@
 		stateSearchTerm;
 		movePage(1);
 	}
+
+	function formatEvent(event: IStrapiScheduleResponse['data']['attributes']) {
+		let start = '';
+		if (event.start) {
+			start = format(parse(event.start, 'HH:mm:ss', new Date()), 'H:mm');
+		}
+
+		let end = '';
+		if (event.end) {
+			end = format(parse(event.end, 'HH:mm:ss', new Date()), 'H:mm');
+		}
+		if (start || end) {
+			return `${event.name}(${start || ''}〜${end || ''})`;
+		}
+		return event.name;
+	}
 </script>
 
 <div class="w-full">
@@ -73,10 +91,16 @@
 			<TableBody tableBodyClass="divide-y">
 				{#each stateSchedules as schedule (schedule.id)}
 					<TableBodyRow>
-						<TableBodyCell>
+						<TableBodyCell tdClass="px-6 py-4 w-48">
 							{formatDate(schedule.attributes.date)}
 						</TableBodyCell>
-						<TableBodyCell tdClass="px-6 py-4">{console.log(schedule.attributes)}</TableBodyCell>
+						<TableBodyCell tdClass="px-6 py-4">
+							{#each schedule.attributes.schedules.data as event (event.id)}
+								<P>
+									{formatEvent(event.attributes)}
+								</P>
+							{/each}
+						</TableBodyCell>
 					</TableBodyRow>
 				{/each}
 			</TableBody>

@@ -12,7 +12,9 @@ class StrapiPages extends StrapiBase<ListResponse, SingleResponse> {
 
 	async getMulti(fetch: Fetch, args: object = {}) {
 		return super.getMulti(fetch, {
-			sort: 'order:desc',
+			sort: {
+				order: 'desc'
+			},
 			...args
 		});
 	}

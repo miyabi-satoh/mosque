@@ -14,7 +14,9 @@ class StrapiSchedules extends StrapiBase<ListResponse, SingleResponse> {
 
 	async getMulti(fetch: Fetch, args: object = {}) {
 		return super.getMulti(fetch, {
-			sort: 'date:desc',
+			sort: {
+				start: 'asc'
+			},
 			...args
 		});
 	}
@@ -26,16 +28,14 @@ class StrapiScheduleDates extends StrapiBase<HeadListResponse, HeadSingleRespons
 	}
 
 	async get(fetch: Fetch, id: number | string, args: object = {}) {
-		return super.get(fetch, id, {
-			populate: '*',
-			...args
-		});
+		return super.get(fetch, id, args);
 	}
 
 	async getMulti(fetch: Fetch, args: object = {}) {
 		return super.getMulti(fetch, {
-			populate: '*',
-			sort: 'date:desc',
+			sort: {
+				date: 'desc'
+			},
 			...args
 		});
 	}
