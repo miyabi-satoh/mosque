@@ -1,4 +1,3 @@
-import qs from 'qs';
 import { apiLinks } from '$lib/api';
 import type { Fetch } from '$lib/api/utils';
 import { normalizeSearch } from '$lib/utils';
@@ -47,8 +46,7 @@ export async function updatePage(fetch: Fetch, params: URLSearchParams) {
 		'pagination[page]': stateCurrentPageNumber,
 		'pagination[pageSize]': pageSize
 	};
-	const query = qs.stringify(objQuery, { encodeValuesOnly: true });
-	const json = await apiLinks.getMulti(fetch, query);
+	const json = await apiLinks.getMulti(fetch, objQuery);
 	const stateLinks = json.data;
 	const stateMeta = json.meta;
 	const pageCount = stateMeta?.pagination?.pageCount || 0;

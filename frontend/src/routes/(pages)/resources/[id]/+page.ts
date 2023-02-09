@@ -13,7 +13,7 @@ type IResource = {
 	mimeType: string;
 };
 
-export const load = (async ({ params, fetch, depends }) => {
+export const load = (async ({ params, fetch }) => {
 	console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts`);
 	// 文書情報を取得する
 	const resource = await apiResources.get(fetch, params.id);
@@ -69,8 +69,6 @@ export const load = (async ({ params, fetch, depends }) => {
 		};
 		resources = [...resources, resource];
 	}
-	// 再読み込み可能にする
-	depends('app:resources');
 
 	console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts ${resources}`);
 	return {

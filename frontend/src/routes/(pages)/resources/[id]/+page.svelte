@@ -1,13 +1,9 @@
 <script lang="ts">
 	import { Alert, Button, P, TabItem, Tabs } from 'flowbite-svelte';
 	import type { PageData } from './$types';
-	import { invalidate } from '$app/navigation';
 
 	export let data: PageData;
 
-	function reload() {
-		invalidate('app:resources');
-	}
 	function handleClickOpen(src: string) {
 		const a = document.createElement('a');
 		a.href = src;

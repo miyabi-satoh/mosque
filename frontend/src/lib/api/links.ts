@@ -1,16 +1,20 @@
 import { StrapiBase } from './strapiBase';
 import type { Fetch } from './utils';
-import type { IStrapiLinkListResponse, IStrapiLinkResponse } from '$models/interfaces';
+import type {
+	IStrapiLinkListResponse as ListResponse,
+	IStrapiLinkResponse as SingleResponse
+} from '$models/interfaces';
 
-type ListResponse = IStrapiLinkListResponse;
-type SingleResponse = IStrapiLinkResponse;
 class StrapiLinks extends StrapiBase<ListResponse, SingleResponse> {
 	constructor() {
 		super('links');
 	}
 
-	async getMulti(fetch: Fetch, args = '') {
-		return super.getMulti(fetch, `sort=order:desc${args ? '&' + args : ''}`);
+	async getMulti(fetch: Fetch, args: object = {}) {
+		return super.getMulti(fetch, {
+			sort: 'order:desc',
+			...args
+		});
 	}
 }
 

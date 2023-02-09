@@ -9,12 +9,19 @@ class StrapiResources extends StrapiBase<ListResponse, SingleResponse> {
 		super('resources');
 	}
 
-	async get(fetch: Fetch, id: number | string, args = ''): Promise<SingleResponse> {
-		return super.get(fetch, id, `populate=*${args ? '&' + args : ''}`);
+	async get(fetch: Fetch, id: number | string, args: object = {}): Promise<SingleResponse> {
+		return super.get(fetch, id, {
+			populate: '*',
+			...args
+		});
 	}
 
-	async getMulti(fetch: Fetch, args = '') {
-		return super.getMulti(fetch, `populate=*&sort=updatedAt:desc${args ? '&' + args : ''}`);
+	async getMulti(fetch: Fetch, args: object = {}) {
+		return super.getMulti(fetch, {
+			populate: '*',
+			sort: 'updatedAt:desc',
+			...args
+		});
 	}
 }
 

@@ -1,15 +1,11 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
 	import {
-		A,
 		ChevronLeft,
 		ChevronRight,
 		Input,
 		P,
 		Pagination,
 		Search,
-		Select,
-		Span,
 		Table,
 		TableBody,
 		TableBodyCell,
