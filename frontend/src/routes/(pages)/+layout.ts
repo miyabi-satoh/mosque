@@ -3,7 +3,7 @@ import { apiPages, strapiUrl } from '$lib/api';
 import type { IBreadcrumbItemParam } from '$models/interfaces';
 
 export const load = (async ({ url, fetch }) => {
-	console.log('load @ frontend/src/routes/(pages)/+layout.ts');
+	// console.log('load @ frontend/src/routes/(pages)/+layout.ts');
 	const paths = url.pathname.split('/');
 	let breadcrumbParams: IBreadcrumbItemParam[] = [];
 	let joinedPath = '';

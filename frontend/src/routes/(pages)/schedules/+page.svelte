@@ -14,22 +14,36 @@
 		TableHeadCell
 	} from 'flowbite-svelte';
 	import { onMount } from 'svelte';
+	import { format, parse } from 'date-fns';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { formatDate } from '$lib/utils';
 	import type { IStrapiScheduleResponse } from '$models/interfaces';
-	import { format, parse } from 'date-fns';
 
 	export let data: PageData;
-
-	let stateSearchTerm = $page.url.searchParams.get('q') ?? '';
-	$: stateCurrentPageNumber = Number($page.url.searchParams.get('p')) ?? 1;
-	$: stateStartDate = Number($page.url.searchParams.get('s')) ?? 1;
-	$: stateEndDate = Number($page.url.searchParams.get('e')) ?? 1;
 	$: stateSchedules = data.schedules.stateSchedules;
 	$: statePageCount = data.schedules.stateMeta?.pagination?.pageCount ?? 0;
 	$: statePages = data.schedules.statePages;
+
+	let stateSearchTerm = $page.url.searchParams.get('q') ?? '';
+	let stateCurrentPageNumber = Number($page.url.searchParams.get('p')) ?? 1;
+	let inputStartDate = dateString($page.url.searchParams.get('s') ?? '', new Date());
+	let inputEndDate = dateString($page.url.searchParams.get('e') ?? '');
+
+	$: stateStartDate = dateString(inputStartDate);
+	$: stateEndDate = dateString(inputEndDate);
+
+	function dateString(dateStr: string, defaultDate: Date | undefined = undefined): string {
+		try {
+			return format(new Date(dateStr), 'yyyy-MM-dd');
+		} catch (err) {
+			if (defaultDate) {
+				return format(defaultDate, 'yyyy-MM-dd');
+			}
+		}
+		return '';
+	}
 
 	async function movePage(page: number) {
 		if (page < 1) {
@@ -38,7 +52,7 @@
 			page = statePageCount;
 		}
 		stateCurrentPageNumber = page;
-		const href = `/schedules?p=${page}&q=${stateSearchTerm}`;
+		const href = `/schedules?p=${page}&q=${stateSearchTerm}&s=${stateStartDate}&e=${stateEndDate}`;
 		await goto(href, {
 			keepFocus: true
 		});
@@ -48,6 +62,9 @@
 	onMount(() => (mounted = true));
 	$: if (mounted) {
 		stateSearchTerm;
+		stateStartDate;
+		stateEndDate;
+		// console.log(stateStartDate, stateEndDate);
 		movePage(1);
 	}
 
@@ -77,7 +94,9 @@
 			bind:value={stateSearchTerm}
 		/>
 		<div class="flex items-center gap-2">
-			<Input type="date" />〜<Input type="date" />
+			<Input type="date" bind:value={inputStartDate} />
+			〜
+			<Input type="date" bind:value={inputEndDate} />
 		</div>
 	</div>
 	{#if stateSchedules && stateSchedules.length > 0}
@@ -96,9 +115,9 @@
 						</TableBodyCell>
 						<TableBodyCell tdClass="px-6 py-4">
 							{#each schedule.attributes.schedules.data as event (event.id)}
-								<P>
+								<p>
 									{formatEvent(event.attributes)}
-								</P>
+								</p>
 							{/each}
 						</TableBodyCell>
 					</TableBodyRow>

@@ -1,35 +1,65 @@
 import type { Fetch } from '$lib/api/utils';
-import type { IStrapiScheduleDateQuery } from '$models/interfaces';
 import { apiScheduleDates } from '$lib/api';
+import { normalizeSearch } from '$lib/utils';
 
 const pageSize = 10;
 const pageRange = 2;
 
 export async function updatePage(fetch: Fetch, params: URLSearchParams) {
 	const stateCurrentPageNumber = Number(params.get('p')) || 1;
+	const stateStartDate = params.get('s') || '';
+	const stateEndDate = params.get('e') || '';
 	const stateSearchTerm = params.get('q') || '';
 
-	let objQuery: IStrapiScheduleDateQuery = {};
-	// const terms = normalizeSearch(stateSearchTerm).split(' ');
-	// terms.forEach((term) => {
-	// const obj = {
-	// 	keyword: {
-	// 		$containsi: term
-	// 	}
-	// };
-	// if (!objQuery.filters) {
-	// 	objQuery.filters = {};
-	// }
-	// if (!objQuery.filters['$and']) {
-	// 	objQuery.filters['$and'] = [] as never;
-	// }
-	// objQuery.filters['$and'] = [...objQuery.filters['$and'], obj] as never;
-	// });
+	const terms = normalizeSearch(stateSearchTerm).split(' ');
+	let filters = [];
+	filters = terms
+		.filter((term) => term)
+		.map((term) => {
+			return {
+				schedules: {
+					keyword: {
+						$contains: term
+					}
+				}
+			};
+		});
 
+	if (stateStartDate) {
+		filters = [
+			...filters,
+			{
+				date: {
+					$gte: stateStartDate
+				}
+			}
+		];
+	}
+	if (stateEndDate) {
+		filters = [
+			...filters,
+			{
+				date: {
+					$lte: stateEndDate
+				}
+			}
+		];
+	}
+
+	let objQuery = {};
+	if (filters.length > 0) {
+		objQuery = {
+			filters: {
+				$and: filters
+			}
+		};
+	}
 	objQuery = {
 		...objQuery,
-		'pagination[page]': stateCurrentPageNumber,
-		'pagination[pageSize]': pageSize
+		pagination: {
+			page: stateCurrentPageNumber,
+			pageSize: pageSize
+		}
 	};
 	const json = await apiScheduleDates.getMulti(fetch, objQuery);
 	const stateSchedules = json.data;
@@ -55,7 +85,7 @@ export async function updatePage(fetch: Fetch, params: URLSearchParams) {
 	for (let i = start; i <= end; i++) {
 		statePages.push({
 			name: `${i}`,
-			href: `/schedules?p=${i}&q=${stateSearchTerm}`,
+			href: `/schedules?p=${i}&q=${stateSearchTerm}&s=${stateStartDate}&e=${stateEndDate}`,
 			active: i == stateCurrentPageNumber
 		});
 	}

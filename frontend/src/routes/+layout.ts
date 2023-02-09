@@ -3,7 +3,7 @@ import type { LayoutLoad } from './$types';
 import { apiPages, strapiUrl } from '$lib/api';
 
 export const load = (async ({ url, fetch }) => {
-	console.log(`load @ frontend/src/routes/+layout.ts`);
+	// console.log(`load @ frontend/src/routes/+layout.ts`);
 	// サイドメニューの項目を読み込み
 	const menuItems = await apiPages.getMenuItems(fetch);
 	// ページ情報を読み込み
@@ -20,7 +20,7 @@ export const load = (async ({ url, fetch }) => {
 				}
 			};
 		}
-		console.log(`${url.pathname} is not in pages`);
+		// console.log(`${url.pathname} is not in pages`);
 		const res = await fetch(strapiUrl(url.pathname.slice(1)));
 		if (res.ok) {
 			const json = await res.json();

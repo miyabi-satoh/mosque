@@ -27,6 +27,9 @@
     },
     "end": {
       "type": "time"
+    },
+    "keyword": {
+      "type": "text"
     }
   }
 }

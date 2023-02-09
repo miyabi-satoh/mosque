@@ -34,7 +34,7 @@ class StrapiScheduleDates extends StrapiBase<HeadListResponse, HeadSingleRespons
 	async getMulti(fetch: Fetch, args: object = {}) {
 		return super.getMulti(fetch, {
 			sort: {
-				date: 'desc'
+				date: 'asc'
 			},
 			...args
 		});

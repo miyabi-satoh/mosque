@@ -6,7 +6,7 @@ export const load = (async ({ url, fetch }) => {
 	// console.log(`load @ frontend/src/routes/(pages)/schedules/+page.ts`);
 	const schedules = await updatePage(fetch, url.searchParams);
 	for (const schedule of schedules.stateSchedules) {
-		console.log(schedule);
+		// console.log(schedule);
 		schedule.attributes.schedules = await apiSchedules.getMulti(fetch, {
 			filters: {
 				schedule_dates: {

@@ -14,7 +14,7 @@ type IResource = {
 };
 
 export const load = (async ({ params, fetch }) => {
-	console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts`);
+	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts`);
 	// 文書情報を取得する
 	const resource = await apiResources.get(fetch, params.id);
 
@@ -53,7 +53,7 @@ export const load = (async ({ params, fetch }) => {
 						lines.push(json.detail);
 					}
 				} catch (err) {
-					console.log(err);
+					// console.log(err);
 				}
 			}
 			text = lines.join('\n');
@@ -70,7 +70,7 @@ export const load = (async ({ params, fetch }) => {
 		resources = [...resources, resource];
 	}
 
-	console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts ${resources}`);
+	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts ${resources}`);
 	return {
 		resources: resources
 	};

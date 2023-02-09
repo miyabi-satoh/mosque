@@ -3730,6 +3730,7 @@ export interface components {
 				 * @example 12:54.000
 				 */
 				end?: string;
+				keyword?: string;
 			};
 		};
 		ScheduleListResponseDataItem: {
@@ -3763,6 +3764,7 @@ export interface components {
 										 * @example 12:54.000
 										 */
 										end?: string;
+										keyword?: string;
 										/** Format: date-time */
 										createdAt?: string;
 										/** Format: date-time */
@@ -3907,6 +3909,7 @@ export interface components {
 				 * @example 12:54.000
 				 */
 				end?: string;
+				keyword?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -3958,6 +3961,7 @@ export interface components {
 										 * @example 12:54.000
 										 */
 										end?: string;
+										keyword?: string;
 										/** Format: date-time */
 										createdAt?: string;
 										/** Format: date-time */
@@ -4102,6 +4106,7 @@ export interface components {
 				 * @example 12:54.000
 				 */
 				end?: string;
+				keyword?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -4164,6 +4169,7 @@ export interface components {
 										 * @example 12:54.000
 										 */
 										end?: string;
+										keyword?: string;
 										/** Format: date-time */
 										createdAt?: string;
 										/** Format: date-time */
@@ -4308,6 +4314,7 @@ export interface components {
 				 * @example 12:54.000
 				 */
 				end?: string;
+				keyword?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -4359,6 +4366,7 @@ export interface components {
 										 * @example 12:54.000
 										 */
 										end?: string;
+										keyword?: string;
 										/** Format: date-time */
 										createdAt?: string;
 										/** Format: date-time */
@@ -4503,6 +4511,7 @@ export interface components {
 				 * @example 12:54.000
 				 */
 				end?: string;
+				keyword?: string;
 				/** Format: date-time */
 				createdAt?: string;
 				/** Format: date-time */
@@ -4679,6 +4688,7 @@ export interface components {
 							 * @example 12:54.000
 							 */
 							end?: string;
+							keyword?: string;
 							/** Format: date-time */
 							createdAt?: string;
 							/** Format: date-time */
@@ -4865,6 +4875,7 @@ export interface components {
 							 * @example 12:54.000
 							 */
 							end?: string;
+							keyword?: string;
 							/** Format: date-time */
 							createdAt?: string;
 							/** Format: date-time */
@@ -5062,6 +5073,7 @@ export interface components {
 							 * @example 12:54.000
 							 */
 							end?: string;
+							keyword?: string;
 							/** Format: date-time */
 							createdAt?: string;
 							/** Format: date-time */
@@ -5248,6 +5260,7 @@ export interface components {
 							 * @example 12:54.000
 							 */
 							end?: string;
+							keyword?: string;
 							/** Format: date-time */
 							createdAt?: string;
 							/** Format: date-time */

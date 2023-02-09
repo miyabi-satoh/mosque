@@ -3,7 +3,7 @@ import { apiResources, apiUrl } from '$lib/api';
 import type { IStrapiAssetResponse } from '$models/interfaces';
 
 export const load = (async ({ fetch }) => {
-	console.log(`frontend/src/routes/(pages)/test/+page.ts`);
+	// console.log(`frontend/src/routes/(pages)/test/+page.ts`);
 	// 文書情報を取得する
 	const resource = await apiResources.get(fetch, 1);
 
@@ -12,7 +12,7 @@ export const load = (async ({ fetch }) => {
 	for (const asset of resource.data.attributes.assets.data) {
 		const blobUrl = apiUrl(`assets/${asset.id}/${asset.attributes.slug}`);
 		const res = await fetch(blobUrl);
-		console.log(res);
+		// console.log(res);
 
 		assets = [...assets, asset];
 	}
