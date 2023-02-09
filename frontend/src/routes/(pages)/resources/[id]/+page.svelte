@@ -1,13 +1,18 @@
 <script lang="ts">
-	import { Alert, P, TabItem, Tabs } from 'flowbite-svelte';
+	import { Alert, Button, P, TabItem, Tabs } from 'flowbite-svelte';
 	import type { PageData } from './$types';
 	import { invalidate } from '$app/navigation';
 
 	export let data: PageData;
-	console.log(data.resources);
 
 	function reload() {
 		invalidate('app:resources');
+	}
+	function handleClickOpen(src: string) {
+		const a = document.createElement('a');
+		a.href = src;
+		a.target = '_blank';
+		a.click();
 	}
 </script>
 
@@ -34,8 +39,14 @@
 						<pre
 							class="text-sm w-full border p-4 whitespace-pre-wrap max-h-80 overflow-y-scroll">{resource.text}</pre>
 					{:else if resource.type == 'img'}
+						<Button class="mb-4" on:click={() => handleClickOpen(resource.blobUrl)}
+							>新しいタブで開く</Button
+						>
 						<img class="w-full border" alt="preview" src={resource.blobUrl} />
 					{:else if resource.type == 'pdf'}
+						<Button class="mb-4" on:click={() => handleClickOpen(resource.blobUrl)}
+							>新しいタブで開く</Button
+						>
 						<object
 							title="pdf"
 							type="application/pdf"

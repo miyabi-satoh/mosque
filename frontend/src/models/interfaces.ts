@@ -59,6 +59,26 @@ export type IStrapiInfoQuery = Partial<
 	DeepNonNullable<paths['/infos']['get']['parameters']>['query']
 >;
 
+export type IStrapiScheduleResponse = DeepNonNullable<
+	paths['/schedules/{id}']['get']['responses']['200']['content']['application/json']
+>;
+export type IStrapiScheduleListResponse = DeepNonNullable<
+	paths['/schedules']['get']['responses']['200']['content']['application/json']
+>;
+export type IStrapiScheduleQuery = Partial<
+	DeepNonNullable<paths['/schedules']['get']['parameters']>['query']
+>;
+
+export type IStrapiScheduleDateResponse = DeepNonNullable<
+	paths['/schedule-dates/{id}']['get']['responses']['200']['content']['application/json']
+>;
+export type IStrapiScheduleDateListResponse = DeepNonNullable<
+	paths['/schedule-dates']['get']['responses']['200']['content']['application/json']
+>;
+export type IStrapiScheduleDateQuery = Partial<
+	DeepNonNullable<paths['/schedule-dates']['get']['parameters']>['query']
+>;
+
 export interface IPageMeta {
 	title: string;
 	description?: string | undefined;

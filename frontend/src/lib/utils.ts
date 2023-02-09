@@ -1,3 +1,6 @@
+import format from 'date-fns/format';
+import ja from 'date-fns/locale/ja';
+
 export function getLocalToken() {
 	return localStorage.getItem('token');
 }
@@ -11,9 +14,8 @@ export function removeLocalToken() {
 }
 
 export function formatDate(dateStr: string) {
-	const dayOfWeeks = '日月火水木金土'.split('');
 	const dt = new Date(dateStr);
-	return `${dt.getFullYear()}年${dt.getMonth()}月${dt.getDate()}日(${dayOfWeeks[dt.getDay()]})`;
+	return format(dt, 'y年M月d日(E)', { locale: ja });
 }
 
 export function normalizeSearch(search: string): string {

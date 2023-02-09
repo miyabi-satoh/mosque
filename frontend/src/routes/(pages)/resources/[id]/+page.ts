@@ -24,16 +24,8 @@ export const load = (async ({ params, fetch, depends }) => {
 		let type: BlobType = 'error';
 		let mimeType = '';
 		let text = '';
-		// let blobUrl = asset.attributes.uri;
-		// let res;
-		// if (blobUrl.startsWith('http')) {
-		// 	res = await fetch(blobUrl, {
-		// 		mode: 'no-cors'
-		// 	});
-		// } else {
 		const blobUrl = apiUrl(`assets/${asset.id}/${asset.attributes.slug}`);
 		const res = await fetch(blobUrl);
-		// }
 		const status = res.status;
 		const blob = await res.blob();
 		if (res.ok) {
@@ -44,7 +36,6 @@ export const load = (async ({ params, fetch, depends }) => {
 				text = await blob.text();
 			}
 		} else {
-			type = 'error';
 			const lines: string[] = [];
 			switch (status) {
 				case 404:
@@ -74,10 +65,8 @@ export const load = (async ({ params, fetch, depends }) => {
 			type,
 			text,
 			blobUrl,
-			// blob,
 			mimeType
 		};
-		// console.log(resource);
 		resources = [...resources, resource];
 	}
 	// 再読み込み可能にする
