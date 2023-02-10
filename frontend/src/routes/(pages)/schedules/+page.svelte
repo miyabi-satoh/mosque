@@ -83,6 +83,14 @@
 		}
 		return event.name;
 	}
+
+	function splitDate(dateString: string) {
+		dateString = formatDate(dateString);
+		const s1 = dateString.slice(0, 5);
+		const s2 = dateString.slice(5, -3);
+		const s3 = dateString.slice(-3);
+		return [s1, s2, s3];
+	}
 </script>
 
 <div class="w-full">
@@ -100,7 +108,7 @@
 		</div>
 	</div>
 	{#if stateSchedules && stateSchedules.length > 0}
-		<Table striped={true} divClass="relative overflow-x-auto">
+		<Table striped={true}>
 			<TableHead
 				class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400"
 			>
@@ -110,10 +118,12 @@
 			<TableBody tableBodyClass="divide-y">
 				{#each stateSchedules as schedule (schedule.id)}
 					<TableBodyRow>
-						<TableBodyCell tdClass="px-6 py-4 w-48">
-							{formatDate(schedule.attributes.date)}
+						<TableBodyCell tdClass="px-4 md:px-6 py-4 whitespace-nowrap">
+							{#each splitDate(schedule.attributes.date) as s, index}
+								<span class={index == 0 ? 'hidden md:inline' : ''}>{s}</span>
+							{/each}
 						</TableBodyCell>
-						<TableBodyCell tdClass="px-6 py-4">
+						<TableBodyCell tdClass="px-4 md:px-6 py-4">
 							{#each schedule.attributes.schedules.data as event (event.id)}
 								<p>
 									{formatEvent(event.attributes)}
