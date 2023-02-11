@@ -2,10 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import {
 		A,
-		ChevronLeft,
-		ChevronRight,
 		P,
-		Pagination,
 		Search,
 		Select,
 		Table,
@@ -19,6 +16,7 @@
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import Pagination from '$lib/Pagination.svelte';
 
 	type ForType = '' | 'forStaff' | 'forTeacher' | 'forStudent';
 	export let data: PageData;
@@ -105,23 +103,11 @@
 		</Table>
 
 		{#if statePageCount > 1}
-			<div class="flex justify-center mt-4">
-				<Pagination
-					bind:pages={statePages}
-					on:previous={() => movePage(stateCurrentPageNumber - 1)}
-					on:next={() => movePage(stateCurrentPageNumber + 1)}
-					icon
-				>
-					<svelte:fragment slot="prev">
-						<span class="sr-only">Previous</span>
-						<ChevronLeft class="w-5 h-5" />
-					</svelte:fragment>
-					<svelte:fragment slot="next">
-						<span class="sr-only">Next</span>
-						<ChevronRight class="w-5 h-5" />
-					</svelte:fragment>
-				</Pagination>
-			</div>
+			<Pagination
+				pages={statePages}
+				on:previous={() => movePage(stateCurrentPageNumber - 1)}
+				on:next={() => movePage(stateCurrentPageNumber + 1)}
+			/>
 		{/if}
 	{:else}
 		<P class="w-full">データがありません</P>
