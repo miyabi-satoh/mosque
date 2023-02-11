@@ -1,4 +1,4 @@
-import type { BlobType } from '$models/interfaces';
+import type { BlobType } from '$schemas';
 
 export function typeDetect(typeStr: string): BlobType {
 	const table: Record<string, BlobType> = {

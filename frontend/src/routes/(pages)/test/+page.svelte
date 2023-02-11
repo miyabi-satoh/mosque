@@ -4,24 +4,7 @@
 	import { mainStore } from '$stores';
 
 	export let data: PageData;
-	let objTest = {};
-
-	objTest = {
-		filters: {
-			hoge: {
-				$eq: 'hoge'
-			}
-		}
-	};
-	objTest = {
-		...objTest,
-		filters: {
-			fuga: {
-				$eq: 'fuga'
-			}
-		}
-	};
-	console.log(objTest);
+	console.log(data);
 </script>
 
 {#if $mainStore.isLoggedIn}

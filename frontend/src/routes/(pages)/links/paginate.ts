@@ -1,7 +1,6 @@
 import { apiLinks } from '$lib/api';
-import type { IStrapiQuery } from '$lib/api/strapiBase';
-import type { Fetch } from '$lib/api/utils';
 import { normalizeSearch } from '$lib/utils';
+import type { Fetch, IStrapiQuery } from '$schemas';
 
 const pageSize = 2; // 1ページに表示する件数
 const pageRange = 2; // ページャーに表示する前後のページ数

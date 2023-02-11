@@ -19,7 +19,7 @@ const config = {
 		alias: {
 			// npm run check すること
 			$lib: path.resolve('./src/lib'),
-			$models: path.resolve('./src/models'),
+			$schemas: path.resolve('./src/schemas'),
 			$stores: path.resolve('./src/stores')
 		},
 		env: {

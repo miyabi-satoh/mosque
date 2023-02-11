@@ -16,7 +16,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { formatDate } from '$lib/utils';
-	// import type { IStrapiScheduleResponse } from '$models/interfaces';
 	import Pagination from '$lib/Pagination.svelte';
 
 	export let data: PageData;

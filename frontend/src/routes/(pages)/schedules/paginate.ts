@@ -1,7 +1,6 @@
-import type { Fetch } from '$lib/api/utils';
 import { apiScheduleDates } from '$lib/api';
 import { normalizeSearch } from '$lib/utils';
-import type { IStrapiQuery } from '$lib/api/strapiBase';
+import type { Fetch, IStrapiQuery } from '$schemas';
 
 const pageSize = 10;
 const pageRange = 2;

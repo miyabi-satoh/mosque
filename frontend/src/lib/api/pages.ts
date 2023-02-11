@@ -1,7 +1,5 @@
-import { StrapiBase, type IStrapiQuery } from './strapiBase';
-import type { Fetch } from './utils';
-import type { DeepNonNullable } from '$models/interfaces';
-import type { paths } from '$models/strapi_schemas';
+import { StrapiBase } from './strapiBase';
+import type { DeepNonNullable, Fetch, IStrapiQuery, paths } from '$schemas';
 
 type SingleResponse = DeepNonNullable<
 	paths['/pages/{id}']['get']['responses']['200']['content']['application/json']

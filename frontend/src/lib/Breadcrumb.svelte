@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
-	import type { IBreadcrumbItemParam } from '$models/interfaces';
+	import type { IBreadcrumbItemParam } from '$schemas';
 
 	export let navClass = 'flex';
 	export let params: IBreadcrumbItemParam[];

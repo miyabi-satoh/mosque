@@ -1,18 +1,7 @@
 import qs from 'qs';
-import { strapiUrl, type Fetch } from './utils';
+import { strapiUrl } from './utils';
+import type { Fetch, IStrapiQuery } from '$schemas';
 
-export interface IStrapiQuery {
-	sort?: string;
-	'pagination[withCount]'?: boolean;
-	'pagination[page]'?: number;
-	'pagination[pageSize]'?: number;
-	'pagination[start]'?: number;
-	'pagination[limit]'?: number;
-	fields?: string;
-	populate?: string;
-	filters?: Record<string, never>;
-	locale?: string;
-}
 export class StrapiBase<ListResponse, SingleResponse> {
 	protected endpoint: string;
 

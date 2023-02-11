@@ -1,5 +1,4 @@
 import { PUBLIC_SERVER_HOST } from '$env/static/public';
-export type Fetch = typeof fetch;
 
 export function apiUrl(url: string) {
 	return `${PUBLIC_SERVER_HOST}/api/v1/${url}`;

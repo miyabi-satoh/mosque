@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import type { IUserProfile } from '$models/interfaces';
 import { removeLocalToken, saveLocalToken } from '$lib/utils';
+import type { IUserProfile } from '$schemas';
 
 export interface AppNotification {
 	content: string;

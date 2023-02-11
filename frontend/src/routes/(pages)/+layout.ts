@@ -1,6 +1,6 @@
 import type { LayoutLoad } from './$types';
 import { apiPages, strapiUrl } from '$lib/api';
-import type { IBreadcrumbItemParam } from '$models/interfaces';
+import type { IBreadcrumbItemParam } from '$schemas';
 
 export const load = (async ({ url, fetch }) => {
 	// console.log('load @ frontend/src/routes/(pages)/+layout.ts');

@@ -1,5 +1,5 @@
-import { apiUrl, type Fetch } from './utils';
-import type { IUserProfile } from '$models/interfaces';
+import { apiUrl } from './utils';
+import type { Fetch, IUserProfile } from '$schemas';
 
 function authHeaders(token: string) {
 	return {
