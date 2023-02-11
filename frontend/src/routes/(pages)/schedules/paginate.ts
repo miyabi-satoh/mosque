@@ -1,6 +1,7 @@
 import type { Fetch } from '$lib/api/utils';
 import { apiScheduleDates } from '$lib/api';
 import { normalizeSearch } from '$lib/utils';
+import type { IStrapiQuery } from '$lib/api/strapiBase';
 
 const pageSize = 10;
 const pageRange = 2;
@@ -11,9 +12,9 @@ export async function updatePage(fetch: Fetch, params: URLSearchParams) {
 	const stateEndDate = params.get('e') || '';
 	const stateSearchTerm = params.get('q') || '';
 
-	const terms = normalizeSearch(stateSearchTerm).split(' ');
 	let filters = [];
-	filters = terms
+	filters = normalizeSearch(stateSearchTerm)
+		.split(' ')
 		.filter((term) => term)
 		.map((term) => {
 			return {
@@ -46,20 +47,18 @@ export async function updatePage(fetch: Fetch, params: URLSearchParams) {
 		];
 	}
 
-	let objQuery = {};
+	let objQuery = {} as IStrapiQuery;
 	if (filters.length > 0) {
 		objQuery = {
 			filters: {
 				$and: filters
-			}
+			} as never
 		};
 	}
 	objQuery = {
 		...objQuery,
-		pagination: {
-			page: stateCurrentPageNumber,
-			pageSize: pageSize
-		}
+		'pagination[page]': stateCurrentPageNumber,
+		'pagination[pageSize]': pageSize
 	};
 	const json = await apiScheduleDates.getMulti(fetch, objQuery);
 	const stateSchedules = json.data;

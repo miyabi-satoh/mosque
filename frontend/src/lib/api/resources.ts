@@ -1,9 +1,15 @@
-import { StrapiBase } from './strapiBase';
+import { StrapiBase, type IStrapiQuery } from './strapiBase';
 import type { Fetch } from './utils';
-import type { IStrapiResourceListResponse, IStrapiResourceResponse } from '$models/interfaces';
+import type { DeepNonNullable } from '$models/interfaces';
+import type { paths } from '$models/strapi_schemas';
 
-type ListResponse = IStrapiResourceListResponse;
-type SingleResponse = IStrapiResourceResponse;
+type SingleResponse = DeepNonNullable<
+	paths['/resources/{id}']['get']['responses']['200']['content']['application/json']
+>;
+type ListResponse = DeepNonNullable<
+	paths['/resources']['get']['responses']['200']['content']['application/json']
+>;
+
 class StrapiResources extends StrapiBase<ListResponse, SingleResponse> {
 	constructor() {
 		super('resources');
@@ -16,13 +22,11 @@ class StrapiResources extends StrapiBase<ListResponse, SingleResponse> {
 		});
 	}
 
-	async getMulti(fetch: Fetch, args: object = {}) {
+	async getMulti(fetch: Fetch, query: IStrapiQuery = {}): Promise<ListResponse> {
 		return super.getMulti(fetch, {
 			populate: '*',
-			sort: {
-				updatedAt: 'desc'
-			},
-			...args
+			sort: 'updatedAt:desc',
+			...query
 		});
 	}
 }

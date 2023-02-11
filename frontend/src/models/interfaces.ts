@@ -1,83 +1,12 @@
 // npx openapi-typescript strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json --output frontend/src/models/strapi_schemas.ts
-import type { paths } from './strapi_schemas';
 
 type Primitive = number | string | boolean | bigint | symbol | undefined | null;
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Builtin = Primitive | Function | Date | Error | RegExp;
 
-type DeepNonNullable<T> = T extends Builtin
+export type DeepNonNullable<T> = T extends Builtin
 	? NonNullable<T>
 	: { [key in keyof T]-?: DeepNonNullable<T[key]> };
-
-export type IStrapiPageResponse = DeepNonNullable<
-	paths['/pages/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiPageListResponse = DeepNonNullable<
-	paths['/pages']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiPageQuery = Partial<
-	DeepNonNullable<paths['/pages']['get']['parameters']>['query']
->;
-
-export type IStrapiLinkResponse = DeepNonNullable<
-	paths['/links/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiLinkListResponse = DeepNonNullable<
-	paths['/links']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiLinkQuery = Partial<
-	DeepNonNullable<paths['/links']['get']['parameters']>['query']
->;
-
-export type IStrapiResourceResponse = DeepNonNullable<
-	paths['/resources/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiResourceListResponse = DeepNonNullable<
-	paths['/resources']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiResourceQuery = Partial<
-	DeepNonNullable<paths['/resources']['get']['parameters']>['query']
->;
-
-export type IStrapiAssetResponse = DeepNonNullable<
-	paths['/assets/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiAssetListResponse = DeepNonNullable<
-	paths['/assets']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiAssetQuery = Partial<
-	DeepNonNullable<paths['/assets']['get']['parameters']>['query']
->;
-
-export type IStrapiInfoResponse = DeepNonNullable<
-	paths['/infos/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiInfoListResponse = DeepNonNullable<
-	paths['/infos']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiInfoQuery = Partial<
-	DeepNonNullable<paths['/infos']['get']['parameters']>['query']
->;
-
-export type IStrapiScheduleResponse = DeepNonNullable<
-	paths['/schedules/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiScheduleListResponse = DeepNonNullable<
-	paths['/schedules']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiScheduleQuery = Partial<
-	DeepNonNullable<paths['/schedules']['get']['parameters']>['query']
->;
-
-export type IStrapiScheduleDateResponse = DeepNonNullable<
-	paths['/schedule-dates/{id}']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiScheduleDateListResponse = DeepNonNullable<
-	paths['/schedule-dates']['get']['responses']['200']['content']['application/json']
->;
-export type IStrapiScheduleDateQuery = Partial<
-	DeepNonNullable<paths['/schedule-dates']['get']['parameters']>['query']
->;
 
 export interface IPageMeta {
 	title: string;

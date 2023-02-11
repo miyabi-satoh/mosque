@@ -1,21 +1,24 @@
-import { StrapiBase } from './strapiBase';
+import { StrapiBase, type IStrapiQuery } from './strapiBase';
 import type { Fetch } from './utils';
-import type {
-	IStrapiLinkListResponse as ListResponse,
-	IStrapiLinkResponse as SingleResponse
-} from '$models/interfaces';
+import type { DeepNonNullable } from '$models/interfaces';
+import type { paths } from '$models/strapi_schemas';
+
+type SingleResponse = DeepNonNullable<
+	paths['/links/{id}']['get']['responses']['200']['content']['application/json']
+>;
+type ListResponse = DeepNonNullable<
+	paths['/links']['get']['responses']['200']['content']['application/json']
+>;
 
 class StrapiLinks extends StrapiBase<ListResponse, SingleResponse> {
 	constructor() {
 		super('links');
 	}
 
-	async getMulti(fetch: Fetch, args: object = {}) {
+	async getMulti(fetch: Fetch, query: IStrapiQuery = {}): Promise<ListResponse> {
 		return super.getMulti(fetch, {
-			sort: {
-				order: 'desc'
-			},
-			...args
+			sort: 'order:desc',
+			...query
 		});
 	}
 }

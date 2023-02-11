@@ -1,44 +1,46 @@
 import { apiLinks } from '$lib/api';
+import type { IStrapiQuery } from '$lib/api/strapiBase';
 import type { Fetch } from '$lib/api/utils';
 import { normalizeSearch } from '$lib/utils';
-import type { IStrapiLinkQuery } from '$models/interfaces';
 
-const pageSize = 10;
-const pageRange = 2;
+const pageSize = 2; // 1ページに表示する件数
+const pageRange = 2; // ページャーに表示する前後のページ数
 
 export async function updatePage(fetch: Fetch, params: URLSearchParams) {
 	const stateCurrentPageNumber = Number(params.get('p')) || 1;
 	const stateSearchTerm = params.get('q') || '';
 	const stateFor = params.get('f') || '';
 
-	let objQuery: IStrapiLinkQuery = {};
-	const terms = normalizeSearch(stateSearchTerm).split(' ');
-	terms.forEach((term) => {
-		const obj = {
-			keyword: {
-				$containsi: term
-			}
-		};
-		if (!objQuery.filters) {
-			objQuery.filters = {};
-		}
-		if (!objQuery.filters['$and']) {
-			objQuery.filters['$and'] = [] as never;
-		}
-		objQuery.filters['$and'] = [...objQuery.filters['$and'], obj] as never;
-	});
-	const objFor: IStrapiLinkQuery = {};
+	let filters = [];
+	filters = normalizeSearch(stateSearchTerm)
+		.split(' ')
+		.filter((term) => term)
+		.map((term) => {
+			return {
+				keyword: {
+					$contains: term
+				}
+			};
+		});
+
 	if (stateFor) {
-		objFor.filters = {};
-		objFor.filters[stateFor] = {
-			$eq: true
-		} as never;
+		filters = [
+			...filters,
+			{
+				stateFor: {
+					$eq: true
+				}
+			}
+		];
 	}
 
-	if (objQuery.filters && objFor.filters) {
-		objQuery.filters['$and'] = [objFor.filters, ...objQuery.filters['$and']] as never;
-	} else if (objFor.filters) {
-		objQuery.filters = { ...objFor.filters };
+	let objQuery = {} as IStrapiQuery;
+	if (filters.length > 0) {
+		objQuery = {
+			filters: {
+				$and: filters
+			}
+		} as never;
 	}
 
 	objQuery = {

@@ -16,7 +16,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { formatDate } from '$lib/utils';
-	import type { IStrapiScheduleResponse } from '$models/interfaces';
+	// import type { IStrapiScheduleResponse } from '$models/interfaces';
 	import Pagination from '$lib/Pagination.svelte';
 
 	export let data: PageData;
@@ -66,20 +66,20 @@
 		movePage(1);
 	}
 
-	function formatEvent(event: IStrapiScheduleResponse['data']['attributes']) {
-		let start = '';
-		if (event.start) {
-			start = format(parse(event.start, 'HH:mm:ss', new Date()), 'H:mm');
+	function formatEvent(name: string, start: string, end: string) {
+		let strStart = '';
+		if (start) {
+			strStart = format(parse(start, 'HH:mm:ss', new Date()), 'H:mm');
 		}
 
-		let end = '';
-		if (event.end) {
-			end = format(parse(event.end, 'HH:mm:ss', new Date()), 'H:mm');
+		let strEnd = '';
+		if (end) {
+			strEnd = format(parse(end, 'HH:mm:ss', new Date()), 'H:mm');
 		}
 		if (start || end) {
-			return `${event.name}(${start || ''}〜${end || ''})`;
+			return `${name}(${strStart}〜${strEnd})`;
 		}
-		return event.name;
+		return name;
 	}
 
 	function splitDate(dateString: string) {
@@ -124,7 +124,7 @@
 						<TableBodyCell tdClass="px-4 md:px-6 py-4">
 							{#each schedule.attributes.schedules.data as event (event.id)}
 								<p>
-									{formatEvent(event.attributes)}
+									{formatEvent(event.attributes.name, event.attributes.start, event.attributes.end)}
 								</p>
 							{/each}
 						</TableBodyCell>

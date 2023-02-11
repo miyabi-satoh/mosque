@@ -1,28 +1,36 @@
-import { StrapiBase } from './strapiBase';
+import { StrapiBase, type IStrapiQuery } from './strapiBase';
 import type { Fetch } from './utils';
-import type {
-	IStrapiScheduleListResponse as ListResponse,
-	IStrapiScheduleResponse as SingleResponse,
-	IStrapiScheduleDateListResponse as HeadListResponse,
-	IStrapiScheduleDateResponse as HeadSingleResponse
-} from '$models/interfaces';
+import type { DeepNonNullable } from '$models/interfaces';
+import type { paths } from '$models/strapi_schemas';
+
+type SingleResponse = DeepNonNullable<
+	paths['/schedules/{id}']['get']['responses']['200']['content']['application/json']
+>;
+type ListResponse = DeepNonNullable<
+	paths['/schedules']['get']['responses']['200']['content']['application/json']
+>;
 
 class StrapiSchedules extends StrapiBase<ListResponse, SingleResponse> {
 	constructor() {
 		super('schedules');
 	}
 
-	async getMulti(fetch: Fetch, args: object = {}) {
+	async getMulti(fetch: Fetch, query: IStrapiQuery = {}) {
 		return super.getMulti(fetch, {
-			sort: {
-				start: 'asc'
-			},
-			...args
+			sort: 'start:asc',
+			...query
 		});
 	}
 }
 
-class StrapiScheduleDates extends StrapiBase<HeadListResponse, HeadSingleResponse> {
+type DateSingleResponse = DeepNonNullable<
+	paths['/schedule-dates/{id}']['get']['responses']['200']['content']['application/json']
+>;
+type DateListResponse = DeepNonNullable<
+	paths['/schedule-dates']['get']['responses']['200']['content']['application/json']
+>;
+
+class StrapiScheduleDates extends StrapiBase<DateListResponse, DateSingleResponse> {
 	constructor() {
 		super('schedule-dates');
 	}
@@ -31,12 +39,10 @@ class StrapiScheduleDates extends StrapiBase<HeadListResponse, HeadSingleRespons
 		return super.get(fetch, id, args);
 	}
 
-	async getMulti(fetch: Fetch, args: object = {}) {
+	async getMulti(fetch: Fetch, query: IStrapiQuery = {}) {
 		return super.getMulti(fetch, {
-			sort: {
-				date: 'asc'
-			},
-			...args
+			sort: 'date:asc',
+			...query
 		});
 	}
 }

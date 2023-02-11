@@ -14,7 +14,7 @@ export const load = (async ({ url, fetch }) => {
 						$eq: schedule.id
 					}
 				}
-			}
+			} as never
 		});
 	}
 

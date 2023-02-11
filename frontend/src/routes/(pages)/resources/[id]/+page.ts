@@ -1,7 +1,12 @@
 import type { PageLoad } from './$types';
 import { typeDetect } from './typeDetect';
 import { apiResources, apiUrl } from '$lib/api';
-import type { BlobType, IStrapiAssetResponse } from '$models/interfaces';
+import type { BlobType, DeepNonNullable } from '$models/interfaces';
+import type { paths } from '$models/strapi_schemas';
+
+type IStrapiAssetResponse = DeepNonNullable<
+	paths['/assets/{id}']['get']['responses']['200']['content']['application/json']
+>;
 
 type IResource = {
 	data: IStrapiAssetResponse['data'];
