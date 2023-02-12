@@ -9,11 +9,11 @@ elseif ($IsMacOS) {
 }
 pip freeze > ./requirements.txt
 
-npx openapi-typescript strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json --output frontend/src/models/strapi_schemas.ts
+npx openapi-typescript strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json --output frontend/src/schemas/strapi_schemas.ts
 
 Set-Location (Join-Path $PSScriptRoot frontend)
 npm run format
-$TARGET = "src/models/strapi_schemas.ts"
+$TARGET = "src/schemas/strapi_schemas.ts"
 $ENCODING = "UTF8"
 (Get-Content $TARGET -Encoding $ENCODING) | `
   ForEach-Object { $_ -replace "responses: {};", "responses: object;" } | `
