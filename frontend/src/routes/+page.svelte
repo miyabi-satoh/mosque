@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
 	import { formatDate } from '$lib/utils';
 	import Markdown from '$lib/Markdown.svelte';
@@ -10,31 +9,31 @@
 	$: latestInfo = data.latestInfo;
 </script>
 
-<div
-	class="prose relative  overflow-hidden mt-24 lg:mb-8 mx-auto 2xl:px-8 text-center lg:text-left"
->
+<div class="relative  overflow-hidden mt-24 lg:mb-8 mx-auto 2xl:px-8 text-center lg:text-left">
 	<h1>{pageMeta.title}</h1>
 	{#if pageMeta.description}
 		<p class="w-full my-8">{pageMeta.description}</p>
 	{/if}
 </div>
 {#if latestInfo.meta.pagination.total > 0}
-	<div class="prose max-w-none my-8 rounded-xl border p-2 sm:p-6">
-		<p>{formatDate(latestInfo.data[0].attributes.updatedAt)}</p>
-		<h2>{latestInfo.data[0].attributes.title}</h2>
-		<Markdown divClass="mt-2 prose" source={latestInfo.data[0].attributes.text} />
+	<div class="max-w-none my-8 rounded-xl border-2 border-base-200 p-6">
+		<div>{formatDate(latestInfo.data[0].attributes.updatedAt)}</div>
+		<h2 class="my-0">{latestInfo.data[0].attributes.title}</h2>
+		<Markdown divClass="mt-2" source={latestInfo.data[0].attributes.text} />
 	</div>
 {/if}
-<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 not-prose">
 	{#each menuItems.data as menuItem (menuItem.id)}
-		<div class="card card-compact border rounded-xl shadow-lg">
-			<a class="card-title link px-4 pt-4" href={menuItem.attributes.url}>
+		<a
+			class="card card-compact border-2 border-base-200 bg-white/5 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
+			href={menuItem.attributes.url}
+		>
+			<div class="card-title px-4 pt-4">
 				<h3>{menuItem.attributes.title}</h3>
-				<Icon icon="mdi:external-link" height="auto" />
-			</a>
+			</div>
 			<div class="card-body">
 				{menuItem.attributes.description}
 			</div>
-		</div>
+		</a>
 	{/each}
 </div>

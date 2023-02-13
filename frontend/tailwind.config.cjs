@@ -13,13 +13,7 @@ const config = {
 		require('@tailwindcss/line-clamp'),
 		require('flowbite/plugin'),
 		require('daisyui')
-	],
-
-	// darkMode: 'class',
-
-	daisyui: {
-		themes: ['fantasy', 'night']
-	}
+	]
 };
 
 module.exports = config;
