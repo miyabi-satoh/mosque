@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { Card, Heading, P, Span } from 'flowbite-svelte';
 	import type { PageData } from './$types';
 	import { formatDate } from '$lib/utils';
 	import Markdown from '$lib/Markdown.svelte';
@@ -12,35 +11,30 @@
 </script>
 
 <div
-	class="relative bg-white overflow-hidden mt-24 lg:mb-8 mx-auto dark:bg-gray-900 2xl:px-8 text-center lg:text-left"
+	class="prose relative  overflow-hidden mt-24 lg:mb-8 mx-auto 2xl:px-8 text-center lg:text-left"
 >
-	<Heading tag="h1" customSize="text-4xl font-extrabold">{pageMeta.title}</Heading>
+	<h1>{pageMeta.title}</h1>
 	{#if pageMeta.description}
-		<P class="w-full my-8">{pageMeta.description}</P>
+		<p class="w-full my-8">{pageMeta.description}</p>
 	{/if}
 </div>
 {#if latestInfo.meta.pagination.total > 0}
-	<div class="my-8 rounded-xl border border-gray-200 dark:border-gray-700 p-2 sm:p-6">
-		<P color="text-gray-500 dark:text-gray-400" size="sm"
-			>{formatDate(latestInfo.data[0].attributes.updatedAt)}</P
-		>
-		<Heading tag="h2" customSize="text-xl font-bold">{latestInfo.data[0].attributes.title}</Heading>
-		<Markdown divClass="mt-2" source={latestInfo.data[0].attributes.text} />
+	<div class="prose max-w-none my-8 rounded-xl border p-2 sm:p-6">
+		<p>{formatDate(latestInfo.data[0].attributes.updatedAt)}</p>
+		<h2>{latestInfo.data[0].attributes.title}</h2>
+		<Markdown divClass="mt-2 prose" source={latestInfo.data[0].attributes.text} />
 	</div>
 {/if}
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
 	{#each menuItems.data as menuItem (menuItem.id)}
-		<Card padding="none" href={menuItem.attributes.url} size="xl">
-			<P
-				class="rounded-t-md py-2.5 px-5 flex justify-between items-center border-b border-gray-200 dark:border-gray-600"
-			>
-				<Heading tag="h5" class="text-gray-500 dark:text-white">{menuItem.attributes.title}</Heading
-				>
-				<Span><Icon icon="mdi:external-link" height="auto" /></Span>
-			</P>
-			<P class="m-4">
+		<div class="card card-compact border rounded-xl shadow-lg">
+			<a class="card-title link px-4 pt-4" href={menuItem.attributes.url}>
+				<h3>{menuItem.attributes.title}</h3>
+				<Icon icon="mdi:external-link" height="auto" />
+			</a>
+			<div class="card-body">
 				{menuItem.attributes.description}
-			</P>
-		</Card>
+			</div>
+		</div>
 	{/each}
 </div>

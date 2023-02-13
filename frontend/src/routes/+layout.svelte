@@ -6,14 +6,10 @@
 		NavUl,
 		// NavHamburger,
 		Span,
-		DarkMode,
 		Sidebar,
 		SidebarGroup,
 		SidebarItem,
 		SidebarWrapper,
-		// Footer,
-		// FooterCopyright,
-		Button,
 		Dropdown,
 		DropdownItem,
 		DropdownDivider,
@@ -23,6 +19,7 @@
 	import { sineIn } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import { themeChange } from 'theme-change';
 	import type { LayoutData } from './$types';
 	import Footer from './footer.svelte';
 	import { page } from '$app/stores';
@@ -85,6 +82,7 @@
 
 	onMount(async () => {
 		mql = createMediaQueryStore('(min-width: 1024px)');
+		themeChange(false);
 
 		await checkLoggedIn();
 	});
@@ -97,10 +95,7 @@
 		navClass="px-2 py-2 fixed w-full mx-auto z-20 top-0 left-0 border-b"
 		navDivClass="mx-auto flex flex-wrap items-center"
 	>
-		<button
-			class="mx-2 hover:text-gray-900 text-gray-500 dark:text-gray-400 dark:hover:text-white  hover:bg-gray-100 dark:hover:bg-gray-600 ml-3 lg:hidden"
-			on:click={() => (hiddenMainMenu = false)}
-		>
+		<button class="mx-2 ml-3 lg:hidden" on:click={() => (hiddenMainMenu = false)}>
 			<span class="sr-only">Open main menu</span>
 			<Icon icon="mdi:apps" height="46" />
 		</button>
@@ -123,10 +118,11 @@
 					<DropdownItem on:click={removeLogin}>ログアウト</DropdownItem>
 				</Dropdown>
 			{:else}
-				<Button size="sm" on:click={() => (openLoginModal = true)}>ログイン</Button>
+				<button class="btn btn-primary" on:click={() => (openLoginModal = true)}>ログイン</button>
 			{/if}
 			<LoginModal bind:open={openLoginModal} />
-			<DarkMode class="ml-2" />
+			<button data-toggle-theme="night,fantasy" data-act-class="ACTIVECLASS">TEST</button>
+			<!-- <DarkMode class="ml-2" /> -->
 			<!-- <NavHamburger on:click={toggle} /> -->
 		</div>
 		<!-- <NavUl {hidden} class="order-1">
@@ -151,13 +147,13 @@
 		activateClickOutside={!fixedMainMenu}
 		bind:hidden={hiddenMainMenu}
 		id="sidebar"
-		divClass="overflow-y-auto z-50 p-4 bg-gray-50 dark:bg-gray-800"
+		divClass="overflow-y-auto z-50 p-4 "
 		leftOffset="left-0 lg:top-14 h-screen pb-32"
 		width="w-64"
 		backdrop={false}
 	>
 		<div class="flex items-center">
-			<CloseButton on:click={() => (hiddenMainMenu = true)} class="dark:text-white lg:hidden" />
+			<CloseButton on:click={() => (hiddenMainMenu = true)} class=" lg:hidden" />
 		</div>
 		<Sidebar asideClass="w-54">
 			<SidebarWrapper>
