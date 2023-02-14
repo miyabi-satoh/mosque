@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Heading, P } from 'flowbite-svelte';
 	import type { LayoutData } from './$types';
 	import Breadcrumb from '$lib/Breadcrumb.svelte';
 
@@ -11,10 +10,10 @@
 	<div class="container flex flex-wrap mx-auto">
 		<Breadcrumb params={data.breadcrumbParams} navClass="flex pt-16 py-8" />
 		{#if pageMeta.title}
-			<Heading tag="h1" customSize="text-3xl" class="w-full mb-2">{pageMeta.title}</Heading>
+			<h1>{pageMeta.title}</h1>
 		{/if}
 		{#if pageMeta.description}
-			<P class="w-full mb-8">{pageMeta.description}</P>
+			<div>{pageMeta.description}</div>
 		{/if}
 		<slot />
 	</div>

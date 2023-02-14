@@ -126,7 +126,7 @@
 				<LoginModal bind:open={openLoginModal} />
 			</div>
 		</nav>
-		<main class="prose px-4">
+		<main class="prose w-full max-w-4xl px-4">
 			<slot />
 		</main>
 		<div class="bg-base-content/10 h-px my-6" />
@@ -142,12 +142,12 @@
 	<div class="drawer-side">
 		<label for="drawer" class="drawer-overlay" />
 		<aside class="bg-base-200 w-64">
-			<div class="flex justify-end">
+			<div class="flex justify-end lg:hidden">
 				<label for="drawer" class="btn btn-sm btn-circle drawer-button m-4">
 					<Icon icon="mdi:close" />
 				</label>
 			</div>
-			<ul class="menu">
+			<ul class="menu lg:mt-12">
 				{#each menuItems.data as menuItem (menuItem.id)}
 					<li>
 						<a
