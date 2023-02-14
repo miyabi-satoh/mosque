@@ -73,11 +73,13 @@
 	<input id="drawer" type="checkbox" class="drawer-toggle" />
 	<div class="drawer-content">
 		<nav class="navbar">
-			<div class="flex flex-1">
-				<label for="drawer" class="btn btn-square btn-ghost drawer-button mx-4 lg:hidden">
+			<div class="flex flex-1 gap-2">
+				<label for="drawer" class="btn btn-square btn-ghost drawer-button lg:hidden">
 					<Icon icon="mdi:apps" height="46" />
 				</label>
-				<a href="/" class="text-xl font-semibold">MOSQUE</a>
+				<a href="/" class="btn btn-ghost lg:hidden">
+					<span class="text-lg md:text-3xl text-primary uppercase">MOSQUE</span>
+				</a>
 			</div>
 			<div class="flex flex-none gap-2">
 				{#if $mainStore.isLoggedIn}
@@ -142,12 +144,19 @@
 	<div class="drawer-side">
 		<label for="drawer" class="drawer-overlay" />
 		<aside class="bg-base-200 w-64">
-			<div class="flex justify-end lg:hidden">
-				<label for="drawer" class="btn btn-sm btn-circle drawer-button m-4">
-					<Icon icon="mdi:close" />
-				</label>
+			<div class="z-20 sticky top-0 px-4 py-2">
+				<div class="flex justify-end lg:hidden">
+					<label for="drawer" class="btn btn-sm btn-circle drawer-button m-4">
+						<Icon icon="mdi:close" />
+					</label>
+				</div>
+				<div class="hidden lg:block">
+					<a href="/" class="btn btn-ghost px-2">
+						<span class="text-lg md:text-3xl text-primary uppercase">MOSQUE</span>
+					</a>
+				</div>
 			</div>
-			<ul class="menu lg:mt-12">
+			<ul class="menu px-4 lg:mt-6">
 				{#each menuItems.data as menuItem (menuItem.id)}
 					<li>
 						<a
