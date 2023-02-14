@@ -1,16 +1,25 @@
 <script lang="ts">
-	import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
 	import type { IBreadcrumbItemParam } from '$schemas';
+	import Icon from '@iconify/svelte';
 
-	export let navClass = 'flex';
 	export let params: IBreadcrumbItemParam[];
 </script>
 
-<Breadcrumb {navClass}>
-	{#each params as param, index}
-		<BreadcrumbItem
-			home={param.href == '/'}
-			href={index == params.length - 1 ? undefined : param.href}>{param.name}</BreadcrumbItem
-		>
-	{/each}
-</Breadcrumb>
+<div class="text-sm breadcrumbs not-prose mb-8">
+	<ul>
+		{#each params as { href, name }, index}
+			<li>
+				{#if index == params.length - 1}
+					{name}
+				{:else}
+					<a {href} class="link link-hover">
+						{#if href == '/'}
+							<Icon icon="mdi:home" class="mr-2" />
+						{/if}
+						{name}
+					</a>
+				{/if}
+			</li>
+		{/each}
+	</ul>
+</div>

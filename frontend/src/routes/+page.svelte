@@ -9,7 +9,7 @@
 	$: latestInfo = data.latestInfo;
 </script>
 
-<div class="relative  overflow-hidden mt-24 lg:mb-8 mx-auto 2xl:px-8 text-center lg:text-left">
+<div class="mt-24 lg:mb-8 2xl:px-8 text-center lg:text-left">
 	<h1>{pageMeta.title}</h1>
 	{#if pageMeta.description}
 		<p class="w-full my-8">{pageMeta.description}</p>
