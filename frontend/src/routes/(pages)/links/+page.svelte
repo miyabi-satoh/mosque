@@ -1,17 +1,4 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
-	import {
-		A,
-		P,
-		Search,
-		Select,
-		Table,
-		TableBody,
-		TableBodyCell,
-		TableBodyRow,
-		TableHead,
-		TableHeadCell
-	} from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
@@ -21,10 +8,6 @@
 	type ForType = '' | 'forStaff' | 'forTeacher' | 'forStudent';
 	export let data: PageData;
 
-	// let inputSearchTerm = $page.url.searchParams.get('q') ?? '';
-	// let inputFor = ($page.url.searchParams.get('f') ?? '') as ForType;
-	// let stateSearchTerm = inputSearchTerm;
-	// let stateFor = inputFor;
 	let stateSearchTerm = $page.url.searchParams.get('q') ?? '';
 	let stateFor = ($page.url.searchParams.get('f') ?? '') as ForType;
 	$: stateCurrentPageNumber = Number($page.url.searchParams.get('p')) ?? 1;
@@ -59,57 +42,44 @@
 		stateFor;
 		movePage(1);
 	}
-
-	// console.log(`frontend/src/routes/(pages)/links/+page.svelte`);
 </script>
 
-<div class="w-full">
-	<div class="py-4 flex flex-col md:flex-row gap-2">
-		<Search
-			size="md"
-			class="flex flex-1 gap-2 items-center"
-			placeholder="Search keywords..."
-			bind:value={stateSearchTerm}
-		/>
-		<Select class="!w-auto" placeholder="" bind:value={stateFor}>
-			{#each filters as { value, name }}
-				<option selected={value == stateFor} {value}>{name}</option>
-			{/each}
-		</Select>
-	</div>
-	{#if stateLinks && stateLinks.length > 0}
-		<Table striped={true} divClass="relative overflow-x-auto">
-			<TableHead
-				class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400"
-			>
-				<TableHeadCell>Title</TableHeadCell>
-				<TableHeadCell>Description</TableHeadCell>
-			</TableHead>
-			<TableBody tableBodyClass="divide-y">
-				{#each stateLinks as link (link.id)}
-					<TableBodyRow>
-						<TableBodyCell>
-							<A target="_blank" href={link.attributes?.url}>
-								<span class="mr-2">{link.attributes?.title}</span>
-								<Icon icon="mdi:external-link" />
-							</A></TableBodyCell
-						>
-						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{link.attributes?.description}</TableBodyCell
-						>
-					</TableBodyRow>
-				{/each}
-			</TableBody>
-		</Table>
+<div class="py-4 flex flex-col md:flex-row gap-2">
+	<input type="text" placeholder="Search keywords..." class="input input-bordered flex-1" />
+	<select class="select select-bordered flex-none">
+		{#each filters as { value, name }}
+			<option selected={value == stateFor} {value}>{name}</option>
+		{/each}
+	</select>
+</div>
 
-		{#if statePageCount > 1}
+{#if stateLinks && stateLinks.length > 0}
+	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
+		{#each stateLinks as link (link.id)}
+			<a
+				class="card card-compact border-2 border-base-200 bg-white/5 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
+				href={link.attributes.url}
+				target="_blank"
+				rel="noreferrer"
+			>
+				<div class="card-title px-4 pt-4">
+					<h3>{link.attributes.title}</h3>
+				</div>
+				<div class="card-body">
+					{link.attributes.description}
+				</div>
+			</a>
+		{/each}
+	</div>
+	{#if statePageCount > 1}
+		<div class="flex justify-center my-4">
 			<Pagination
 				pages={statePages}
 				on:previous={() => movePage(stateCurrentPageNumber - 1)}
 				on:next={() => movePage(stateCurrentPageNumber + 1)}
 			/>
-		{/if}
-	{:else}
-		<P class="w-full">データがありません</P>
+		</div>
 	{/if}
-</div>
+{:else}
+	<p>データがありません</p>
+{/if}

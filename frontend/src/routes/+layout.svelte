@@ -11,6 +11,11 @@
 	let username = '';
 	let password = '';
 	let toggleLogin = false;
+	$: if (toggleLogin) {
+		setTimeout(() => {
+			window.document.getElementById('username')?.focus();
+		}, 100);
+	}
 
 	let theme: string;
 	export let data: LayoutData;
@@ -205,7 +210,7 @@
 </div>
 
 <!-- Put this part before </body> tag -->
-<input type="checkbox" id="login" class="modal-toggle" />
+<input type="checkbox" id="login" class="modal-toggle" bind:checked={toggleLogin} />
 <div class="modal">
 	<form class="modal-box relative" action="#" on:submit|preventDefault={handleSubmitLogin}>
 		<label for="login" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>

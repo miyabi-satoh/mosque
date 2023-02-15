@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { IBreadcrumbItemParam } from '$schemas';
 	import Icon from '@iconify/svelte';
+	import type { IBreadcrumbItemParam } from '$schemas';
 
 	export let params: IBreadcrumbItemParam[];
 </script>
