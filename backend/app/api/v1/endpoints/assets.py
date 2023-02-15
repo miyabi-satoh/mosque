@@ -54,7 +54,7 @@ async def read_file(
                 return FileResponse(filepath, filename=os.path.basename(filepath), content_disposition_type="inline")
 
         # ファイルをダウンロードして保存
-        response = requests.get(asset.uri, stream=True)
+        response = requests.get(asset.uri)
         if response.status_code == requests.codes.ok:
             if "Content-Disposition" in response.headers.keys():
                 filename = re.findall(
@@ -64,10 +64,7 @@ async def read_file(
 
             filepath = os.path.join(dir, filename)
             with open(filepath, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
-                        f.flush()
+                f.write(response.content)
 
             print(filepath)
             if os.path.isfile(filepath):
