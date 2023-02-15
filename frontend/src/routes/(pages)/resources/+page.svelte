@@ -1,14 +1,6 @@
 <script lang="ts">
-	import {
-		A,
-		P,
-		TableBody,
-		TableBodyCell,
-		TableBodyRow,
-		TableHead,
-		TableHeadCell,
-		TableSearch
-	} from 'flowbite-svelte';
+	
+	
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 
@@ -27,34 +19,34 @@
 	}
 </script>
 
-<div class="w-full">
-	{#if resourcesMeta.pagination.total > 0}
-		<TableSearch
-			striped={true}
-			placeholder="Search keywords..."
-			hoverable={true}
-			bind:inputValue={searchTerm}
-			divClass="relative overflow-x-auto"
-		>
-			<TableHead>
-				<TableHeadCell>Title</TableHeadCell>
-				<TableHeadCell>Items</TableHeadCell>
-			</TableHead>
-			<TableBody tableBodyClass="divide-y">
-				{#each filterdItems as resource (resource.id)}
-					<TableBodyRow>
-						<TableBodyCell
-							><A href="{$page.url.pathname}/{resource.id}">{resource.attributes.title}</A
-							></TableBodyCell
-						>
-						<TableBodyCell tdClass="px-6 py-4 lg:whitespace-nowrap"
-							>{resource.attributes.assets.data.length}</TableBodyCell
-						>
-					</TableBodyRow>
-				{/each}
-			</TableBody>
-		</TableSearch>
-	{:else}
-		<P class="w-full">データがありません</P>
-	{/if}
+<div class="py-4 flex flex-col md:flex-row gap-2">
+	<input
+		bind:value={searchTerm}
+		type="text"
+		placeholder="Search keywords..."
+		class="input input-bordered flex-1"
+	/>
 </div>
+
+{#if resourcesMeta.pagination.total > 0}
+	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
+		{#each filterdItems as resource (resource.id)}
+			<a
+				class="card card-compact border-2 border-base-200 bg-white/5 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
+				href="{$page.url.pathname}/{resource.id}"
+			>
+				<div class="card-body">
+					<h3 class="card-title">{resource.attributes.title}</h3>
+					<p>{resource.attributes.description ?? ''}</p>
+					<div class="card-actions">
+						{#each resource.attributes.assets.data as asset}
+							<div class="badge badge-outline">{asset.attributes.slug}</div>
+						{/each}
+					</div>
+				</div>
+			</a>
+		{/each}
+	</div>
+{:else}
+	<p>データがありません</p>
+{/if}

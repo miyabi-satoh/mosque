@@ -86,6 +86,10 @@
 		window.document.documentElement.setAttribute('data-theme', theme);
 	}
 
+	function handleToggleDrawer() {
+		window.document.getElementById('drawer')?.click();
+	}
+
 	onMount(async () => {
 		theme = window.document.documentElement.getAttribute('data-theme') ?? '';
 
@@ -114,7 +118,7 @@
 						<Icon icon="mdi:apps" height="46" />
 					</label>
 					<a href="/" class="btn btn-ghost lg:hidden">
-						<span class="text-lg md:text-3xl text-primary uppercase">MOSQUE</span>
+						<span class="text-lg md:text-3xl text-base-content uppercase">MOSQUE</span>
 					</a>
 				</div>
 				<div class="flex flex-none gap-2">
@@ -191,7 +195,7 @@
 				</div>
 				<div class="hidden lg:block">
 					<a href="/" class="btn btn-ghost px-2">
-						<span class="text-lg md:text-3xl text-primary uppercase">MOSQUE</span>
+						<span class="text-lg md:text-3xl text-base-content uppercase">MOSQUE</span>
 					</a>
 				</div>
 			</div>
@@ -200,7 +204,10 @@
 					<li>
 						<a
 							class={activeUrl === menuItem.attributes.url ? 'active' : ''}
-							href={menuItem.attributes.url}>{menuItem.attributes.title}</a
+							href={menuItem.attributes.url}
+							on:click={handleToggleDrawer}
+						>
+							{menuItem.attributes.title}</a
 						>
 					</li>
 				{/each}

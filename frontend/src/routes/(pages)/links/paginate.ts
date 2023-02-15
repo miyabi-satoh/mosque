@@ -2,7 +2,7 @@ import { apiLinks } from '$lib/api';
 import { normalizeSearch } from '$lib/utils';
 import type { Fetch, IStrapiQuery } from '$schemas';
 
-const pageSize = 2; // 1ページに表示する件数
+const pageSize = 10; // 1ページに表示する件数
 const pageRange = 2; // ページャーに表示する前後のページ数
 
 export async function updatePage(fetch: Fetch, params: URLSearchParams) {

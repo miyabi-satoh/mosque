@@ -1,18 +1,10 @@
 <script lang="ts">
-	import {
-		Input,
-		P,
-		Search,
-		Table,
-		TableBody,
-		TableBodyCell,
-		TableBodyRow,
-		TableHead,
-		TableHeadCell
-	} from 'flowbite-svelte';
+	
+	
 	import { onMount } from 'svelte';
 	import { format, parse } from 'date-fns';
 	import type { PageData } from './$types';
+	import ScheduleItem from './ScheduleItem.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { formatDate } from '$lib/utils';
@@ -80,66 +72,45 @@
 		}
 		return name;
 	}
-
-	function splitDate(dateString: string) {
-		dateString = formatDate(dateString);
-		const s1 = dateString.slice(0, 5);
-		const s2 = dateString.slice(5, -3);
-		const s3 = dateString.slice(-3);
-		return [s1, s2, s3];
-	}
 </script>
 
-<div class="w-full">
-	<div class="py-4 flex flex-col md:flex-row gap-2">
-		<Search
-			size="md"
-			class="flex flex-1 gap-2 items-center"
-			placeholder="Search keywords..."
-			bind:value={stateSearchTerm}
-		/>
-		<div class="flex items-center gap-2">
-			<Input type="date" bind:value={inputStartDate} />
-			〜
-			<Input type="date" bind:value={inputEndDate} />
-		</div>
+<div class="py-4 flex flex-col md:flex-row gap-2">
+	<input
+		bind:value={stateSearchTerm}
+		type="text"
+		placeholder="Search keywords..."
+		class="input input-bordered flex-1"
+	/>
+	<div class="flex items-center gap-2">
+		<input class="input input-bordered" type="date" bind:value={inputStartDate} />
+		〜
+		<input class="input input-bordered" type="date" bind:value={inputEndDate} />
 	</div>
-	{#if stateSchedules && stateSchedules.length > 0}
-		<Table striped={true}>
-			<TableHead
-				class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400"
-			>
-				<TableHeadCell>Date</TableHeadCell>
-				<TableHeadCell>Events</TableHeadCell>
-			</TableHead>
-			<TableBody tableBodyClass="divide-y">
-				{#each stateSchedules as schedule (schedule.id)}
-					<TableBodyRow>
-						<TableBodyCell tdClass="px-4 md:px-6 py-4 whitespace-nowrap">
-							{#each splitDate(schedule.attributes.date) as s, index}
-								<span class={index == 0 ? 'hidden md:inline' : ''}>{s}</span>
-							{/each}
-						</TableBodyCell>
-						<TableBodyCell tdClass="px-4 md:px-6 py-4">
-							{#each schedule.attributes.schedules.data as event (event.id)}
-								<p>
-									{formatEvent(event.attributes.name, event.attributes.start, event.attributes.end)}
-								</p>
-							{/each}
-						</TableBodyCell>
-					</TableBodyRow>
-				{/each}
-			</TableBody>
-		</Table>
-
-		{#if statePageCount > 1}
+</div>
+{#if stateSchedules && stateSchedules.length > 0}
+	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 not-prose">
+		{#each stateSchedules as schedule (schedule.id)}
+			<div class="card card-compact border-2 border-base-200 bg-white/5 hover:bg-gray-300/10">
+				<div class="card-body">
+					<h3 class="card-title">{formatDate(schedule.attributes.date)}</h3>
+					<div>
+						{#each schedule.attributes.schedules.data as event (event.id)}
+							<ScheduleItem {...event.attributes} />
+						{/each}
+					</div>
+				</div>
+			</div>
+		{/each}
+	</div>
+	{#if statePageCount > 1}
+		<div class="flex justify-center my-4">
 			<Pagination
 				pages={statePages}
 				on:previous={() => movePage(stateCurrentPageNumber - 1)}
 				on:next={() => movePage(stateCurrentPageNumber + 1)}
 			/>
-		{/if}
-	{:else}
-		<P class="w-full">データがありません</P>
+		</div>
 	{/if}
-</div>
+{:else}
+	<p>データがありません</p>
+{/if}

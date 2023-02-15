@@ -45,8 +45,13 @@
 </script>
 
 <div class="py-4 flex flex-col md:flex-row gap-2">
-	<input type="text" placeholder="Search keywords..." class="input input-bordered flex-1" />
-	<select class="select select-bordered flex-none">
+	<input
+		bind:value={stateSearchTerm}
+		type="text"
+		placeholder="Search keywords..."
+		class="input input-bordered flex-1"
+	/>
+	<select bind:value={stateFor} class="select select-bordered flex-none">
 		{#each filters as { value, name }}
 			<option selected={value == stateFor} {value}>{name}</option>
 		{/each}
@@ -62,11 +67,9 @@
 				target="_blank"
 				rel="noreferrer"
 			>
-				<div class="card-title px-4 pt-4">
-					<h3>{link.attributes.title}</h3>
-				</div>
 				<div class="card-body">
-					{link.attributes.description}
+					<h3 class="card-title">{link.attributes.title}</h3>
+					<p>{link.attributes.description}</p>
 				</div>
 			</a>
 		{/each}

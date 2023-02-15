@@ -9,7 +9,7 @@
 	$: latestInfo = data.latestInfo;
 </script>
 
-<div class="mt-24 lg:mb-8 2xl:px-8 text-center lg:text-left">
+<div class="my-8 text-center lg:text-left">
 	<h1>{pageMeta.title}</h1>
 	{#if pageMeta.description}
 		<p class="w-full my-8">{pageMeta.description}</p>
@@ -22,17 +22,17 @@
 		<Markdown divClass="mt-2" source={latestInfo.data[0].attributes.text} />
 	</div>
 {/if}
-<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 not-prose">
+<div class="my-8 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
 	{#each menuItems.data as menuItem (menuItem.id)}
 		<a
 			class="card card-compact border-2 border-base-200 bg-white/5 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
 			href={menuItem.attributes.url}
 		>
-			<div class="card-title px-4 pt-4">
-				<h3>{menuItem.attributes.title}</h3>
-			</div>
 			<div class="card-body">
-				{menuItem.attributes.description}
+				<h3 class="card-title">
+					{menuItem.attributes.title}
+				</h3>
+				<p>{menuItem.attributes.description}</p>
 			</div>
 		</a>
 	{/each}
