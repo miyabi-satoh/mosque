@@ -12,3 +12,4 @@ logs
 export_*.json
 strapi/src/extensions/documentation/public/index.html
 strapi/src/extensions/documentation/documentation/1.0.0/full_documentation.json
+cache

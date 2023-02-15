@@ -1,6 +1,4 @@
 <script lang="ts">
-	
-	
 	import { onMount } from 'svelte';
 	import { format, parse } from 'date-fns';
 	import type { PageData } from './$types';
@@ -95,7 +93,11 @@
 					<h3 class="card-title">{formatDate(schedule.attributes.date)}</h3>
 					<div>
 						{#each schedule.attributes.schedules.data as event (event.id)}
-							<ScheduleItem {...event.attributes} />
+							<ScheduleItem
+								name={event.attributes.name}
+								start={event.attributes.start}
+								end={event.attributes.end}
+							/>
 						{/each}
 					</div>
 				</div>

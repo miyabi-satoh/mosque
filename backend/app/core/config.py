@@ -4,13 +4,14 @@ from typing import Any, Dict, List, Union
 from pydantic import AnyHttpUrl, BaseSettings, HttpUrl, PostgresDsn, validator
 # from pydantic import AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, validator
 
-
-envPath = os.path.abspath(os.path.join(
-    __file__, os.pardir, os.pardir, os.pardir, os.pardir, '.env'))
+pjRoot = os.path.abspath(os.path.join(
+    __file__, os.pardir, os.pardir, os.pardir, os.pardir))
+envPath = os.path.join(pjRoot, '.env')
 # print(envPath)
 
 
 class Settings(BaseSettings):
+    PJROOT: str = pjRoot
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
@@ -22,7 +23,7 @@ class Settings(BaseSettings):
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
+    @ validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
@@ -37,7 +38,7 @@ class Settings(BaseSettings):
 
     SENTRY_DSN: HttpUrl | None
 
-    @validator("SENTRY_DSN", pre=True)
+    @ validator("SENTRY_DSN", pre=True)
     def sentry_dsn_can_be_blank(cls, v: str) -> str | None:
         if len(v) == 0:
             return None
@@ -51,7 +52,7 @@ class Settings(BaseSettings):
     DATABASE_PASSWORD: str
     SQLALCHEMY_DATABASE_URI: str | None
 
-    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
+    @ validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: str | None, values: Dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v

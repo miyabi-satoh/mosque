@@ -1,25 +1,18 @@
 import os
-import aiohttp
-import contextlib
+import glob
+import datetime
+import re
+import requests
+import hashlib
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse
 from sqlmodel import Session
-from typing import AsyncGenerator
 
 from app import crud
+from app.core.config import settings
 from app.db.session import get_db
 
 router = APIRouter()
-
-
-async def get_exit_stack() -> AsyncGenerator[contextlib.AsyncExitStack, None]:
-    async with contextlib.AsyncExitStack() as stack:
-        yield stack
-
-
-async def get_aiohttp_session() -> AsyncGenerator[aiohttp.ClientSession, None]:
-    async with aiohttp.ClientSession() as session:
-        yield session
 
 
 @router.get("/{asset_id}/{dummy_title}")
@@ -27,8 +20,6 @@ async def read_file(
     asset_id: int,
     dummy_title: str,
     db: Session = Depends(get_db),
-    exit_stack: contextlib.AsyncExitStack = Depends(get_exit_stack),
-    session: aiohttp.ClientSession = Depends(get_aiohttp_session),
 ):
     # dummy_titleはPDF表示のタイトルになるダミーパラメータ
     asset = crud.asset.get(db, id=asset_id)
@@ -38,25 +29,48 @@ async def read_file(
             detail="The resource with this id does not exist in the system",
         )
 
+    if os.path.isfile(asset.uri):
+        _, ext = asset.uri.split('.', 1)
+        filename = asset.slug + '.' + ext
+        return FileResponse(asset.uri, filename=filename, content_disposition_type="inline")
+
     if asset.uri.startswith('http'):
-        res = await exit_stack.enter_async_context(
-            session.get(url=asset.uri)
-        )
-        if res.status != 200:
-            raise HTTPException(status_code=404, detail="Failed to download")
+        # URLのハッシュ値を取得
+        hs = hashlib.md5(asset.uri.encode()).hexdigest()
+        # キャッシュ用のディレクトリ
+        dir = os.path.join(settings.PJROOT, 'cache', hs)
+        os.makedirs(dir, exist_ok=True)
+        print(dir)
+        # ディレクトリ内のファイルを取得
+        for filepath in glob.glob(os.path.join(dir, '*')):
+            print(filepath)
+            # ファイルの更新日時を取得
+            mtime = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))
+            # 期間を比較
+            today = datetime.datetime.now()
+            span = datetime.timedelta(weeks=4)
+            if (mtime + span > today):
+                # キャッシュ有効
+                return FileResponse(filepath, filename=os.path.basename(filepath), content_disposition_type="inline")
 
-        return StreamingResponse(
-            content=res.content.iter_chunked(1 * 1024),
-            media_type=res.headers["content-type"],
-        )
+        # ファイルをダウンロードして保存
+        response = requests.get(asset.uri, stream=True)
+        if response.status_code == requests.codes.ok:
+            if "Content-Disposition" in response.headers.keys():
+                filename = re.findall(
+                    "filename=(.+)", response.headers["Content-Disposition"])[0]
+            else:
+                filename = asset.uri.split("/")[-1]
 
-    if not os.path.isfile(asset.uri):
-        raise HTTPException(
-            status_code=404,
-            detail="The resource with this uri does not exist in the system",
-        )
+            filepath = os.path.join(dir, filename)
+            with open(filepath, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
 
-    _, ext = asset.uri.split('.', 1)
-    filename = asset.slug + '.' + ext
-    # filename = urllib.parse.quote(filename)
-    return FileResponse(asset.uri, filename=filename, content_disposition_type="inline")
+            print(filepath)
+            if os.path.isfile(filepath):
+                return FileResponse(filepath, filename=os.path.basename(filepath), content_disposition_type="inline")
+
+    raise HTTPException(status_code=404, detail="Failed to download")
