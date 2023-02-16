@@ -3,6 +3,9 @@ import { typeDetect } from './typeDetect';
 import { apiResources, apiUrl } from '$lib/api';
 import type { BlobType, DeepNonNullable, paths } from '$schemas';
 
+// <object>のonloadを使うため
+export const ssr = false;
+
 type IStrapiAssetResponse = DeepNonNullable<
 	paths['/assets/{id}']['get']['responses']['200']['content']['application/json']
 >;

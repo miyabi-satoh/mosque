@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { format, parse } from 'date-fns';
+	import { format } from 'date-fns';
 	import type { PageData } from './$types';
 	import ScheduleItem from './ScheduleItem.svelte';
 	import { goto } from '$app/navigation';
@@ -51,24 +51,7 @@
 		stateSearchTerm;
 		stateStartDate;
 		stateEndDate;
-		// console.log(stateStartDate, stateEndDate);
 		movePage(1);
-	}
-
-	function formatEvent(name: string, start: string, end: string) {
-		let strStart = '';
-		if (start) {
-			strStart = format(parse(start, 'HH:mm:ss', new Date()), 'H:mm');
-		}
-
-		let strEnd = '';
-		if (end) {
-			strEnd = format(parse(end, 'HH:mm:ss', new Date()), 'H:mm');
-		}
-		if (start || end) {
-			return `${name}(${strStart}〜${strEnd})`;
-		}
-		return name;
 	}
 </script>
 
