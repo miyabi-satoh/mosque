@@ -60,7 +60,7 @@
 		bind:value={stateSearchTerm}
 		type="text"
 		placeholder="Search keywords..."
-		class="input input-bordered flex-1"
+		class="input input-bordered md:flex-1"
 	/>
 	<div class="flex items-center gap-2">
 		<input class="input input-bordered" type="date" bind:value={inputStartDate} />

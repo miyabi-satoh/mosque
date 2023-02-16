@@ -49,7 +49,7 @@
 		bind:value={stateSearchTerm}
 		type="text"
 		placeholder="Search keywords..."
-		class="input input-bordered flex-1"
+		class="input input-bordered md:flex-1"
 	/>
 	<select bind:value={stateFor} class="select select-bordered flex-none">
 		{#each filters as { value, name }}
