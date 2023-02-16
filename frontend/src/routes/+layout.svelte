@@ -172,8 +172,8 @@
 				<div class="flex-1 w-full prose max-w-4xl px-4 mx-auto">
 					<slot />
 				</div>
-				<div class="bg-base-content/10 h-px my-6" />
-				<footer class="footer pb-6 px-4 gap-y-0 sm:grid-flow-col">
+				<div class="divider" />
+				<footer class="footer mt-2 mb-6 px-4 gap-y-0 sm:grid-flow-col">
 					<div class="justify-self-center sm:justify-self-start">
 						© 2023 miyabi-satoh . All Rights Reserved.
 					</div>

@@ -49,12 +49,12 @@
 	</div>
 </div>
 {#if stateSchedules && stateSchedules.length > 0}
-	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 not-prose">
+	<div class="grid grid-cols-1 gap-2 not-prose">
 		{#each stateSchedules as schedule (schedule.id)}
 			<div class="card card-compact border-2 border-base-200 bg-white/5 hover:bg-gray-300/10">
-				<div class="card-body">
-					<h3 class="card-title">{formatDate(schedule.attributes.date)}</h3>
-					<div>
+				<div class="card-body sm:flex-row sm:items-center">
+					<h3 class="card-title !mb-0 !text-base">{formatDate(schedule.attributes.date)}</h3>
+					<div class="sm:ml-2">
 						{#each schedule.attributes.schedules.data as event (event.id)}
 							<ScheduleItem
 								name={event.attributes.name}
