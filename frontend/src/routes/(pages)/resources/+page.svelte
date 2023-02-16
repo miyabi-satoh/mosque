@@ -30,7 +30,7 @@
 	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
 		{#each stateResources as resource (resource.id)}
 			<a
-				class="card card-compact border-2 border-base-200 bg-white/5 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
+				class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
 				href="{$page.url.pathname}/{resource.id}"
 			>
 				<div class="card-body">

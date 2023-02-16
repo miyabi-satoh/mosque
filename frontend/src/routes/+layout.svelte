@@ -117,8 +117,8 @@
 					<label for="drawer" class="btn btn-square btn-ghost drawer-button lg:hidden">
 						<Icon icon="mdi:apps" height="46" />
 					</label>
-					<a href="/" class="btn btn-ghost lg:hidden">
-						<span class="text-lg md:text-3xl text-base-content uppercase">MOSQUE</span>
+					<a href="/" class="lg:hidden">
+						<span class="text-xl sm:text-3xl font-bold text-base-content uppercase">MOSQUE</span>
 					</a>
 				</div>
 				<div class="flex flex-none gap-2">
@@ -140,7 +140,7 @@
 						<!-- The button to open modal -->
 						<label for="login" class="btn btn-primary">ログイン</label>
 					{/if}
-					<button on:click={toggleTheme} class="btn btn-square btn-ghost">
+					<button on:click={toggleTheme} class="mx-2">
 						{#if theme == 'dark'}
 							<svg
 								class="w-5 h-5"
