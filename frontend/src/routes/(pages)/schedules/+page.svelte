@@ -1,46 +1,26 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { format } from 'date-fns';
 	import type { PageData } from './$types';
 	import ScheduleItem from './ScheduleItem.svelte';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import { formatDate } from '$lib/utils';
 	import Pagination from '$lib/Pagination.svelte';
 
 	export let data: PageData;
-	$: stateSchedules = data.schedules.stateSchedules;
-	$: statePageCount = data.schedules.stateMeta?.pagination?.pageCount ?? 0;
-	$: statePages = data.schedules.statePages;
 
-	let stateSearchTerm = $page.url.searchParams.get('q') ?? '';
-	let stateCurrentPageNumber = Number($page.url.searchParams.get('p')) ?? 1;
-	let inputStartDate = dateString($page.url.searchParams.get('s') ?? '', new Date());
-	let inputEndDate = dateString($page.url.searchParams.get('e') ?? '');
+	let stateSearchTerm = data.querySearch;
+	let stateStartDate = data.queyStartDate;
+	let stateEndDate = data.queryEndDate;
+	$: pagination = data.schedules.meta.pagination;
+	$: stateSchedules = data.schedules.data;
 
-	$: stateStartDate = dateString(inputStartDate);
-	$: stateEndDate = dateString(inputEndDate);
-
-	function dateString(dateStr: string, defaultDate: Date | undefined = undefined): string {
-		try {
-			return format(new Date(dateStr), 'yyyy-MM-dd');
-		} catch (err) {
-			if (defaultDate) {
-				return format(defaultDate, 'yyyy-MM-dd');
-			}
-		}
-		return '';
+	function movePage(event: CustomEvent<number>) {
+		refresh(event.detail);
 	}
 
-	async function movePage(page: number) {
-		if (page < 1) {
-			page = 1;
-		} else if (statePageCount < page) {
-			page = statePageCount;
-		}
-		stateCurrentPageNumber = page;
+	function refresh(page = 1) {
 		const href = `/schedules?p=${page}&q=${stateSearchTerm}&s=${stateStartDate}&e=${stateEndDate}`;
-		await goto(href, {
+		goto(href, {
 			keepFocus: true
 		});
 	}
@@ -51,7 +31,7 @@
 		stateSearchTerm;
 		stateStartDate;
 		stateEndDate;
-		movePage(1);
+		refresh();
 	}
 </script>
 
@@ -63,9 +43,9 @@
 		class="input input-bordered md:flex-1"
 	/>
 	<div class="flex items-center gap-2">
-		<input class="input input-bordered" type="date" bind:value={inputStartDate} />
+		<input class="input input-bordered" type="date" bind:value={stateStartDate} />
 		〜
-		<input class="input input-bordered" type="date" bind:value={inputEndDate} />
+		<input class="input input-bordered" type="date" bind:value={stateEndDate} />
 	</div>
 </div>
 {#if stateSchedules && stateSchedules.length > 0}
@@ -87,13 +67,9 @@
 			</div>
 		{/each}
 	</div>
-	{#if statePageCount > 1}
+	{#if pagination.pageCount > 1}
 		<div class="flex justify-center my-4">
-			<Pagination
-				pages={statePages}
-				on:previous={() => movePage(stateCurrentPageNumber - 1)}
-				on:next={() => movePage(stateCurrentPageNumber + 1)}
-			/>
+			<Pagination param={pagination} on:page={movePage} />
 		</div>
 	{/if}
 {:else}

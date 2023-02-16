@@ -2,35 +2,37 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import Pagination from '$lib/Pagination.svelte';
 
-	type ForType = '' | 'forStaff' | 'forTeacher' | 'forStudent';
+	const ForTypes = {
+		all: '',
+		staff: 'forStaff',
+		teacher: 'forTeacher',
+		student: 'forStudent'
+	};
+	type ForType = (typeof ForTypes)[keyof typeof ForTypes];
+
 	export let data: PageData;
 
-	let stateSearchTerm = $page.url.searchParams.get('q') ?? '';
-	let stateFor = ($page.url.searchParams.get('f') ?? '') as ForType;
-	$: stateCurrentPageNumber = Number($page.url.searchParams.get('p')) ?? 1;
-	$: stateLinks = data.links.stateLinks;
-	$: statePageCount = data.links.stateMeta?.pagination?.pageCount ?? 0;
-	$: statePages = data.links.statePages;
+	let stateSearchTerm = data.querySearch;
+	let stateFor = data.queryFor;
+	$: pagination = data.links.meta.pagination;
+	$: stateLinks = data.links.data;
 
 	const filters: Array<{ value: ForType; name: string }> = [
-		{ value: '', name: '全て' },
-		{ value: 'forStaff', name: 'スタッフ用' },
-		{ value: 'forTeacher', name: '講師用' },
-		{ value: 'forStudent', name: '生徒用' }
+		{ value: ForTypes.all, name: '全て' },
+		{ value: ForTypes.staff, name: 'スタッフ用' },
+		{ value: ForTypes.teacher, name: '講師用' },
+		{ value: ForTypes.student, name: '生徒用' }
 	];
 
-	async function movePage(page: number) {
-		if (page < 1) {
-			page = 1;
-		} else if (statePageCount < page) {
-			page = statePageCount;
-		}
-		stateCurrentPageNumber = page;
+	function movePage(event: CustomEvent<number>) {
+		refresh(event.detail);
+	}
+
+	function refresh(page = 1) {
 		const href = `/links?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
-		await goto(href, {
+		goto(href, {
 			keepFocus: true
 		});
 	}
@@ -40,7 +42,7 @@
 	$: if (mounted) {
 		stateSearchTerm;
 		stateFor;
-		movePage(1);
+		refresh();
 	}
 </script>
 
@@ -74,13 +76,9 @@
 			</a>
 		{/each}
 	</div>
-	{#if statePageCount > 1}
+	{#if pagination.pageCount > 1}
 		<div class="flex justify-center my-4">
-			<Pagination
-				pages={statePages}
-				on:previous={() => movePage(stateCurrentPageNumber - 1)}
-				on:next={() => movePage(stateCurrentPageNumber + 1)}
-			/>
+			<Pagination param={pagination} on:page={movePage} />
 		</div>
 	{/if}
 {:else}

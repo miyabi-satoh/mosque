@@ -12,6 +12,7 @@ export class StrapiBase<ListResponse, SingleResponse> {
 	async getMulti(fetch: Fetch, query: IStrapiQuery = {}): Promise<ListResponse> {
 		const q = qs.stringify(query, { encodeValuesOnly: true });
 		const url = `${this.endpoint}${q ? '?' + q : ''}`;
+		// console.log(url);
 		const response = await fetch(url);
 		if (response.ok) {
 			return await response.json();

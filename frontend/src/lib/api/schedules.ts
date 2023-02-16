@@ -33,13 +33,14 @@ class StrapiScheduleDates extends StrapiBase<DateListResponse, DateSingleRespons
 		super('schedule-dates');
 	}
 
-	async get(fetch: Fetch, id: number | string, args: object = {}) {
-		return super.get(fetch, id, args);
-	}
+	// async get(fetch: Fetch, id: number | string, args: object = {}) {
+	// 	return super.get(fetch, id, args);
+	// }
 
 	async getMulti(fetch: Fetch, query: IStrapiQuery = {}) {
 		return super.getMulti(fetch, {
 			sort: 'date:asc',
+			populate: '*',
 			...query
 		});
 	}

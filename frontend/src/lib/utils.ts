@@ -1,6 +1,27 @@
 import format from 'date-fns/format';
 import ja from 'date-fns/locale/ja';
 
+export function buildPageQuery(filters: object[], page: number, pageSize: number) {
+	let objQuery = {};
+	if (filters.length == 1) {
+		objQuery = {
+			filters: filters[0]
+		} as never;
+	} else if (filters.length > 0) {
+		objQuery = {
+			filters: {
+				$and: filters
+			}
+		} as never;
+	}
+
+	return {
+		...objQuery,
+		'pagination[page]': page,
+		'pagination[pageSize]': pageSize
+	};
+}
+
 export function getLocalToken() {
 	return localStorage.getItem('token');
 }
