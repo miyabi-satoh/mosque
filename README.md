@@ -60,6 +60,4 @@ DBMS ... PostgreSQL
 
 - backend: API 整理
   - /login, /users を strapi に移譲
-- frontend: UIをdaisyUIベースに
-- frontend: ページネーションの共通化
 - system: nginx, postgresqlをネイティブに
