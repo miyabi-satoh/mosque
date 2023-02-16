@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { format, parse } from 'date-fns';
 	import type { PageData } from './$types';
-	import ScheduleItem from './ScheduleItem.svelte';
 	import { goto } from '$app/navigation';
 	import { formatDate } from '$lib/utils';
 	import Pagination from '$lib/Pagination.svelte';
@@ -33,6 +33,10 @@
 		stateEndDate;
 		refresh();
 	}
+
+	function timeString(timeStr: string) {
+		return format(parse(timeStr, 'HH:mm:ss', new Date()), 'H:mm');
+	}
 </script>
 
 <div class="py-4 flex flex-col md:flex-row gap-2">
@@ -56,11 +60,18 @@
 					<h3 class="card-title !mb-0 !text-base">{formatDate(schedule.attributes.date)}</h3>
 					<div class="sm:ml-2">
 						{#each schedule.attributes.schedules.data as event (event.id)}
-							<ScheduleItem
-								name={event.attributes.name}
-								start={event.attributes.start}
-								end={event.attributes.end}
-							/>
+							<div class="flex flex-row">
+								{#if event.attributes.start}
+									<div class="w-9 text-right mr-1">{timeString(event.attributes.start)}</div>
+								{/if}
+								{#if event.attributes.start || event.attributes.end}
+									<div class="mr-1">〜</div>
+								{/if}
+								{#if event.attributes.end}
+									<div class="w-9 text-right mr-1">{timeString(event.attributes.end)}</div>
+								{/if}
+								<div>{event.attributes.name}</div>
+							</div>
 						{/each}
 					</div>
 				</div>
