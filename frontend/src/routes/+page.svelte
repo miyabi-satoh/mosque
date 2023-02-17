@@ -9,6 +9,9 @@
 	$: latestInfo = data.latestInfo;
 </script>
 
+<svelte:head>
+	<title>MOSQUE | Home</title>
+</svelte:head>
 <div class="my-8 text-center lg:text-left">
 	<h1>{pageMeta.title}</h1>
 	{#if pageMeta.description}

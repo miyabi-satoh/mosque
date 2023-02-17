@@ -6,8 +6,10 @@
 	$: pageMeta = data.pageMeta;
 </script>
 
-<!-- <div class="max-w-3xl 2xl:max-w-4xl mx-auto mt-8">
-	<div class="container mx-auto"> -->
+<svelte:head>
+	<title>MOSQUE | {pageMeta.title}</title>
+</svelte:head>
+
 <Breadcrumb params={data.breadcrumbParams} />
 {#if pageMeta.title}
 	<h1 class="mt-0 mb-2">{pageMeta.title}</h1>
@@ -18,5 +20,3 @@
 <div class="pt-8">
 	<slot />
 </div>
-<!-- </div>
-</div> -->
