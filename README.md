@@ -61,3 +61,5 @@ DBMS ... PostgreSQL
 - backend: API 整理
   - /login, /users を strapi に移譲
 - system: nginx, postgresqlをネイティブに
+- frontend & strapi: orderを参照カウントにする。クリック数が多いほど上位に。
+- backend: office文書をpdfに変換する
