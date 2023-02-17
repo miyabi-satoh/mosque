@@ -2,17 +2,6 @@ volumes:
   db_data:
 
 services:
-  # mosque-web:
-  #   container_name: mosque-web
-  #   image: nginx:alpine
-  #   volumes:
-  #     - ./nginx/templates:/etc/nginx/templates
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-  #   ports:
-  #     - "80:80"
-  #   environment:
-  #     SERVER_NAME: ${SERVER_NAME}
-
   mosque-db:
     container_name: mosque-db
     image: postgres:alpine
