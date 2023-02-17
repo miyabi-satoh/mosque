@@ -1,5 +1,5 @@
-import format from 'date-fns/format';
-import ja from 'date-fns/locale/ja';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale/index.js';
 
 export function buildPageQuery(filters: object[], page: number, pageSize: number) {
 	let objQuery = {};
