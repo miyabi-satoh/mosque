@@ -1,10 +1,15 @@
+import { redirect } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { apiLinks } from '$lib/api';
 import { buildPageQuery, normalizeSearch } from '$lib/utils';
 
-const pageSize = 10;
+const pageSize = 2;
 
 export const load = (async ({ url, fetch }) => {
+	if (!url.searchParams.get('p')) {
+		throw redirect(302, `${url.pathname}?p=1`);
+	}
+
 	// console.log('load @ frontend/src/routes/(pages)/links/+page.ts');
 	const queryPage = (() => {
 		const num = Number(url.searchParams.get('p') ?? 1);

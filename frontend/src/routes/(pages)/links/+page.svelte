@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
@@ -32,14 +33,14 @@
 
 	function refresh(page = 1) {
 		const href = `/links?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
-		goto(href, {
-			keepFocus: true
-		});
+		if (href != `${$page.url.pathname}${$page.url.search}`) {
+			goto(href, {
+				keepFocus: true
+			});
+		}
 	}
 
-	let mounted = false;
-	onMount(() => (mounted = true));
-	$: if (mounted) {
+	$: {
 		stateSearchTerm;
 		stateFor;
 		refresh();
