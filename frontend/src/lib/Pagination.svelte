@@ -35,48 +35,25 @@
 		return retPages;
 	}
 
-	// type LinkType = {
-	// 	name: string;
-	// 	href: string;
-	// 	active?: boolean;
-	// };
-	// export let pages: LinkType[] = [];
-
 	const dispatch = createEventDispatcher<{ page: number }>();
-	// function previous() {
-	// 	dispatch('previous');
-	// }
-	// function next() {
-	// 	dispatch('next');
-	// }
 	function onClick(page: number) {
 		dispatch('page', page);
 	}
 </script>
 
 <div class="btn-group">
-	<button
-		class="btn"
-		on:click={() => {
-			if (param.page > 1) {
-				onClick(param.page - 1);
-			}
-		}}
-	>
+	<button class="btn" disabled={param.page <= 1} on:click={() => onClick(param.page - 1)}>
 		<Icon icon="mdi:chevron-left" />
 	</button>
 	{#each pages as page}
-		<button on:click={() => onClick(page)} class="btn {page == param.page ? 'btn-active' : ''}"
+		<button on:click={() => onClick(page)} class="btn" class:btn-active={page == param.page}
 			>{page}</button
 		>
 	{/each}
 	<button
 		class="btn"
-		on:click={() => {
-			if (param.page < param.pageCount) {
-				onClick(param.page + 1);
-			}
-		}}
+		disabled={param.page >= param.pageCount}
+		on:click={() => onClick(param.page + 1)}
 	>
 		<Icon icon="mdi:chevron-right" />
 	</button>
