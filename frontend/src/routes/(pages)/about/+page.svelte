@@ -3,7 +3,7 @@
 	import Markdown from '$lib/Markdown.svelte';
 
 	export let data: PageData;
-	$: source = data.pageMeta.content;
+	$: source = data.pageMeta?.content ?? '';
 </script>
 
 <Markdown {source} />

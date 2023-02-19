@@ -8,6 +8,9 @@
 	import { apiAuth } from '$lib/api';
 	import '../app.postcss';
 
+	export let data: LayoutData;
+	console.log(data);
+
 	let username = '';
 	let password = '';
 	let toggleLogin = false;
@@ -18,7 +21,7 @@
 	}
 
 	let theme: string;
-	export let data: LayoutData;
+
 	$: menuItems = data.menuItems;
 	$: activeUrl = $page.url.pathname;
 
@@ -200,14 +203,14 @@
 				</div>
 			</div>
 			<ul class="menu px-4 lg:mt-6">
-				{#each menuItems.data as menuItem (menuItem.id)}
+				{#each menuItems as menuItem (menuItem.id)}
 					<li>
 						<a
-							class={activeUrl === menuItem.attributes.url ? 'active' : ''}
-							href={menuItem.attributes.url}
+							class={activeUrl === menuItem.url ? 'active' : ''}
+							href={menuItem.url}
 							on:click={handleToggleDrawer}
 						>
-							{menuItem.attributes.title}</a
+							{menuItem.title}</a
 						>
 					</li>
 				{/each}

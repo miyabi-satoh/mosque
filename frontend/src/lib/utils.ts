@@ -34,8 +34,17 @@ export function removeLocalToken() {
 	return localStorage.removeItem('token');
 }
 
-export function formatDate(dateStr: string) {
-	const dt = new Date(dateStr);
+export function formatDate(date: string | Date | null) {
+	if (date === null) {
+		return '';
+	}
+
+	let dt: Date;
+	if (typeof date === 'string') {
+		dt = new Date(date);
+	} else {
+		dt = date;
+	}
 	return format(dt, 'y年M月d日(E)', { locale: ja });
 }
 

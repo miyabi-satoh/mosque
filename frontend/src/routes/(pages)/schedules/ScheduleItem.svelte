@@ -1,20 +1,25 @@
 <script lang="ts">
-	import { format, parse } from 'date-fns';
+	import type { Event } from '@prisma/client';
+	import { addMinutes, format } from 'date-fns';
 
-	export let start: string | null;
-	export let end: string | null;
-	export let name: string;
+	export let data: (Event | null)[];
+
+	function timeString(time: Date) {
+		return format(addMinutes(time, time.getTimezoneOffset()), 'H:mm');
+	}
 </script>
 
-<div class="flex flex-row">
-	{#if start}
-		<div class="w-10 text-right mr-1">{format(parse(start, 'HH:mm:ss', new Date()), 'H:mm')}</div>
-	{/if}
-	{#if start || end}
-		<div>〜</div>
-	{/if}
-	{#if end}
-		<div class="w-10 text-right">{format(parse(end, 'HH:mm:ss', new Date()), 'H:mm')}</div>
-	{/if}
-	<div class="mx-2">{name}</div>
-</div>
+{#each data as schedule (schedule?.id)}
+	<div class="flex flex-row">
+		{#if schedule?.start}
+			<div class="w-10 text-right mr-1">{timeString(schedule.start)}</div>
+		{/if}
+		{#if schedule?.start || schedule?.end}
+			<div>〜</div>
+		{/if}
+		{#if schedule?.end}
+			<div class="w-10 text-right">{timeString(schedule.end)}</div>
+		{/if}
+		<div class="mx-2">{schedule?.name}</div>
+	</div>
+{/each}

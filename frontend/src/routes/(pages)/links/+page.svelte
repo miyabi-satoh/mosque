@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/Pagination.svelte';
@@ -17,8 +16,7 @@
 
 	let stateSearchTerm = data.querySearch;
 	let stateFor = data.queryFor;
-	$: pagination = data.links.meta.pagination;
-	$: stateLinks = data.links.data;
+	$: stateLinks = data.links;
 
 	const filters: Array<{ value: ForType; name: string }> = [
 		{ value: ForTypes.all, name: '全て' },
@@ -66,22 +64,25 @@
 		{#each stateLinks as link (link.id)}
 			<a
 				class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
-				href={link.attributes.url}
+				href={link.url}
 				target="_blank"
 				rel="noreferrer"
 			>
 				<div class="card-body">
-					<h3 class="card-title">{link.attributes.title}</h3>
-					<p>{link.attributes.description}</p>
+					<h3 class="card-title">{link.title}</h3>
+					<p>{link.description}</p>
 				</div>
 			</a>
 		{/each}
 	</div>
-	{#if pagination.pageCount > 1}
-		<div class="flex justify-center my-4">
-			<Pagination param={pagination} on:page={movePage} />
-		</div>
-	{/if}
+	<div class="flex justify-center my-4">
+		<Pagination
+			on:page={movePage}
+			count={data.count}
+			currentPage={data.queryPage}
+			pageSize={data.pageSize}
+		/>
+	</div>
 {:else}
 	<p>データがありません</p>
 {/if}

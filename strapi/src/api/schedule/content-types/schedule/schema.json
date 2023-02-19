@@ -12,24 +12,16 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "name": {
-      "type": "string",
-      "required": true
+    "date": {
+      "type": "date",
+      "required": true,
+      "unique": true
     },
-    "schedule_dates": {
+    "events": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::schedule-date.schedule-date",
+      "target": "api::event.event",
       "inversedBy": "schedules"
-    },
-    "start": {
-      "type": "time"
-    },
-    "end": {
-      "type": "time"
-    },
-    "keyword": {
-      "type": "text"
     }
   }
 }

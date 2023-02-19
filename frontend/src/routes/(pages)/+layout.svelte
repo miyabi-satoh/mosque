@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { LayoutData } from './$types';
 	import Breadcrumb from '$lib/Breadcrumb.svelte';
+	import { page } from '$app/stores';
 
 	export let data: LayoutData;
-	$: pageMeta = data.pageMeta;
+	$: pageMeta = $page.data.pageMeta;
 </script>
 
 <svelte:head>

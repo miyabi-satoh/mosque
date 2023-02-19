@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { format, parse } from 'date-fns';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { formatDate } from '$lib/utils';
 	import Pagination from '$lib/Pagination.svelte';
+	import ScheduleItem from './ScheduleItem.svelte';
 
 	export let data: PageData;
 
 	let stateSearchTerm = data.querySearch;
 	let stateStartDate = data.queyStartDate;
 	let stateEndDate = data.queryEndDate;
-	$: pagination = data.schedules.meta.pagination;
-	$: stateSchedules = data.schedules.data;
+	$: stateSchedules = data.schedules;
 
 	function movePage(event: CustomEvent<number>) {
 		refresh(event.detail);
@@ -32,10 +31,6 @@
 		stateStartDate;
 		stateEndDate;
 		refresh();
-	}
-
-	function timeString(timeStr: string) {
-		return format(parse(timeStr, 'HH:mm:ss', new Date()), 'H:mm');
 	}
 </script>
 
@@ -57,32 +52,22 @@
 		{#each stateSchedules as schedule (schedule.id)}
 			<div class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10">
 				<div class="card-body sm:flex-row sm:items-center">
-					<h3 class="card-title !mb-0 !text-base">{formatDate(schedule.attributes.date)}</h3>
+					<h3 class="card-title !mb-0 !text-base">{formatDate(schedule.date)}</h3>
 					<div class="sm:ml-2">
-						{#each schedule.attributes.schedules.data as event (event.id)}
-							<div class="flex flex-row">
-								{#if event.attributes.start}
-									<div class="w-9 text-right mr-1">{timeString(event.attributes.start)}</div>
-								{/if}
-								{#if event.attributes.start || event.attributes.end}
-									<div class="mr-1">〜</div>
-								{/if}
-								{#if event.attributes.end}
-									<div class="w-9 text-right mr-1">{timeString(event.attributes.end)}</div>
-								{/if}
-								<div>{event.attributes.name}</div>
-							</div>
-						{/each}
+						<ScheduleItem data={schedule.events} />
 					</div>
 				</div>
 			</div>
 		{/each}
 	</div>
-	{#if pagination.pageCount > 1}
-		<div class="flex justify-center my-4">
-			<Pagination param={pagination} on:page={movePage} />
-		</div>
-	{/if}
+	<div class="flex justify-center my-4">
+		<Pagination
+			on:page={movePage}
+			count={data.count}
+			currentPage={data.queryPage}
+			pageSize={data.pageSize}
+		/>
+	</div>
 {:else}
 	<p>データがありません</p>
 {/if}

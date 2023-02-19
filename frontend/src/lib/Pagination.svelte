@@ -4,27 +4,24 @@
 
 	const pageRange = 2; // ページャーに表示する前後のページ数
 
-	type PaginationType = {
-		page: number;
-		pageSize: number;
-		pageCount: number;
-		total: number;
-	};
-	export let param: PaginationType;
-	$: pages = initPages(param);
+	export let currentPage: number;
+	export let pageSize: number;
+	export let count: number;
+	$: pageCount = Math.ceil(count / pageSize);
+	$: pages = initPages(currentPage, pageSize, count);
 
-	function initPages(_param: PaginationType) {
+	function initPages(_page: number, _pageSize: number, _count: number) {
 		// 現在位置からの前後nページを表示
 		let start = 0;
 		let end = 0;
-		if (param.pageCount <= pageRange * 2 + 1) {
+		if (pageCount <= pageRange * 2 + 1) {
 			start = 1;
-			end = param.pageCount;
+			end = pageCount;
 		} else {
-			start = Math.max(param.page - pageRange, 1);
-			end = Math.min(start + pageRange * 2, param.pageCount);
-			if (end == param.pageCount) {
-				start = param.pageCount - pageRange * 2;
+			start = Math.max(currentPage - pageRange, 1);
+			end = Math.min(start + pageRange * 2, pageCount);
+			if (end == pageCount) {
+				start = pageCount - pageRange * 2;
 			}
 		}
 
@@ -42,19 +39,15 @@
 </script>
 
 <div class="btn-group">
-	<button class="btn" disabled={param.page <= 1} on:click={() => onClick(param.page - 1)}>
-		<Icon icon="mdi:chevron-left" />
+	<button class="btn" disabled={currentPage <= 1} on:click={() => onClick(currentPage - 1)}>
+		<Icon icon="mdi:chevron-left" height="auto" />
 	</button>
 	{#each pages as page}
-		<button on:click={() => onClick(page)} class="btn" class:btn-active={page == param.page}
+		<button on:click={() => onClick(page)} class="btn" class:btn-active={page == currentPage}
 			>{page}</button
 		>
 	{/each}
-	<button
-		class="btn"
-		disabled={param.page >= param.pageCount}
-		on:click={() => onClick(param.page + 1)}
-	>
-		<Icon icon="mdi:chevron-right" />
+	<button class="btn" disabled={currentPage >= pageCount} on:click={() => onClick(currentPage + 1)}>
+		<Icon icon="mdi:chevron-right" height="auto" />
 	</button>
 </div>
