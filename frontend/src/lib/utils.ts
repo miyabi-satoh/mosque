@@ -48,6 +48,11 @@ export function formatDate(date: string | Date | null) {
 	return format(dt, 'y年M月d日(E)', { locale: ja });
 }
 
+export const normalizeNumber = (numStr: string | null, numDefault = 0) => {
+	const num = Number(numStr ?? numDefault);
+	return isNaN(num) ? 1 : Math.max(numDefault, num);
+};
+
 export function normalizeSearch(search: string): string {
 	const hankakuToZenkakuKatakanaMap: Record<string, string> = {
 		ｧ: 'ァ',

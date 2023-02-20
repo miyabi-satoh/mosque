@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { formatDate } from '$lib/utils';
@@ -19,14 +19,14 @@
 
 	function refresh(page = 1) {
 		const href = `/schedules?p=${page}&q=${stateSearchTerm}&s=${stateStartDate}&e=${stateEndDate}`;
-		goto(href, {
-			keepFocus: true
-		});
+		if (href != `${$page.url.pathname}${$page.url.search}`) {
+			goto(href, {
+				keepFocus: true
+			});
+		}
 	}
 
-	let mounted = false;
-	onMount(() => (mounted = true));
-	$: if (mounted) {
+	$: {
 		stateSearchTerm;
 		stateStartDate;
 		stateEndDate;
@@ -47,7 +47,7 @@
 		<input class="input input-bordered" type="date" bind:value={stateEndDate} />
 	</div>
 </div>
-{#if stateSchedules && stateSchedules.length > 0}
+{#if data.count > 0}
 	<div class="grid grid-cols-1 gap-2 not-prose">
 		{#each stateSchedules as schedule (schedule.id)}
 			<div class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10">

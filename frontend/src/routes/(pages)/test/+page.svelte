@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	// import type { PageData } from './$types';
 	import { mainStore } from '$stores';
 
-	export let data: PageData;
-	console.log(data);
+	// export let data: PageData;
+	// console.log(data);
 </script>
 
 {#if $mainStore.isLoggedIn}

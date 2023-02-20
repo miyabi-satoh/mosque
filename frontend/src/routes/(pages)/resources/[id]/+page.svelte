@@ -16,7 +16,7 @@
 	}
 
 	function onLoadObject() {
-		console.log('onLoadObject');
+		// console.log('onLoadObject');
 		objContainerClass = 'aspect-w-5 aspect-h-7';
 	}
 </script>

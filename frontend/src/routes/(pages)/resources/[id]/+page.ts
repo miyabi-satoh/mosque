@@ -1,37 +1,45 @@
+import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { typeDetect } from './typeDetect';
-import { apiResources, apiUrl } from '$lib/api';
-import type { BlobType, DeepNonNullable, paths } from '$schemas';
+import { apiUrl } from '$lib/api';
+import type { BlobType } from '$schemas';
+import { prisma } from '$lib/server/prisma';
 
 // <object>のonloadを使うため
 export const ssr = false;
 
-type IStrapiAssetResponse = DeepNonNullable<
-	paths['/assets/{id}']['get']['responses']['200']['content']['application/json']
->;
-
-type IResource = {
-	data: IStrapiAssetResponse['data'];
-	status: number;
-	type: BlobType;
-	text: string;
-	blobUrl: string;
-	// blob: Blob;
-	mimeType: string;
-};
-
 export const load = (async ({ params, fetch }) => {
 	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts`);
 	// 文書情報を取得する
-	const resource = await apiResources.get(fetch, params.id);
+	// const resource = await apiResources.get(fetch, params.id);
+	const found = await prisma.resource.findUnique({
+		where: {
+			id: Number(params.id)
+		},
+		include: {
+			resources_assets_links: {
+				include: {
+					assets: true
+				}
+			}
+		}
+	});
+	if (!found) {
+		throw error(404, 'ご指定のリソースは見つかりませんでした');
+	}
+
+	const resource = {
+		...found,
+		assets: found.resources_assets_links.map((r) => r.assets)
+	};
 
 	// 実ファイル情報を取得する
-	let resources: IResource[] = [];
-	for (const asset of resource.data.attributes.assets.data) {
+	let resources: object[] = [];
+	resource.assets.forEach(async (asset) => {
 		let type: BlobType = 'error';
 		let mimeType = '';
 		let text = '';
-		const blobUrl = apiUrl(`assets/${asset.id}/${asset.attributes.slug}`);
+		const blobUrl = apiUrl(`assets/${asset?.id}/${asset?.slug}`);
 		const res = await fetch(blobUrl);
 		const status = res.status;
 		const blob = await res.blob();
@@ -75,10 +83,10 @@ export const load = (async ({ params, fetch }) => {
 			mimeType
 		};
 		resources = [...resources, resource];
-	}
+	});
 
 	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts ${resources}`);
 	return {
-		resources: resources
+		resources
 	};
 }) satisfies PageLoad;

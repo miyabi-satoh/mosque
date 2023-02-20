@@ -338,7 +338,7 @@ model Resource {
   published_at                                     DateTime?                @db.Timestamp(6)
   created_by_id                                    Int?
   updated_by_id                                    Int?
-  keywords                                         String?
+  keyword                                          String?
   description                                      String?
   admin_users_resources_created_by_idToadmin_users admin_users?             @relation("resources_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
   admin_users_resources_updated_by_idToadmin_users admin_users?             @relation("resources_updated_by_idToadmin_users", fields: [updated_by_id], references: [id], onUpdate: NoAction)

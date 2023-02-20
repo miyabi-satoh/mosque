@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-
-const prisma = new PrismaClient();
+import { prisma } from '$lib/server/prisma';
 
 export const load = (async ({ url }) => {
 	// console.log(`load @ frontend/src/routes/+layout.ts`);

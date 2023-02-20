@@ -9,7 +9,7 @@
 	import '../app.postcss';
 
 	export let data: LayoutData;
-	console.log(data);
+	// console.log(data);
 
 	let username = '';
 	let password = '';

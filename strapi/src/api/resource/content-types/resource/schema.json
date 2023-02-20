@@ -16,7 +16,7 @@
       "type": "string",
       "required": true
     },
-    "keywords": {
+    "keyword": {
       "type": "text"
     },
     "description": {

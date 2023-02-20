@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import type { LayoutServerLoad } from './$types';
 import type { IBreadcrumbItemParam } from '$schemas';
-
-const prisma = new PrismaClient();
+import { prisma } from '$lib/server/prisma';
 
 export const load = (async ({ url }) => {
 	// console.log('load @ frontend/src/routes/(pages)/+layout.ts');

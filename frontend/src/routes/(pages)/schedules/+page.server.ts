@@ -1,21 +1,17 @@
 import { format, parse } from 'date-fns';
 import { redirect } from '@sveltejs/kit';
-import { PrismaClient } from '@prisma/client';
 import type { PageServerLoad } from './$types';
-import { normalizeSearch } from '$lib/utils';
+import { normalizeNumber, normalizeSearch } from '$lib/utils';
+import { prisma } from '$lib/server/prisma';
 
-const prisma = new PrismaClient();
 const pageSize = 10;
 
-function dateString(dateStr: string, defaultDate: Date | undefined = undefined) {
+function dateString(dateStr: string, defaultDate: Date | null = null) {
 	const fmt = 'yyyy-MM-dd';
 	try {
 		return format(parse(dateStr, fmt, new Date()), fmt);
 	} catch (err) {
-		if (defaultDate) {
-			return format(defaultDate, fmt);
-		}
-		return '';
+		return defaultDate ? format(defaultDate, fmt) : '';
 	}
 }
 
@@ -25,10 +21,7 @@ export const load = (async ({ url }) => {
 	}
 
 	// console.log(`load @ frontend/src/routes/(pages)/schedules/+page.ts`);
-	const queryPage = (() => {
-		const num = Number(url.searchParams.get('p') ?? 1);
-		return isNaN(num) ? 1 : Math.max(1, num);
-	})();
+	const queryPage = normalizeNumber(url.searchParams.get('p'), 1);
 	const querySearch = url.searchParams.get('q') ?? '';
 	const queyStartDate = url.searchParams.get('s') ?? '';
 	const queryEndDate = url.searchParams.get('e') ?? '';
@@ -70,7 +63,7 @@ export const load = (async ({ url }) => {
 		}
 	};
 	const count = await prisma.schedule.count({ where });
-	const schedules = await prisma.schedule.findMany({
+	const rows = await prisma.schedule.findMany({
 		skip: (queryPage - 1) * pageSize,
 		take: pageSize,
 		orderBy: {
@@ -86,21 +79,21 @@ export const load = (async ({ url }) => {
 		}
 	});
 
-	const result = schedules.map((schedule) => {
+	const schedules = rows.map((row) => {
 		return {
-			...schedule,
-			events: schedule.schedules_events_links.map((s) => s.events)
+			...row,
+			events: row.schedules_events_links.map((r) => r.events)
 		};
 	});
 
-	console.log(result);
+	// console.log(result);
 
 	return {
 		queryPage,
 		querySearch,
 		queyStartDate: startDate,
 		queryEndDate,
-		schedules: result,
+		schedules,
 		pageSize,
 		count
 	};
