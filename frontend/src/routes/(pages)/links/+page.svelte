@@ -30,9 +30,10 @@
 	}
 
 	function refresh(page = 1) {
-		const href = `/links?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
-		if (href != `${$page.url.pathname}${$page.url.search}`) {
-			goto(href, {
+		const search = `?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
+		// const href = `${$page.url.pathname}?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
+		if (search != $page.url.search) {
+			goto(`${$page.url.pathname}${search}`, {
 				keepFocus: true
 			});
 		}

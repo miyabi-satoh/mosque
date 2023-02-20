@@ -17,7 +17,7 @@ function dateString(dateStr: string, defaultDate: Date | null = null) {
 
 export const load = (async ({ url }) => {
 	if (!url.searchParams.get('p')) {
-		throw redirect(302, `${url.pathname}?p=1`);
+		throw redirect(302, `${url.pathname}?p=1&q=&s=&e=`);
 	}
 
 	// console.log(`load @ frontend/src/routes/(pages)/schedules/+page.ts`);

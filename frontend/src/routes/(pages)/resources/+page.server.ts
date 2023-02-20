@@ -7,7 +7,7 @@ const pageSize = 10;
 
 export const load = (async ({ url }) => {
 	if (!url.searchParams.get('p')) {
-		throw redirect(302, `${url.pathname}?p=1`);
+		throw redirect(302, `${url.pathname}?p=1&q=`);
 	}
 
 	// console.log(`load @ frontend/src/routes/(pages)/resources/+page.ts`);

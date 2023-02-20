@@ -1,41 +1,25 @@
-import { error } from '@sveltejs/kit';
+import type { Asset } from '@prisma/client';
 import type { PageLoad } from './$types';
 import { typeDetect } from './typeDetect';
 import { apiUrl } from '$lib/api';
 import type { BlobType } from '$schemas';
-import { prisma } from '$lib/server/prisma';
 
+type AssetData = Asset & {
+	status: number;
+	type: BlobType;
+	text: string;
+	blobUrl: string;
+	mimeType: string;
+};
 // <object>のonloadを使うため
 export const ssr = false;
 
-export const load = (async ({ params, fetch }) => {
+export const load = (async ({ data, fetch }) => {
 	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts`);
-	// 文書情報を取得する
-	// const resource = await apiResources.get(fetch, params.id);
-	const found = await prisma.resource.findUnique({
-		where: {
-			id: Number(params.id)
-		},
-		include: {
-			resources_assets_links: {
-				include: {
-					assets: true
-				}
-			}
-		}
-	});
-	if (!found) {
-		throw error(404, 'ご指定のリソースは見つかりませんでした');
-	}
-
-	const resource = {
-		...found,
-		assets: found.resources_assets_links.map((r) => r.assets)
-	};
 
 	// 実ファイル情報を取得する
-	let resources: object[] = [];
-	resource.assets.forEach(async (asset) => {
+	let assets: AssetData[] = [];
+	data.assets.forEach(async (asset) => {
 		let type: BlobType = 'error';
 		let mimeType = '';
 		let text = '';
@@ -74,19 +58,22 @@ export const load = (async ({ params, fetch }) => {
 			text = lines.join('\n');
 		}
 
-		const resource = {
-			data: asset,
-			status,
-			type,
-			text,
-			blobUrl,
-			mimeType
-		};
-		resources = [...resources, resource];
+		assets = [
+			...assets,
+			{
+				...asset,
+				status,
+				type,
+				text,
+				blobUrl,
+				mimeType
+			} as never
+		];
 	});
 
 	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts ${resources}`);
 	return {
-		resources
+		...data,
+		assets
 	};
 }) satisfies PageLoad;

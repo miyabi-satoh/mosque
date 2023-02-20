@@ -18,9 +18,10 @@
 	}
 
 	function refresh(page = 1) {
-		const href = `/schedules?p=${page}&q=${stateSearchTerm}&s=${stateStartDate}&e=${stateEndDate}`;
-		if (href != `${$page.url.pathname}${$page.url.search}`) {
-			goto(href, {
+		const search = `?p=${page}&q=${stateSearchTerm}&s=${stateStartDate}&e=${stateEndDate}`;
+		// const href = `${$page.url.pathname}?p=${page}&q=${stateSearchTerm}&s=${stateStartDate}&e=${stateEndDate}`;
+		if (search != $page.url.search) {
+			goto(`${$page.url.pathname}${search}`, {
 				keepFocus: true
 			});
 		}

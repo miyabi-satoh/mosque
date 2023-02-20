@@ -4,15 +4,15 @@
 	export let data: PageData;
 	let objContainerClass = '';
 	let activeTabIndex = 0;
-	let activeResource: (typeof data.resources)[0];
-	if (data.resources.length > 0) {
-		activeResource = data.resources[0];
+	let activeResource: (typeof data.assets)[0];
+	$: if (data.assets.length > 0) {
+		activeResource = data.assets[0];
 	}
 
 	function handleClickTab(index: number) {
 		objContainerClass = '';
 		activeTabIndex = index;
-		activeResource = data.resources[index];
+		activeResource = data.assets[index];
 	}
 
 	function onLoadObject() {
@@ -21,15 +21,14 @@
 	}
 </script>
 
-{#if data.resources.length == 0}
+{#if data.assets.length == 0}
 	<p>アイテムはありません</p>
 {:else}
 	<div class="tabs">
-		{#each data.resources as resource, index}
+		{#each data.assets as asset, index}
 			<button
 				on:click={() => handleClickTab(index)}
-				class="tab tab-bordered {activeTabIndex == index ? 'tab-active' : ''}"
-				>{resource.data.attributes.slug}</button
+				class="tab tab-bordered {activeTabIndex == index ? 'tab-active' : ''}">{asset.slug}</button
 			>
 		{/each}
 	</div>
@@ -73,13 +72,10 @@
 					<div class="alert alert-error shadow-lg my-8">
 						<div>プレビューを表示できません。</div>
 					</div>
-					{#if activeResource.data.attributes.uri.startsWith('http')}
+					{#if activeResource.uri && activeResource.uri.startsWith('http')}
 						<div class="text-center my-8">
-							<a
-								href={activeResource.data.attributes.uri}
-								class="link"
-								target="_blank"
-								rel="noreferrer">こちらを試してみてください</a
+							<a href={activeResource.uri} class="link" target="_blank" rel="noreferrer"
+								>こちらを試してみてください</a
 							>
 						</div>
 					{/if}
@@ -97,13 +93,10 @@
 			<audio controls src={activeResource.blobUrl}>
 				<div class="alert alert-error shadow-lg">
 					<div>オーディオコントロールを表示できません。</div>
-					{#if activeResource.data.attributes.uri.startsWith('http')}
+					{#if activeResource.uri && activeResource.uri.startsWith('http')}
 						<div class="text-center my-8">
-							<a
-								href={activeResource.data.attributes.uri}
-								class="link"
-								target="_blank"
-								rel="noreferrer">こちらを試してみてください</a
+							<a href={activeResource.uri} class="link" target="_blank" rel="noreferrer"
+								>こちらを試してみてください</a
 							>
 						</div>
 					{/if}
@@ -114,13 +107,10 @@
 			<video controls src={activeResource.blobUrl}>
 				<div class="alert alert-error shadow-lg">
 					<div>オーディオコントロールを表示できません。</div>
-					{#if activeResource.data.attributes.uri.startsWith('http')}
+					{#if activeResource.uri && activeResource.uri.startsWith('http')}
 						<div class="text-center my-8">
-							<a
-								href={activeResource.data.attributes.uri}
-								class="link"
-								target="_blank"
-								rel="noreferrer">こちらを試してみてください</a
+							<a href={activeResource.uri} class="link" target="_blank" rel="noreferrer"
+								>こちらを試してみてください</a
 							>
 						</div>
 					{/if}

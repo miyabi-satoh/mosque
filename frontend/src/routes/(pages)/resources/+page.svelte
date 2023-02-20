@@ -14,9 +14,13 @@
 	}
 
 	function refresh(page = 1) {
-		const href = `/resources?p=${page}&q=${stateSearchTerm}`;
-		if (href != `${$page.url.pathname}${$page.url.search}`) {
-			goto(href, {
+		const search = `?p=${page}&q=${stateSearchTerm}`;
+		// const href = `${$page.url.pathname}?p=${page}&q=${stateSearchTerm}`;
+		// console.log(href);
+		// console.log(`${$page.url.pathname}${$page.url.search}`);
+		// if (href != `${$page.url.pathname}${$page.url.search}`) {
+		if (search != $page.url.search) {
+			goto(`${$page.url.pathname}${search}`, {
 				keepFocus: true
 			});
 		}
