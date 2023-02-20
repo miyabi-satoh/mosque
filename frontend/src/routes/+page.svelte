@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import { formatDate } from '$lib/utils';
 	import Markdown from '$lib/Markdown.svelte';
+	import { formatDate } from '$lib/utils';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 	$: pageMeta = data.pageMeta;
 	$: menuItems = data.menuItems;
-	// $: latestInfo = data.latestInfo;
+	$: latestInfo = data.latestInfo;
 </script>
 
 <svelte:head>
@@ -20,19 +20,19 @@
 		{/if}
 	</div>
 {/if}
-<div class="my-8">
-	<h2>最新インフォメーション</h2>
-</div>
+{#if latestInfo}
+	<div class="my-8">
+		<h2 class="mb-4">最新インフォメーション</h2>
+		<div class="max-w-none rounded-xl border-2 border-base-200 p-4">
+			<div>{formatDate(latestInfo.updated_at)}</div>
+			<h3 class="my-0">{latestInfo.title}</h3>
+			<Markdown divClass="mt-2" source={latestInfo.text ?? ''} />
+		</div>
+	</div>
+{/if}
 <div class="my-8">
 	<h2>直近のスケジュール</h2>
 </div>
-<!-- {#if latestInfo.meta.pagination.total > 0}
-	<div class="max-w-none my-8 rounded-xl border-2 border-base-200 p-6">
-		<div>{formatDate(latestInfo.data[0].attributes.updatedAt)}</div>
-		<h2 class="my-0">{latestInfo.data[0].attributes.title}</h2>
-		<Markdown divClass="mt-2" source={latestInfo.data[0].attributes.text} />
-	</div>
-{/if} -->
 <div class="my-8 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
 	{#each menuItems as menuItem (menuItem.id)}
 		<a
