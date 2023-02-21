@@ -1,8 +1,14 @@
+<script lang="ts" context="module">
+	export type BreadcrumbParamType = {
+		name: string;
+		href: string;
+	};
+</script>
+
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import type { IBreadcrumbItemParam } from '$schemas';
 
-	export let params: IBreadcrumbItemParam[];
+	export let params: BreadcrumbParamType[];
 </script>
 
 <div class="text-sm breadcrumbs not-prose mb-8">

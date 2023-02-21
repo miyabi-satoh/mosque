@@ -3,9 +3,6 @@
 	import { onMount } from 'svelte';
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
-	import { getLocalToken, removeLocalToken } from '$lib/utils';
-	import { mainStore } from '$stores';
-	import { apiAuth } from '$lib/api';
 	import '../app.postcss';
 
 	export let data: LayoutData;
@@ -25,64 +22,6 @@
 	$: menuItems = data.menuItems;
 	$: activeUrl = $page.url.pathname;
 
-	async function handleSubmitLogin() {
-		try {
-			const token = await apiAuth.getAccessToken(fetch, username, password);
-			if (token) {
-				mainStore.setToken(token);
-				mainStore.setLoggedIn(true);
-				mainStore.setLogInError(false);
-				await actionGetUserProfile();
-				mainStore.addNotification({ content: 'Logged in', color: 'success' });
-				// open = false;
-			} else {
-				mainStore.setLoggedIn(false);
-			}
-		} catch (err) {
-			mainStore.setLogInError(true);
-			mainStore.setLoggedIn(false);
-		}
-	}
-
-	async function actionGetUserProfile() {
-		try {
-			const profile = await apiAuth.getMe(fetch, $mainStore.token);
-			mainStore.setUserProfile(profile);
-		} catch (error) {
-			mainStore.setLoggedIn(false);
-		}
-	}
-
-	async function checkLoggedIn() {
-		if (!$mainStore.isLoggedIn) {
-			let token = $mainStore.token;
-			if (!token) {
-				const localToken = getLocalToken();
-				if (localToken) {
-					mainStore.setToken(localToken);
-					token = localToken;
-				}
-			}
-			if (token) {
-				try {
-					const profile = await apiAuth.getMe(fetch, token);
-					mainStore.setLoggedIn(true);
-					mainStore.setUserProfile(profile);
-				} catch (error) {
-					removeLogin();
-				}
-			} else {
-				removeLogin();
-			}
-		}
-	}
-
-	function removeLogin() {
-		removeLocalToken();
-		mainStore.setToken('');
-		mainStore.setLoggedIn(false);
-	}
-
 	function toggleTheme() {
 		theme = theme == 'dark' ? 'light' : 'dark';
 		localStorage.setItem('theme', theme);
@@ -95,8 +34,6 @@
 
 	onMount(async () => {
 		theme = window.document.documentElement.getAttribute('data-theme') ?? '';
-
-		await checkLoggedIn();
 	});
 </script>
 
@@ -125,24 +62,8 @@
 					</a>
 				</div>
 				<div class="flex flex-none gap-2">
-					{#if $mainStore.isLoggedIn}
-						<ul class="menu menu-horizontal px-1">
-							<li tabindex="-1">
-								<span
-									><Icon icon="mdi:user-circle" height="auto" />
-									{$mainStore.userProfile?.email}</span
-								>
-								<ul class="p-2">
-									<li>設定</li>
-									<li class="divider" />
-									<li><button on:click={removeLogin}>ログアウト</button></li>
-								</ul>
-							</li>
-						</ul>
-					{:else}
-						<!-- The button to open modal -->
-						<label for="login" class="btn btn-primary">ログイン</label>
-					{/if}
+					<!-- The button to open modal -->
+					<label for="login" class="btn btn-primary">ログイン</label>
 					<button on:click={toggleTheme} class="mx-2">
 						{#if theme == 'dark'}
 							<svg
@@ -222,7 +143,7 @@
 <!-- Put this part before </body> tag -->
 <input type="checkbox" id="login" class="modal-toggle" bind:checked={toggleLogin} />
 <div class="modal">
-	<form class="modal-box relative" action="#" on:submit|preventDefault={handleSubmitLogin}>
+	<form class="modal-box relative" action="#" on:submit|preventDefault={() => {}}>
 		<label for="login" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 		<div class="flex flex-col space-y-6">
 			<h3 class="text-lg font-bold">ログイン</h3>

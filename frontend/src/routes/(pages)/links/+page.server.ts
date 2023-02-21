@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { normalizeSearch } from '$lib/utils';
+import { normalizeNumber, normalizeSearch } from '$lib/utils';
 import { prisma } from '$lib/server/prisma';
 
 const pageSize = 10;
@@ -11,10 +11,7 @@ export const load = (async ({ url }) => {
 	}
 
 	// console.log('load @ frontend/src/routes/(pages)/links/+page.ts');
-	const queryPage = (() => {
-		const num = Number(url.searchParams.get('p') ?? 1);
-		return isNaN(num) ? 1 : Math.max(1, num);
-	})();
+	const queryPage = normalizeNumber(url.searchParams.get('p'), 1);
 	const querySearch = url.searchParams.get('q') ?? '';
 	const queryFor = url.searchParams.get('f') ?? '';
 

@@ -2,11 +2,11 @@ import type { Asset } from '@prisma/client';
 import type { PageLoad } from './$types';
 import { typeDetect } from './typeDetect';
 // import { apiUrl } from '$lib/api';
-import type { BlobType } from '$schemas';
+// import type { BlobType } from '$schemas';
 
 type AssetData = Asset & {
 	status: number;
-	type: BlobType;
+	type: ReturnType<typeof typeDetect>;
 	text: string;
 	blobUrl: string;
 	mimeType: string;
@@ -22,7 +22,7 @@ export const load = (async ({ data, fetch }) => {
 	let assets: AssetData[] = [];
 	for (const asset of data.assets) {
 		if (asset) {
-			let type: BlobType = 'error';
+			let type: AssetData['type'] = 'error';
 			let mimeType = '';
 			let text = '';
 			// const blobUrl = apiUrl(`assets/${asset?.id}/${asset?.slug}`);

@@ -18,9 +18,7 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			// npm run check すること
-			$lib: path.resolve('./src/lib'),
-			$schemas: path.resolve('./src/schemas'),
-			$stores: path.resolve('./src/stores')
+			$lib: path.resolve('./src/lib')
 		},
 		env: {
 			dir: '..'

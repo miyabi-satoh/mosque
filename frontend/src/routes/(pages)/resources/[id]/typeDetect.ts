@@ -1,4 +1,4 @@
-import type { BlobType } from '$schemas';
+type BlobType = 'text' | 'img' | 'audio' | 'video' | 'pdf' | 'unknown' | 'error';
 
 export function typeDetect(typeStr: string): BlobType {
 	const table: Record<string, BlobType> = {

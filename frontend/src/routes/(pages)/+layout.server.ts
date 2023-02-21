@@ -1,11 +1,11 @@
 import type { LayoutServerLoad } from './$types';
-import type { IBreadcrumbItemParam } from '$schemas';
 import { prisma } from '$lib/server/prisma';
+import type { BreadcrumbParamType } from '$lib/Breadcrumb.svelte';
 
 export const load = (async ({ url }) => {
 	// console.log('load @ frontend/src/routes/(pages)/+layout.ts');
 	const paths = url.pathname.split('/');
-	let breadcrumbParams: IBreadcrumbItemParam[] = [];
+	let breadcrumbParams: BreadcrumbParamType[] = [];
 	let joinedPath = '';
 	for (const path of paths) {
 		if (joinedPath == '') {

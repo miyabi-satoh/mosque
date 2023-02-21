@@ -12,6 +12,6 @@
 	});
 </script>
 
-<div class="markdown {divClass}">
+<div class={divClass}>
 	{@html marked.parse(source)}
 </div>

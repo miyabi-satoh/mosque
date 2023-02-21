@@ -2,10 +2,13 @@
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	const pageRange = 2; // ページャーに表示する前後のページ数
-
+	// ページャーに表示する前後のページ数
+	export let pageRange = 2;
+	// 現在のページ
 	export let currentPage: number;
+	// 1ページに表示するデータ数
 	export let pageSize: number;
+	// 総データ数
 	export let count: number;
 	$: pageCount = Math.ceil(count / pageSize);
 	$: pages = initPages(currentPage, pageSize, count);
