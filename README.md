@@ -29,28 +29,30 @@ DBMS ... PostgreSQL
     python -m venv .venv
     ```
 
+1. env.exampleを参考に、.envファイルを編集する
+
+1. .envのコピー
+    ```
+    ./copy_env.ps1
+    ```
+
 1. 依存パッケージのインストール・更新
     ```
     ./post_pull.ps1
     ```
 
-1. Docker で PstgreSQL と Nginx を起動
+2. Docker で PstgreSQL を起動
     ```sh
     docker compose up -d
     ```
 
-1. backend を起動
-    ```sh
-    uvicorn --reload --host 0.0.0.0 --app-dir backend app.main:app
-    ```
-
-1. strapi を起動
+3. strapi を起動
     ```sh
     cd strapi
-    ENV_PATH=../.env yarn develop
+    yarn develop
     ```
 
-1. frontend を起動
+4. frontend を起動
     ```sh
     cd frontend
     npm run dev -- --host 0.0.0.0 --port 3000
@@ -58,8 +60,6 @@ DBMS ... PostgreSQL
 
 ## TODO
 
-- backend: API 整理
-  - /login, /users を strapi に移譲
-- system: nginx, postgresqlをネイティブに
-- frontend & strapi: orderを参照カウントにする。クリック数が多いほど上位に。
-- backend: office文書をpdfに変換する
+- backend不要説。
+- orderを参照カウントにする。クリック数が多いほど上位に。
+- office文書をpdfに変換する
