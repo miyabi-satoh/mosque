@@ -1,7 +1,7 @@
 <script lang="ts">
+	import type { PageData } from './$types';
 	import Markdown from '$lib/Markdown.svelte';
 	import { formatDate } from '$lib/utils';
-	import type { PageData } from './$types';
 
 	export let data: PageData;
 	$: pageMeta = data.pageMeta;
