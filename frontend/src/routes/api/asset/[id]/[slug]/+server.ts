@@ -49,21 +49,25 @@ const download = async (uri: string, dirname: string): Promise<void> => {
 };
 
 const findCache = (dirname: string): string | null => {
-	const dirents = fs.readdirSync(dirname, {
-		withFileTypes: true
-	});
+	try {
+		const dirents = fs.readdirSync(dirname, {
+			withFileTypes: true
+		});
 
-	for (const dirent of dirents) {
-		if (dirent.isFile()) {
-			// ファイルの更新日時を取得
-			const file = path.join(dirname, dirent.name);
-			const stats = fs.statSync(file);
-			// 期間を比較
-			if (addWeeks(stats.mtime, 4) > new Date()) {
-				return file;
+		for (const dirent of dirents) {
+			if (dirent.isFile()) {
+				// ファイルの更新日時を取得
+				const file = path.join(dirname, dirent.name);
+				const stats = fs.statSync(file);
+				// 期間を比較
+				if (addWeeks(stats.mtime, 4) > new Date()) {
+					return file;
+				}
+				fs.unlinkSync(file);
 			}
-			fs.unlinkSync(file);
 		}
+	} catch (err) {
+		/* empty */
 	}
 	return null;
 };
