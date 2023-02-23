@@ -13,46 +13,44 @@
 
 ```
 .
-├── backend ... FastAPI
-├── frontend ... Sveltekit
-├── nginx ... nginx config
-└── strapi ... strapi
+├── frontend ... Sveltekit 1.x
+└── strapi ... strapi 4.x
+
+DBMS ... PostgreSQL 15.x
 ```
 
-HTTP Server ... Nginx<br/>
-DBMS ... PostgreSQL
+- Webサーバーは立てない。
+- strapiの管理パネルでデータを編集する。
+- frontendからはprismaを経由して、DBアクセスする。
+
 
 ## git clone(fetch)したら
 
-1. Python の venv 環境を作る
-    ```
-    python -m venv .venv
-    ```
-
 1. env.exampleを参考に、.envファイルを編集する
 
-1. .envのコピー
+2. .envのコピー
     ```
     ./copy_env.ps1
     ```
 
-1. 依存パッケージのインストール・更新
+3. 依存パッケージのインストール・更新
     ```
     ./post_pull.ps1
     ```
 
-2. Docker で PstgreSQL を起動
+4. Docker で PstgreSQL を起動
     ```sh
     docker compose up -d
     ```
 
-3. strapi を起動
+5. strapi を起動
     ```sh
     cd strapi
+    yarn build
     yarn develop
     ```
 
-4. frontend を起動
+6. frontend を起動
     ```sh
     cd frontend
     npm run dev -- --host 0.0.0.0 --port 3000
@@ -60,6 +58,5 @@ DBMS ... PostgreSQL
 
 ## TODO
 
-- backend不要説。
 - orderを参照カウントにする。クリック数が多いほど上位に。
 - office文書をpdfに変換する
