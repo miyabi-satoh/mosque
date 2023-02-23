@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { formatDate } from '$lib/utils';
 	import Pagination from '$lib/Pagination.svelte';
-	import ScheduleItem from './ScheduleItem.svelte';
+	import ScheduleItem from '$lib/ScheduleItem.svelte';
 
 	export let data: PageData;
 

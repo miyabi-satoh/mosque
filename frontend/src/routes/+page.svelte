@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import Markdown from '$lib/Markdown.svelte';
 	import { formatDate } from '$lib/utils';
+	import ScheduleItem from '$lib/ScheduleItem.svelte';
 
 	export let data: PageData;
 	$: pageMeta = data.pageMeta;
@@ -12,6 +13,7 @@
 <svelte:head>
 	<title>MOSQUE | Home</title>
 </svelte:head>
+
 {#if pageMeta}
 	<div class="my-8 text-center lg:text-left">
 		<h1>{pageMeta.title}</h1>
@@ -20,6 +22,7 @@
 		{/if}
 	</div>
 {/if}
+
 {#if latestInfo}
 	<div class="my-8">
 		<h2 class="mb-4">最新インフォメーション</h2>
@@ -30,9 +33,21 @@
 		</div>
 	</div>
 {/if}
-<div class="my-8">
-	<h2>直近のスケジュール</h2>
-</div>
+
+{#if data.schedules && data.schedules.length > 0}
+	<div class="my-8">
+		<h2>直近のスケジュール</h2>
+		<ul>
+			{#each data.schedules as schedule (schedule.id)}
+				<li class="sm:flex gap-4">
+					<span>{formatDate(schedule.date)}</span>
+					<ScheduleItem data={schedule.events} />
+				</li>
+			{/each}
+		</ul>
+	</div>
+{/if}
+
 <div class="my-8 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
 	{#each menuItems as menuItem (menuItem.id)}
 		<a
