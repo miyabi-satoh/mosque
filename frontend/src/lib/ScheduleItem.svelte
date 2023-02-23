@@ -10,16 +10,18 @@
 </script>
 
 {#each data as schedule (schedule?.id)}
-	<div class="flex flex-row">
-		{#if schedule?.start}
-			<div class="w-10 text-right mr-1">{timeString(schedule.start)}</div>
-		{/if}
+	<div class="flex gap-2">
 		{#if schedule?.start || schedule?.end}
-			<div>〜</div>
+			<div class="flex flex-none gap-1">
+				{#if schedule?.start}
+					<div class="w-10 text-right">{timeString(schedule.start)}</div>
+				{/if}
+				<div>〜</div>
+				{#if schedule?.end}
+					<div class="w-10 text-right">{timeString(schedule.end)}</div>
+				{/if}
+			</div>
 		{/if}
-		{#if schedule?.end}
-			<div class="w-10 text-right">{timeString(schedule.end)}</div>
-		{/if}
-		<div class="mx-2">{schedule?.name}</div>
+		<div>{schedule?.name}</div>
 	</div>
 {/each}

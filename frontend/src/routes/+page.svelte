@@ -40,7 +40,7 @@
 		<ul>
 			{#each data.schedules as schedule (schedule.id)}
 				<li class="sm:flex gap-4">
-					<span>{formatDate(schedule.date)}</span>
+					<span class="w-40 overflow-x-visible">{formatDate(schedule.date)}</span>
 					<ScheduleItem data={schedule.events} />
 				</li>
 			{/each}
@@ -48,18 +48,21 @@
 	</div>
 {/if}
 
-<div class="my-8 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
-	{#each menuItems as menuItem (menuItem.id)}
-		<a
-			class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
-			href={menuItem.url}
-		>
-			<div class="card-body">
-				<h3 class="card-title">
-					{menuItem.title}
-				</h3>
-				<p>{menuItem.description}</p>
-			</div>
-		</a>
-	{/each}
+<div class="my-8">
+	<h2>メニュー</h2>
+	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
+		{#each menuItems as menuItem (menuItem.id)}
+			<a
+				class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
+				href={menuItem.url}
+			>
+				<div class="card-body">
+					<h3 class="card-title">
+						{menuItem.title}
+					</h3>
+					<p>{menuItem.description}</p>
+				</div>
+			</a>
+		{/each}
+	</div>
 </div>
