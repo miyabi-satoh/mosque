@@ -61,6 +61,17 @@
 				rel="noreferrer">新しいタブで開く</a
 			>
 		{:else if activeResource.type == 'pdf'}
+			{#if objContainerClass.length}
+				<div class="flex gap-4">
+					<a
+						class="btn btn-primary btn-sm my-4"
+						href={activeResource.blobUrl}
+						target="_blank"
+						rel="noreferrer">新しいタブで開く</a
+					>
+					<button class="btn btn-primary btn-sm my-4">印刷</button>
+				</div>
+			{/if}
 			<div class={objContainerClass}>
 				<object
 					class="border-0"
@@ -81,14 +92,6 @@
 					{/if}
 				</object>
 			</div>
-			{#if objContainerClass.length}
-				<a
-					class="btn btn-primary btn-sm my-4"
-					href={activeResource.blobUrl}
-					target="_blank"
-					rel="noreferrer">新しいタブで開く</a
-				>
-			{/if}
 		{:else if activeResource.type == 'audio'}
 			<audio controls src={activeResource.blobUrl}>
 				<div class="alert alert-error shadow-lg">
