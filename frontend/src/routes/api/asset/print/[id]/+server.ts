@@ -3,9 +3,11 @@ import { addWeeks } from 'date-fns';
 import type { Nullable } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { createHash } from 'crypto';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
+import { PRINTER_NAME } from '$env/static/private';
 
 const findCache = (dirname: string): string | null => {
 	try {
@@ -32,6 +34,7 @@ const findCache = (dirname: string): string | null => {
 };
 
 export const GET = (async ({ params }) => {
+	// console.log(PRINTER_NAME);
 	const asset = await prisma.asset.findUnique({
 		where: {
 			id: Number(params.id)
@@ -57,7 +60,13 @@ export const GET = (async ({ params }) => {
 		throw error(404, 'Not found');
 	}
 
+	const script = path.join('scripts', 'printout.ps1');
+	const spawn = spawnSync(`pwsh ${script} "${filepath}" "${PRINTER_NAME}"`, { shell: true });
+	// const spawn = spawnSync(`pwsh -v`, { shell: true });
+	console.log(`stdout: ${spawn.stdout}`);
+	console.log(`stderr: ${spawn.stderr}`);
+	console.log(`status: ${spawn.status}`);
 	return json({
-		success: filepath
+		success: spawn.status === 0
 	});
 }) satisfies RequestHandler;

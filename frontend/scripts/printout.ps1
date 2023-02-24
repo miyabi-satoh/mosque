@@ -14,15 +14,18 @@ if (-not $PrinterName) {
   Exit 1
 }
 
-if ($IsWindows) {
-  $printer = Get-WmiObject Win32_Printer | Where-Object Name -eq $PrinterName
-  if (-not $printer) {
-    Write-Error "Printer not found: $printer"
-    Exit 1
-  }
-  $default = Get-WmiObject Win32_Printer | Where-Object default
-  $printer.SetDefaultPrinter()
-  Set-PrintConfiguration $printer.name -Color $false
-  Start-Process $Path -Verb Print
-  $default.SetDefaultPrinter()
+if (-not $IsWindows) {
+  Write-Error "Unsupported operating"
+  Exit 1
 }
+$printer = Get-CimInstance -Class Win32_Printer -Filter "Name='$PrinterName'"
+if (-not $printer) {
+  Write-Error "Printer not found: $printer"
+  Exit 1
+}
+$default = Get-CimInstance Win32_Printer | Where-Object default
+Invoke-CimMethod -InputObject $printer -MethodName SetDefaultPrinter
+Set-PrintConfiguration $printer.name -Color $false
+Start-Process $Path -Verb Print -WindowStyle Hidden
+Invoke-CimMethod -InputObject $default -MethodName SetDefaultPrinter
+

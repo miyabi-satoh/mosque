@@ -1,22 +1,25 @@
 <script lang="ts" context="module">
-	type AlertType = 'info' | 'warning' | 'success' | 'error';
+	import { writable } from 'svelte/store';
+
+	type AlertType = 'alert-info' | 'alert-warning' | 'alert-success' | 'alert-error';
 	type ToastType = {
 		message: string;
 		alertType: AlertType;
 	};
 
-	let queue: ToastType[] = [];
+	export const toastQueue = writable<ToastType[]>([]);
 
-	export const addToast = (message: string, alertType: AlertType) => {
-		const toast = {
-			message,
-			alertType
-		};
-		queue = [...queue, toast];
-		// setTimeout(() => {
-		// 	queue = queue.slice(1);
-		// }, 5000);
-		console.log(queue);
+	export const addToast = (message: string, alertType: AlertType = 'alert-success') => {
+		if (message) {
+			const toast = {
+				message,
+				alertType
+			};
+			toastQueue.update((value) => [...value, toast]);
+			setTimeout(() => {
+				toastQueue.update((value) => value.slice(1));
+			}, 2000 + Math.floor(message.length * 20));
+		}
 	};
 </script>
 
@@ -24,8 +27,8 @@
 	export let position = 'toast-top toast-center';
 </script>
 
-<div class="toast z-50 {position}">
-	{#each queue as item}
+<div class="toast z-50 min-w-[50%] max-w-[80%] {position}">
+	{#each $toastQueue as item}
 		<div class="alert {item.alertType}">
 			<div>
 				<span>{item.message}</span>

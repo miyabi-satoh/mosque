@@ -4,7 +4,7 @@
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import '../app.postcss';
-	import Toast from '$lib/Toast.svelte';
+	import Toast, { addToast } from '$lib/Toast.svelte';
 
 	export let data: LayoutData;
 	// console.log(data);

@@ -27,10 +27,14 @@
 		const res = await fetch(`/api/asset/print/${assetId}`);
 		if (res.ok) {
 			const json = await res.json();
-			addToast('プリンタに送信しました', 'success');
+			if (json.success) {
+				addToast('プリンタに送信しました', 'alert-success');
+			} else {
+				addToast('印刷に失敗しました', 'alert-error');
+			}
 			console.log(json);
 		} else {
-			addToast(res.statusText, 'error');
+			addToast(res.statusText, 'alert-error');
 			// res.statusText
 			// todo
 			console.log(res);
@@ -146,7 +150,7 @@
 		<h3 class="my-0 text-center">注意</h3>
 		<ul class="my-4">
 			<li>
-				<span class="font-bold underline text-red-500">全ページをモノクロで</span>印刷します。
+				<span class="font-bold underline text-red-500">全ページを</span>印刷します。
 			</li>
 			<li>
 				A4サイズを印刷する場合、他のスタッフが<span class="font-bold underline text-red-500"
