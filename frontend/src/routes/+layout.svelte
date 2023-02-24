@@ -4,6 +4,7 @@
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import '../app.postcss';
+	import Toast from '$lib/Toast.svelte';
 
 	export let data: LayoutData;
 	// console.log(data);
@@ -48,6 +49,7 @@
 	</script>
 </svelte:head>
 
+<Toast />
 <div class="drawer drawer-mobile bg-base-100">
 	<input id="drawer" type="checkbox" class="drawer-toggle" />
 	<div class="drawer-content">

@@ -60,3 +60,4 @@ DBMS ... PostgreSQL 15.x
 
 - orderを参照カウントにする。クリック数が多いほど上位に。
 - office文書をpdfに変換する
+- ホスト経由での印刷

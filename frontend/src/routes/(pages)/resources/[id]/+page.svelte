@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { addToast } from '$lib/Toast.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -19,12 +20,28 @@
 		// console.log('onLoadObject');
 		objContainerClass = 'aspect-w-5 aspect-h-7';
 	}
+
+	const handleClickPrint = async () => {
+		const assetId = activeResource.id;
+		document.getElementById('print-confirm')?.click();
+		const res = await fetch(`/api/asset/print/${assetId}`);
+		if (res.ok) {
+			const json = await res.json();
+			addToast('プリンタに送信しました', 'success');
+			console.log(json);
+		} else {
+			addToast(res.statusText, 'error');
+			// res.statusText
+			// todo
+			console.log(res);
+		}
+	};
 </script>
 
 {#if data.assets.length == 0}
 	<p>アイテムはありません</p>
 {:else}
-	<div class="tabs">
+	<div class="tabs justify-center">
 		{#each data.assets as asset, index}
 			<button
 				on:click={() => handleClickTab(index)}
@@ -62,14 +79,14 @@
 			>
 		{:else if activeResource.type == 'pdf'}
 			{#if objContainerClass.length}
-				<div class="flex gap-4">
+				<div class="flex gap-4 justify-end">
 					<a
 						class="btn btn-primary btn-sm my-4"
 						href={activeResource.blobUrl}
 						target="_blank"
 						rel="noreferrer">新しいタブで開く</a
 					>
-					<button class="btn btn-primary btn-sm my-4">印刷</button>
+					<label class="btn btn-primary btn-sm my-4" for="print-confirm">印刷</label>
 				</div>
 			{/if}
 			<div class={objContainerClass}>
@@ -122,3 +139,25 @@
 		{/if}
 	</div>
 {/if}
+
+<input type="checkbox" id="print-confirm" class="modal-toggle" />
+<div class="modal">
+	<div class="modal-box">
+		<h3 class="my-0 text-center">注意</h3>
+		<ul class="my-4">
+			<li>
+				<span class="font-bold underline text-red-500">全ページをモノクロで</span>印刷します。
+			</li>
+			<li>
+				A4サイズを印刷する場合、他のスタッフが<span class="font-bold underline text-red-500"
+					>宛名シール印刷を行っていないことを確認</span
+				>してから開始してください。
+			</li>
+		</ul>
+		<p class="my-4">印刷を開始してもよろしいですか？</p>
+		<div class="modal-action flex justify-between">
+			<label for="print-confirm" class="btn">キャンセル</label>
+			<button class="btn btn-primary" on:click={handleClickPrint}>印刷開始</button>
+		</div>
+	</div>
+</div>

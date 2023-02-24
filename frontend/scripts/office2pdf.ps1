@@ -1,5 +1,9 @@
 #!/usr/bin/env pwsh
 
+if (-not $IsWindows) {
+  Exit
+}
+
 #引数なし
 if ( $null -eq $args[0] ) {
   Write-Warning '引数がありません'
