@@ -26,5 +26,6 @@ export function typeDetect(typeStr: string): BlobType {
 	if (typeStr.match(/^video\//)) {
 		return 'video';
 	}
+	console.log(`typeStr: ${typeStr}`);
 	return 'unknown';
 }

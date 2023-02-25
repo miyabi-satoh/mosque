@@ -30,6 +30,12 @@
       "type": "string",
       "required": true,
       "unique": true
+    },
+    "lastModified": {
+      "type": "datetime"
+    },
+    "cache": {
+      "type": "string"
     }
   }
 }

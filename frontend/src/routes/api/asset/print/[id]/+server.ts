@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'crypto';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { PRINTER_NAME } from '$env/static/private';
+// import { PRINTER_NAME } from '$env/static/private';
 
 const findCache = (dirname: string): string | null => {
 	try {
@@ -60,9 +60,9 @@ export const GET = (async ({ params }) => {
 		throw error(404, 'Not found');
 	}
 
-	const script = path.join('scripts', 'printout.ps1');
-	const spawn = spawnSync(`pwsh ${script} "${filepath}" "${PRINTER_NAME}"`, { shell: true });
-	// const spawn = spawnSync(`pwsh -v`, { shell: true });
+	// const script = path.join('scripts', 'printout.ps1');
+	// const spawn = spawnSync(`pwsh ${script} "${filepath}" "${PRINTER_NAME}"`, { shell: true });
+	const spawn = spawnSync(`pwsh -v`, { shell: true });
 	console.log(`stdout: ${spawn.stdout}`);
 	console.log(`stderr: ${spawn.stderr}`);
 	console.log(`status: ${spawn.status}`);

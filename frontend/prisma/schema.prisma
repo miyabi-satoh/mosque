@@ -145,6 +145,8 @@ model Asset {
   updated_by_id                                 Int?
   uri                                           String?                  @db.VarChar(255)
   title                                         String?                  @db.VarChar(255)
+  last_modified                                 DateTime?                @db.Timestamp(6)
+  cache                                         String?                  @db.VarChar(255)
   admin_users_assets_created_by_idToadmin_users admin_users?             @relation("assets_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
   admin_users_assets_updated_by_idToadmin_users admin_users?             @relation("assets_updated_by_idToadmin_users", fields: [updated_by_id], references: [id], onUpdate: NoAction)
   resources_assets_links                        resources_assets_links[]

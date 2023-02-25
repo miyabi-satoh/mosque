@@ -1,78 +1,114 @@
 import { error } from '@sveltejs/kit';
-import { addWeeks } from 'date-fns';
-import mime from 'mime/lite';
+import mime from 'mime';
+import type { Asset } from '@prisma/client';
 import fs from 'node:fs';
 import path from 'node:path';
-import https from 'node:https';
+import { spawnSync } from 'node:child_process';
 import { createHash } from 'crypto';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 
-const download = async (uri: string, dirname: string): Promise<void> => {
-	return await new Promise<void>((resolve, reject) =>
-		https
-			.get(uri, (res) => {
-				const code = res.statusCode ?? 0;
-				console.log(`code: ${code}`);
-				if (code >= 400) {
-					return reject(new Error(res.statusMessage));
-				}
+type Fetch = typeof fetch;
+const download = async (
+	fetch: Fetch,
+	asset: Asset,
+	uri: string,
+	dirname: string
+): Promise<string> => {
+	const res = await fetch(uri);
+	const code = res.status ?? 0;
+	if (code >= 400) {
+		console.log(`code: ${code}`);
+		throw new Error(res.statusText);
+	}
 
-				// handle redirects
-				if (code > 300 && !!res.headers.location) {
-					return resolve(download(res.headers.location, dirname));
-				}
-				const contentDisposition = res.headers['content-disposition'];
-				console.log(`content-disposition: ${contentDisposition}`);
-				let filename = '';
-				if (contentDisposition) {
-					filename = contentDisposition.split(';')[1].split('=')[1];
-				}
-				if (!filename) {
-					filename = path.basename(uri);
-				}
+	// handle redirects
+	if (code > 300) {
+		const location = res.headers.get('location');
+		console.log(`code: ${code}`);
+		console.log(`location: ${location}`);
+		if (location) {
+			return await download(fetch, asset, location, dirname);
+		}
+	}
 
-				const filepath = path.join(dirname, filename);
-				console.log(`filepath: ${filepath}`);
-				const fileWriter = fs.createWriteStream(filepath);
-				fileWriter.on('finish', () => resolve());
-				fileWriter.on('error', (error) => {
-					fileWriter.close();
-					fs.unlink(filepath, () => reject(error));
-				});
-				res.pipe(fileWriter);
-			})
-			.on('error', (error) => {
-				reject(error);
-			})
-	);
-};
-
-const findCache = (dirname: string): string | null => {
-	try {
-		const dirents = fs.readdirSync(dirname, {
-			withFileTypes: true
-		});
-
-		for (const dirent of dirents) {
-			if (dirent.isFile()) {
-				// ファイルの更新日時を取得
-				const file = path.join(dirname, dirent.name);
-				const stats = fs.statSync(file);
-				// 期間を比較
-				if (addWeeks(stats.mtime, 4) > new Date()) {
-					return file;
-				}
-				fs.unlinkSync(file);
+	const lastModified = res.headers.get('Last-Modified');
+	if (lastModified) {
+		const dt = new Date(lastModified);
+		if (dt.getTime() == asset.last_modified?.getTime()) {
+			// 前回取得時から変更なし
+			if (asset.cache && fs.existsSync(asset.cache)) {
+				// キャッシュファイルも残っている -> 処理不要
+				console.log(`Use cache: ${asset.cache}`);
+				return asset.cache;
 			}
 		}
-	} catch (err) {
-		/* empty */
+		asset.last_modified = dt;
 	}
-	return null;
+
+	// 以前のキャッシュがあれば削除
+	if (asset.cache && fs.existsSync(asset.cache)) {
+		fs.unlinkSync(asset.cache);
+	}
+
+	const contentDisposition = res.headers.get('content-disposition');
+	console.log(`content-disposition: ${contentDisposition}`);
+	let filename = '';
+	if (contentDisposition) {
+		filename = contentDisposition.split(';')[1].split('=')[1];
+	}
+	if (!filename) {
+		filename = path.basename(uri);
+	}
+
+	fs.mkdirSync(dirname, { recursive: true });
+	asset.cache = path.join(dirname, filename);
+	fs.writeFileSync(asset.cache, Buffer.from(await res.arrayBuffer()));
+	await prisma.asset.update({
+		where: {
+			id: asset.id
+		},
+		data: {
+			last_modified: asset.last_modified,
+			cache: asset.cache
+		}
+	});
+	return asset.cache;
 };
 
-export const GET = (async ({ params }) => {
+const convert = async (asset: Asset, filepath: string) => {
+	const stats = fs.statSync(filepath);
+	if (asset.cache && fs.existsSync(asset.cache)) {
+		if (stats.mtime.getTime() == asset.last_modified?.getTime()) {
+			return asset.cache;
+		}
+	}
+
+	const filename = path.basename(filepath).replace(/\.(doc|xls|ppt)[xm]?$/, '.pdf');
+	const hs = createHash('md5').update(filepath).digest('hex');
+	const out = path.join('cache', hs, filename);
+	const script = path.join('scripts', 'office2pdf.ps1');
+	const spawn = spawnSync(`pwsh ${script} "${filepath}" "${out}"`, { shell: true });
+	if (spawn.status === 0) {
+		await prisma.asset.update({
+			where: {
+				id: asset.id
+			},
+			data: {
+				last_modified: stats.mtime,
+				cache: out
+			}
+		});
+		return out;
+	}
+	console.log(`status: ${spawn.status}`);
+	console.log(`stdout: ${spawn.stdout}`);
+	console.log(`stderr: ${spawn.stderr}`);
+
+	return filepath;
+};
+
+export const GET = (async ({ params, fetch }) => {
 	const asset = await prisma.asset.findUnique({
 		where: {
 			id: Number(params.id)
@@ -85,45 +121,40 @@ export const GET = (async ({ params }) => {
 		throw error(404, 'Invalid uri');
 	}
 
-	if (fs.existsSync(asset.uri)) {
-		// 実ファイルはそのまま送信
-		const filename = path.basename(asset.uri);
-		return new Response(fs.readFileSync(asset.uri), {
-			status: 200,
-			headers: {
-				'Content-Type': mime.getType(filename) ?? 'text/plain',
-				'Content-Disposition': `inline; filename=${filename}`
-			}
-		});
-	}
+	let filepath: string | null = null;
 
 	// Webリソースはキャッシュを生成
 	if (asset.uri.match(/^https?:\/\//)) {
 		// URLのハッシュ値を取得
 		const hs = createHash('md5').update(asset.uri).digest('hex');
 		const dirname = path.join('cache', hs);
-		if (findCache(dirname) === null) {
-			fs.mkdirSync(dirname, { recursive: true });
 
-			try {
-				await download(asset.uri, dirname);
-			} catch (err) {
-				console.log('download error');
-				console.log(err);
+		try {
+			filepath = await download(fetch, asset, asset.uri, dirname);
+		} catch (err) {
+			console.log('download error');
+			console.log(err);
+		}
+	}
+	// ローカルリソースはそのまま送信
+	else if (fs.existsSync(asset.uri)) {
+		filepath = asset.uri;
+	}
+
+	// office文書はインライン表示できないため、pdfに変換する
+	if (filepath && filepath.match(/\.(doc|xls|ppt)[xm]?$/)) {
+		filepath = await convert(asset, filepath);
+	}
+
+	if (filepath && fs.existsSync(filepath)) {
+		const filename = path.basename(filepath);
+		return new Response(fs.readFileSync(filepath), {
+			status: 200,
+			headers: {
+				'Content-Type': mime.getType(filename) ?? 'text/plain',
+				'Content-Disposition': `inline; filename=${encodeURI(filename)}`
 			}
-		}
-
-		const filepath = findCache(dirname);
-		if (filepath) {
-			const filename = path.basename(filepath);
-			return new Response(fs.readFileSync(filepath), {
-				status: 200,
-				headers: {
-					'Content-Type': mime.getType(filename) ?? 'text/plain',
-					'Content-Disposition': `inline; filename=${filename}`
-				}
-			});
-		}
+		});
 	}
 
 	throw error(404, 'Invalid asset');

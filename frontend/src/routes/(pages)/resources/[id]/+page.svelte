@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { addToast } from '$lib/Toast.svelte';
 	import type { PageData } from './$types';
+	import { addToast } from '$lib/Toast.svelte';
 
 	export let data: PageData;
 	let objContainerClass = '';
@@ -63,13 +63,6 @@
 					{/each}
 				</div>
 			</div>
-		{:else if activeResource.type == 'unknown'}
-			<div class="alert alert-warning shadow-lg">
-				<div>
-					この形式のファイルはプレビューを表示できません。<br />
-					形式：{activeResource.mimeType}
-				</div>
-			</div>
 		{:else if activeResource.type == 'text'}
 			<pre
 				class="text-sm w-full whitespace-pre-wrap max-h-80 overflow-y-scroll">{activeResource.text}</pre>
@@ -90,14 +83,14 @@
 						target="_blank"
 						rel="noreferrer">新しいタブで開く</a
 					>
-					<label class="btn btn-primary btn-sm my-4" for="print-confirm">印刷</label>
+					<!-- <label class="btn btn-primary btn-sm my-4" for="print-confirm">印刷</label> -->
 				</div>
 			{/if}
 			<div class={objContainerClass}>
 				<object
 					class="border-0"
 					title="pdf"
-					type="application/pdf"
+					type={activeResource.mimeType}
 					data={activeResource.blobUrl}
 					on:load={onLoadObject}
 				>
@@ -140,6 +133,13 @@
 					{/if}
 				</div>
 			</video>
+		{:else}
+			<div class="alert alert-warning shadow-lg">
+				<div>
+					この形式のファイルはプレビューを表示できません。<br />
+					形式：{activeResource.mimeType}
+				</div>
+			</div>
 		{/if}
 	</div>
 {/if}

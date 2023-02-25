@@ -11,6 +11,7 @@
 
 Set-Location (Join-Path $PSScriptRoot frontend)
 npm i
+npm run prisma:generate
 npm run check
 
 Set-Location (Join-Path $PSScriptRoot strapi)
