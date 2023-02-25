@@ -5,10 +5,13 @@
 	import { page } from '$app/stores';
 	import '../app.postcss';
 	import Toast from '$lib/Toast.svelte';
+	import { getToken, removeToken, setToken, userStore, type User } from '$lib/user';
+	import { fade } from 'svelte/transition';
 
 	export let data: LayoutData;
-	// console.log(data);
+	// console.log(`userStore: ${$userStore}`);
 
+	let loginError = '';
 	let username = '';
 	let password = '';
 	let toggleLogin = false;
@@ -33,8 +36,66 @@
 		window.document.getElementById('drawer')?.click();
 	}
 
+	const handleEscKey = (event: KeyboardEvent) => {
+		// console.log(event);
+		if (event.key == 'Escape') {
+			window.document.getElementById('login')?.click();
+		}
+	};
+
+	const login = async () => {
+		loginError = '';
+		const res = await fetch('/api/auth/login', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+			body: JSON.stringify({ identifier: username, password })
+		});
+		if (res.ok) {
+			const data: { user: User; jwt: string } = await res.json();
+			if (data) {
+				setToken(data.jwt);
+				$userStore = data.user;
+				document.getElementById('login')?.click();
+				username = '';
+				password = '';
+			}
+		} else {
+			const data: {
+				error: {
+					status: number;
+					name: string;
+					message: string;
+				};
+			} = await res.json();
+			if (data?.error?.message) {
+				loginError = data.error.message;
+				username = '';
+				password = '';
+				window.document.getElementById('username')?.focus();
+				setTimeout(() => {
+					loginError = '';
+				}, 4000);
+			}
+		}
+	};
+
+	const logout = () => {
+		removeToken();
+		$userStore = null;
+	};
+
 	onMount(async () => {
 		theme = window.document.documentElement.getAttribute('data-theme') ?? '';
+		const token = getToken();
+		if (token) {
+			const res = await fetch('/api/auth/me', {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+			if (res.ok) {
+				const user: User = await res.json();
+				$userStore = user;
+			}
+		}
 	});
 </script>
 
@@ -64,8 +125,24 @@
 					</a>
 				</div>
 				<div class="flex flex-none gap-2">
-					<!-- The button to open modal -->
-					<label for="login" class="btn btn-primary">ログイン</label>
+					{#if $userStore}
+						<div class="dropdown dropdown-end">
+							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+							<!-- svelte-ignore a11y-label-has-associated-control -->
+							<label tabindex="0" class="btn btn-ghost">
+								<Icon icon="mdi:user-circle" height="auto" class="mr-1" />
+								{$userStore.displayName}
+							</label>
+							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+							<ul tabindex="0" class="menu dropdown-content shadow bg-base-300 w-48">
+								<li><button>プロフィール編集</button></li>
+								<li><button on:click={logout}>ログアウト</button></li>
+							</ul>
+						</div>
+					{:else}
+						<!-- The button to open modal -->
+						<label for="login" class="btn btn-primary">ログイン</label>
+					{/if}
 					<button on:click={toggleTheme} class="mx-2">
 						{#if theme == 'dark'}
 							<svg
@@ -145,7 +222,12 @@
 <!-- Put this part before </body> tag -->
 <input type="checkbox" id="login" class="modal-toggle" bind:checked={toggleLogin} />
 <div class="modal">
-	<form class="modal-box relative" action="#" on:submit|preventDefault={() => {}}>
+	<form
+		class="modal-box relative"
+		action="#"
+		on:submit|preventDefault={login}
+		on:keyup={handleEscKey}
+	>
 		<label for="login" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 		<div class="flex flex-col space-y-6">
 			<h3 class="text-lg font-bold">ログイン</h3>
@@ -170,6 +252,25 @@
 				/>
 			</div>
 			<button class="btn btn-primary" type="submit">ログイン</button>
+			{#if loginError}
+				<div class="alert alert-error shadow-lg" transition:fade>
+					<div>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="stroke-current flex-shrink-0 h-6 w-6"
+							fill="none"
+							viewBox="0 0 24 24"
+							><path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+							/></svg
+						>
+						<span>{loginError}</span>
+					</div>
+				</div>
+			{/if}
 		</div>
 	</form>
 </div>
