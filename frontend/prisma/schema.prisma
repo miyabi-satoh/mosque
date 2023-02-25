@@ -110,8 +110,8 @@ model admin_users {
   up_permissions_up_permissions_updated_by_idToadmin_users                             up_permissions[]               @relation("up_permissions_updated_by_idToadmin_users")
   up_roles_up_roles_created_by_idToadmin_users                                         up_roles[]                     @relation("up_roles_created_by_idToadmin_users")
   up_roles_up_roles_updated_by_idToadmin_users                                         up_roles[]                     @relation("up_roles_updated_by_idToadmin_users")
-  up_users_up_users_created_by_idToadmin_users                                         up_users[]                     @relation("up_users_created_by_idToadmin_users")
-  up_users_up_users_updated_by_idToadmin_users                                         up_users[]                     @relation("up_users_updated_by_idToadmin_users")
+  up_users_up_users_created_by_idToadmin_users                                         User[]                         @relation("up_users_created_by_idToadmin_users")
+  up_users_up_users_updated_by_idToadmin_users                                         User[]                         @relation("up_users_updated_by_idToadmin_users")
   upload_folders_upload_folders_created_by_idToadmin_users                             upload_folders[]               @relation("upload_folders_created_by_idToadmin_users")
   upload_folders_upload_folders_updated_by_idToadmin_users                             upload_folders[]               @relation("upload_folders_updated_by_idToadmin_users")
 
@@ -138,9 +138,9 @@ model admin_users_roles_links {
 model Asset {
   id                                            Int                      @id @default(autoincrement())
   slug                                          String?                  @db.VarChar(255)
-  created_at                                    DateTime?                @db.Timestamp(6)
-  updated_at                                    DateTime?                @db.Timestamp(6)
-  published_at                                  DateTime?                @db.Timestamp(6)
+  createdAt                                     DateTime?                @map("created_at") @db.Timestamp(6)
+  updatedAt                                     DateTime?                @map("updated_at") @db.Timestamp(6)
+  publishedAt                                   DateTime?                @map("published_at") @db.Timestamp(6)
   created_by_id                                 Int?
   updated_by_id                                 Int?
   uri                                           String?                  @db.VarChar(255)
@@ -162,9 +162,9 @@ model Event {
   start                                         DateTime?                @db.Time(6)
   end                                           DateTime?                @db.Time(6)
   private_name                                  String?                  @db.VarChar(255)
-  created_at                                    DateTime?                @db.Timestamp(6)
-  updated_at                                    DateTime?                @db.Timestamp(6)
-  published_at                                  DateTime?                @db.Timestamp(6)
+  createdAt                                     DateTime?                @map("created_at") @db.Timestamp(6)
+  updatedAt                                     DateTime?                @map("updated_at") @db.Timestamp(6)
+  publishedAt                                   DateTime?                @map("published_at") @db.Timestamp(6)
   created_by_id                                 Int?
   updated_by_id                                 Int?
   keyword                                       String?
@@ -258,9 +258,9 @@ model Info {
   id                                           Int          @id @default(autoincrement())
   text                                         String?
   title                                        String?      @db.VarChar(255)
-  created_at                                   DateTime?    @db.Timestamp(6)
-  updated_at                                   DateTime?    @db.Timestamp(6)
-  published_at                                 DateTime?    @db.Timestamp(6)
+  createdAt                                    DateTime?    @map("created_at") @db.Timestamp(6)
+  updatedAt                                    DateTime?    @map("updated_at") @db.Timestamp(6)
+  publishedAt                                  DateTime?    @map("published_at") @db.Timestamp(6)
   created_by_id                                Int?
   updated_by_id                                Int?
   admin_users_infos_created_by_idToadmin_users admin_users? @relation("infos_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
@@ -276,9 +276,9 @@ model Link {
   url                                          String?      @db.VarChar(255)
   title                                        String?      @db.VarChar(255)
   description                                  String?
-  created_at                                   DateTime?    @db.Timestamp(6)
-  updated_at                                   DateTime?    @db.Timestamp(6)
-  published_at                                 DateTime?    @db.Timestamp(6)
+  createdAt                                    DateTime?    @map("created_at") @db.Timestamp(6)
+  updatedAt                                    DateTime?    @map("updated_at") @db.Timestamp(6)
+  publishedAt                                  DateTime?    @map("published_at") @db.Timestamp(6)
   created_by_id                                Int?
   updated_by_id                                Int?
   order                                        Int?
@@ -298,9 +298,9 @@ model Note {
   id                                           Int          @id @default(autoincrement())
   title                                        String?      @db.VarChar(255)
   body                                         String?
-  created_at                                   DateTime?    @db.Timestamp(6)
-  updated_at                                   DateTime?    @db.Timestamp(6)
-  published_at                                 DateTime?    @db.Timestamp(6)
+  createdAt                                    DateTime?    @map("created_at") @db.Timestamp(6)
+  updatedAt                                    DateTime?    @map("updated_at") @db.Timestamp(6)
+  publishedAt                                  DateTime?    @map("published_at") @db.Timestamp(6)
   created_by_id                                Int?
   updated_by_id                                Int?
   admin_users_notes_created_by_idToadmin_users admin_users? @relation("notes_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
@@ -317,9 +317,9 @@ model Page {
   title                                        String?      @db.VarChar(255)
   description                                  String?
   is_menuitem                                  Boolean?
-  created_at                                   DateTime?    @db.Timestamp(6)
-  updated_at                                   DateTime?    @db.Timestamp(6)
-  published_at                                 DateTime?    @db.Timestamp(6)
+  createdAt                                    DateTime?    @map("created_at") @db.Timestamp(6)
+  updatedAt                                    DateTime?    @map("updated_at") @db.Timestamp(6)
+  publishedAt                                  DateTime?    @map("published_at") @db.Timestamp(6)
   created_by_id                                Int?
   updated_by_id                                Int?
   order                                        Int?
@@ -335,9 +335,9 @@ model Page {
 model Resource {
   id                                               Int                      @id @default(autoincrement())
   title                                            String?                  @db.VarChar(255)
-  created_at                                       DateTime?                @db.Timestamp(6)
-  updated_at                                       DateTime?                @db.Timestamp(6)
-  published_at                                     DateTime?                @db.Timestamp(6)
+  createdAt                                        DateTime?                @map("created_at") @db.Timestamp(6)
+  updatedAt                                        DateTime?                @map("updated_at") @db.Timestamp(6)
+  publishedAt                                      DateTime?                @map("published_at") @db.Timestamp(6)
   created_by_id                                    Int?
   updated_by_id                                    Int?
   keyword                                          String?
@@ -370,9 +370,9 @@ model resources_assets_links {
 model Schedule {
   id                                               Int                      @id @default(autoincrement())
   date                                             DateTime?                @db.Date
-  created_at                                       DateTime?                @db.Timestamp(6)
-  updated_at                                       DateTime?                @db.Timestamp(6)
-  published_at                                     DateTime?                @db.Timestamp(6)
+  createdAt                                        DateTime?                @map("created_at") @db.Timestamp(6)
+  updatedAt                                        DateTime?                @map("updated_at") @db.Timestamp(6)
+  publishedAt                                      DateTime?                @map("published_at") @db.Timestamp(6)
   created_by_id                                    Int?
   updated_by_id                                    Int?
   admin_users_schedules_created_by_idToadmin_users admin_users?             @relation("schedules_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
@@ -534,7 +534,7 @@ model up_roles {
   @@index([updated_by_id])
 }
 
-model up_users {
+model User {
   id                                              Int                   @id @default(autoincrement())
   username                                        String?               @db.VarChar(255)
   email                                           String?               @db.VarChar(255)
@@ -548,12 +548,19 @@ model up_users {
   updated_at                                      DateTime?             @db.Timestamp(6)
   created_by_id                                   Int?
   updated_by_id                                   Int?
+  displayName                                     String?               @map("display_name") @db.VarChar(255)
+  sei                                             String?               @db.VarChar(255)
+  mei                                             String?               @db.VarChar(255)
+  seiKana                                         String?               @map("sei_kana") @db.VarChar(255)
+  meiKana                                         String?               @map("mei_kana") @db.VarChar(255)
+  abbrev                                          String?               @db.VarChar(255)
   admin_users_up_users_created_by_idToadmin_users admin_users?          @relation("up_users_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
   admin_users_up_users_updated_by_idToadmin_users admin_users?          @relation("up_users_updated_by_idToadmin_users", fields: [updated_by_id], references: [id], onUpdate: NoAction)
   up_users_role_links                             up_users_role_links[]
 
   @@index([created_by_id])
   @@index([updated_by_id])
+  @@map("up_users")
 }
 
 model up_users_role_links {
@@ -561,7 +568,7 @@ model up_users_role_links {
   user_id    Int?
   role_id    Int?
   user_order Float?
-  up_users   up_users? @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  up_users   User?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   up_roles   up_roles? @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@unique([user_id, role_id])
