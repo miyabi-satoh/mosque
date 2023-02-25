@@ -23,9 +23,7 @@ export const load = (async ({ url, params, parent }) => {
 	}
 
 	const assets = resource.resources_assets_links.map((r) => r.assets);
-
 	const parentData = await parent();
-	parentData.pageMeta;
 	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts ${resources}`);
 	return {
 		resource,
