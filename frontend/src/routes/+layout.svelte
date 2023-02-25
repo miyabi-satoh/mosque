@@ -130,12 +130,15 @@
 							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label tabindex="0" class="btn btn-ghost">
-								<Icon icon="mdi:user-circle" height="auto" class="mr-1" />
-								{$userStore.displayName}
+								<Icon icon="mdi:user-circle" height="auto" class="sm:mr-1" />
+								<span class="hidden sm:inline">
+									{$userStore.displayName}
+								</span>
 							</label>
 							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-							<ul tabindex="0" class="menu dropdown-content shadow bg-base-300 w-48">
-								<li><button>プロフィール編集</button></li>
+							<ul tabindex="0" class="menu dropdown-content shadow bg-base-300 w-48 rounded">
+								<li class="sm:hidden"><button disabled>{$userStore.displayName}</button></li>
+								<li><a href="/me">プロフィール編集</a></li>
 								<li><button on:click={logout}>ログアウト</button></li>
 							</ul>
 						</div>
@@ -143,7 +146,7 @@
 						<!-- The button to open modal -->
 						<label for="login" class="btn btn-primary">ログイン</label>
 					{/if}
-					<button on:click={toggleTheme} class="mx-2">
+					<button on:click={toggleTheme} class="mr-2">
 						{#if theme == 'dark'}
 							<svg
 								class="w-5 h-5"
