@@ -3,8 +3,8 @@
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { formatDate } from '$lib/utils';
-	import Pagination from '$lib/Pagination.svelte';
-	import ScheduleItem from '$lib/ScheduleItem.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
+	import ScheduleItem from '$lib/components/ScheduleItem.svelte';
 
 	export let data: PageData;
 

@@ -4,9 +4,9 @@
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import '../app.postcss';
-	import Toast from '$lib/Toast.svelte';
 	import { getToken, removeToken, setToken, userStore, type User } from '$lib/user';
 	import { fade } from 'svelte/transition';
+	import Toast from '$lib/components/Toast.svelte';
 
 	export let data: LayoutData;
 	// console.log(`userStore: ${$userStore}`);

@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 	import { formatDate } from '$lib/utils';
 	import { goto } from '$app/navigation';
-	import Pagination from '$lib/Pagination.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 
 	export let data: PageData;
 	let stateSearchTerm = data.querySearch;

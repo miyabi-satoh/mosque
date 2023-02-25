@@ -1,7 +1,7 @@
 <script lang="ts">
 	// import type { LayoutData } from './$types';
-	import Breadcrumb from '$lib/Breadcrumb.svelte';
 	import { page } from '$app/stores';
+	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 
 	// export let data: LayoutData;
 	// $: pageMeta = $page.data.pageMeta;

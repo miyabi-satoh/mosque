@@ -1,6 +1,6 @@
 import type { LayoutServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import type { BreadcrumbParamType } from '$lib/Breadcrumb.svelte';
+import type { BreadcrumbParamType } from '$lib/types';
 
 export const load = (async ({ url }) => {
 	// console.log('load @ frontend/src/routes/(pages)/+layout.ts');
