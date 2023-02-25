@@ -14,7 +14,7 @@ export function formatDate(date: string | Date | null) {
 	}
 
 	const y = dt.getFullYear();
-	const m = dt.getMonth();
+	const m = dt.getMonth() + 1;
 	const d = dt.getDate();
 	const w = ['日', '月', '火', '水', '木', '金', '土'][dt.getDay()];
 	// return format(dt, 'y年M月d日(E)', { locale: ja });
