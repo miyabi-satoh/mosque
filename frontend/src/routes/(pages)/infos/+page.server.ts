@@ -43,7 +43,7 @@ export const load = (async ({ url }) => {
 		skip: (queryPage - 1) * pageSize,
 		take: pageSize,
 		orderBy: {
-			updated_at: 'desc'
+			updatedAt: 'desc'
 		},
 		where
 	});

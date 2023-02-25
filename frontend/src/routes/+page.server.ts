@@ -5,7 +5,7 @@ export const load = (async () => {
 	// 最新インフォメーション
 	const latestInfo = await prisma.info.findFirst({
 		orderBy: {
-			updated_at: 'desc'
+			updatedAt: 'desc'
 		}
 	});
 

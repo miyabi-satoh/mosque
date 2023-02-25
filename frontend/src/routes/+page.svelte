@@ -27,7 +27,7 @@
 	<div class="my-8">
 		<h2 class="mb-4">最新インフォメーション</h2>
 		<div class="max-w-none rounded-xl border-2 border-base-200 p-4">
-			<div>{formatDate(latestInfo.updated_at)}</div>
+			<div>{formatDate(latestInfo.updatedAt)}</div>
 			<h3 class="my-0">{latestInfo.title}</h3>
 			<Markdown divClass="mt-2" source={latestInfo.text ?? ''} />
 		</div>

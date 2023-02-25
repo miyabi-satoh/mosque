@@ -45,7 +45,7 @@
 				href="/infos/{info.id}"
 			>
 				<div class="card-body">
-					<p color="text-sm">{formatDate(info.updated_at)}</p>
+					<p color="text-sm">{formatDate(info.updatedAt)}</p>
 					<h3 class="card-title">
 						{info.title}
 					</h3>
