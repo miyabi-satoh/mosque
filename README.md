@@ -22,7 +22,7 @@ DBMS ... PostgreSQL 15.x
 - Webサーバーは立てない。ポート3000でアクセス。
 - strapiの管理パネルでデータを編集する。
 - frontendからはprismaを経由して、DBアクセスする。
-- ユーザー認証だけstrapiのapiを利用する
+- ユーザー認証だけstrapiのapiを利用するが、クライアントからはfrontendのapiをfetch, frontendからstapiのapiをfetchという構造。
 
 
 ## git clone(fetch)したら
@@ -59,6 +59,5 @@ DBMS ... PostgreSQL 15.x
 
 ## TODO
 
-- orderを参照カウントにする。クリック数が多いほど上位に。
 - office文書をpdfに変換する
 - ホスト経由での印刷
