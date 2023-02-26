@@ -58,7 +58,7 @@ const download = async (
 		filename = contentDisposition.split(';')[1].split('=')[1];
 	}
 	if (!filename) {
-		filename = path.basename(uri);
+		filename = path.basename(uri).replace(/\?.*$/, '');
 	}
 
 	fs.mkdirSync(dirname, { recursive: true });
@@ -147,13 +147,24 @@ export const GET = (async ({ params, fetch }) => {
 	}
 
 	if (filepath && fs.existsSync(filepath)) {
+		const stats = fs.statSync(filepath);
 		const filename = path.basename(filepath);
+		const contentType = mime.getType(filename) ?? 'text/plain';
+		let headers = {};
+		headers = {
+			'Content-Type': contentType,
+			'Content-Length': stats.size,
+			'Content-Disposition': `inline; filename=${encodeURI(filename)}`
+		};
+		if (contentType.startsWith('audio/')) {
+			headers = {
+				...headers,
+				'Accept-Ranges': 'bytes'
+			};
+		}
 		return new Response(fs.readFileSync(filepath), {
 			status: 200,
-			headers: {
-				'Content-Type': mime.getType(filename) ?? 'text/plain',
-				'Content-Disposition': `inline; filename=${encodeURI(filename)}`
-			}
+			headers
 		});
 	}
 
