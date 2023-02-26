@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { addToast } from '$lib/components/Toast.svelte';
 	import type { PageData } from './$types';
+	import { addToast } from '$lib/components/Toast.svelte';
 
 	export let data: PageData;
 	let objContainerClass = '';
@@ -107,7 +107,7 @@
 				</object>
 			</div>
 		{:else if activeResource.type == 'audio'}
-			<audio controls src={activeResource.blobUrl}>
+			<audio controls preload="metadata" src={activeResource.blobUrl} class="w-full">
 				<div class="alert alert-error shadow-lg">
 					<div>オーディオコントロールを表示できません。</div>
 					{#if activeResource.uri && activeResource.uri.startsWith('http')}
