@@ -43,9 +43,14 @@ export const load = (async ({ url }) => {
 	const links = await prisma.link.findMany({
 		skip: (queryPage - 1) * pageSize,
 		take: pageSize,
-		orderBy: {
-			order: 'desc'
-		},
+		orderBy: [
+			{
+				count: 'desc'
+			},
+			{
+				updatedAt: 'desc'
+			}
+		],
 		where
 	});
 

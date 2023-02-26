@@ -35,9 +35,14 @@ export const load = (async ({ url }) => {
 	const rows = await prisma.resource.findMany({
 		skip: (queryPage - 1) * pageSize,
 		take: pageSize,
-		orderBy: {
-			updatedAt: 'desc'
-		},
+		orderBy: [
+			{
+				count: 'desc'
+			},
+			{
+				updatedAt: 'desc'
+			}
+		],
 		where,
 		include: {
 			resources_assets_links: {

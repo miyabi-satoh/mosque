@@ -24,7 +24,7 @@
     "description": {
       "type": "text"
     },
-    "order": {
+    "count": {
       "type": "integer",
       "default": 0,
       "required": true

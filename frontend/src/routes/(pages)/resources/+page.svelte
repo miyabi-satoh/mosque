@@ -30,6 +30,12 @@
 		stateSearchTerm;
 		refresh();
 	}
+
+	const handleClick = async (id: number) => {
+		// console.log(`handleClick ${id}`);
+		const res = await fetch(`/api/resource/${id}/click`);
+		console.log(res.status);
+	};
 </script>
 
 <div class="py-4 flex flex-col md:flex-row gap-2">
@@ -47,6 +53,7 @@
 			<a
 				class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
 				href="{$page.url.pathname}/{resource.id}"
+				on:click={() => handleClick(resource.id)}
 			>
 				<div class="card-body">
 					<h3 class="card-title">{resource.title}</h3>

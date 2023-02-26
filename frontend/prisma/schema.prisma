@@ -281,11 +281,11 @@ model Link {
   publishedAt                                  DateTime?    @map("published_at") @db.Timestamp(6)
   created_by_id                                Int?
   updated_by_id                                Int?
-  order                                        Int?
   for_staff                                    Boolean?
   for_teacher                                  Boolean?
   for_student                                  Boolean?
   keyword                                      String?
+  count                                        Int?
   admin_users_links_created_by_idToadmin_users admin_users? @relation("links_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
   admin_users_links_updated_by_idToadmin_users admin_users? @relation("links_updated_by_idToadmin_users", fields: [updated_by_id], references: [id], onUpdate: NoAction)
 
@@ -342,6 +342,7 @@ model Resource {
   updated_by_id                                    Int?
   keyword                                          String?
   description                                      String?
+  count                                            Int?
   admin_users_resources_created_by_idToadmin_users admin_users?             @relation("resources_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
   admin_users_resources_updated_by_idToadmin_users admin_users?             @relation("resources_updated_by_idToadmin_users", fields: [updated_by_id], references: [id], onUpdate: NoAction)
   resources_assets_links                           resources_assets_links[]

@@ -44,6 +44,12 @@
 		stateFor;
 		refresh();
 	}
+
+	const handleClick = async (id: number) => {
+		// console.log(`handleClick`);
+		const res = await fetch(`/api/link/${id}/click`);
+		// console.log(res.status);
+	};
 </script>
 
 <div class="py-4 flex flex-col md:flex-row gap-2">
@@ -68,6 +74,7 @@
 				href={link.url}
 				target="_blank"
 				rel="noreferrer"
+				on:click={() => handleClick(link.id)}
 			>
 				<div class="card-body">
 					<h3 class="card-title">{link.title}</h3>
