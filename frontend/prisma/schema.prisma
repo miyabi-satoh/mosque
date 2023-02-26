@@ -281,9 +281,9 @@ model Link {
   publishedAt                                  DateTime?    @map("published_at") @db.Timestamp(6)
   created_by_id                                Int?
   updated_by_id                                Int?
-  for_staff                                    Boolean?
-  for_teacher                                  Boolean?
-  for_student                                  Boolean?
+  forStaff                                     Boolean?     @map("for_staff")
+  forTeacher                                   Boolean?     @map("for_teacher")
+  forStudent                                   Boolean?     @map("for_student")
   keyword                                      String?
   count                                        Int?
   admin_users_links_created_by_idToadmin_users admin_users? @relation("links_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
