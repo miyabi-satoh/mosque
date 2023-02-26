@@ -3,7 +3,7 @@ import type { PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { normalizeNumber, normalizeSearch } from '$lib/utils';
 
-const pageSize = 10;
+const pageSize = 12;
 
 export const load = (async ({ url }) => {
 	if (!url.searchParams.get('p')) {
@@ -46,6 +46,9 @@ export const load = (async ({ url }) => {
 		where,
 		include: {
 			resources_assets_links: {
+				orderBy: {
+					asset_order: 'asc'
+				},
 				include: {
 					assets: true
 				}
