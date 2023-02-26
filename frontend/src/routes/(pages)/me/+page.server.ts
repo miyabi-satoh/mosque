@@ -1,40 +1,36 @@
-import { error } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import { prisma } from '$lib/server/prisma';
+import { getUser } from '$lib/server/session';
 
-export const load = (async ({ url, parent }) => {
-	const parentData = await parent();
-	return {
-		breadcrumbParams: [
-			...parentData.breadcrumbParams,
-			{
-				href: url.pathname,
-				name: 'プロフィール編集'
-			}
-		],
-		pageMeta: {
-			title: 'プロフィール編集',
-			description: ''
-		}
-	};
-}) satisfies PageServerLoad;
-
+// frontend/src/routes/(pages)/me/+page.server.ts
 export const actions = {
-	default: async ({ request }) => {
-		const data = await request.formData();
-		const id = data.get('id');
-		const displayName = data.get('displayName');
-		if (id && displayName) {
-			const user = await prisma.user.update({
-				where: {
-					id: Number(id)
-				},
-				data: {
-					displayName: String(displayName)
+	default: async ({ request, cookies }) => {
+		let user = await getUser(cookies);
+		if (user) {
+			const data = await request.formData();
+			const displayName = data.get('displayName');
+			if (displayName) {
+				user = await prisma.user.update({
+					where: {
+						id: user.id
+					},
+					data: {
+						displayName: String(displayName)
+					}
+				});
+				if (user) {
+					user.password = '';
+					return {
+						message: `更新しました`,
+						user
+					};
 				}
-			});
-			return { user };
+			}
 		}
-		throw error(400, 'Bad request');
+
+		return {
+			message: '更新に失敗しました',
+			user: null
+		};
 	}
 } satisfies Actions;
