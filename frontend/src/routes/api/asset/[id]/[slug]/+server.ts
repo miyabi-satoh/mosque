@@ -18,6 +18,10 @@ const download = async (
 	const res = await fetch(uri);
 	const code = res.status ?? 0;
 	if (code >= 400) {
+		// キャッシュが残っていれば、それを使用する
+		if (asset.cache && fs.existsSync(asset.cache)) {
+			return asset.cache;
+		}
 		console.log(`code: ${code}`);
 		throw new Error(res.statusText);
 	}
@@ -35,7 +39,7 @@ const download = async (
 	const lastModified = res.headers.get('Last-Modified');
 	if (lastModified) {
 		const dt = new Date(lastModified);
-		if (dt.getTime() == asset.last_modified?.getTime()) {
+		if (dt.getTime() == asset.lastModified?.getTime()) {
 			// 前回取得時から変更なし
 			if (asset.cache && fs.existsSync(asset.cache)) {
 				// キャッシュファイルも残っている -> 処理不要
@@ -43,7 +47,7 @@ const download = async (
 				return asset.cache;
 			}
 		}
-		asset.last_modified = dt;
+		asset.lastModified = dt;
 	}
 
 	// 以前のキャッシュがあれば削除
@@ -69,7 +73,7 @@ const download = async (
 			id: asset.id
 		},
 		data: {
-			last_modified: asset.last_modified,
+			lastModified: asset.lastModified,
 			cache: asset.cache
 		}
 	});
@@ -79,7 +83,7 @@ const download = async (
 const convert = async (asset: Asset, filepath: string) => {
 	const stats = fs.statSync(filepath);
 	if (asset.cache && fs.existsSync(asset.cache)) {
-		if (stats.mtime.getTime() == asset.last_modified?.getTime()) {
+		if (stats.mtime.getTime() == asset.lastModified?.getTime()) {
 			return asset.cache;
 		}
 	}
@@ -95,7 +99,7 @@ const convert = async (asset: Asset, filepath: string) => {
 				id: asset.id
 			},
 			data: {
-				last_modified: stats.mtime,
+				lastModified: stats.mtime,
 				cache: out
 			}
 		});
