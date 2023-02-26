@@ -20,9 +20,8 @@ DBMS ... PostgreSQL 15.x
 ```
 
 - Webサーバーは立てない。ポート3000でアクセス。
-- strapiの管理パネルでデータを編集する。
+- strapiはDBのデータ編集やカラム変更が必要な場合に使う。
 - frontendからはprismaを経由して、DBアクセスする。
-- ユーザー認証だけstrapiのapiを利用するが、クライアントからはfrontendのapiをfetch, frontendからstapiのapiをfetchという構造。
 
 
 ## git clone(fetch)したら

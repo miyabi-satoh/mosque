@@ -555,6 +555,7 @@ model User {
   seiKana                                         String?               @map("sei_kana") @db.VarChar(255)
   meiKana                                         String?               @map("mei_kana") @db.VarChar(255)
   abbrev                                          String?               @db.VarChar(255)
+  token                                           String?               @db.VarChar(255)
   admin_users_up_users_created_by_idToadmin_users admin_users?          @relation("up_users_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
   admin_users_up_users_updated_by_idToadmin_users admin_users?          @relation("up_users_updated_by_idToadmin_users", fields: [updated_by_id], references: [id], onUpdate: NoAction)
   up_users_role_links                             up_users_role_links[]

@@ -23,7 +23,7 @@
 
 	const handleClickPrint = async () => {
 		const assetId = activeResource.id;
-		document.getElementById('print-confirm')?.click();
+		window.document.getElementById('print-confirm')?.click();
 		const res = await fetch(`/api/asset/print/${assetId}`);
 		if (res.ok) {
 			const json = await res.json();

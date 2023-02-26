@@ -1,15 +1,44 @@
+import { json } from '@sveltejs/kit';
+import { compareSync } from 'bcrypt';
 import type { RequestHandler } from './$types';
+import { prisma } from '$lib/server/prisma';
+import { COOKIE_SESSION } from '$lib/constants';
 
-export const POST = (async ({ fetch, request }) => {
-	const json = await request.json();
+// frontend/src/routes/api/auth/login/+server.ts
+export const POST = (async ({ request, cookies }) => {
+	const data: { username?: string; password?: string } = await request.json();
+	if (data && data.username && data.password) {
+		const user = await prisma.user.findFirst({
+			where: {
+				username: data.username,
+				provider: 'local',
+				confirmed: true,
+				blocked: false
+			}
+		});
+		if (user) {
+			const match = compareSync(data.password, user.password ?? '');
+			if (match) {
+				const authToken = crypto.randomUUID();
+				await prisma.user.update({
+					where: {
+						id: user.id
+					},
+					data: {
+						token: authToken
+					}
+				});
+				cookies.set(COOKIE_SESSION, authToken, {
+					path: '/',
+					maxAge: 60 * 60 * 24 * 7
+				});
+				user.password = '';
+				return json(user);
+			}
+		}
+	}
 
-	const res = await fetch('http://127.0.0.1:1337/api/auth/local', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-		body: JSON.stringify(json)
+	return new Response(`Invalid username or password.`, {
+		status: 401
 	});
-
-	// console.log(json);
-
-	return res;
 }) satisfies RequestHandler;

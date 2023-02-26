@@ -5,7 +5,7 @@
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import '../app.postcss';
-	import { getToken, removeToken, setToken, userStore, type User } from '$lib/user';
+	import { userStore, type User } from '$lib/user';
 	import Toast from '$lib/components/Toast.svelte';
 
 	export let data: LayoutData;
@@ -48,51 +48,44 @@
 		const res = await fetch('/api/auth/login', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-			body: JSON.stringify({ identifier: username, password })
+			body: JSON.stringify({ username, password })
 		});
+
 		if (res.ok) {
-			const data: { user: User; jwt: string } = await res.json();
-			if (data) {
-				setToken(data.jwt);
-				$userStore = data.user;
-				document.getElementById('login')?.click();
-				username = '';
-				password = '';
+			// const data: { user: User; jwt: string } = await res.json();
+			const user: User = await res.json();
+			// if (data) {
+			if (user) {
+				// setToken(data.jwt);
+				$userStore = user;
+				window.document.getElementById('login')?.click();
+				window.location.reload();
 			}
 		} else {
-			const data: {
-				error: {
-					status: number;
-					name: string;
-					message: string;
-				};
-			} = await res.json();
-			if (data?.error?.message) {
-				loginError = data.error.message;
-				username = '';
-				password = '';
-				window.document.getElementById('username')?.focus();
-				setTimeout(() => {
-					loginError = '';
-				}, 4000);
-			}
+			loginError = `ユーザー名またはパスワードが違います`;
+			window.document.getElementById('username')?.focus();
+			setTimeout(() => {
+				loginError = '';
+			}, 4000);
 		}
+		username = '';
+		password = '';
 	};
 
-	const logout = () => {
-		removeToken();
+	const logout = async () => {
+		await fetch('/api/auth/logout');
+		// removeToken();
 		$userStore = null;
+		window.location.reload();
+		// console.log($page.url);
 	};
 
 	onMount(async () => {
 		theme = window.document.documentElement.getAttribute('data-theme') ?? '';
-		const token = getToken();
-		if (token) {
-			const res = await fetch('/api/auth/me', {
-				headers: { Authorization: `Bearer ${token}` }
-			});
-			if (res.ok) {
-				const user: User = await res.json();
+		const res = await fetch('/api/auth/me');
+		if (res.ok) {
+			const user: User = await res.json();
+			if (data) {
 				$userStore = user;
 			}
 		}
@@ -138,6 +131,9 @@
 							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 							<ul tabindex="0" class="menu dropdown-content shadow bg-base-300 w-48 rounded">
 								<li class="sm:hidden"><button disabled>{$userStore.displayName}</button></li>
+								{#if $userStore.id == 1}
+									<li><a href="/admin">管理ページ</a></li>
+								{/if}
 								<li><a href="/me">プロフィール編集</a></li>
 								<li><button on:click={logout}>ログアウト</button></li>
 							</ul>

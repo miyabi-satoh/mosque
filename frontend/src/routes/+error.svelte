@@ -4,7 +4,13 @@
 	// console.log($page);
 </script>
 
-<h1>{$page.status} {$page.error?.message}</h1>
+<svelte:head>
+	<title>MOSQUE | Error</title>
+</svelte:head>
+
+<div class="my-8 text-center lg:text-left">
+	<h1>{$page.status} {$page.error?.message}</h1>
+</div>
 {#if $page.status == 404}
 	<p class="my-8">ご指定のページは見つかりませんでした</p>
 	<p>

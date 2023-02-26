@@ -80,6 +80,9 @@
     },
     "abbrev": {
       "type": "string"
+    },
+    "token": {
+      "type": "string"
     }
   }
 }
