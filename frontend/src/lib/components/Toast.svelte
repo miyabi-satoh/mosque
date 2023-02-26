@@ -37,7 +37,7 @@
 	export let position = 'toast-top toast-center';
 </script>
 
-<div class="toast z-50 min-w-[50%] max-w-[80%] {position}">
+<div class="toast z-50 w-full {position}">
 	{#each $toastQueue as item (item.id)}
 		{#if item.message}
 			<div class="alert {item.alertType}" transition:fade|local>
