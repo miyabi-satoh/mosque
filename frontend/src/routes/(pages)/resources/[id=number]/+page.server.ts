@@ -12,6 +12,9 @@ export const load = (async ({ url, params, parent }) => {
 		},
 		include: {
 			resources_assets_links: {
+				orderBy: {
+					asset_order: 'asc'
+				},
 				include: {
 					assets: true
 				}
