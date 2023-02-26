@@ -16,25 +16,22 @@ export const POST = (async ({ request, cookies }) => {
 				blocked: false
 			}
 		});
-		if (user) {
-			const match = compareSync(data.password, user.password ?? '');
-			if (match) {
-				const authToken = crypto.randomUUID();
-				await prisma.user.update({
-					where: {
-						id: user.id
-					},
-					data: {
-						token: authToken
-					}
-				});
-				cookies.set(COOKIE_SESSION, authToken, {
-					path: '/',
-					maxAge: 60 * 60 * 24 * 7
-				});
-				user.password = '';
-				return json(user);
-			}
+		if (user && compareSync(data.password, user.password ?? '')) {
+			const authToken = crypto.randomUUID();
+			await prisma.user.update({
+				where: {
+					id: user.id
+				},
+				data: {
+					token: authToken
+				}
+			});
+			cookies.set(COOKIE_SESSION, authToken, {
+				path: '/',
+				maxAge: 60 * 60 * 24 * 7
+			});
+			user.password = '';
+			return json(user);
 		}
 	}
 
