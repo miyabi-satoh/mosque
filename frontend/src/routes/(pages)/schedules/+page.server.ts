@@ -26,18 +26,23 @@ export const load = (async ({ url }) => {
 	const queyStartDate = url.searchParams.get('s') ?? '';
 	const queryEndDate = url.searchParams.get('e') ?? '';
 
-	let keywords = {};
-	normalizeSearch(querySearch)
+	const keywords: object[] = [];
+	normalizeSearch(decodeURIComponent(querySearch))
 		.split(' ')
 		.filter((term) => term)
 		.forEach((term) => {
-			keywords = {
-				...keywords,
-				keyword: {
-					contains: term,
-					mode: 'insensitive'
+			keywords.push({
+				schedules_events_links: {
+					every: {
+						events: {
+							keyword: {
+								contains: term,
+								mode: 'insensitive'
+							}
+						}
+					}
 				}
-			};
+			});
 		});
 
 	const startDate = dateString(queyStartDate, new Date());
@@ -53,14 +58,14 @@ export const load = (async ({ url }) => {
 	}
 
 	const where = {
-		date: {
-			...whereDate
-		},
-		schedules_events_links: {
-			every: {
-				...keywords
-			}
-		}
+		AND: [
+			{
+				date: {
+					...whereDate
+				}
+			},
+			...keywords
+		]
 	};
 	const count = await prisma.schedule.count({ where });
 	const rows = await prisma.schedule.findMany({

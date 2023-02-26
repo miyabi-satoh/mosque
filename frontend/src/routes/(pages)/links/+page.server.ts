@@ -15,31 +15,31 @@ export const load = (async ({ url }) => {
 	const querySearch = url.searchParams.get('q') ?? '';
 	const queryFor = url.searchParams.get('f') ?? '';
 
-	let keywords = {};
-	normalizeSearch(querySearch)
+	const keywords: object[] = [];
+	normalizeSearch(decodeURIComponent(querySearch))
 		.split(' ')
 		.filter((term) => term)
 		.forEach((term) => {
-			keywords = {
-				...keywords,
+			keywords.push({
 				keyword: {
 					contains: term,
 					mode: 'insensitive'
 				}
-			};
+			});
 		});
 
-	const whereFor: Record<string, boolean> = {};
 	if (queryFor) {
-		whereFor[queryFor] = true;
+		keywords.push(JSON.parse(`{ "${queryFor}": true }`));
 	}
 
 	const where = {
-		...whereFor,
-		...keywords
+		AND: keywords
 	};
 
-	const count = await prisma.link.count(where);
+	console.log(where);
+	const count = await prisma.link.count({
+		where
+	});
 	const links = await prisma.link.findMany({
 		skip: (queryPage - 1) * pageSize,
 		take: pageSize,

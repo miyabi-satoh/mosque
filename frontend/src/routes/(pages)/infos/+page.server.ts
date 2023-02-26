@@ -15,7 +15,9 @@ export const load = (async ({ url }) => {
 	const querySearch = url.searchParams.get('q') ?? '';
 
 	let where = {};
-	querySearch
+	decodeURIComponent(querySearch)
+		.replaceAll('　', ' ')
+		.replace(/ +/g, ' ')
 		.split(' ')
 		.filter((term) => term)
 		.forEach((term) => {

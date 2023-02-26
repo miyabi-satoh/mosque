@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import type { PageData } from './$types';
+	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
+	import { browser } from '$app/environment';
 
 	const ForTypes = {
 		all: '',
@@ -29,9 +30,8 @@
 		refresh(event.detail);
 	}
 
-	function refresh(page = 1) {
-		const search = `?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
-		// const href = `${$page.url.pathname}?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
+	function refresh(p = 1) {
+		const search = `?p=${p}&q=${encodeURIComponent(stateSearchTerm)}&f=${stateFor}`;
 		if (search != $page.url.search) {
 			goto(`${$page.url.pathname}${search}`, {
 				keepFocus: true
@@ -39,16 +39,15 @@
 		}
 	}
 
-	$: {
+	$: if (browser) {
 		stateSearchTerm;
 		stateFor;
 		refresh();
 	}
 
 	const handleClick = async (id: number) => {
-		// console.log(`handleClick`);
-		const res = await fetch(`/api/link/${id}/click`);
-		// console.log(res.status);
+		// クリックカウントを更新
+		const _res = await fetch(`/api/link/${id}/click`);
 	};
 </script>
 

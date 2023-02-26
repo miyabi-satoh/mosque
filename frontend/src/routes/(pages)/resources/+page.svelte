@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
+	import { browser } from '$app/environment';
 
 	export let data: PageData;
 
@@ -13,12 +14,8 @@
 		refresh(event.detail);
 	}
 
-	function refresh(page = 1) {
-		const search = `?p=${page}&q=${stateSearchTerm}`;
-		// const href = `${$page.url.pathname}?p=${page}&q=${stateSearchTerm}`;
-		// console.log(href);
-		// console.log(`${$page.url.pathname}${$page.url.search}`);
-		// if (href != `${$page.url.pathname}${$page.url.search}`) {
+	function refresh(p = 1) {
+		const search = `?p=${p}&q=${encodeURIComponent(stateSearchTerm)}`;
 		if (search != $page.url.search) {
 			goto(`${$page.url.pathname}${search}`, {
 				keepFocus: true
@@ -26,7 +23,7 @@
 		}
 	}
 
-	$: {
+	$: if (browser) {
 		stateSearchTerm;
 		refresh();
 	}

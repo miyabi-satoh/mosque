@@ -14,23 +14,23 @@ export const load = (async ({ url }) => {
 	const queryPage = normalizeNumber(url.searchParams.get('p'), 1);
 	const querySearch = url.searchParams.get('q') ?? '';
 
-	let keywords = {};
-	normalizeSearch(querySearch)
+	const keywords: object[] = [];
+	normalizeSearch(decodeURIComponent(querySearch))
 		.split(' ')
 		.filter((term) => term)
 		.forEach((term) => {
-			keywords = {
-				...keywords,
+			keywords.push({
 				keyword: {
 					contains: term,
 					mode: 'insensitive'
 				}
-			};
+			});
 		});
 
 	const where = {
-		...keywords
+		AND: keywords
 	};
+	console.log(where);
 	const count = await prisma.resource.count({ where });
 	const rows = await prisma.resource.findMany({
 		skip: (queryPage - 1) * pageSize,

@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import type { PageData } from './$types';
+	import { page } from '$app/stores';
 	import { formatDate } from '$lib/utils';
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
+	import { browser } from '$app/environment';
 
 	export let data: PageData;
 	let stateSearchTerm = data.querySearch;
@@ -12,9 +13,8 @@
 		refresh(event.detail);
 	}
 
-	function refresh(page = 1) {
-		const search = `?p=${page}&q=${stateSearchTerm}`;
-		// const href = `${$page.url.pathname}?p=${page}&q=${stateSearchTerm}&f=${stateFor}`;
+	function refresh(p = 1) {
+		const search = `?p=${p}&q=${encodeURIComponent(stateSearchTerm)}`;
 		if (search != $page.url.search) {
 			goto(`${$page.url.pathname}${search}`, {
 				keepFocus: true
@@ -22,7 +22,7 @@
 		}
 	}
 
-	$: {
+	$: if (browser) {
 		stateSearchTerm;
 		refresh();
 	}
