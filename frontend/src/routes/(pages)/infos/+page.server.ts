@@ -3,7 +3,7 @@ import type { PageServerLoad } from './$types';
 import { normalizeNumber } from '$lib/utils';
 import { prisma } from '$lib/server/prisma';
 
-const pageSize = 10;
+const pageSize = 12;
 
 export const load = (async ({ url }) => {
 	if (!url.searchParams.get('p')) {

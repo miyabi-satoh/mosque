@@ -4,7 +4,7 @@ import type { PageServerLoad } from './$types';
 import { normalizeNumber, normalizeSearch } from '$lib/utils';
 import { prisma } from '$lib/server/prisma';
 
-const pageSize = 10;
+const pageSize = 12;
 
 function dateString(dateStr: string, defaultDate: Date | null = null) {
 	const fmt = 'yyyy-MM-dd';
@@ -77,6 +77,9 @@ export const load = (async ({ url }) => {
 		where,
 		include: {
 			schedules_events_links: {
+				orderBy: {
+					event_order: 'asc'
+				},
 				include: {
 					events: true
 				}
