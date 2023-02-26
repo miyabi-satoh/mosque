@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import '../app.postcss';
 	import { getToken, removeToken, setToken, userStore, type User } from '$lib/user';
-	import { fade } from 'svelte/transition';
 	import Toast from '$lib/components/Toast.svelte';
 
 	export let data: LayoutData;

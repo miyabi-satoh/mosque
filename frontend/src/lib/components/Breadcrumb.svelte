@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { BreadcrumbParamType } from '$lib/types';
 	import Icon from '@iconify/svelte';
+	import type { BreadcrumbParamType } from '$lib/types';
 
 	export let params: BreadcrumbParamType[];
 </script>
