@@ -129,12 +129,13 @@
 								</span>
 							</label>
 							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-							<ul tabindex="0" class="menu dropdown-content shadow bg-base-300 w-48 rounded">
+							<ul tabindex="0" class="menu dropdown-content shadow bg-base-300 w-56 rounded">
 								<li class="sm:hidden"><button disabled>{$userStore.displayName}</button></li>
 								{#if $userStore.id == 1}
 									<li><a href="/admin">管理ページ</a></li>
 								{/if}
-								<li><a href="/me">プロフィール編集</a></li>
+								<li><a href="/me">プロフィール確認・編集</a></li>
+								<li><a href="/passwd">パスワード変更</a></li>
 								<li><button on:click={logout}>ログアウト</button></li>
 							</ul>
 						</div>
