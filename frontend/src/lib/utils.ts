@@ -134,7 +134,7 @@ export function normalizeSearch(search: string): string {
 			// 全角スペースを半角に
 			.replaceAll('　', ' ')
 			// 記号を半角スペースに
-			.replaceAll(/[!"#$%&'()*,\-./:;<>?@[\\\]^_`{|}~]/g, ' ')
+			.replaceAll(/[!"$%&'()*,\-./:;<>?@[\\\]^_`{|}~]/g, ' ')
 			// 連続する半角スペースを一つの半角スペースに
 			.replaceAll(/ +/g, ' ')
 			// トリム
