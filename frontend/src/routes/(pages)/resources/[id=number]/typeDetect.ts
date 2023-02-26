@@ -20,7 +20,7 @@ export function typeDetect(typeStr: string): BlobType {
 	if (typeStr.match(/^image\//)) {
 		return 'img';
 	}
-	if (typeStr.match(/-audio\//)) {
+	if (typeStr.match(/^audio\//)) {
 		return 'audio';
 	}
 	if (typeStr.match(/^video\//)) {
