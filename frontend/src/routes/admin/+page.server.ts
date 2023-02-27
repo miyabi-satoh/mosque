@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getUser } from '$lib/server/session';
+import { prisma } from '$lib/server/prisma';
 
 // frontend/src/routes/admin/+page.server.ts
 export const load = (async ({ cookies }) => {
@@ -9,5 +10,18 @@ export const load = (async ({ cookies }) => {
 		throw error(404, 'Not Found');
 	}
 
-	console.log(`server load`);
+	const pages = await prisma.page.findMany({
+		where: {
+			url: {
+				startsWith: `/admin/`
+			}
+		},
+		orderBy: {
+			order: 'desc'
+		}
+	});
+
+	return {
+		pages
+	};
 }) satisfies PageServerLoad;
