@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
+	import Icon from '@iconify/svelte';
 
 	export let data: PageData;
 
@@ -30,6 +31,11 @@
 		const res = await fetch(`/api/resource/${id}/click`);
 		console.log(res.status);
 	};
+
+	const handleRemove = async (id: number) => {
+		if (confirm('Are you sure to remove this user?')) {
+		}
+	};
 </script>
 
 <div class="py-4 flex flex-col md:flex-row gap-2">
@@ -42,18 +48,40 @@
 </div>
 
 {#if data.count > 0}
-	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
-		{#each data.users as user (user.id)}
-			<a
-				class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
-				href="{$page.url.pathname}/{user.id}"
-				on:click={() => handleClick(user.id)}
-			>
-				<div class="card-body">
-					<h3 class="card-title">{user.username}</h3>
-				</div>
-			</a>
-		{/each}
+	<div class="overflow-x-auto">
+		<table class="table table-zebra w-full">
+			<!-- head -->
+			<thead>
+				<tr>
+					<th>ユーザー名</th>
+					<th>氏名</th>
+					<th>氏名カナ</th>
+					<th>略称</th>
+					<th>表示名</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- row -->
+				{#each data.users as user (user.id)}
+					<tr>
+						<th>{user.username}</th>
+						<td>{user.sei} {user.mei}</td>
+						<td>{user.seiKana} {user.meiKana}</td>
+						<td>{user.abbrev}</td>
+						<td>{user.displayName}</td>
+						<td>
+							<div class="flex items-center gap-4">
+								<a href="/admin/users/{user.id}/edit"><Icon icon="mdi:edit" height="auto" /></a>
+								<button on:click={() => handleRemove(user.id)}
+									><Icon icon="mdi:trash" height="auto" /></button
+								>
+							</div>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
 	<div class="flex justify-center my-4">
 		<Pagination
