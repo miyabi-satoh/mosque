@@ -72,9 +72,9 @@
 						<td>{user.displayName}</td>
 						<td>
 							<div class="flex items-center gap-4">
-								<a href="/admin/users/{user.id}/edit"><Icon icon="mdi:edit" height="auto" /></a>
+								<a href="/admin/users/{user.id}/edit"><Icon icon="mdi:edit" height="18" /></a>
 								<button on:click={() => handleRemove(user.id)}
-									><Icon icon="mdi:trash" height="auto" /></button
+									><Icon icon="mdi:trash" height="18" /></button
 								>
 							</div>
 						</td>
