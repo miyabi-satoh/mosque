@@ -3,7 +3,7 @@ import type { LayoutServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 
 export const load = (async ({ url }) => {
-	// console.log(`load @ frontend/src/routes/+layout.ts`);
+	console.log(`frontend/src/routes/+layout.server.ts`);
 	// サイドメニューの項目を読み込み
 	const menuItems = await prisma.page.findMany({
 		where: { is_menuitem: true },
@@ -19,7 +19,6 @@ export const load = (async ({ url }) => {
 		where: { url: url.pathname }
 	});
 
-	// console.log(menuItems);
 	return {
 		menuItems,
 		pageMeta

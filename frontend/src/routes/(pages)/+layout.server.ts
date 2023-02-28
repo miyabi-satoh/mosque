@@ -3,7 +3,7 @@ import { prisma } from '$lib/server/prisma';
 import type { BreadcrumbParamType } from '$lib/types';
 
 export const load = (async ({ url }) => {
-	// console.log('load @ frontend/src/routes/(pages)/+layout.ts');
+	console.log(`frontend/src/routes/(pages)/+layout.server.ts`);
 	const paths = url.pathname.split('/');
 	let breadcrumbParams: BreadcrumbParamType[] = [];
 	let joinedPath = '';

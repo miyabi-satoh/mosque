@@ -8,6 +8,7 @@
 	import { userStore, type User } from '$lib/user';
 	import Toast from '$lib/components/Toast.svelte';
 
+	console.log(`frontend/src/routes/+layout.svelte`);
 	export let data: LayoutData;
 	// console.log(`userStore: ${$userStore}`);
 
