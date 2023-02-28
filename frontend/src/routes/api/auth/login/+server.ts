@@ -3,6 +3,7 @@ import { compareSync } from 'bcrypt';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { COOKIE_SESSION } from '$lib/constants';
+import { clearSecret } from '$lib/user';
 
 // frontend/src/routes/api/auth/login/+server.ts
 export const POST = (async ({ request, cookies }) => {
@@ -30,8 +31,7 @@ export const POST = (async ({ request, cookies }) => {
 				path: '/',
 				maxAge: 60 * 60 * 24 * 7
 			});
-			user.password = '';
-			return json(user);
+			return json(clearSecret(user));
 		}
 	}
 

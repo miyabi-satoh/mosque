@@ -2,6 +2,7 @@ import { compareSync, hashSync } from 'bcrypt';
 import type { Actions } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { getUser } from '$lib/server/session';
+import { clearSecret } from '$lib/user';
 
 // frontend/src/routes/(pages)/passwd/+page.server.ts
 export const actions = {
@@ -41,10 +42,9 @@ export const actions = {
 					}
 				});
 				if (user) {
-					user.password = '';
 					return {
 						message: `パスワードを更新しました`,
-						user
+						user: clearSecret(user)
 					};
 				}
 			}
