@@ -5,10 +5,10 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 	import Icon from '@iconify/svelte';
+	import Portal, { portal } from 'svelte-portal/src/Portal.svelte';
 
 	export let data: PageData;
 	let selectedFiles: FileList | null = null;
-	console.log(data.users);
 
 	function movePage(event: CustomEvent<number>) {
 		refresh(event.detail);
@@ -40,58 +40,40 @@
 	};
 
 	$: if (selectedFiles) {
-		console.log(selectedFiles);
+		setPreview(selectedFiles);
 	}
+	let textData: string;
+	const setPreview = async (files: FileList) => {
+		const file = files[0];
+		if (file) {
+			textData = await file.text();
+		}
+	};
+
+	const handleExport = async () => {
+		const res = await fetch(`/api/user/export`);
+		if (res.ok) {
+			const blob = await res.blob();
+			const url = URL.createObjectURL(blob);
+
+			const a = window.document.createElement('a');
+			a.download = `export_mosque_user.csv`;
+			a.href = url;
+			a.click();
+		}
+	};
 </script>
 
-<div class="flex gap-4">
+<div class="flex gap-4 mb-8">
 	<label for="upload" class="btn btn-primary gap-2">
-		<Icon icon="mdi:upload" />
-		<span>アップロード</span>
+		<Icon icon="mdi:upload" height="20" />
+		<span>インポート</span>
 	</label>
-	<button class="btn btn-primary gap-2">
-		<Icon icon="mdi:upload" />
-		<span>ダウンロード</span>
+	<button class="btn btn-primary gap-2" on:click={handleExport}>
+		<Icon icon="mdi:download" height="20" />
+		<span>エクスポート</span>
 	</button>
 </div>
-
-<input type="checkbox" id="upload" class="modal-toggle" />
-<label for="upload" class="modal cursor-pointer">
-	<div class="modal-box relative">
-		<label for="upload" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-		<h4 class="my-0">アップロード</h4>
-		<form method="POST" action="?/upload">
-			{#if selectedFiles}
-				<div class="flex items-center justify-between w-full mt-4">
-					<button class="btn btn-default" on:click|preventDefault={() => (selectedFiles = null)}
-						>再選択</button
-					>
-					<button class="btn btn-primary">インポート</button>
-				</div>
-			{:else}
-				<div class="flex items-center justify-center w-full mt-4">
-					<label
-						for="selected-file"
-						class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer"
-					>
-						<div class="flex flex-col items-center justify-center p-6">
-							<Icon icon="mdi:cloud-upload-outline" height="auto" />
-							<p class="text-sm">ここにファイルをドロップするか、クリックしてファイルを選択</p>
-						</div>
-						<input
-							id="selected-file"
-							name="file"
-							type="file"
-							class="hidden"
-							bind:files={selectedFiles}
-							accept=".csv,.json"
-						/>
-					</label>
-				</div>
-			{/if}
-		</form>
-	</div>
-</label>
 
 <div class="pt-4">
 	<input
@@ -104,7 +86,7 @@
 
 {#if data.count > 0}
 	<div class="overflow-x-auto">
-		<table class="table table-zebra w-full">
+		<table class="table table-zebra w-full mt-2">
 			<!-- head -->
 			<thead>
 				<tr>
@@ -120,7 +102,7 @@
 				<!-- row -->
 				{#each data.users as user (user.id)}
 					<tr>
-						<th>{user.username}</th>
+						<td>{user.username}</td>
 						<td>{user.sei} {user.mei}</td>
 						<td>{user.seiKana} {user.meiKana}</td>
 						<td>{user.abbrev}</td>
@@ -151,3 +133,51 @@
 {:else}
 	<p>データがありません</p>
 {/if}
+
+<Portal target="#modals">
+	<input type="checkbox" id="upload" class="modal-toggle" />
+	<label for="upload" class="modal cursor-pointer">
+		<label class="modal-box w-2/3" class:max-w-2xl={textData} for="">
+			<label for="upload" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+			<h4 class="my-0">インポート</h4>
+			{#if selectedFiles}
+				{#if textData}
+					<pre class="h-[40vh] overflow-scroll">{textData}</pre>
+				{/if}
+				<div class="flex items-center justify-between w-full mt-4">
+					<button
+						class="btn btn-default"
+						on:click|preventDefault={() => {
+							selectedFiles = null;
+							textData = '';
+						}}>再選択</button
+					>
+					<form method="POST" action="?/upload">
+						<input type="hidden" name="body" value={textData} />
+						<button class="btn btn-primary">インポート</button>
+					</form>
+				</div>
+			{:else}
+				<div class="flex items-center justify-center w-full mt-4">
+					<label
+						for="selected-file"
+						class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer"
+					>
+						<div class="flex flex-col items-center justify-center p-6">
+							<Icon icon="mdi:cloud-upload-outline" height="auto" />
+							<p class="text-sm">ここにファイルをドロップするか、クリックしてファイルを選択</p>
+						</div>
+						<input
+							id="selected-file"
+							name="file"
+							type="file"
+							class="hidden"
+							bind:files={selectedFiles}
+							accept=".txt,.csv,.json"
+						/>
+					</label>
+				</div>
+			{/if}
+		</label>
+	</label>
+</Portal>

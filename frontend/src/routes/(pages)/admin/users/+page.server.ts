@@ -79,5 +79,10 @@ export const actions = {
 			deleteUser: null
 		});
 	},
-	upload: async ({ request }) => {}
+	upload: async ({ request }) => {
+		const data = await request.formData();
+		const body = data.get('body');
+
+		console.log(body);
+	}
 } satisfies Actions;

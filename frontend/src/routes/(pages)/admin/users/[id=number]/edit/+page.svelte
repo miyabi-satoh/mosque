@@ -1,11 +1,9 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import Pagination from '$lib/components/Pagination.svelte';
-	import { browser } from '$app/environment';
 	import Icon from '@iconify/svelte';
 	import { addToast } from '$lib/components/Toast.svelte';
+	import Label from '$lib/components/form/Label.svelte';
+	import InputText from '$lib/components/form/InputText.svelte';
 
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.svelte`);
 	export let data: PageData;
@@ -14,90 +12,88 @@
 		console.log(form);
 	}
 
-	if (form?.success) {
-		addToast(`保存しました`, `alert-success`);
-	}
-	if (form?.message) {
-		addToast(form.message, `alert-error`);
+	$: if (form) {
+		if (form.success) {
+			addToast(`保存しました`, `alert-success`);
+		} else if (form.message) {
+			addToast(form.message, `alert-error`);
+		}
 	}
 </script>
 
 {#if data.user}
 	<form method="POST">
 		<div class="grid gap-4 sm:grid-cols-2">
-			<div class="sm:col-span-2">
-				<label for="form-username">ユーザー名</label>
-				<input
-					class="input input-bordered w-full"
+			<div class="sm:col-span-2 form-control">
+				<Label id="form-username">ユーザー名</Label>
+				<InputText
 					id="form-username"
 					name="username"
 					required
 					value={form?.user?.username ?? data.user.username}
+					errorMessage={form?.errors?.username}
 				/>
-				{#if form?.errors?.username}
-					<div class="bg-error text-error-content mt-1 px-2 rounded">{form.errors.username}</div>
-				{/if}
 			</div>
-			<div>
-				<label for="displayName">表示名(5文字以内)</label>
-				<input
-					class="input input-bordered w-full"
+			<div class="form-control">
+				<Label id="displayName">表示名(5文字以内)</Label>
+				<InputText
 					id="displayName"
 					name="displayName"
-					maxlength="5"
+					maxlength={5}
 					required
 					value={form?.user?.displayName ?? data.user.displayName}
+					errorMessage={form?.errors?.displayName}
 				/>
 			</div>
-			<div>
-				<label for="abbrev">略称(5文字以内)</label>
-				<input
-					class="input input-bordered w-full"
+			<div class="form-control">
+				<Label id="abbrev">略称(5文字以内)</Label>
+				<InputText
 					id="abbrev"
 					name="abbrev"
-					maxlength="5"
+					maxlength={5}
 					required
 					value={form?.user?.abbrev ?? data.user.abbrev}
+					errorMessage={form?.errors?.abbrev}
 				/>
 			</div>
-			<div>
-				<label for="sei">姓</label>
-				<input
-					class="input input-bordered w-full"
+			<div class="form-control">
+				<Label id="sei">姓</Label>
+				<InputText
 					id="sei"
 					name="sei"
 					required
 					value={form?.user?.sei ?? data.user.sei}
+					errorMessage={form?.errors?.sei}
 				/>
 			</div>
-			<div>
-				<label for="mei">名</label>
-				<input
-					class="input input-bordered w-full"
+			<div class="form-control">
+				<Label id="mei">名</Label>
+				<InputText
 					id="mei"
 					name="mei"
 					required
-					value={form?.user?.mei && data.user.mei}
+					value={form?.user?.mei ?? data.user.mei}
+					errorMessage={form?.errors?.mei}
 				/>
 			</div>
-			<div>
-				<label for="seiKana">姓(カナ)</label>
-				<input
-					class="input input-bordered w-full"
+			<div class="form-control">
+				<Label id="seiKana">姓(カナ)</Label>
+				<InputText
 					id="seiKana"
 					name="seiKana"
 					required
 					value={form?.user?.seiKana ?? data.user.seiKana}
+					errorMessage={form?.errors?.seiKana}
 				/>
 			</div>
-			<div>
-				<label for="seiKana">名(カナ)</label>
-				<input
-					class="input input-bordered w-full"
+			<div class="form-control">
+				<Label id="seiKana">名(カナ)</Label>
+				<InputText
 					id="meiKana"
 					name="meiKana"
 					required
 					value={form?.user?.meiKana ?? data.user.meiKana}
+					errorMessage={form?.errors?.meiKana}
 				/>
 			</div>
 		</div>

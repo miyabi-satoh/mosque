@@ -75,7 +75,7 @@ export const actions = {
 
 				return {
 					errors: errors as FormError,
-					user: formData
+					user: formData as FormData
 				};
 			}
 		}
