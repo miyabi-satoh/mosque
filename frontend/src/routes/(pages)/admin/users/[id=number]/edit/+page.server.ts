@@ -1,4 +1,4 @@
-import { object, string } from 'yup';
+import { object, string, ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 
@@ -39,34 +39,25 @@ export const actions = {
 			meiKana: string().required()
 		});
 
-		return {
-			success: true,
-			formData
-		};
+		try {
+			const validated = await userSchema.validate(formData, {
+				abortEarly: false
+			});
+			return {
+				success: true,
+				formData
+			};
+		} catch (error) {
+			if (error instanceof ValidationError) {
+				const errors = error.inner.reduce((acc, err) => {
+					return { ...acc, [err.path ?? 'error']: err.message };
+				}, {});
 
-		// バリデーション
-
-		// const user = await prisma.user.update({
-		// 	where: {
-		// 		id: userData.id
-		// 	},
-		// 	data: {
-		// 		...userData
-		// 	}
-		// });
-
-		// let success = false;
-		// if (user) {
-		// 	success = true;
-		// 	user.password = '';
-		// 	return {
-		// 		success,
-		// 		user
-		// 	};
-		// }
-		// return fail(400, {
-		// 	success,
-		// 	user
-		// });
+				return {
+					errors,
+					formData
+				};
+			}
+		}
 	}
 } satisfies Actions;
