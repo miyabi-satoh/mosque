@@ -2,8 +2,9 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { normalizeNumber } from '$lib/utils';
+import { clearSecret } from '$lib/user';
 
-const pageSize = 12;
+const pageSize = 10;
 export const load = (async ({ url }) => {
 	console.log(`frontend/src/routes/(pages)/admin/users/+page.server.ts`);
 
@@ -54,7 +55,7 @@ export const load = (async ({ url }) => {
 	return {
 		queryPage,
 		querySearch,
-		users,
+		users: users.map((user) => clearSecret(user)),
 		pageSize,
 		count
 	};
@@ -70,13 +71,13 @@ export const actions = {
 			}
 		});
 		if (deleteUser) {
-			deleteUser.password = '';
 			return {
-				deleteUser
+				deleteUser: clearSecret(deleteUser)
 			};
 		}
 		return fail(400, {
 			deleteUser: null
 		});
-	}
+	},
+	upload: async ({ request }) => {}
 } satisfies Actions;

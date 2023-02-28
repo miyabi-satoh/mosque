@@ -1,16 +1,21 @@
 import { object, string, ValidationError } from 'yup';
+import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
+import { clearSecret, type User } from '$lib/user';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
 
 	const { breadcrumbParams } = await parent();
-	const user = await prisma.user.findUnique({
+	let user = await prisma.user.findUnique({
 		where: {
 			id: Number(params.id)
 		}
 	});
+	if (user) {
+		user = clearSecret(user);
+	}
 
 	return {
 		user,
@@ -26,26 +31,41 @@ export const load = (async ({ params, parent }) => {
 	};
 }) satisfies PageServerLoad;
 
+type FormData = Pick<
+	User,
+	'username' | 'displayName' | 'abbrev' | 'sei' | 'mei' | 'seiKana' | 'meiKana'
+>;
+type FormError = {
+	[key in keyof FormData]?: string;
+};
 export const actions = {
 	default: async ({ request }) => {
 		const formData = Object.fromEntries(await request.formData());
 		const userSchema = object({
-			username: string().required(),
-			displayName: string().required(),
-			abbrev: string().required(),
+			username: string()
+				.required()
+				.min(4, '4文字以上で入力してください')
+				.max(20, '20文字以下で入力してください')
+				.matches(/^[0-9A-Za-z]+$/, '半角英数字のみ使用できます'),
+			displayName: string().required().max(5, '5文字以下で入力してください'),
+			abbrev: string().required().max(5, '5文字以下で入力してください'),
 			sei: string().required(),
 			mei: string().required(),
-			seiKana: string().required(),
-			meiKana: string().required()
+			seiKana: string()
+				.required()
+				.matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください'),
+			meiKana: string()
+				.required()
+				.matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください')
 		});
 
 		try {
-			const validated = await userSchema.validate(formData, {
+			const _validated = await userSchema.validate(formData, {
 				abortEarly: false
 			});
 			return {
 				success: true,
-				formData
+				user: formData as FormData
 			};
 		} catch (error) {
 			if (error instanceof ValidationError) {
@@ -54,10 +74,14 @@ export const actions = {
 				}, {});
 
 				return {
-					errors,
-					formData
+					errors: errors as FormError,
+					user: formData
 				};
 			}
 		}
+
+		return fail(400, {
+			message: `予期せぬエラーが発生しました`
+		});
 	}
 } satisfies Actions;

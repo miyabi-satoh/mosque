@@ -10,13 +10,15 @@
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.svelte`);
 	export let data: PageData;
 	export let form: ActionData;
-
 	if (form) {
-		if (form.success === true) {
-			addToast(`保存しました`, `alert-success`);
-		} else if (form.success === false) {
-			addToast(`エラーが発生しました`, `alert-error`);
-		}
+		console.log(form);
+	}
+
+	if (form?.success) {
+		addToast(`保存しました`, `alert-success`);
+	}
+	if (form?.message) {
+		addToast(form.message, `alert-error`);
 	}
 </script>
 
@@ -30,8 +32,11 @@
 					id="form-username"
 					name="username"
 					required
-					value={data.user.username}
+					value={form?.user?.username ?? data.user.username}
 				/>
+				{#if form?.errors?.username}
+					<div class="bg-error text-error-content mt-1 px-2 rounded">{form.errors.username}</div>
+				{/if}
 			</div>
 			<div>
 				<label for="displayName">表示名(5文字以内)</label>
@@ -41,7 +46,7 @@
 					name="displayName"
 					maxlength="5"
 					required
-					value={data.user.displayName}
+					value={form?.user?.displayName ?? data.user.displayName}
 				/>
 			</div>
 			<div>
@@ -52,7 +57,7 @@
 					name="abbrev"
 					maxlength="5"
 					required
-					value={data.user.abbrev}
+					value={form?.user?.abbrev ?? data.user.abbrev}
 				/>
 			</div>
 			<div>
@@ -62,7 +67,7 @@
 					id="sei"
 					name="sei"
 					required
-					value={data.user.sei}
+					value={form?.user?.sei ?? data.user.sei}
 				/>
 			</div>
 			<div>
@@ -72,7 +77,7 @@
 					id="mei"
 					name="mei"
 					required
-					value={data.user.mei}
+					value={form?.user?.mei && data.user.mei}
 				/>
 			</div>
 			<div>
@@ -82,7 +87,7 @@
 					id="seiKana"
 					name="seiKana"
 					required
-					value={data.user.seiKana}
+					value={form?.user?.seiKana ?? data.user.seiKana}
 				/>
 			</div>
 			<div>
@@ -92,7 +97,7 @@
 					id="meiKana"
 					name="meiKana"
 					required
-					value={data.user.meiKana}
+					value={form?.user?.meiKana ?? data.user.meiKana}
 				/>
 			</div>
 		</div>
