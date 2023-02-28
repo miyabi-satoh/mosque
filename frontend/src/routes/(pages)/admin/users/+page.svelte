@@ -38,12 +38,12 @@
 	};
 </script>
 
-<div class="py-4 flex flex-col md:flex-row gap-2">
+<div class="pt-4">
 	<input
 		bind:value={data.querySearch}
 		type="text"
 		placeholder="Search keywords..."
-		class="input input-bordered md:flex-1"
+		class="input input-bordered w-full"
 	/>
 </div>
 
@@ -73,9 +73,11 @@
 						<td>
 							<div class="flex items-center gap-4">
 								<a href="/admin/users/{user.id}/edit"><Icon icon="mdi:edit" height="18" /></a>
-								<button on:click={() => handleRemove(user.id)}
-									><Icon icon="mdi:trash" height="18" /></button
-								>
+								{#if user.id != 1}
+									<button on:click={() => handleRemove(user.id)}
+										><Icon icon="mdi:trash" height="18" /></button
+									>
+								{/if}
 							</div>
 						</td>
 					</tr>

@@ -1,11 +1,12 @@
-import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { normalizeNumber } from '$lib/utils';
 
 const pageSize = 12;
-// frontend/src/routes/admin/users/+page.server.ts
 export const load = (async ({ url }) => {
+	console.log(`frontend/src/routes/(pages)/admin/users/+page.server.ts`);
+
 	if (!url.searchParams.get('p')) {
 		throw redirect(302, `${url.pathname}?p=1&q=`);
 	}
@@ -44,7 +45,7 @@ export const load = (async ({ url }) => {
 		take: pageSize,
 		orderBy: [
 			{
-				username: 'asc'
+				id: 'asc'
 			}
 		],
 		where
@@ -58,3 +59,24 @@ export const load = (async ({ url }) => {
 		count
 	};
 }) satisfies PageServerLoad;
+
+export const actions = {
+	remove: async ({ request }) => {
+		const data = await request.formData();
+		const id = data.get('id');
+		const deleteUser = await prisma.user.delete({
+			where: {
+				id: Number(id)
+			}
+		});
+		if (deleteUser) {
+			deleteUser.password = '';
+			return {
+				deleteUser
+			};
+		}
+		return fail(400, {
+			deleteUser: null
+		});
+	}
+} satisfies Actions;
