@@ -17,9 +17,12 @@ const download = async (
 ): Promise<string> => {
 	const res = await fetch(uri);
 	const code = res.status ?? 0;
+	console.log(`${code}: ${uri}`);
+
 	if (code >= 400) {
 		// キャッシュが残っていれば、それを使用する
 		if (asset.cache && fs.existsSync(asset.cache)) {
+			console.log(`Use cache.`);
 			return asset.cache;
 		}
 		console.log(`code: ${code}`);
@@ -29,22 +32,28 @@ const download = async (
 	// handle redirects
 	if (code > 300) {
 		const location = res.headers.get('location');
-		console.log(`code: ${code}`);
-		console.log(`location: ${location}`);
 		if (location) {
+			console.log(`redirect to ${location}`);
 			return await download(fetch, asset, location, dirname);
 		}
+		throw new Error(res.statusText);
 	}
 
+	const contentLength = res.headers.get('Content-Length') ?? 0;
 	const lastModified = res.headers.get('Last-Modified');
 	if (lastModified) {
 		const dt = new Date(lastModified);
 		if (dt.getTime() == asset.lastModified?.getTime()) {
 			// 前回取得時から変更なし
 			if (asset.cache && fs.existsSync(asset.cache)) {
-				// キャッシュファイルも残っている -> 処理不要
-				console.log(`Use cache: ${asset.cache}`);
-				return asset.cache;
+				// キャッシュファイルも残っている
+				const stats = fs.statSync(asset.cache);
+				if (contentLength > 0 && stats.size == contentLength) {
+					// サイズも同じ
+					// -> 処理不要
+					console.log(`Use cache: ${asset.cache}`);
+					return asset.cache;
+				}
 			}
 		}
 		asset.lastModified = dt;
@@ -56,7 +65,6 @@ const download = async (
 	}
 
 	const contentDisposition = res.headers.get('content-disposition');
-	console.log(`content-disposition: ${contentDisposition}`);
 	let filename = '';
 	if (contentDisposition) {
 		filename = contentDisposition.split(';')[1].split('=')[1];
@@ -68,6 +76,8 @@ const download = async (
 	fs.mkdirSync(dirname, { recursive: true });
 	asset.cache = path.join(dirname, filename);
 	fs.writeFileSync(asset.cache, Buffer.from(await res.arrayBuffer()));
+	console.log(`Download completed: ${asset.cache}`);
+
 	await prisma.asset.update({
 		where: {
 			id: asset.id

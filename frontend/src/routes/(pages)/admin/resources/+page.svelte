@@ -5,6 +5,10 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 	import Icon from '@iconify/svelte';
+	import Portal from 'svelte-portal/src/Portal.svelte';
+	import type { Asset } from '@prisma/client';
+	import { onDestroy } from 'svelte';
+	import ca from 'date-fns/locale/ca';
 
 	console.log(`frontend/src/routes/(pages)/admin/resources/+page.svelte`);
 	export let data: PageData;
@@ -27,19 +31,43 @@
 		refresh();
 	}
 
+	let assets: Asset[] = [];
 	const handleCacheUpdate = async () => {
+		assets = [];
+		window.document.getElementById('cache')?.click();
 		// 処理対象データを取得
-		// 1件ずつ処理
-		const res = await fetch(`/api/user/export`);
+		const res = await fetch(`/api/asset/uncached`);
 		if (res.ok) {
-			const blob = await res.blob();
-			const url = URL.createObjectURL(blob);
-
-			const a = window.document.createElement('a');
-			a.download = `export_mosque_user.csv`;
-			a.href = url;
-			a.click();
+			const json = await res.json();
+			assets = json.assets as Asset[];
 		}
+	};
+
+	let cancel = false;
+	let progress = 0;
+	let message = '';
+	const handleClickStart = async () => {
+		window.document.getElementById('cache')?.click();
+		cancel = false;
+		progress = 1;
+		for (const asset of assets) {
+			if (cancel) {
+				break;
+			}
+			message = `(${progress++}/${assets.length}) ${asset.title ?? ''}`;
+			const res = await fetch(`/api/asset/${asset.id}/${asset.slug}`);
+		}
+		message = `完了`;
+		assets = [];
+		progress = 0;
+		cancel = false;
+	};
+	onDestroy(() => {
+		cancel = true;
+	});
+	const handleCancel = () => {
+		console.log(`handleCancel`);
+		cancel = true;
 	};
 
 	const ellipsis = (s: string | null) => {
@@ -50,10 +78,20 @@
 	};
 </script>
 
-<button class="btn btn-primary gap-2" on:click={handleCacheUpdate}>
-	<Icon icon="mdi:download" height="20" />
-	<span>キャッシュ更新</span>
-</button>
+<div class="flex items-center gap-2">
+	<button
+		class="flex-none btn btn-primary gap-2"
+		disabled={progress !== 0}
+		on:click={handleCacheUpdate}
+	>
+		<Icon icon="mdi:download" height="20" />
+		<span>キャッシュ更新</span>
+	</button>
+	{#if progress > 0}
+		<button class="btn btn-sm btn-circle" disabled={cancel} on:click={handleCancel}>✕</button>
+		<div class="flex-1">{message}</div>
+	{/if}
+</div>
 
 <div class="pt-4">
 	<input
@@ -104,3 +142,17 @@
 {:else}
 	<p>データがありません</p>
 {/if}
+
+<Portal target="#modals">
+	<input type="checkbox" id="cache" class="modal-toggle" />
+	<label for="cache" class="modal cursor-pointer">
+		<label class="modal-box" for="">
+			<label for="cache" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+			<h4 class="my-0">キャッシュ更新</h4>
+			<p>
+				対象のデータ：{assets.length} 件
+			</p>
+			<button class="btn btn-primary" on:click={handleClickStart}>開始</button>
+		</label>
+	</label>
+</Portal>

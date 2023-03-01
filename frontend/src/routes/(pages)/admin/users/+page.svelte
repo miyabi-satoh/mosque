@@ -5,7 +5,7 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 	import Icon from '@iconify/svelte';
-	import Portal, { portal } from 'svelte-portal/src/Portal.svelte';
+	import Portal from 'svelte-portal/src/Portal.svelte';
 
 	export let data: PageData;
 	let selectedFiles: FileList | null = null;
