@@ -11,16 +11,20 @@
 	const ID_IMPORT_USER = 'import-user-modal';
 	export let data: PageData;
 	export let form: ActionData;
-	let selectedFiles: FileList;
-	let textData: string;
+	let selectedFiles: FileList | undefined;
+	let textData: string | undefined;
 
-	if (form?.message) {
-		if (form?.success) {
-			// window.document.getElementById(ID_IMPORT_USER)?.click();
-			addToast(form.message, 'alert-success');
-		}
-		if (form?.error && form?.message) {
-			addToast(form.message, 'alert-error');
+	if (form) {
+		selectedFiles = undefined;
+		textData = undefined;
+		if (form.message) {
+			if (form.success) {
+				// window.document.getElementById(ID_IMPORT_USER)?.click();
+				addToast(form.message, 'alert-success');
+			}
+			if (form.error) {
+				addToast(form.message, 'alert-error');
+			}
 		}
 	}
 
@@ -118,16 +122,17 @@
 		<div class="modal-box w-2/3" class:max-w-2xl={textData}>
 			<label for={ID_IMPORT_USER} class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 			<h4 class="my-0">インポート</h4>
-			{#if selectedFiles}
-				{#if textData}
-					<pre class="h-[40vh] overflow-scroll">{textData}</pre>
+			{#if selectedFiles && selectedFiles.length > 0}
+				<p class="my-0">{selectedFiles[0].name}</p>
+				{#if textData !== undefined}
+					<pre class="mt-0 h-[40vh] overflow-scroll">{textData}</pre>
 				{/if}
 				<div class="flex items-center justify-between w-full mt-4">
 					<button
 						class="btn btn-default"
-						on:click={() => {
+						on:click|preventDefault={() => {
 							selectedFiles = undefined;
-							textData = '';
+							textData = undefined;
 						}}>再選択</button
 					>
 					<form method="POST" action="?/upload-user">
@@ -136,7 +141,7 @@
 					</form>
 				</div>
 			{:else}
-				<div class="flex items-center justify-center w-full mt-4">
+				<div class="not-prose flex items-center justify-center w-full mt-4">
 					<Dropzone id="selected-file" name="file" accept=".json" bind:files={selectedFiles} />
 				</div>
 			{/if}
