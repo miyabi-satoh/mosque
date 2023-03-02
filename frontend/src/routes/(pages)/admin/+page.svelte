@@ -34,7 +34,8 @@
 
 	const handleImportUser = async () => {
 		console.log(`handleImportUser`);
-		alert('未実装');
+		const el = window.document.getElementById('form-import');
+		(el as HTMLFormElement).submit();
 	};
 
 	const handleExportUser = async () => {
@@ -119,7 +120,7 @@
 <Portal target="#modals">
 	<input type="checkbox" id={ID_IMPORT_USER} class="modal-toggle" />
 	<label for={ID_IMPORT_USER} class="modal cursor-pointer">
-		<div class="modal-box w-2/3" class:max-w-2xl={textData}>
+		<label for="" class="modal-box w-2/3" class:max-w-2xl={textData}>
 			<label for={ID_IMPORT_USER} class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 			<h4 class="my-0">インポート</h4>
 			{#if selectedFiles && selectedFiles.length > 0}
@@ -135,9 +136,12 @@
 							textData = undefined;
 						}}>再選択</button
 					>
-					<form method="POST" action="?/upload-user">
+					<!-- TODO: endpointに変更する -->
+					<form id="form-import" method="POST" action="?/upload-user">
 						<input type="hidden" name="body" value={textData} />
-						<button class="btn btn-primary">インポート</button>
+						<button class="btn btn-primary" on:click|preventDefault={handleImportUser}
+							>インポート</button
+						>
 					</form>
 				</div>
 			{:else}
@@ -145,6 +149,6 @@
 					<Dropzone id="selected-file" name="file" accept=".json" bind:files={selectedFiles} />
 				</div>
 			{/if}
-		</div>
+		</label>
 	</label>
 </Portal>
