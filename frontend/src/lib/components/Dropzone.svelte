@@ -5,7 +5,6 @@
 	export let name: string;
 	export let accept: string | undefined = undefined;
 	export let files: FileList;
-	console.log('slots', $$slots);
 </script>
 
 <label

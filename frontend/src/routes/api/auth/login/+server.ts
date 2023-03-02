@@ -1,9 +1,8 @@
 import { json } from '@sveltejs/kit';
-import { compareSync } from 'bcrypt';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { COOKIE_SESSION } from '$lib/constants';
-import { clearSecret } from '$lib/user';
+import { clearSecret, comparePassword } from '$lib/user';
 
 // frontend/src/routes/api/auth/login/+server.ts
 export const POST = (async ({ request, cookies }) => {
@@ -17,7 +16,7 @@ export const POST = (async ({ request, cookies }) => {
 				blocked: false
 			}
 		});
-		if (user && compareSync(data.password, user.password ?? '')) {
+		if (user && comparePassword(data.password, user.password)) {
 			const authToken = crypto.randomUUID();
 			await prisma.user.update({
 				where: {

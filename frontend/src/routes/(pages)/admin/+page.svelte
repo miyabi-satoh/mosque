@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { error } from '@sveltejs/kit';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { userStore } from '$lib/user';
 	import IconButton from '$lib/components/form/IconButton.svelte';
 	import { format } from 'date-fns';
@@ -9,10 +9,20 @@
 	import Portal from 'svelte-portal';
 
 	const ID_IMPORT_USER = 'import-user-modal';
-
 	export let data: PageData;
+	export let form: ActionData;
 	let selectedFiles: FileList;
 	let textData: string;
+
+	if (form?.message) {
+		if (form?.success) {
+			// window.document.getElementById(ID_IMPORT_USER)?.click();
+			addToast(form.message, 'alert-success');
+		}
+		if (form?.error && form?.message) {
+			addToast(form.message, 'alert-error');
+		}
+	}
 
 	$: if (!$userStore || $userStore.id != 1) {
 		error(404, 'Not Found');
@@ -105,7 +115,7 @@
 <Portal target="#modals">
 	<input type="checkbox" id={ID_IMPORT_USER} class="modal-toggle" />
 	<label for={ID_IMPORT_USER} class="modal cursor-pointer">
-		<label class="modal-box w-2/3" class:max-w-2xl={textData} for="">
+		<div class="modal-box w-2/3" class:max-w-2xl={textData}>
 			<label for={ID_IMPORT_USER} class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 			<h4 class="my-0">インポート</h4>
 			{#if selectedFiles}
@@ -115,12 +125,12 @@
 				<div class="flex items-center justify-between w-full mt-4">
 					<button
 						class="btn btn-default"
-						on:click|preventDefault={() => {
-							selectedFiles = new FileList();
+						on:click={() => {
+							selectedFiles = undefined;
 							textData = '';
 						}}>再選択</button
 					>
-					<form method="POST" action="?/upload">
+					<form method="POST" action="?/upload-user">
 						<input type="hidden" name="body" value={textData} />
 						<button class="btn btn-primary">インポート</button>
 					</form>
@@ -130,6 +140,6 @@
 					<Dropzone id="selected-file" name="file" accept=".json" bind:files={selectedFiles} />
 				</div>
 			{/if}
-		</label>
+		</div>
 	</label>
 </Portal>

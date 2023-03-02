@@ -1,8 +1,8 @@
-import { compareSync, hashSync } from 'bcrypt';
 import type { Actions } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { getUser } from '$lib/server/session';
 import { clearSecret } from '$lib/user';
+import { comparePassword, encryptPassword } from '$lib/server/passwd';
 
 // frontend/src/routes/(pages)/passwd/+page.server.ts
 export const actions = {
@@ -26,19 +26,19 @@ export const actions = {
 						user: null
 					};
 				}
-				if (!compareSync(currrentPassword, user.password ?? '')) {
+				if (!comparePassword(currrentPassword, user.password)) {
 					return {
 						message: `パスワードが正しくありません`,
 						user: null
 					};
 				}
-				const hashedPassword = hashSync(newPassword, 10);
+				const encryptedPassword = encryptPassword(newPassword);
 				user = await prisma.user.update({
 					where: {
 						id: user.id
 					},
 					data: {
-						password: hashedPassword
+						password: encryptedPassword
 					}
 				});
 				if (user) {

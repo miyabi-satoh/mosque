@@ -1,8 +1,9 @@
 // https://dev.to/danawoodman/getting-form-body-data-in-your-sveltekit-endpoints-4a85
 type StructuredFormData = string | boolean | number | File | StructuredFormData[];
 
-export function formBody(body: FormData) {
-	return [...body.entries()].reduce((data, [k, v]) => {
+export const formBody = async (request: Request) => {
+	const values = await request.formData();
+	return [...values.entries()].reduce((data, [k, v]) => {
 		let value: StructuredFormData = v;
 		if (v === 'true') value = true;
 		if (v === 'false') value = false;
@@ -19,4 +20,4 @@ export function formBody(body: FormData) {
 
 		return data;
 	}, {} as Record<string, StructuredFormData>);
-}
+};

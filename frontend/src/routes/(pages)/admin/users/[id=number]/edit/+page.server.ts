@@ -1,8 +1,9 @@
 import { object, string, ValidationError } from 'yup';
 import { fail } from '@sveltejs/kit';
+import type { User } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { clearSecret, type User } from '$lib/user';
+import { clearSecret } from '$lib/user';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);

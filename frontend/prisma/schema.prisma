@@ -545,8 +545,8 @@ model User {
   confirmation_token                              String?               @db.VarChar(255)
   confirmed                                       Boolean?
   blocked                                         Boolean?
-  created_at                                      DateTime?             @db.Timestamp(6)
-  updated_at                                      DateTime?             @db.Timestamp(6)
+  createdAt                                       DateTime?             @map("created_at") @db.Timestamp(6)
+  updatedAt                                       DateTime?             @map("updated_at") @db.Timestamp(6)
   created_by_id                                   Int?
   updated_by_id                                   Int?
   displayName                                     String?               @map("display_name") @db.VarChar(255)

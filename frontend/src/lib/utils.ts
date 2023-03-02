@@ -1,5 +1,15 @@
-// import { format } from 'date-fns';
-// import { ja } from 'date-fns/locale/index.js';
+import { ValidationError } from 'yup';
+
+export type Nullable<T> = { [K in keyof T]?: T[K] };
+
+export const fromValidationError = (error: unknown) => {
+	if (error instanceof ValidationError) {
+		return error.inner.reduce((acc, err) => {
+			return { ...acc, [err.path ?? 'error']: err.message };
+		}, {});
+	}
+	return { error: 'Unknown error.' };
+};
 
 export function formatDate(date: string | Date | null) {
 	if (date === null) {
@@ -17,7 +27,6 @@ export function formatDate(date: string | Date | null) {
 	const m = dt.getMonth() + 1;
 	const d = dt.getDate();
 	const w = ['日', '月', '火', '水', '木', '金', '土'][dt.getDay()];
-	// return format(dt, 'y年M月d日(E)', { locale: ja });
 	return `${y}年${m}月${d}日(${w})`;
 }
 
