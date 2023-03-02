@@ -14,3 +14,8 @@ export const getUser = async (cookies: Cookies) => {
 	}
 	return null;
 };
+
+export const isAdminSession = async (cookies: Cookies) => {
+	const user = await getUser(cookies);
+	return user && user.id == 1;
+};

@@ -2,26 +2,134 @@
 	import { error } from '@sveltejs/kit';
 	import type { PageData } from './$types';
 	import { userStore } from '$lib/user';
+	import IconButton from '$lib/components/form/IconButton.svelte';
+	import { format } from 'date-fns';
+	import { addToast } from '$lib/components/Toast.svelte';
+	import Dropzone from '$lib/components/Dropzone.svelte';
+	import Portal from 'svelte-portal';
+
+	const ID_IMPORT_USER = 'import-user-modal';
 
 	export let data: PageData;
+	let selectedFiles: FileList;
+	let textData: string;
 
 	$: if (!$userStore || $userStore.id != 1) {
 		error(404, 'Not Found');
 	}
+
+	const handleImportUser = async () => {
+		console.log(`handleImportUser`);
+		alert('未実装');
+	};
+
+	const handleExportUser = async () => {
+		// console.log(`handleExportUser`);
+		const filter = {
+			where: {
+				id: {
+					not: 1
+				}
+			},
+			orderBy: {
+				id: 'asc'
+			},
+			select: {
+				id: true,
+				username: true,
+				sei: true,
+				mei: true,
+				seiKana: true,
+				meiKana: true,
+				abbrev: true,
+				displayName: true,
+				blocked: true
+			}
+		};
+		const query = new URLSearchParams({ filter: encodeURIComponent(JSON.stringify(filter)) });
+		const res = await fetch(`/api/user?${query}`);
+		if (res.ok) {
+			const json = await res.json();
+			const data = JSON.stringify(json, null, '\t');
+			const blob = new Blob([data], { type: 'application/json' });
+
+			const a = window.document.createElement('a');
+			a.download = `export_mosque_user_${format(new Date(), 'yyyyMMddHHmmss')}.json`;
+			a.href = URL.createObjectURL(blob);
+			a.click();
+			URL.revokeObjectURL(a.href);
+		} else {
+			addToast(`${res.status}:${res.statusText}`, 'alert-error');
+		}
+	};
+
+	const handleUpdateCache = () => {
+		console.log(`handleUpdateCache`);
+		alert('未実装');
+	};
+
+	const handleRemoveCache = () => {
+		console.log(`handleRemoveCache`);
+		alert('未実装');
+	};
+
+	$: if (selectedFiles) {
+		setPreview(selectedFiles);
+	}
+	const setPreview = async (files: FileList) => {
+		const file = files[0];
+		if (file) {
+			textData = await file.text();
+		}
+	};
 </script>
 
 <h2>メニュー</h2>
-<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
-	{#each data.pages as item (item.id)}
-		<a
-			class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
-			href={item.url}
-		>
-			<div class="card-body">
-				<h3 class="card-title">
-					{item.title}
-				</h3>
-			</div>
-		</a>
-	{/each}
+<div class="my-6 bg-base-300 p-4">
+	<h3 class="mt-0">ユーザー管理</h3>
+	<div class="flex gap-4">
+		<IconButton icon="mdi:upload" for={ID_IMPORT_USER}>インポート</IconButton>
+		<IconButton icon="mdi:download" on:click={handleExportUser}>エクスポート</IconButton>
+	</div>
 </div>
+
+<div class="my-6 bg-base-300 p-4">
+	<h3 class="mt-0">リソース管理</h3>
+	<div class="flex gap-4">
+		<IconButton icon="mdi:file-refresh" on:click={handleUpdateCache}>キャッシュ更新</IconButton>
+		<IconButton icon="mdi:filter-remove" on:click={handleRemoveCache}>不要キャッシュ削除</IconButton
+		>
+	</div>
+</div>
+
+<Portal target="#modals">
+	<input type="checkbox" id={ID_IMPORT_USER} class="modal-toggle" />
+	<label for={ID_IMPORT_USER} class="modal cursor-pointer">
+		<label class="modal-box w-2/3" class:max-w-2xl={textData} for="">
+			<label for={ID_IMPORT_USER} class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+			<h4 class="my-0">インポート</h4>
+			{#if selectedFiles}
+				{#if textData}
+					<pre class="h-[40vh] overflow-scroll">{textData}</pre>
+				{/if}
+				<div class="flex items-center justify-between w-full mt-4">
+					<button
+						class="btn btn-default"
+						on:click|preventDefault={() => {
+							selectedFiles = new FileList();
+							textData = '';
+						}}>再選択</button
+					>
+					<form method="POST" action="?/upload">
+						<input type="hidden" name="body" value={textData} />
+						<button class="btn btn-primary">インポート</button>
+					</form>
+				</div>
+			{:else}
+				<div class="flex items-center justify-center w-full mt-4">
+					<Dropzone id="selected-file" name="file" accept=".json" bind:files={selectedFiles} />
+				</div>
+			{/if}
+		</label>
+	</label>
+</Portal>

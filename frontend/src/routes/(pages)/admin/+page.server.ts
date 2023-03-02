@@ -1,14 +1,8 @@
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import { getUser } from '$lib/server/session';
+import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 
-// frontend/src/routes/admin/+page.server.ts
-export const load = (async ({ cookies }) => {
-	const user = await getUser(cookies);
-	if (!user || user.id != 1) {
-		throw error(404, 'Not Found');
-	}
+export const load = (async () => {
+	console.log(`frontend/src/routes/(pages)/admin/+page.server.ts`);
 
 	const pages = await prisma.page.findMany({
 		where: {
@@ -25,3 +19,9 @@ export const load = (async ({ cookies }) => {
 		pages
 	};
 }) satisfies PageServerLoad;
+
+export const actions: Actions = {
+	'upload-user': async ({ request }) => {
+		console.log(`upload-user: frontend/src/routes/(pages)/admin/+page.server.ts`);
+	}
+};

@@ -3,6 +3,7 @@ import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { clearSecret, type User } from '$lib/user';
+import { formBody } from '$lib/form-helpers';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
@@ -40,7 +41,8 @@ type FormError = {
 };
 export const actions = {
 	default: async ({ request }) => {
-		const formData = Object.fromEntries(await request.formData());
+		const values = await request.formData();
+		const user = formBody(values) as FormData;
 		const userSchema = object({
 			username: string()
 				.required()
@@ -60,12 +62,12 @@ export const actions = {
 		});
 
 		try {
-			const _validated = await userSchema.validate(formData, {
+			const _validated = await userSchema.validate(user, {
 				abortEarly: false
 			});
 			return {
 				success: true,
-				user: formData as FormData
+				user
 			};
 		} catch (error) {
 			if (error instanceof ValidationError) {
@@ -75,7 +77,7 @@ export const actions = {
 
 				return {
 					errors: errors as FormError,
-					user: formData as FormData
+					user
 				};
 			}
 		}

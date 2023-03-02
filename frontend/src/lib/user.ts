@@ -5,7 +5,11 @@ export type { User };
 export const userStore = writable<User | null>(null);
 
 export const clearSecret = (user: User) => {
-	user.password = '';
-	user.token = '';
+	if (user.password) {
+		user.password = '';
+	}
+	if (user.token) {
+		user.token = '';
+	}
 	return user;
 };
