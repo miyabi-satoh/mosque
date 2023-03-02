@@ -9,7 +9,7 @@
 	import Portal from 'svelte-portal';
 
 	const ID_IMPORT_USER = 'import-user-modal';
-	export let data: PageData;
+	// export let data: PageData;
 	export let form: ActionData;
 	let selectedFiles: FileList | undefined;
 	let textData: string | undefined;
@@ -117,6 +117,7 @@
 	</div>
 </div>
 
+<!-- コンポーネント化できそう -->
 <Portal target="#modals">
 	<input type="checkbox" id={ID_IMPORT_USER} class="modal-toggle" />
 	<label for={ID_IMPORT_USER} class="modal cursor-pointer">
