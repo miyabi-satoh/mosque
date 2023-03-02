@@ -4,7 +4,7 @@
 	export let id: string;
 	export let name: string;
 	export let accept: string | undefined = undefined;
-	export let files: FileList;
+	export let files: FileList | undefined;
 </script>
 
 <label
