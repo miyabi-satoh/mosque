@@ -64,8 +64,8 @@ const download = async (
 		fs.unlinkSync(asset.cache);
 	}
 
-	const contentDisposition = res.headers.get('content-disposition');
 	let filename = '';
+	const contentDisposition = res.headers.get('content-disposition');
 	if (contentDisposition) {
 		filename = contentDisposition.split(';')[1].split('=')[1];
 	}
@@ -73,8 +73,8 @@ const download = async (
 		filename = path.basename(uri).replace(/\?.*$/, '');
 	}
 
-	fs.mkdirSync(dirname, { recursive: true });
 	asset.cache = path.join(dirname, filename);
+	fs.mkdirSync(dirname, { recursive: true });
 	fs.writeFileSync(asset.cache, Buffer.from(await res.arrayBuffer()));
 	console.log(`Download completed: ${asset.cache}`);
 

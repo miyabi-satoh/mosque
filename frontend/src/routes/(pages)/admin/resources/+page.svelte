@@ -8,7 +8,6 @@
 	import Portal from 'svelte-portal/src/Portal.svelte';
 	import type { Asset } from '@prisma/client';
 	import { onDestroy } from 'svelte';
-	import ca from 'date-fns/locale/ca';
 
 	console.log(`frontend/src/routes/(pages)/admin/resources/+page.svelte`);
 	export let data: PageData;
@@ -54,8 +53,9 @@
 			if (cancel) {
 				break;
 			}
-			message = `(${progress++}/${assets.length}) ${asset.title ?? ''}`;
+			message = `(${progress}/${assets.length}) ${asset.title ?? ''}`;
 			const res = await fetch(`/api/asset/${asset.id}/${asset.slug}`);
+			progress++;
 		}
 		message = `完了`;
 		assets = [];
