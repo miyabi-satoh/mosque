@@ -1,9 +1,9 @@
 import { fail } from '@sveltejs/kit';
-import { object } from 'yup';
+import { boolean, number, object, string } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { formBody } from '$lib/form-helpers';
-import { UserValidations, type UserUpdate } from '$lib/user';
+import type { UserUpdate } from '$lib/user';
 import { fromValidationError } from '$lib/utils';
 import { comparePassword, encryptPassword } from '$lib/server/passwd';
 
@@ -29,8 +29,16 @@ export const load = (async () => {
 type FormData = {
 	body: string;
 };
-type FormError = {
+type ValidationError = {
 	[key in keyof UserUpdate]?: string;
+};
+type ActionResponse = {
+	error?: boolean;
+	success?: boolean;
+	id?: number;
+	errors?: ValidationError;
+	user?: UserUpdate;
+	message: string;
 };
 
 export const actions: Actions = {
@@ -40,49 +48,67 @@ export const actions: Actions = {
 		const error = true;
 		const json = (await formBody(request)) as FormData;
 		const users = JSON.parse(json.body) as UserUpdate[];
-		const userSchema = object({
-			id: UserValidations.id(),
-			username: UserValidations.username(),
-			password: UserValidations.password(),
-			displayName: UserValidations.displayName(),
-			abbrev: UserValidations.abbrev(),
-			sei: UserValidations.sei(),
-			mei: UserValidations.mei(),
-			seiKana: UserValidations.seiKana(),
-			meiKana: UserValidations.meiKana(),
-			blocked: UserValidations.blocked()
-		});
 		const validateOptions = {
 			abortEarly: false
 		};
 
 		let progress = 0;
+		let upserted = 0;
 		for (const user of users) {
+			progress++;
+
 			// 値のバリデーション
 			try {
-				await userSchema.validate(user, validateOptions);
-			} catch (error) {
-				const errors = fromValidationError(error) as FormError;
-				return fail(400, { error, errors, user });
+				const schema = object({
+					id: number().notRequired().min(2),
+					username: string()
+						.notRequired()
+						.min(4, '4文字以上で入力してください')
+						.max(20, '20文字以下で入力してください')
+						.matches(/^[0-9A-Za-z]+$/, '半角英数字のみ使用できます'),
+					password: string()
+						.notRequired()
+						.min(4, '4文字以上で入力してください')
+						.matches(/^[0-9A-Za-z]+$/, '半角英数字のみ使用できます'),
+					displayName: string().notRequired().max(5, '5文字以下で入力してください'),
+					abbrev: string().notRequired().max(5, '5文字以下で入力してください'),
+					sei: string().notRequired(),
+					mei: string().notRequired(),
+					seiKana: string()
+						.notRequired()
+						.matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください'),
+					meiKana: string()
+						.notRequired()
+						.matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください'),
+					blocked: boolean().notRequired()
+				});
+				await schema.validate(user, validateOptions);
+			} catch (err) {
+				const message = `${progress}件目の入力データに不備があります。`;
+				const errors = fromValidationError(err) as ValidationError;
+				const data: ActionResponse = { error, message, errors, user };
+				console.log(data);
+				return fail(400, data);
 			}
+
+			const id = user.id ?? 0;
 
 			// usernameのユニークチェック
 			if (user.username) {
 				const query = {
 					where: {
 						id: {
-							not: user.id ?? 0
+							not: id
 						},
 						username: user.username
 					}
 				};
 				const count = await prisma.user.count(query);
 				if (count > 0) {
-					return fail(400, {
-						error,
-						id: user.id,
-						message: `${user.username}: ユーザー名が重複しています。`
-					});
+					const message = `${user.username}: ユーザー名が重複しています。`;
+					const data: ActionResponse = { error, message, id };
+					console.log(data);
+					return fail(400, data);
 				}
 			}
 
@@ -91,41 +117,46 @@ export const actions: Actions = {
 				const query = {
 					where: {
 						id: {
-							not: user.id ?? 0
+							not: id
 						},
 						abbrev: user.abbrev
 					}
 				};
 				const count = await prisma.user.count(query);
 				if (count > 0) {
-					return fail(400, {
-						error,
-						id: user.id,
-						message: `${user.abbrev}: 略称が重複しています。`
-					});
+					const message = `${user.abbrev}: 略称が重複しています。`;
+					const data: ActionResponse = { error, message, id };
+					console.log(data);
+					return fail(400, data);
 				}
 			}
 
 			const userInDB = await prisma.user.findUnique({
 				where: {
-					id: user.id ?? 0
+					id
 				}
 			});
 
+			const userData = {
+				username: user.username ?? undefined,
+				abbrev: user.abbrev ?? undefined,
+				displayName: user.displayName ?? undefined,
+				sei: user.sei ?? undefined,
+				mei: user.mei ?? undefined,
+				seiKana: user.seiKana ?? undefined,
+				meiKana: user.meiKana ?? undefined,
+				blocked: user.blocked ?? undefined,
+				updatedAt: new Date()
+			};
 			if (userInDB) {
 				// 更新する必要ある？
 				if (
-					user.username === userInDB.username &&
-					user.abbrev === userInDB.abbrev &&
-					user.displayName === userInDB.displayName &&
-					user.sei === userInDB.sei &&
-					user.mei === userInDB.mei &&
-					user.seiKana === userInDB.seiKana &&
-					user.meiKana === userInDB.meiKana &&
-					user.blocked === userInDB.blocked &&
-					(user.password === undefined || comparePassword(user.password, userInDB.password))
+					!(Object.keys(user) as (keyof UserUpdate)[]).find(
+						(key) => key !== 'password' && user[key] && user[key] !== userInDB[key]
+					) &&
+					(!user.password || comparePassword(user.password, userInDB.password))
 				) {
-					console.log(`${user.id}: 更新の必要なし`);
+					console.log(`${id}: 更新の必要なし`);
 					continue;
 				}
 
@@ -134,56 +165,56 @@ export const actions: Actions = {
 						id: userInDB.id
 					},
 					data: {
-						...user,
-						password: user.password ? encryptPassword(user.password) : undefined,
-						updatedAt: new Date()
+						...userData,
+						password: user.password ? encryptPassword(user.password) : undefined
 					}
 				});
 				if (!result) {
-					return fail(500, {
-						error,
-						id: user.id,
-						message: `データベースの更新に失敗しました`
-					});
+					const message = `データベースの更新に失敗しました。`;
+					const data: ActionResponse = { error, message, id, user };
+					console.log(data);
+					return fail(500, data);
 				}
 			} else {
 				// 新規作成 -> 必須項目チェック
-				const userRequiredSchema = object({
-					username: UserValidations.username().required(),
-					displayName: UserValidations.displayName().required(),
-					abbrev: UserValidations.abbrev().required(),
-					sei: UserValidations.sei().required(),
-					mei: UserValidations.mei().required(),
-					seiKana: UserValidations.seiKana().required(),
-					meiKana: UserValidations.meiKana().required()
-				});
 				try {
-					await userRequiredSchema.validate(user, validateOptions);
-				} catch (error) {
-					const errors = fromValidationError(error);
-					return fail(400, { error, errors, user });
+					const schema = object({
+						username: string().required(),
+						password: string().required(),
+						displayName: string().required(),
+						abbrev: string().required(),
+						sei: string().required(),
+						mei: string().required(),
+						seiKana: string().required(),
+						meiKana: string().required()
+					});
+					await schema.validate(user, validateOptions);
+				} catch (err) {
+					const message = `${progress}件目の入力データに不備があります。`;
+					const errors = fromValidationError(err);
+					const data: ActionResponse = { error, message, errors, user };
+					console.log(data);
+					return fail(400, data);
 				}
 
 				const result = await prisma.user.create({
 					data: {
-						...user,
-						confirmed: true,
-						updatedAt: new Date()
+						...userData,
+						password: encryptPassword(user.password),
+						confirmed: true
 					}
 				});
 				if (!result) {
-					return fail(500, {
-						error,
-						message: `データベースの更新に失敗しました`
-					});
+					const message = `データベースの更新に失敗しました。`;
+					const data: ActionResponse = { error, message, user };
+					console.log(data);
+					return fail(500, data);
 				}
 			}
-			progress++;
+			upserted++;
 		}
 
-		return {
-			success,
-			message: `${progress}件のデータを更新しました`
-		};
+		const message = `インポートしたデータは${upserted}件です。`;
+		return { success, message };
 	}
 };

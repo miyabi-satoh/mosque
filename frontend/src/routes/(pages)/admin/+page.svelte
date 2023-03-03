@@ -7,35 +7,59 @@
 	import { addToast } from '$lib/components/Toast.svelte';
 	import Dropzone from '$lib/components/Dropzone.svelte';
 	import Portal from 'svelte-portal';
+	import { applyAction, enhance } from '$app/forms';
 
 	const ID_IMPORT_USER = 'import-user-modal';
 	// export let data: PageData;
-	export let form: ActionData;
+	export let form: ActionData | undefined;
 	let selectedFiles: FileList | undefined;
 	let textData: string | undefined;
-
-	if (form) {
-		selectedFiles = undefined;
-		textData = undefined;
-		if (form.message) {
-			if (form.success) {
-				// window.document.getElementById(ID_IMPORT_USER)?.click();
-				addToast(form.message, 'alert-success');
-			}
-			if (form.error) {
-				addToast(form.message, 'alert-error');
-			}
-		}
-	}
+	let useEnhance = false;
 
 	$: if (!$userStore || $userStore.id != 1) {
 		error(404, 'Not Found');
 	}
 
-	const handleImportUser = async () => {
+	const errorDetail = (key: string) => {
+		if (form && form.errors) {
+			return `${key}:${form.errors[key as keyof typeof form.errors]}`;
+		}
+		return '';
+	};
+	const showImportUserResult = () => {
+		console.log(`showImportUserResult`);
+		if (useEnhance) {
+			console.log(form);
+			if (form && form.success) {
+				window.document.getElementById(ID_IMPORT_USER)?.click();
+				addToast(form.message, 'alert-success');
+				selectedFiles = undefined;
+				textData = undefined;
+			}
+			// その他のエラーはモーダルに表示される
+		} else {
+			// モーダルは閉じられているので、トースト表示
+			if (form && form.message) {
+				if (form.success) {
+					addToast(form.message, 'alert-success');
+				}
+				if (form.error) {
+					addToast(form.message, 'alert-error');
+				}
+				if (form.errors) {
+					Object.keys(form.errors).map((key) => addToast(errorDetail(key), 'alert-error'));
+				}
+			}
+			form = undefined;
+		}
+	};
+	if (form) {
+		showImportUserResult();
+	}
+
+	const handleImportUser = () => {
 		console.log(`handleImportUser`);
-		const el = window.document.getElementById('form-import');
-		(el as HTMLFormElement).submit();
+		form = undefined;
 	};
 
 	const handleExportUser = async () => {
@@ -52,6 +76,7 @@
 			select: {
 				id: true,
 				username: true,
+				password: true,
 				sei: true,
 				mei: true,
 				seiKana: true,
@@ -66,6 +91,7 @@
 		if (res.ok) {
 			const json = await res.json();
 			const data = JSON.stringify(json, null, '\t');
+
 			const blob = new Blob([data], { type: 'application/json' });
 
 			const a = window.document.createElement('a');
@@ -103,7 +129,9 @@
 <div class="my-6 bg-base-300 p-4">
 	<h3 class="mt-0">ユーザー管理</h3>
 	<div class="flex gap-4">
-		<IconButton icon="mdi:upload" for={ID_IMPORT_USER}>インポート</IconButton>
+		<IconButton icon="mdi:upload" for={ID_IMPORT_USER} on:click={handleImportUser}
+			>インポート</IconButton
+		>
 		<IconButton icon="mdi:download" on:click={handleExportUser}>エクスポート</IconButton>
 	</div>
 </div>
@@ -127,7 +155,19 @@
 			{#if selectedFiles && selectedFiles.length > 0}
 				<p class="my-0">{selectedFiles[0].name}</p>
 				{#if textData !== undefined}
-					<pre class="mt-0 h-[40vh] overflow-scroll">{textData}</pre>
+					<pre class="my-0 h-[40vh] overflow-scroll">{textData}</pre>
+				{/if}
+				{#if form && form.error && form.message}
+					<div class="my-4 p-2 bg-error text-error-content">
+						{form.message}
+						{#if form.errors}
+							<ul class="my-2">
+								{#each Object.keys(form.errors) as key}
+									<li>{errorDetail(key)}</li>
+								{/each}
+							</ul>
+						{/if}
+					</div>
 				{/if}
 				<div class="flex items-center justify-between w-full mt-4">
 					<button
@@ -137,12 +177,28 @@
 							textData = undefined;
 						}}>再選択</button
 					>
-					<!-- TODO: endpointに変更する -->
-					<form id="form-import" method="POST" action="?/upload-user">
+					<form
+						method="POST"
+						action="?/upload-user"
+						use:enhance={({ form, data, action, cancel }) => {
+							useEnhance = true;
+							// `form` は `<form>` 要素です
+							// `data` はその `FormData` オブジェクトです
+							// `action` はフォームが POST される URL です
+							// `cancel()` は送信(submission)を中止します
+
+							return async ({ result }) => {
+								console.log(result);
+								// `result` は `ActionResult` オブジェクトです
+								// if (result.type === 'error') {
+								await applyAction(result);
+								showImportUserResult();
+								// }
+							};
+						}}
+					>
 						<input type="hidden" name="body" value={textData} />
-						<button class="btn btn-primary" on:click|preventDefault={handleImportUser}
-							>インポート</button
-						>
+						<button class="btn btn-primary">インポート</button>
 					</form>
 				</div>
 			{:else}

@@ -1,6 +1,6 @@
 import { ValidationError } from 'yup';
 
-export type Nullable<T> = { [K in keyof T]?: T[K] };
+export type UpdateSchema<T> = { [K in keyof T]?: T[K] | null };
 
 export const fromValidationError = (error: unknown) => {
 	if (error instanceof ValidationError) {
