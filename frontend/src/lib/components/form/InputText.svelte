@@ -1,10 +1,10 @@
 <script lang="ts">
 	export let id: string;
 	export let name: string;
-	export let maxlength: number | null = null;
-	export let required: boolean = false;
-	export let value: string | null = null;
-	export let errorMessage: string | null = null;
+	export let maxlength: number | undefined = undefined;
+	export let required = false;
+	export let value: string | null | undefined = undefined;
+	export let errorMessage: string | undefined = undefined;
 	export let type: 'email' | 'password' | 'search' | 'tel' | 'text' | 'url' = 'text';
 </script>
 

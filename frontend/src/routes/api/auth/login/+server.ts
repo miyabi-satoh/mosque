@@ -2,7 +2,8 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { COOKIE_SESSION } from '$lib/constants';
-import { clearSecret, comparePassword } from '$lib/user';
+import { clearSecret } from '$lib/user';
+import { comparePassword } from '$lib/server/passwd';
 
 // frontend/src/routes/api/auth/login/+server.ts
 export const POST = (async ({ request, cookies }) => {

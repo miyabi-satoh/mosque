@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ActionData, PageData } from './$types';
 	import Icon from '@iconify/svelte';
+	import type { ActionData, PageData } from './$types';
 	import { addToast } from '$lib/components/Toast.svelte';
 	import Label from '$lib/components/form/Label.svelte';
 	import InputText from '$lib/components/form/InputText.svelte';

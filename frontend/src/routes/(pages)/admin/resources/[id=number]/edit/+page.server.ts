@@ -4,7 +4,7 @@ import type { User } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { clearSecret } from '$lib/user';
-import { formBody } from '$lib/form-helpers';
+import { fromRequest } from '$lib/form-helpers';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
@@ -42,8 +42,7 @@ type FormError = {
 };
 export const actions = {
 	default: async ({ request }) => {
-		const values = await request.formData();
-		const user = formBody(values) as FormData;
+		const user = await fromRequest<FormData>(request);
 		const userSchema = object({
 			username: string()
 				.required()

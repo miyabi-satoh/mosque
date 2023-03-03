@@ -2,11 +2,13 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import type { User } from '@prisma/client';
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import '../app.postcss';
-	import { userStore, type User } from '$lib/user';
+	import { userStore } from '$lib/user';
 	import Toast from '$lib/components/Toast.svelte';
+	import { ID_MODALS } from '$lib/constants';
 
 	console.log(`frontend/src/routes/+layout.svelte`);
 	export let data: LayoutData;
@@ -220,7 +222,7 @@
 	</div>
 </div>
 
-<div id="modals" class="prose">
+<div id={ID_MODALS} class="prose">
 	<!-- Put this part before </body> tag -->
 	<div>
 		<input type="checkbox" id="login" class="modal-toggle" bind:checked={toggleLogin} />

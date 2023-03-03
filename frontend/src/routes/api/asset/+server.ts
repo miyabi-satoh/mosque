@@ -2,20 +2,18 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { isAdminSession } from '$lib/server/session';
-import { clearSecret } from '$lib/user';
 
 export const GET = (async ({ url, cookies }) => {
-	console.log(`GET frontend/src/routes/api/user/+server.ts`);
+	console.log(`GET frontend/src/routes/api/asset/+server.ts`);
 	if (!isAdminSession(cookies)) {
 		throw error(401, 'アクセス権がありません。');
 	}
 
 	const filter = url.searchParams.get('filter') ?? '';
-	const objFilter = filter ? JSON.parse(decodeURIComponent(filter)) : {};
-	const users = await prisma.user.findMany(objFilter);
-	if (users) {
-		return json(users.map((user) => clearSecret(user)));
+	const objFilter = filter ? JSON.parse(filter) : {};
+	const assets = await prisma.asset.findMany(objFilter);
+	if (assets) {
+		return json(assets);
 	}
-
-	throw error(400, 'ユーザーリストの取得に失敗しました。');
+	throw error(404, 'アセットリストの取得に失敗しました');
 }) satisfies RequestHandler;

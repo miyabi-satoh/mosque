@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { normalizeNumber } from '$lib/utils';
@@ -52,23 +52,23 @@ export const load = (async ({ url }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	remove: async ({ request }) => {
-		const data = await request.formData();
-		const id = data.get('id');
-		// const deleteUser = await prisma.user.delete({
-		// 	where: {
-		// 		id: Number(id)
-		// 	}
-		// });
-		// if (deleteUser) {
-		// 	return {
-		// 		deleteUser: clearSecret(deleteUser)
-		// 	};
-		// }
-		return fail(400, {
-			deleteUser: null
-		});
-	},
+	// remove: async ({ request }) => {
+	// 	const data = await request.formData();
+	// 	const id = data.get('id');
+	// 	const deleteUser = await prisma.user.delete({
+	// 		where: {
+	// 			id: Number(id)
+	// 		}
+	// 	});
+	// 	if (deleteUser) {
+	// 		return {
+	// 			deleteUser: clearSecret(deleteUser)
+	// 		};
+	// 	}
+	// 	return fail(400, {
+	// 		deleteUser: null
+	// 	});
+	// },
 	upload: async ({ request }) => {
 		const data = await request.formData();
 		const body = data.get('body');

@@ -1,13 +1,13 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
+	import Portal from 'svelte-portal/src/Portal.svelte';
+	import { onDestroy } from 'svelte';
+	import type { Asset } from '@prisma/client';
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
-	import Icon from '@iconify/svelte';
-	import Portal from 'svelte-portal/src/Portal.svelte';
-	import type { Asset } from '@prisma/client';
-	import { onDestroy } from 'svelte';
 
 	console.log(`frontend/src/routes/(pages)/admin/resources/+page.svelte`);
 	export let data: PageData;
@@ -54,7 +54,7 @@
 				break;
 			}
 			message = `(${progress}/${assets.length}) ${asset.title ?? ''}`;
-			const res = await fetch(`/api/asset/${asset.id}/${asset.slug}`);
+			await fetch(`/api/asset/${asset.id}/${asset.slug}`);
 			progress++;
 		}
 		message = `完了`;

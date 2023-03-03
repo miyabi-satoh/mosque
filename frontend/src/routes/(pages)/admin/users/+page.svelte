@@ -1,11 +1,11 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
+	import Portal from 'svelte-portal/src/Portal.svelte';
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
-	import Icon from '@iconify/svelte';
-	import Portal from 'svelte-portal/src/Portal.svelte';
 
 	export let data: PageData;
 	let selectedFiles: FileList | null = null;
@@ -28,14 +28,15 @@
 		refresh();
 	}
 
-	const handleClick = async (id: number) => {
-		// console.log(`handleClick ${id}`);
-		const res = await fetch(`/api/resource/${id}/click`);
-		console.log(res.status);
-	};
+	// const handleClick = async (id: number) => {
+	// 	// console.log(`handleClick ${id}`);
+	// 	const res = await fetch(`/api/resource/${id}/click`);
+	// 	console.log(res.status);
+	// };
 
 	const handleRemove = async (id: number) => {
-		if (confirm('Are you sure to remove this user?')) {
+		if (confirm(`Are you sure to remove this user #${id} ?`)) {
+			// pass
 		}
 	};
 

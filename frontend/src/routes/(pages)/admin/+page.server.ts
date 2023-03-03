@@ -2,10 +2,10 @@ import { fail } from '@sveltejs/kit';
 import { boolean, number, object, string } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { formBody } from '$lib/form-helpers';
 import type { UserUpdate } from '$lib/user';
 import { fromValidationError } from '$lib/utils';
 import { comparePassword, encryptPassword } from '$lib/server/passwd';
+import { fromRequest } from '$lib/form-helpers';
 
 export const load = (async () => {
 	console.log(`frontend/src/routes/(pages)/admin/+page.server.ts`);
@@ -46,7 +46,7 @@ export const actions: Actions = {
 		console.log(`upload-user: frontend/src/routes/(pages)/admin/+page.server.ts`);
 		const success = true;
 		const error = true;
-		const json = (await formBody(request)) as FormData;
+		const json = await fromRequest<FormData>(request);
 		const users = JSON.parse(json.body) as UserUpdate[];
 		const validateOptions = {
 			abortEarly: false
