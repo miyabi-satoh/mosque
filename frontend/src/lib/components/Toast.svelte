@@ -1,10 +1,11 @@
 <script lang="ts" context="module">
 	import { writable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
+	import { v4 as uuidv4 } from 'uuid';
 
 	type AlertType = 'alert-info' | 'alert-warning' | 'alert-success' | 'alert-error';
 	type ToastType = {
-		id: number;
+		id: string;
 		message: string;
 		alertType: AlertType;
 	};
@@ -14,7 +15,7 @@
 	export const addToast = (message: string, alertType: AlertType = 'alert-success') => {
 		if (message) {
 			const toast = {
-				id: new Date().getTime(),
+				id: uuidv4(),
 				message,
 				alertType
 			};
