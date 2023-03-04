@@ -2,10 +2,10 @@
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	let className = 'btn-primary';
-	export { className as class };
 	export let icon: string;
 	export let iconHeight = 20;
+	let className = 'btn-primary';
+	export { className as class };
 	let labelFor: string | undefined = undefined;
 	export { labelFor as for };
 
