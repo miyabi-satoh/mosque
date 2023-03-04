@@ -8,7 +8,7 @@
 	import '../app.postcss';
 	import { userStore } from '$lib/user';
 	import Toast from '$lib/components/Toast.svelte';
-	import { ID_MODALS } from '$lib/constants';
+	import { ID_MODALS, MIME_JSON } from '$lib/constants';
 
 	console.log(`frontend/src/routes/+layout.svelte`);
 	export let data: LayoutData;
@@ -50,7 +50,7 @@
 		loginError = '';
 		const res = await fetch('/api/auth/login', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+			headers: { 'Content-Type': MIME_JSON, Accept: MIME_JSON },
 			body: JSON.stringify({ username, password })
 		});
 

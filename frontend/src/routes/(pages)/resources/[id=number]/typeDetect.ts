@@ -1,8 +1,10 @@
+import { MIME_JSON } from '$lib/constants';
+
 type BlobType = 'text' | 'img' | 'audio' | 'video' | 'pdf' | 'unknown' | 'error';
 
 export function typeDetect(typeStr: string): BlobType {
 	const table: Record<string, BlobType> = {
-		'application/json': 'text',
+		[MIME_JSON]: 'text',
 		'application/x-tex': 'text',
 		'application/pdf': 'pdf',
 		'application/x-httpd-php': 'text',
