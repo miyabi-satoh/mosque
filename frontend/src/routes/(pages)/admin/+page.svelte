@@ -47,8 +47,7 @@
 			if (form && form.message) {
 				if (form.success) {
 					addToast(form.message, 'alert-success');
-				}
-				if (form.error) {
+				} else {
 					addToast(form.message, 'alert-error');
 				}
 				if (form.errors) {
@@ -62,14 +61,21 @@
 		showImportUserResult();
 	}
 
-	const handleImportUser = () => {
-		console.log(`handleImportUser`);
+	const resetImportUserForm = () => {
+		console.log(`resetImportUserForm`);
+		selectedFiles = undefined;
+		textData = undefined;
 		form = undefined;
 	};
 
+	const handleImportUser = () => {
+		console.log(`handleImportUser`);
+		resetImportUserForm();
+	};
+
 	const handleExportUser = async () => {
-		loading = true;
 		console.log(`handleExportUser`);
+		loading = true;
 		const filter = {
 			where: {
 				id: {
@@ -113,8 +119,8 @@
 
 	let assets: Asset[];
 	const handleUpdateCache = async () => {
-		loading = true;
 		console.log(`handleUpdateCache`);
+		loading = true;
 		assets = [];
 		const res = await fetch(`/api/asset`);
 		if (res.ok) {
@@ -225,7 +231,7 @@
 		{#if textData !== undefined}
 			<pre class="my-0 h-[40vh] overflow-scroll">{textData}</pre>
 		{/if}
-		{#if form && form.error && form.message}
+		{#if form && !form.success && form.message}
 			<div class="my-4 p-2 bg-error text-error-content">
 				{form.message}
 				{#if form.errors}
@@ -238,16 +244,9 @@
 			</div>
 		{/if}
 		<div class="flex items-center justify-between w-full mt-4">
-			<button
-				class="btn btn-default"
-				on:click|preventDefault={() => {
-					selectedFiles = undefined;
-					textData = undefined;
-				}}>再選択</button
-			>
+			<button class="btn btn-default" on:click|preventDefault={resetImportUserForm}>再選択</button>
 			<form
 				method="POST"
-				action="?/upload-user"
 				use:enhance={() => {
 					useEnhance = true;
 					// `form` は `<form>` 要素です
@@ -265,7 +264,7 @@
 					};
 				}}
 			>
-				<input type="hidden" name="body" value={textData} />
+				<input type="hidden" name="json" value={textData} />
 				<button class="btn btn-primary">インポート</button>
 			</form>
 		</div>
