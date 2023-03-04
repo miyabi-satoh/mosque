@@ -1,96 +1,90 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import type { User } from '@prisma/client';
 	import type { LayoutData } from './$types';
 	import { page } from '$app/stores';
 	import '../app.postcss';
 	import { userStore } from '$lib/user';
 	import Toast from '$lib/components/Toast.svelte';
-	import { ID_MODALS, MIME_JSON } from '$lib/constants';
+	import { API, ID_MODALS, MIME_JSON } from '$lib/constants';
+	import Label from '$lib/components/form/Label.svelte';
+	import InputText from '$lib/components/form/InputText.svelte';
+	import Modal, { toggleModal } from '$lib/components/Modal.svelte';
+
+	const ID_LOGIN = 'login-modal';
+	const ID_DRAWER = 'drawer';
 
 	console.log(`frontend/src/routes/+layout.svelte`);
 	export let data: LayoutData;
-	// console.log(`userStore: ${$userStore}`);
-
 	let loginError = '';
 	let username = '';
 	let password = '';
-	let toggleLogin = false;
-	$: if (toggleLogin) {
-		setTimeout(() => {
-			window.document.getElementById('username')?.focus();
-		}, 100);
-	}
-
 	let theme: string;
-
 	$: menuItems = data.menuItems;
 	$: activeUrl = $page.url.pathname;
 
-	function toggleTheme() {
+	function handleToggleTheme() {
 		theme = theme == 'dark' ? 'light' : 'dark';
 		localStorage.setItem('theme', theme);
 		window.document.documentElement.setAttribute('data-theme', theme);
 	}
 
 	function handleToggleDrawer() {
-		window.document.getElementById('drawer')?.click();
+		window.document.getElementById(ID_DRAWER)?.click();
 	}
 
-	const handleEscKey = (event: KeyboardEvent) => {
-		// console.log(event);
-		if (event.key == 'Escape') {
-			window.document.getElementById('login')?.click();
+	const handleToggleLoginModal = (event: Event) => {
+		console.log(`handleToggleLoginModal`);
+		const checked = (event.target as HTMLInputElement).checked;
+		if (checked) {
+			username = '';
+			password = '';
+			setTimeout(() => {
+				window.document.getElementById('username')?.focus();
+			}, 100);
 		}
 	};
 
-	const login = async () => {
+	const handleEscKey = (event: KeyboardEvent) => {
+		if (event.key == 'Escape') {
+			toggleModal(ID_LOGIN);
+		}
+	};
+
+	const handleLogin = async () => {
 		loginError = '';
-		const res = await fetch('/api/auth/login', {
+		const res = await fetch(API.LOGIN, {
 			method: 'POST',
 			headers: { 'Content-Type': MIME_JSON, Accept: MIME_JSON },
 			body: JSON.stringify({ username, password })
 		});
 
 		if (res.ok) {
-			// const data: { user: User; jwt: string } = await res.json();
 			const user: User = await res.json();
-			// if (data) {
 			if (user) {
-				// setToken(data.jwt);
 				$userStore = user;
-				window.document.getElementById('login')?.click();
+				toggleModal(ID_LOGIN);
 				window.location.reload();
 			}
 		} else {
 			loginError = `ユーザー名またはパスワードが違います`;
 			window.document.getElementById('username')?.focus();
-			setTimeout(() => {
-				loginError = '';
-			}, 4000);
 		}
-		username = '';
-		password = '';
 	};
 
-	const logout = async () => {
-		await fetch('/api/auth/logout');
-		// removeToken();
+	const handleLogout = async () => {
+		await fetch(API.LOGOUT);
 		$userStore = null;
 		window.location.reload();
-		// console.log($page.url);
 	};
 
 	onMount(async () => {
 		theme = window.document.documentElement.getAttribute('data-theme') ?? '';
-		const res = await fetch('/api/auth/me');
+		const res = await fetch(API.ME);
 		if (res.ok) {
 			const user: User = await res.json();
-			if (data) {
-				$userStore = user;
-			}
+			$userStore = user;
 		}
 	});
 </script>
@@ -108,12 +102,12 @@
 
 <Toast />
 <div class="drawer drawer-mobile bg-base-100">
-	<input id="drawer" type="checkbox" class="drawer-toggle" />
+	<input id={ID_DRAWER} type="checkbox" class="drawer-toggle" />
 	<div class="drawer-content relative z-10">
 		<div class="h-screen flex flex-col">
 			<nav class="navbar">
 				<div class="flex flex-1 gap-2">
-					<label for="drawer" class="btn btn-square btn-ghost drawer-button lg:hidden">
+					<label for={ID_DRAWER} class="btn btn-square btn-ghost drawer-button lg:hidden">
 						<Icon icon="mdi:apps" height="46" />
 					</label>
 					<a href="/" class="lg:hidden">
@@ -139,14 +133,14 @@
 								{/if}
 								<li><a href="/me">プロフィール確認・編集</a></li>
 								<li><a href="/passwd">パスワード変更</a></li>
-								<li><button on:click={logout}>ログアウト</button></li>
+								<li><button on:click={handleLogout}>ログアウト</button></li>
 							</ul>
 						</div>
 					{:else}
 						<!-- The button to open modal -->
-						<label for="login" class="btn btn-primary">ログイン</label>
+						<label for={ID_LOGIN} class="btn btn-primary">ログイン</label>
 					{/if}
-					<button on:click={toggleTheme} class="mr-2">
+					<button on:click={handleToggleTheme} class="mr-2">
 						{#if theme == 'dark'}
 							<svg
 								class="w-5 h-5"
@@ -191,11 +185,11 @@
 		</div>
 	</div>
 	<div class="drawer-side">
-		<label for="drawer" class="drawer-overlay" />
+		<label for={ID_DRAWER} class="drawer-overlay" />
 		<aside class="bg-base-200 w-64 relative">
 			<div class="z-20 sticky top-0 px-4 py-2">
 				<div class="flex justify-end lg:hidden">
-					<label for="drawer" class="btn btn-sm btn-circle drawer-button m-4">
+					<label for={ID_DRAWER} class="btn btn-sm btn-circle drawer-button m-4">
 						<Icon icon="mdi:close" />
 					</label>
 				</div>
@@ -222,62 +216,26 @@
 	</div>
 </div>
 
-<div id={ID_MODALS} class="prose">
-	<!-- Put this part before </body> tag -->
-	<div>
-		<input type="checkbox" id="login" class="modal-toggle" bind:checked={toggleLogin} />
-		<div class="modal">
-			<form
-				class="modal-box relative"
-				action="#"
-				on:submit|preventDefault={login}
-				on:keyup={handleEscKey}
-			>
-				<label for="login" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-				<div class="flex flex-col space-y-6">
-					<h3 class="text-lg font-bold">ログイン</h3>
-					<div>
-						<label for="username" class="label label-text">ログイン名</label>
-						<input
-							class="input input-bordered w-full"
-							id="username"
-							type="text"
-							required
-							bind:value={username}
-						/>
-					</div>
-					<div>
-						<label for="password" class="label label-text">パスワード</label>
-						<input
-							class="input input-bordered w-full"
-							id="password"
-							type="password"
-							required
-							bind:value={password}
-						/>
-					</div>
-					<button class="btn btn-primary" type="submit">ログイン</button>
-					{#if loginError}
-						<div class="alert alert-error shadow-lg" transition:fade>
-							<div>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="stroke-current flex-shrink-0 h-6 w-6"
-									fill="none"
-									viewBox="0 0 24 24"
-									><path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-									/></svg
-								>
-								<span>{loginError}</span>
-							</div>
-						</div>
-					{/if}
+<div id={ID_MODALS} class="prose" />
+
+<Modal id={ID_LOGIN} on:change={handleToggleLoginModal}>
+	<h3 class="text-lg font-bold">ログイン</h3>
+	<form on:keyup={handleEscKey}>
+		<div class="flex flex-col space-y-6">
+			<div>
+				<Label for="username">ログイン名</Label>
+				<InputText id="username" required bind:value={username} />
+			</div>
+			<div>
+				<Label for="password">パスワード</Label>
+				<InputText id="password" type="password" required bind:value={password} />
+			</div>
+			{#if loginError}
+				<div class="bg-error text-error-content p-4">
+					{loginError}
 				</div>
-			</form>
+			{/if}
+			<button class="btn btn-primary" on:click|preventDefault={handleLogin}>ログイン</button>
 		</div>
-	</div>
-</div>
+	</form>
+</Modal>

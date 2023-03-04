@@ -1,5 +1,6 @@
 <script lang="ts">
-	export let id: string;
+	let id: string;
+	export { id as for };
 </script>
 
 <label for={id} class="label label-text"><slot /></label>

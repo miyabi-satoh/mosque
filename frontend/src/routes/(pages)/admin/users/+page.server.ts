@@ -1,4 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
+import type { User } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { normalizeNumber } from '$lib/utils';
@@ -55,7 +56,7 @@ export const load = (async ({ url }) => {
 	return {
 		queryPage,
 		querySearch,
-		users: users.map((user) => clearSecret(user)),
+		users: users.map((user) => clearSecret(user)) as User[],
 		pageSize,
 		count
 	};

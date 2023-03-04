@@ -4,12 +4,14 @@ import { boolean, object, string } from 'yup';
 
 export const userStore = writable<User | null>(null);
 
-export const clearSecret = (user: User) => {
-	if (user.password) {
-		user.password = null;
-	}
-	if (user.token) {
-		user.token = null;
+export const clearSecret = (user: User | null) => {
+	if (user) {
+		if (user.password) {
+			user.password = null;
+		}
+		if (user.token) {
+			user.token = null;
+		}
 	}
 	return user;
 };

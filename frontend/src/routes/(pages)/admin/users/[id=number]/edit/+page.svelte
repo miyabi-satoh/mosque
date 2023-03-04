@@ -25,7 +25,7 @@
 	<form method="POST">
 		<div class="grid gap-4 sm:grid-cols-2">
 			<div class="sm:col-span-2 form-control">
-				<Label id="form-username">ユーザー名</Label>
+				<Label for="form-username">ユーザー名</Label>
 				<InputText
 					id="form-username"
 					name="username"
@@ -35,7 +35,7 @@
 				/>
 			</div>
 			<div class="form-control">
-				<Label id="displayName">表示名(5文字以内)</Label>
+				<Label for="displayName">表示名(5文字以内)</Label>
 				<InputText
 					id="displayName"
 					name="displayName"
@@ -46,7 +46,7 @@
 				/>
 			</div>
 			<div class="form-control">
-				<Label id="abbrev">略称(5文字以内)</Label>
+				<Label for="abbrev">略称(5文字以内)</Label>
 				<InputText
 					id="abbrev"
 					name="abbrev"
@@ -57,7 +57,7 @@
 				/>
 			</div>
 			<div class="form-control">
-				<Label id="sei">姓</Label>
+				<Label for="sei">姓</Label>
 				<InputText
 					id="sei"
 					name="sei"
@@ -67,7 +67,7 @@
 				/>
 			</div>
 			<div class="form-control">
-				<Label id="mei">名</Label>
+				<Label for="mei">名</Label>
 				<InputText
 					id="mei"
 					name="mei"
@@ -77,7 +77,7 @@
 				/>
 			</div>
 			<div class="form-control">
-				<Label id="seiKana">姓(カナ)</Label>
+				<Label for="seiKana">姓(カナ)</Label>
 				<InputText
 					id="seiKana"
 					name="seiKana"
@@ -87,7 +87,7 @@
 				/>
 			</div>
 			<div class="form-control">
-				<Label id="seiKana">名(カナ)</Label>
+				<Label for="seiKana">名(カナ)</Label>
 				<InputText
 					id="meiKana"
 					name="meiKana"
