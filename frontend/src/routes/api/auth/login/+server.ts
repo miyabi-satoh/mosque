@@ -17,7 +17,7 @@ export const POST = (async ({ request, cookies }) => {
 				blocked: false
 			}
 		});
-		if (user && comparePassword(data.password, user.password)) {
+		if (user && comparePassword(data.password, user.password ?? '')) {
 			const authToken = crypto.randomUUID();
 			await prisma.user.update({
 				where: {

@@ -62,7 +62,7 @@ export const actions: Actions = {
 						!(Object.keys(user) as (keyof UserUpdate)[]).find(
 							(key) => key !== 'password' && user[key] && user[key] !== userInDB[key]
 						) &&
-						(!user.password || comparePassword(user.password, userInDB.password))
+						(!user.password || comparePassword(user.password, userInDB.password ?? ''))
 					) {
 						console.log(`${user.id}: 更新の必要なし`);
 						continue;
@@ -95,7 +95,7 @@ export const actions: Actions = {
 					return fail(400, { message } as ActionResponse);
 				}
 
-				validated.password = encryptPassword(validated.password);
+				validated.password = encryptPassword(validated.password ?? '');
 				const result = await prisma.user.upsert({
 					where: {
 						id: user.id ?? 0

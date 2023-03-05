@@ -26,7 +26,7 @@ export const actions = {
 						user: null
 					};
 				}
-				if (!comparePassword(currrentPassword, user.password)) {
+				if (!comparePassword(currrentPassword, user.password ?? '')) {
 					return {
 						message: `パスワードが正しくありません`,
 						user: null

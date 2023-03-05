@@ -61,4 +61,21 @@ DBMS ... PostgreSQL 15.x
 - office文書をpdfに変換する
 - ホスト経由での印刷
 - データ更新時にkeywordを生成して更新
-
+- 管理ページ
+  - ユーザー
+    - 一覧(List)
+    - 編集(Edit)
+    - 追加(Create)
+    - 削除(Delete)
+  - リソース
+    - 一覧(List)
+    - 編集(Edit)
+    - 追加(Create)
+    - 削除(Delete)
+  - スケジュール
+    - 一覧(List)
+    - 編集(Edit)
+    - 追加(Create)
+    - 削除(Delete)
+- 共有ノート
+  - コメント

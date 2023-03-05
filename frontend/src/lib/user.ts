@@ -1,6 +1,7 @@
 import type { User } from '@prisma/client';
 import { writable } from 'svelte/store';
 import { boolean, object, string } from 'yup';
+import type { Impartial } from './types';
 
 export const userStore = writable<User | null>(null);
 
@@ -28,7 +29,7 @@ type PickupField =
 	| 'meiKana'
 	| 'abbrev';
 export type UserUpdate = Partial<Pick<User, PickupField>>;
-export type UserCreate = NonNullable<Omit<UserUpdate, 'id'>>;
+export type UserCreate = Impartial<Required<Omit<UserUpdate, 'id'>>>;
 
 const userSchema = {
 	username: string()
