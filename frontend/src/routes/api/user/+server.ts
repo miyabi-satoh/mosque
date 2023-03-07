@@ -1,4 +1,5 @@
 import { error, json } from '@sveltejs/kit';
+import { ValidationError } from 'yup';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { isAdminSession } from '$lib/server/session';
@@ -37,15 +38,17 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 		const validated = await createUserSchema.validate(user, { abortEarly: false });
 		// usernameのユニークチェック
 		if (await existsUsername(user.username)) {
-			const message = `${user.username}: ユーザー名が重複しています。`;
-			console.log(message);
-			return json({ message });
+			// const message = `${user.username}: ユーザー名が重複しています。`;
+			// console.log(message);
+			// return json({ message });
+			throw new ValidationError(`ユーザー名が重複しています。`, user.username, 'username');
 		}
 		// abbrevのユニークチェック
 		if (await existsAbbrev(user.abbrev)) {
-			const message = `${user.abbrev}: 略称が重複しています。`;
-			console.log(message);
-			return json({ message });
+			// const message = `${user.abbrev}: 略称が重複しています。`;
+			// console.log(message);
+			// return json({ message });
+			throw new ValidationError(`略称が重複しています。`, user.abbrev, 'abbrev');
 		}
 
 		validated.password = encryptPassword(validated.password);
@@ -65,7 +68,8 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 		if (!result) {
 			const message = `データベースの更新に失敗しました。`;
 			console.log(message);
-			return json({ message });
+			// return json({ message });
+			throw error(500, message);
 		}
 	} catch (err) {
 		console.log(err);
