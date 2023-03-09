@@ -7,9 +7,9 @@ export const fromRequest = async <T>(request: Request) => {
 	const values = await request.formData();
 	return [...values.entries()].reduce((data, [k, v]) => {
 		let value: StructuredFormData = v;
-		if (v === 'true') value = true;
-		if (v === 'false') value = false;
-		if (!isNaN(Number(v))) value = Number(v);
+		if (v === 'true' || v === 'on') value = true;
+		if (v === 'false' || v === 'off') value = false;
+		if (v !== '' && !isNaN(Number(v))) value = Number(v);
 
 		// For grouped fields like multi-selects and checkboxes, we need to
 		// store the values in an array.

@@ -1,6 +1,7 @@
 <script lang="ts">
 	export let id: string;
 	export let name: string | undefined = undefined;
+	export let minlength: number | undefined = undefined;
 	export let maxlength: number | undefined = undefined;
 	export let required = false;
 	export let value: string = '';
@@ -17,6 +18,7 @@
 	{id}
 	{name}
 	{type}
+	{minlength}
 	{maxlength}
 	{required}
 	{value}

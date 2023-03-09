@@ -10,7 +10,7 @@
 	import { API, ID_MODALS, MIME_JSON } from '$lib/constants';
 	import Label from '$lib/components/form/Label.svelte';
 	import InputText from '$lib/components/form/InputText.svelte';
-	import Modal, { toggleModal } from '$lib/components/Modal.svelte';
+	import Modal, { closeModal, showModal } from '$lib/components/Modal.svelte';
 
 	const ID_LOGIN = 'login-modal';
 	const ID_DRAWER = 'drawer';
@@ -50,7 +50,7 @@
 
 	const handleEscKey = (event: KeyboardEvent) => {
 		if (event.key == 'Escape') {
-			toggleModal(ID_LOGIN);
+			closeModal(ID_LOGIN);
 		}
 	};
 
@@ -66,7 +66,7 @@
 			const user: User = await res.json();
 			if (user) {
 				$userStore = user;
-				toggleModal(ID_LOGIN);
+				closeModal(ID_LOGIN);
 				window.location.reload();
 			}
 		} else {

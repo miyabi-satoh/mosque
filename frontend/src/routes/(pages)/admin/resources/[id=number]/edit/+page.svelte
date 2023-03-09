@@ -30,7 +30,7 @@
 					id="form-username"
 					name="username"
 					required
-					value={form?.user?.username ?? data.user.username}
+					value={form?.user?.username ?? data.user.username ?? ''}
 					errorMessage={form?.errors?.username}
 				/>
 			</div>
@@ -41,7 +41,7 @@
 					name="displayName"
 					maxlength={5}
 					required
-					value={form?.user?.displayName ?? data.user.displayName}
+					value={form?.user?.displayName ?? data.user.displayName ?? ''}
 					errorMessage={form?.errors?.displayName}
 				/>
 			</div>
@@ -52,7 +52,7 @@
 					name="abbrev"
 					maxlength={5}
 					required
-					value={form?.user?.abbrev ?? data.user.abbrev}
+					value={form?.user?.abbrev ?? data.user.abbrev ?? ''}
 					errorMessage={form?.errors?.abbrev}
 				/>
 			</div>
@@ -62,7 +62,7 @@
 					id="sei"
 					name="sei"
 					required
-					value={form?.user?.sei ?? data.user.sei}
+					value={form?.user?.sei ?? data.user.sei ?? ''}
 					errorMessage={form?.errors?.sei}
 				/>
 			</div>
@@ -72,7 +72,7 @@
 					id="mei"
 					name="mei"
 					required
-					value={form?.user?.mei ?? data.user.mei}
+					value={form?.user?.mei ?? data.user.mei ?? ''}
 					errorMessage={form?.errors?.mei}
 				/>
 			</div>
@@ -82,7 +82,7 @@
 					id="seiKana"
 					name="seiKana"
 					required
-					value={form?.user?.seiKana ?? data.user.seiKana}
+					value={form?.user?.seiKana ?? data.user.seiKana ?? ''}
 					errorMessage={form?.errors?.seiKana}
 				/>
 			</div>
@@ -92,7 +92,7 @@
 					id="meiKana"
 					name="meiKana"
 					required
-					value={form?.user?.meiKana ?? data.user.meiKana}
+					value={form?.user?.meiKana ?? data.user.meiKana ?? ''}
 					errorMessage={form?.errors?.meiKana}
 				/>
 			</div>
