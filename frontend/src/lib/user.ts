@@ -50,7 +50,7 @@ const userSchema = {
 
 export const createUserSchema = object({
 	username: userSchema.username.required(),
-	password: userSchema.password.required('必須項目です'),
+	password: userSchema.password.required(),
 	displayName: userSchema.displayName.required(),
 	abbrev: userSchema.abbrev.required(),
 	sei: userSchema.sei.required(),

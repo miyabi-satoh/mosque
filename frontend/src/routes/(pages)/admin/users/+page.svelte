@@ -6,6 +6,9 @@
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
+	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
+
+	const URL_USER_CREATE = `${$page.url.pathname}/create`;
 
 	export let data: PageData;
 	let selectedFiles: FileList | null = null;
@@ -27,18 +30,6 @@
 		data.querySearch;
 		refresh();
 	}
-
-	// const handleClick = async (id: number) => {
-	// 	// console.log(`handleClick ${id}`);
-	// 	const res = await fetch(`/api/resource/${id}/click`);
-	// 	console.log(res.status);
-	// };
-
-	const handleRemove = async (id: number) => {
-		if (confirm(`Are you sure to remove this user #${id} ?`)) {
-			// pass
-		}
-	};
 
 	$: if (selectedFiles) {
 		setPreview(selectedFiles);
@@ -65,15 +56,21 @@
 	};
 </script>
 
-<div class="flex gap-4 mb-8">
-	<label for="upload" class="btn btn-primary gap-2">
-		<Icon icon="mdi:upload" height="20" />
-		<span>インポート</span>
-	</label>
-	<button class="btn btn-primary gap-2" on:click={handleExport}>
-		<Icon icon="mdi:download" height="20" />
-		<span>エクスポート</span>
-	</button>
+<div class="flex items-center justify-between">
+	<IconLinkButton icon="mdi:account-plus" href={URL_USER_CREATE} class="btn-accent"
+		>追加</IconLinkButton
+	>
+
+	<div class="flex gap-4">
+		<label for="upload" class="btn btn-primary gap-2">
+			<Icon icon="mdi:upload" height="20" />
+			<span>インポート</span>
+		</label>
+		<button class="btn btn-primary gap-2" on:click={handleExport}>
+			<Icon icon="mdi:download" height="20" />
+			<span>エクスポート</span>
+		</button>
+	</div>
 </div>
 
 <div class="pt-4">
@@ -111,11 +108,6 @@
 						<td>
 							<div class="flex items-center gap-4">
 								<a href="/admin/users/{user.id}/edit"><Icon icon="mdi:edit" height="18" /></a>
-								{#if user.id != 1}
-									<button on:click={() => handleRemove(user.id)}
-										><Icon icon="mdi:trash" height="18" /></button
-									>
-								{/if}
 							</div>
 						</td>
 					</tr>

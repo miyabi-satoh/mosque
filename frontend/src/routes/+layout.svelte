@@ -14,6 +14,8 @@
 
 	const ID_LOGIN = 'login-modal';
 	const ID_DRAWER = 'drawer';
+	const ID_USERNAME = 'login-username';
+	const ID_PASSWORD = 'login-password';
 
 	console.log(`frontend/src/routes/+layout.svelte`);
 	export let data: LayoutData;
@@ -41,7 +43,7 @@
 			username = '';
 			password = '';
 			setTimeout(() => {
-				window.document.getElementById('username')?.focus();
+				window.document.getElementById(ID_USERNAME)?.focus();
 			}, 100);
 		}
 	};
@@ -69,7 +71,7 @@
 			}
 		} else {
 			loginError = `ユーザー名またはパスワードが違います`;
-			window.document.getElementById('username')?.focus();
+			window.document.getElementById(ID_USERNAME)?.focus();
 		}
 	};
 
@@ -223,12 +225,12 @@
 	<form on:keyup={handleEscKey}>
 		<div class="flex flex-col space-y-6">
 			<div>
-				<Label for="username">ログイン名</Label>
-				<InputText id="username" required bind:value={username} />
+				<Label for={ID_USERNAME}>ログイン名</Label>
+				<InputText id={ID_USERNAME} required bind:value={username} />
 			</div>
 			<div>
-				<Label for="password">パスワード</Label>
-				<InputText id="password" type="password" required bind:value={password} />
+				<Label for={ID_PASSWORD}>パスワード</Label>
+				<InputText id={ID_PASSWORD} type="password" required bind:value={password} />
 			</div>
 			{#if loginError}
 				<div class="bg-error text-error-content p-4">

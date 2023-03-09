@@ -3,7 +3,7 @@
 	export let name: string | undefined = undefined;
 	export let maxlength: number | undefined = undefined;
 	export let required = false;
-	export let value: string | null | undefined = undefined;
+	export let value: string = '';
 	export let errorMessage: string | undefined = undefined;
 	export let type: 'email' | 'password' | 'search' | 'tel' | 'text' | 'url' = 'text';
 
