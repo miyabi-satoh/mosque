@@ -83,7 +83,8 @@ export const actions: Actions = {
 				},
 				data: {
 					...validated,
-					keyword: normalizeSearch(keywords.join()),
+					password: validated.password ?? undefined,
+					keyword: normalizeSearch(keywords.join(' ')),
 					email: `${validated.username}@mosque.local`,
 					updatedAt: new Date()
 				}
