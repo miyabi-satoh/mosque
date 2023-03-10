@@ -50,6 +50,8 @@ const userSchema = {
 		.max(20, '20文字以下で入力してください')
 		.matches(/^[0-9A-Za-z]+$/, '半角英数字のみ使用できます'),
 	password: string()
+		.nullable()
+		.transform((o, c) => (o === '' ? null : c))
 		.min(4, '4文字以上で入力してください')
 		.matches(/^[0-9A-Za-z]+$/, '半角英数字のみ使用できます'),
 	displayName: string().max(5, '5文字以下で入力してください'),
