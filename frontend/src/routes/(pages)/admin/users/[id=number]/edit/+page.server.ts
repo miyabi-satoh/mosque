@@ -1,10 +1,10 @@
-import { object, string, ValidationError } from 'yup';
-import { fail } from '@sveltejs/kit';
-import type { User } from '@prisma/client';
+import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { clearSecret } from '$lib/user';
-import { fromRequest } from '$lib/utils';
+import { clearSecret, updateUserSchema, type UserCreate, type UserPostErrors } from '$lib/user';
+import { convertToKatakana, fromRequest, fromValidationError, normalizeSearch } from '$lib/utils';
+import { existsAbbrev, existsUsername } from '$lib/server/user';
+import { encryptPassword } from '$lib/server/passwd';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
@@ -33,57 +33,78 @@ export const load = (async ({ params, parent }) => {
 	};
 }) satisfies PageServerLoad;
 
-type FormData = Pick<
-	User,
-	'username' | 'displayName' | 'abbrev' | 'sei' | 'mei' | 'seiKana' | 'meiKana'
->;
-type FormError = {
-	[key in keyof FormData]?: string;
+type ActionResult = {
+	success?: boolean;
+	message?: string;
+	formData: UserCreate;
+	errors?: UserPostErrors;
 };
-export const actions = {
-	default: async ({ request }) => {
-		const formData = await fromRequest<FormData>(request);
-		const userSchema = object({
-			username: string()
-				.required()
-				.min(4, '4文字以上で入力してください')
-				.max(20, '20文字以下で入力してください')
-				.matches(/^[0-9A-Za-z]+$/, '半角英数字のみ使用できます'),
-			displayName: string().required().max(5, '5文字以下で入力してください'),
-			abbrev: string().required().max(5, '5文字以下で入力してください'),
-			sei: string().required(),
-			mei: string().required(),
-			seiKana: string()
-				.required()
-				.matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください'),
-			meiKana: string()
-				.required()
-				.matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください')
-		});
+export const actions: Actions = {
+	default: async ({ params, request }): Promise<ActionResult> => {
+		console.log(`POST frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
+		const id = Number(params.id);
+		const formData: UserCreate = await fromRequest(request);
 
 		try {
-			const _validated = await userSchema.validate(formData, {
-				abortEarly: false
-			});
-			return {
-				success: true,
-				user: formData as FormData
-			};
-		} catch (error) {
-			if (error instanceof ValidationError) {
-				const errors = error.inner.reduce((acc, err) => {
-					return { ...acc, [err.path ?? 'error']: err.message };
-				}, {});
-
-				return {
-					errors: errors as FormError,
-					user: formData as FormData
-				};
+			const validated = await updateUserSchema.validate(formData, { abortEarly: false });
+			// usernameのユニークチェック
+			if (validated.username && (await existsUsername(validated.username, id))) {
+				throw new ValidationError(`ユーザー名が重複しています。`, validated.username, 'username');
 			}
+			// abbrevのユニークチェック
+			if (validated.abbrev && (await existsAbbrev(validated.abbrev, id))) {
+				throw new ValidationError(`略称が重複しています。`, validated.abbrev, 'abbrev');
+			}
+
+			// パスワードを暗号化
+			if (validated.password) {
+				validated.password = encryptPassword(validated.password);
+			}
+			// カタカナに統一
+			if (validated.seiKana) {
+				validated.seiKana = convertToKatakana(validated.seiKana);
+			}
+			if (validated.meiKana) {
+				validated.meiKana = convertToKatakana(validated.meiKana);
+			}
+
+			const keywords = [
+				validated.username,
+				validated.displayName,
+				validated.abbrev,
+				validated.sei,
+				validated.mei,
+				validated.seiKana,
+				validated.meiKana
+			];
+			const result = await prisma.user.update({
+				where: {
+					id
+				},
+				data: {
+					...validated,
+					keyword: normalizeSearch(keywords.join()),
+					email: `${validated.username}@mosque.local`,
+					updatedAt: new Date()
+				}
+			});
+
+			if (!result) {
+				const message = `データベースの更新に失敗しました。`;
+				// console.log(message);
+				return { message, formData };
+			}
+		} catch (err) {
+			// console.log(err);
+			const message = `入力データに不備があります。`;
+			const errors = fromValidationError(err);
+			// console.log(errors);
+			return { message, formData, errors };
 		}
 
-		return fail(400, {
-			message: `予期せぬエラーが発生しました`
-		});
+		return {
+			success: true,
+			formData
+		};
 	}
-} satisfies Actions;
+};

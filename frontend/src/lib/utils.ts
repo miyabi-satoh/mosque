@@ -1,4 +1,5 @@
 import { ValidationError } from 'yup';
+import { hankakuToZenkakuKatakanaMap } from './constants';
 
 // https://dev.to/danawoodman/getting-form-body-data-in-your-sveltekit-endpoints-4a85
 type StructuredFormData = string | boolean | number | File | StructuredFormData[];
@@ -53,123 +54,47 @@ export function formatDate(date: string | Date | null) {
 	return `${y}年${m}月${d}日(${w})`;
 }
 
+// 文字列を数値に変換
 export const normalizeNumber = (numStr: string | null, numDefault = 0) => {
 	const num = Number(numStr ?? numDefault);
-	return isNaN(num) ? 1 : Math.max(numDefault, num);
+	return isNaN(num) ? numDefault : num;
 };
 
-export function normalizeSearch(search: string): string {
-	const hankakuToZenkakuKatakanaMap: Record<string, string> = {
-		ｧ: 'ァ',
-		ｨ: 'ィ',
-		ｩ: 'ゥ',
-		ｪ: 'ェ',
-		ｫ: 'ォ',
-		ｱ: 'ア',
-		ｲ: 'イ',
-		ｳ: 'ウ',
-		ｴ: 'エ',
-		ｵ: 'オ',
-		ｶ: 'カ',
-		ｷ: 'キ',
-		ｸ: 'ク',
-		ｹ: 'ケ',
-		ｺ: 'コ',
-		ｶﾞ: 'ガ',
-		ｷﾞ: 'ギ',
-		ｸﾞ: 'グ',
-		ｹﾞ: 'ゲ',
-		ｺﾞ: 'ゴ',
-		ｻ: 'サ',
-		ｼ: 'シ',
-		ｽ: 'ス',
-		ｾ: 'セ',
-		ｿ: 'ソ',
-		ｻﾞ: 'ザ',
-		ｼﾞ: 'ジ',
-		ｽﾞ: 'ズ',
-		ｾﾞ: 'ゼ',
-		ｿﾞ: 'ゾ',
-		ｯ: 'ッ',
-		ﾀ: 'タ',
-		ﾁ: 'チ',
-		ﾂ: 'ツ',
-		ﾃ: 'テ',
-		ﾄ: 'ト',
-		ﾀﾞ: 'ダ',
-		ﾁﾞ: 'ヂ',
-		ﾂﾞ: 'ヅ',
-		ﾃﾞ: 'デ',
-		ﾄﾞ: 'ド',
-		ﾅ: 'ナ',
-		ﾆ: 'ニ',
-		ﾇ: 'ヌ',
-		ﾈ: 'ネ',
-		ﾉ: 'ノ',
-		ﾊ: 'ハ',
-		ﾋ: 'ヒ',
-		ﾌ: 'フ',
-		ﾍ: 'ヘ',
-		ﾎ: 'ホ',
-		ﾊﾞ: 'バ',
-		ﾋﾞ: 'ビ',
-		ﾌﾞ: 'ブ',
-		ﾍﾞ: 'ベ',
-		ﾎﾞ: 'ボ',
-		ﾊﾟ: 'パ',
-		ﾋﾟ: 'ピ',
-		ﾌﾟ: 'プ',
-		ﾍﾟ: 'ペ',
-		ﾎﾟ: 'ポ',
-		ﾏ: 'マ',
-		ﾐ: 'ミ',
-		ﾑ: 'ム',
-		ﾒ: 'メ',
-		ﾓ: 'モ',
-		ｬ: 'ャ',
-		ｭ: 'ュ',
-		ｮ: 'ョ',
-		ﾔ: 'ヤ',
-		ﾕ: 'ユ',
-		ﾖ: 'ヨ',
-		ﾗ: 'ラ',
-		ﾘ: 'リ',
-		ﾙ: 'ル',
-		ﾚ: 'レ',
-		ﾛ: 'ロ',
-		ﾜ: 'ワ',
-		ｦ: 'ヲ',
-		ﾝ: 'ン',
-		ｳﾞ: 'ヴ',
-		ﾜﾞ: 'ヷ',
-		ｦﾞ: 'ヺ',
-		'｡': '。',
-		'｢': '「',
-		'｣': '」',
-		'､': '、',
-		'･': '・'
-	};
-
+// 半角カタカナ・全角ひらがなを全角カタカナに
+export const convertToKatakana = (s: string) => {
 	const hankakuKatakanaRegex = new RegExp(
 		'(' + Object.keys(hankakuToZenkakuKatakanaMap).join('|') + ')',
 		'g'
 	);
 
+	return s
+		.replace(hankakuKatakanaRegex, (x) => hankakuToZenkakuKatakanaMap[x])
+		.replace(/[\u3041-\u3096]/g, (x) => String.fromCharCode(x.charCodeAt(0) + 0x60));
+};
+
+// 全角英数記号・スペースを半角に
+export const zenkakuToHankaku = (s: string) => {
+	const regex = /[Ａ-Ｚａ-ｚ０-９！＂＃＄％＆＇（）＊＋，－．／：；＜＝＞？＠［＼］＾＿｀｛｜｝]/g;
+
+	// 入力値の全角を半角の文字に置換
+	return s
+		.replace(regex, (x) => String.fromCharCode(x.charCodeAt(0) - 0xfee0))
+		.replace(/[‐－―]/g, '-') // ハイフンなど
+		.replace(/[～〜]/g, '~') // チルダ
+		.replace(/[\u3000]/g, ' '); // スペース
+};
+
+export const normalizeSearch = (search: string) => {
+	// かなを全角カタカナに統一
+	search = convertToKatakana(search);
+	// 全角英数・スペースを半角に統一
+	search = zenkakuToHankaku(search);
+
 	return (
 		search
-			// 半角カタカナを全角カタカナに
-			.replace(hankakuKatakanaRegex, (x) => hankakuToZenkakuKatakanaMap[x])
-			// 全角ひらがなを全角カタカナに
-			.replace(/[\u3041-\u3096]/g, (x) => String.fromCharCode(x.charCodeAt(0) + 0x60))
-			// 全角英数を半角に
-			.replace(/[Ａ-Ｚａ-ｚ０-９]/g, (x) => String.fromCharCode(x.charCodeAt(0) - 0xfee0))
-			// 全角スペースを半角に
-			.replaceAll('　', ' ')
-			// 記号を半角スペースに
-			.replaceAll(/[!"$%&'()*,\-./:;<>?@[\\\]^_`{|}~]/g, ' ')
 			// 連続する半角スペースを一つの半角スペースに
 			.replaceAll(/ +/g, ' ')
 			// トリム
 			.trim()
 	);
-}
+};

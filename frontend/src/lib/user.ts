@@ -30,6 +30,19 @@ type PickupField =
 	| 'abbrev';
 export type UserUpdate = Partial<Pick<User, PickupField>>;
 export type UserCreate = Impartial<Required<Omit<UserUpdate, 'id'>>>;
+export type UserPostErrors = {
+	[K in keyof UserCreate]?: string;
+};
+
+export const LABEL_USERNAME = 'ユーザー名';
+export const LABEL_PASSWORD = 'パスワード';
+export const LABEL_DISPLAYNAME = '表示名';
+export const LABEL_ABBREV = '略称';
+export const LABEL_SEI = '姓';
+export const LABEL_MEI = '名';
+export const LABEL_SEIKANA = '姓(ふりがな)';
+export const LABEL_MEIKANA = '名(ふりがな)';
+export const LABEL_BLOCKED = '使用不可';
 
 const userSchema = {
 	username: string()
@@ -43,8 +56,8 @@ const userSchema = {
 	abbrev: string().max(5, '5文字以下で入力してください'),
 	sei: string(),
 	mei: string(),
-	seiKana: string().matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください'),
-	meiKana: string().matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください'),
+	seiKana: string().matches(/^[\p{scx=Hiragana}\p{scx=Katakana}]+$/u, 'かなで入力してください'),
+	meiKana: string().matches(/^[\p{scx=Hiragana}\p{scx=Katakana}]+$/u, 'かなで入力してください'),
 	blocked: boolean().default(false)
 };
 

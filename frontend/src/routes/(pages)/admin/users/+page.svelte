@@ -3,23 +3,25 @@
 	import Portal from 'svelte-portal/src/Portal.svelte';
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
 
 	const URL_USER_CREATE = `${$page.url.pathname}/create`;
+	const URL_USER_EDIT = (id: number) => `${$page.url.pathname}/${id}/edit`;
+	const URL_USER_DELETE = (id: number) => `${$page.url.pathname}/${id}/delete`;
 
 	export let data: PageData;
 	let selectedFiles: FileList | null = null;
 
 	function movePage(event: CustomEvent<number>) {
-		refresh(event.detail);
+		refresh(false, event.detail);
 	}
 
-	function refresh(p = 1) {
+	function refresh(force: boolean, p = 1) {
 		const search = `?p=${p}&q=${encodeURIComponent(data.querySearch)}`;
-		if (search != $page.url.search) {
+		if (force || search != $page.url.search) {
 			goto(`${$page.url.pathname}${search}`, {
 				keepFocus: true
 			});
@@ -28,7 +30,7 @@
 
 	$: if (browser) {
 		data.querySearch;
-		refresh();
+		refresh(false);
 	}
 
 	$: if (selectedFiles) {
@@ -107,7 +109,14 @@
 						<td>{user.displayName}</td>
 						<td>
 							<div class="flex items-center gap-4">
-								<a href="/admin/users/{user.id}/edit"><Icon icon="mdi:edit" height="18" /></a>
+								<a href={URL_USER_EDIT(user.id)} title="編集"
+									><Icon icon="mdi:edit" height="18" /></a
+								>
+								{#if user.id > 1}
+									<a href={URL_USER_DELETE(user.id)} title="削除"
+										><Icon icon="mdi:trash" height="18" /></a
+									>
+								{/if}
 							</div>
 						</td>
 					</tr>

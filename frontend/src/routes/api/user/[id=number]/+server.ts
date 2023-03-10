@@ -80,6 +80,7 @@ export const PUT: RequestHandler = async ({ cookies, params, request }) => {
 	return json({ success: true });
 };
 
+// DELETE: ユーザーを削除する
 export const DELETE: RequestHandler = async ({ cookies, params }) => {
 	console.log(`DELETE frontend/src/routes/api/user/[id=number]/+server.ts`);
 	if (!isAdminSession(cookies)) {
