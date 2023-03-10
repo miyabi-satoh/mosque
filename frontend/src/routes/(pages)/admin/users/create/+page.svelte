@@ -21,7 +21,16 @@
 	if (form) {
 		console.log(form);
 		if (form.success) {
-			addToast(`ユーザーを追加しました。`, `alert-success`);
+			addToast(`ユーザー${form.formData.username}を追加しました。`, `alert-success`);
+			form.formData.username = '';
+			form.formData.password = '';
+			form.formData.displayName = '';
+			form.formData.abbrev = '';
+			form.formData.sei = '';
+			form.formData.mei = '';
+			form.formData.seiKana = '';
+			form.formData.meiKana = '';
+			form.formData.blocked = false;
 		}
 		if (form.message) {
 			addToast(form.message, `alert-error`);
@@ -97,7 +106,7 @@
 			/>
 		</div>
 		<div>
-			<Label for={ID_SEIKANA}>姓(カナ)</Label>
+			<Label for={ID_SEIKANA}>姓(ふりがな)</Label>
 			<InputText
 				id={ID_SEIKANA}
 				name={ID_SEIKANA}
@@ -107,7 +116,7 @@
 			/>
 		</div>
 		<div>
-			<Label for={ID_MEIKANA}>名(カナ)</Label>
+			<Label for={ID_MEIKANA}>名(ふりがな)</Label>
 			<InputText
 				id={ID_MEIKANA}
 				name={ID_MEIKANA}

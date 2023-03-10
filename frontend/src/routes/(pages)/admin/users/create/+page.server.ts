@@ -1,7 +1,7 @@
 import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { createUserSchema, type UserCreate } from '$lib/user';
-import { fromRequest, fromValidationError } from '$lib/utils';
+import { fromRequest, fromValidationError, normalizeSearch } from '$lib/utils';
 import { existsAbbrev, existsUsername } from '$lib/server/user';
 import { encryptPassword } from '$lib/server/passwd';
 import { prisma } from '$lib/server/prisma';
@@ -49,11 +49,20 @@ export const actions: Actions = {
 			}
 
 			validated.password = encryptPassword(validated.password);
-			// TODO: keywordを生成
-			const keyword = validated.username + validated.displayName;
+
+			const keywords = [
+				validated.username,
+				validated.displayName,
+				validated.abbrev,
+				validated.sei,
+				validated.mei,
+				validated.seiKana,
+				validated.meiKana
+			];
 			const result = await prisma.user.create({
 				data: {
 					...validated,
+					keyword: normalizeSearch(keywords.join()),
 					email: `${validated.username}@mosque.local`,
 					provider: 'local',
 					confirmed: true,
@@ -70,7 +79,7 @@ export const actions: Actions = {
 				return { message, formData };
 			}
 		} catch (err) {
-			console.log(err);
+			// console.log(err);
 			const message = `入力データに不備があります。`;
 			const errors = fromValidationError(err);
 			console.log(errors);

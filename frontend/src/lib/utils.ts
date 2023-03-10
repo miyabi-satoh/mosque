@@ -30,6 +30,7 @@ export const fromValidationError = (error: unknown) => {
 			return { ...acc, [err.path ?? 'error']: err.message };
 		}, {});
 	}
+	console.log(error);
 	return { error: 'Unknown error.' };
 };
 
@@ -158,8 +159,8 @@ export function normalizeSearch(search: string): string {
 		search
 			// 半角カタカナを全角カタカナに
 			.replace(hankakuKatakanaRegex, (x) => hankakuToZenkakuKatakanaMap[x])
-			// 全角カタカナを全角ひらがなに
-			.replace(/[\u30A1-\u30FA]/g, (x) => String.fromCharCode(x.charCodeAt(0) - 0x60))
+			// 全角ひらがなを全角カタカナに
+			.replace(/[\u3041-\u3096]/g, (x) => String.fromCharCode(x.charCodeAt(0) + 0x60))
 			// 全角英数を半角に
 			.replace(/[Ａ-Ｚａ-ｚ０-９]/g, (x) => String.fromCharCode(x.charCodeAt(0) - 0xfee0))
 			// 全角スペースを半角に

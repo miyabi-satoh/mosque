@@ -83,6 +83,9 @@
     },
     "token": {
       "type": "string"
+    },
+    "keyword": {
+      "type": "text"
     }
   }
 }
