@@ -46,7 +46,7 @@
 				name={ID_PASSWORD}
 				minlength={4}
 				type="password"
-				required
+				required={!$page.params.id}
 				errorMessage={errors?.password}
 			/>
 		</div>
