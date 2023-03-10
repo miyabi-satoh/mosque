@@ -64,7 +64,7 @@ export const actions: Actions = {
 			const result = await prisma.user.create({
 				data: {
 					...validated,
-					keyword: normalizeSearch(keywords.join()),
+					keyword: normalizeSearch(keywords.join(' ')),
 					email: `${validated.username}@mosque.local`,
 					provider: 'local',
 					confirmed: true,
