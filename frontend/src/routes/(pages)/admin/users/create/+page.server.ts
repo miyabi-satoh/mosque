@@ -1,11 +1,11 @@
 import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
-import { fromRequest, fromValidationError } from '$lib/utils';
+import { requestToObject, validationErrorToAssoc } from '$lib/utils';
 import { createUser } from '$lib/server/user';
 import type { UserCreate, UserPostErrors } from '$lib/user';
 
 export const load = (async ({ parent }) => {
-	console.log(`frontend/src/routes/(pages)/admin/users/create/+page.server.ts`);
+	console.log(`/routes/(pages)/admin/users/create/+page.server.ts`);
 	const { breadcrumbParams } = await parent();
 	return {
 		breadcrumbParams: [
@@ -29,8 +29,8 @@ type ActionResult = {
 };
 export const actions: Actions = {
 	default: async ({ request }): Promise<ActionResult> => {
-		console.log(`POST frontend/src/routes/(pages)/admin/users/create/+page.server.ts`);
-		const formData: UserCreate = await fromRequest(request);
+		console.log(`POST /routes/(pages)/admin/users/create/+page.server.ts`);
+		const formData: UserCreate = await requestToObject(request);
 		// console.log(formData);
 
 		try {
@@ -38,7 +38,7 @@ export const actions: Actions = {
 		} catch (err) {
 			if (err instanceof ValidationError) {
 				const message = `入力データに不備があります。`;
-				const errors = fromValidationError(err);
+				const errors = validationErrorToAssoc(err);
 				return { message, formData, errors };
 			} else if (err instanceof Error) {
 				const message = err.message;

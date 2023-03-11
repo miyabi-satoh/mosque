@@ -3,12 +3,12 @@ import { ValidationError } from 'yup';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { userType, type UserCreate } from '$lib/user';
-import { exclude, fromRequest, fromValidationError } from '$lib/utils';
+import { exclude, requestToObject, validationErrorToAssoc } from '$lib/utils';
 import { createUser } from '$lib/server/user';
 
 // GET: ユーザーリストを返す
 export const GET = (async ({ url, locals }) => {
-	console.log(`GET frontend/src/routes/api/user/+server.ts`);
+	console.log(`GET /routes/api/user/+server.ts`);
 	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}
@@ -25,19 +25,19 @@ export const GET = (async ({ url, locals }) => {
 
 // POST: ユーザーを作成する
 export const POST: RequestHandler = async ({ locals, request }) => {
-	console.log(`POST frontend/src/routes/api/user/+server.ts`);
+	console.log(`POST /routes/api/user/+server.ts`);
 	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}
 
-	const user = await fromRequest<UserCreate>(request);
+	const user = await requestToObject<UserCreate>(request);
 
 	try {
 		const _user = await createUser(user);
 	} catch (err) {
 		if (err instanceof ValidationError) {
 			const message = `入力データに不備があります。`;
-			const errors = fromValidationError(err);
+			const errors = validationErrorToAssoc(err);
 			return json({ message, errors });
 		} else if (err instanceof Error) {
 			const message = err.message;

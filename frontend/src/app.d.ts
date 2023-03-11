@@ -7,6 +7,7 @@ declare global {
 			user: {
 				id: number;
 				username: string;
+				displayName: string;
 				type: number;
 			};
 		}

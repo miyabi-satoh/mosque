@@ -4,7 +4,7 @@ import { prisma } from '$lib/server/prisma';
 import { userType } from '$lib/user';
 
 export const GET = (async ({ url, locals }) => {
-	console.log(`GET frontend/src/routes/api/asset/+server.ts`);
+	console.log(`GET /routes/api/asset/+server.ts`);
 	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}

@@ -5,7 +5,7 @@ import { URL_ADMIN_USERS } from '$lib/constants';
 import { exclude } from '$lib/utils';
 
 export const load = (async ({ params, parent }) => {
-	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/delete/+page.server.ts`);
+	console.log(`/routes/(pages)/admin/users/[id=number]/delete/+page.server.ts`);
 
 	const { breadcrumbParams } = await parent();
 	const user = await prisma.user.findUnique({
@@ -34,7 +34,7 @@ type ActionResult = {
 };
 export const actions: Actions = {
 	default: async ({ params }): Promise<ActionResult> => {
-		console.log(`POST frontend/src/routes/(pages)/admin/users/[id=number]/delete/+page.server.ts`);
+		console.log(`POST /routes/(pages)/admin/users/[id=number]/delete/+page.server.ts`);
 		const id = Number(params.id);
 		const result = await prisma.user.delete({
 			where: {

@@ -1,16 +1,12 @@
 <script lang="ts">
-	import { format } from 'date-fns';
 	import { onDestroy } from 'svelte';
 	import type { Asset } from '@prisma/client';
-	import type { ActionData } from './$types';
 	import IconButton from '$lib/components/form/IconButton.svelte';
 	import { addToast } from '$lib/components/Toast.svelte';
-	import Dropzone from '$lib/components/Dropzone.svelte';
-	import { applyAction, enhance } from '$app/forms';
 	import Modal, { closeModal } from '$lib/components/Modal.svelte';
 	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
 	import { page } from '$app/stores';
-	import { MIME_JSON, URL_ADMIN_USERS } from '$lib/constants';
+	import { URL_ADMIN_USERS } from '$lib/constants';
 
 	const ID_UPDATE_CACHE = 'update-cache-modal';
 	const URL_RESOURCE_CREATE = `${$page.url.pathname}/resources/create`;

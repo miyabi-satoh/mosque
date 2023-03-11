@@ -1,4 +1,4 @@
-import { ValidationError } from 'yup';
+import type { ValidationError } from 'yup';
 import { hankakuToZenkakuKatakanaMap } from './constants';
 
 // https://www.prisma.io/docs/concepts/components/prisma-client/excluding-fields
@@ -13,7 +13,7 @@ export const exclude = <T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> => 
 // https://dev.to/danawoodman/getting-form-body-data-in-your-sveltekit-endpoints-4a85
 type StructuredFormData = string | boolean | number | File | StructuredFormData[];
 
-export const fromRequest = async <T>(request: Request) => {
+export const requestToObject = async <T>(request: Request) => {
 	const values = await request.formData();
 	return [...values.entries()].reduce((data, [k, v]) => {
 		let value: StructuredFormData = v;
@@ -34,14 +34,10 @@ export const fromRequest = async <T>(request: Request) => {
 	}, {} as Record<string, StructuredFormData>) as T;
 };
 
-export const fromValidationError = (error: unknown) => {
-	if (error instanceof ValidationError) {
-		return error.inner.reduce((acc, err) => {
-			return { ...acc, [err.path ?? 'error']: err.message };
-		}, {});
-	}
-	console.log(error);
-	return { error: 'Unknown error.' };
+export const validationErrorToAssoc = (error: ValidationError): Record<string, string> => {
+	return error.inner.reduce((acc, err) => {
+		return { ...acc, [err.path ?? 'error']: err.message };
+	}, {});
 };
 
 export function formatDate(date: string | Date | null) {

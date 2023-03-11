@@ -3,12 +3,12 @@ import { ValidationError } from 'yup';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { userType, type UserUpdate } from '$lib/user';
-import { exclude, fromRequest, fromValidationError } from '$lib/utils';
+import { exclude, requestToObject, validationErrorToAssoc } from '$lib/utils';
 import { updateUser } from '$lib/server/user';
 
 // GET: ユーザーを返す
 export const GET = (async ({ params, locals }) => {
-	console.log(`GET frontend/src/routes/api/user/[id=number]/+server.ts`);
+	console.log(`GET /routes/api/user/[id=number]/+server.ts`);
 	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}
@@ -28,20 +28,20 @@ export const GET = (async ({ params, locals }) => {
 
 // PUT: ユーザーを更新する
 export const PUT: RequestHandler = async ({ locals, params, request }) => {
-	console.log(`PUT frontend/src/routes/api/user/[id=number]/+server.ts`);
+	console.log(`PUT /routes/api/user/[id=number]/+server.ts`);
 	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}
 
 	const id = Number(params.id);
-	const user: UserUpdate = await fromRequest(request);
+	const user: UserUpdate = await requestToObject(request);
 
 	try {
 		const _user = await updateUser(id, user);
 	} catch (err) {
 		if (err instanceof ValidationError) {
 			const message = `入力データに不備があります。`;
-			const errors = fromValidationError(err);
+			const errors = validationErrorToAssoc(err);
 			return json({ message, errors });
 		} else if (err instanceof Error) {
 			const message = err.message;
@@ -54,7 +54,7 @@ export const PUT: RequestHandler = async ({ locals, params, request }) => {
 
 // DELETE: ユーザーを削除する
 export const DELETE: RequestHandler = async ({ locals, params }) => {
-	console.log(`DELETE frontend/src/routes/api/user/[id=number]/+server.ts`);
+	console.log(`DELETE /routes/api/user/[id=number]/+server.ts`);
 	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}

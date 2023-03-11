@@ -3,9 +3,8 @@ import type { PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 
 export const load = (async ({ url, params, parent }) => {
-	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts`);
+	console.log(`/routes/(pages)/resources/[id=number]/+page.server.ts`);
 	// 文書情報を取得する
-	// const resource = await apiResources.get(fetch, params.id);
 	const resource = await prisma.resource.findUnique({
 		where: {
 			id: Number(params.id)
@@ -27,7 +26,6 @@ export const load = (async ({ url, params, parent }) => {
 
 	const assets = resource.resources_assets_links.map((r) => r.assets);
 	const parentData = await parent();
-	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts ${resources}`);
 	return {
 		resource,
 		assets,

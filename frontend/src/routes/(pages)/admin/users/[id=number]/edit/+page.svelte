@@ -4,7 +4,7 @@
 	import UserForm from '$lib/components/form/UserForm.svelte';
 	import type { UserCreate } from '$lib/user';
 
-	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.svelte`);
+	console.log(`/routes/(pages)/admin/users/[id=number]/edit/+page.svelte`);
 	export let data: PageData;
 	export let form: ActionData;
 	let userData: UserCreate;

@@ -3,19 +3,18 @@ import type { User } from '@prisma/client';
 import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { exclude, fromRequest, fromValidationError, normalizeNumber } from '$lib/utils';
+import { exclude, requestToObject, validationErrorToAssoc, normalizeNumber } from '$lib/utils';
 import type { UserCreate, UserPostErrors, UserUpdate } from '$lib/user';
 import { createUser, updateUser } from '$lib/server/user';
 
 const pageSize = 10;
 export const load = (async ({ url }) => {
-	console.log(`frontend/src/routes/(pages)/admin/users/+page.server.ts`);
+	console.log(`/routes/(pages)/admin/users/+page.server.ts`);
 
 	if (!url.searchParams.get('p')) {
 		throw redirect(302, `${url.pathname}?p=1&q=`);
 	}
 
-	// console.log(`load @ frontend/src/routes/(pages)/resources/+page.ts`);
 	const queryPage = normalizeNumber(url.searchParams.get('p'), 1);
 	const querySearch = url.searchParams.get('q') ?? '';
 
@@ -71,9 +70,9 @@ type ActionResult = {
 
 export const actions: Actions = {
 	default: async ({ request }): Promise<ActionResult> => {
-		console.log(`POST frontend/src/routes/(pages)/admin/users/+page.server.ts`);
+		console.log(`POST /routes/(pages)/admin/users/+page.server.ts`);
 		const success = true;
-		const formData = await fromRequest<FormData>(request);
+		const formData = await requestToObject<FormData>(request);
 		const users = JSON.parse(formData.json) as UserUpdate[];
 		let progress = 0;
 		let created = 0;
@@ -92,7 +91,7 @@ export const actions: Actions = {
 			} catch (err) {
 				if (err instanceof ValidationError) {
 					const message = `${progress}件目の入力データに不備があります。`;
-					const errors = fromValidationError(err);
+					const errors = validationErrorToAssoc(err);
 					return { message, errors };
 				} else if (err instanceof Error) {
 					const message = err.message;

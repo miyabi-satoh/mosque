@@ -4,7 +4,7 @@
 	import { URL_ADMIN_USERS } from '$lib/constants';
 	import { fields } from '$lib/fields';
 
-	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/delete/+page.svelte`);
+	console.log(`/routes/(pages)/admin/users/[id=number]/delete/+page.svelte`);
 	export let data: PageData;
 	export let form: ActionData;
 

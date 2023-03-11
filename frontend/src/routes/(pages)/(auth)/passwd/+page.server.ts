@@ -2,10 +2,11 @@ import { error } from '@sveltejs/kit';
 import { object, ref, string, ValidationError } from 'yup';
 import type { Actions } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { comparePassword, encryptPassword } from '$lib/server/passwd';
+import { comparePassword } from '$lib/server/passwd';
 import { fields } from '$lib/fields';
-import { fromRequest, fromValidationError } from '$lib/utils';
-import { passwordSchema } from '$lib/server/user';
+import { requestToObject, validationErrorToAssoc } from '$lib/utils';
+import { passwordSchema, updateUser } from '$lib/server/user';
+import type { UserUpdate } from '$lib/user';
 
 type FormData = {
 	[K in keyof typeof fields.passwd]: string;
@@ -23,7 +24,7 @@ type ActionResult = {
 
 export const actions: Actions = {
 	default: async ({ request, locals }): Promise<ActionResult> => {
-		console.log(`POST frontend/src/routes/(pages)/passwd/+page.server.ts`);
+		console.log(`POST /routes/(pages)/passwd/+page.server.ts`);
 		if (!locals.user) {
 			throw error(401, 'アクセス権がありません。');
 		}
@@ -32,7 +33,7 @@ export const actions: Actions = {
 				id: locals.user.id
 			}
 		});
-		const formData: FormData = await fromRequest(request);
+		const formData: FormData = await requestToObject(request);
 		const passwdSchema = object({
 			currentPassword: string()
 				.required()
@@ -53,21 +54,25 @@ export const actions: Actions = {
 
 		try {
 			const validated = (await passwdSchema.validate(formData, { abortEarly: false })) as FormData;
-			const result = await prisma.user.update({
-				where: {
-					id: locals.user.id
-				},
-				data: {
-					password: encryptPassword(validated.newPassword)
-				}
-			});
-			if (!result) {
-				throw new Error(`データベースの更新に失敗しました。`);
-			}
+			const data: UserUpdate = {
+				password: validated.newPassword
+			};
+			const _result = await updateUser(locals.user.id, data);
+			// const result = await prisma.user.update({
+			// 	where: {
+			// 		id: locals.user.id
+			// 	},
+			// 	data: {
+			// 		password: encryptPassword(validated.newPassword)
+			// 	}
+			// });
+			// if (!result) {
+			// 	throw new Error(`データベースの更新に失敗しました。`);
+			// }
 		} catch (err) {
 			if (err instanceof ValidationError) {
 				const message = `入力データに不備があります。`;
-				const errors = fromValidationError(err);
+				const errors = validationErrorToAssoc(err);
 				return { message, formData, errors };
 			} else if (err instanceof Error) {
 				const message = err.message;

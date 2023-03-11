@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import Portal from 'svelte-portal/src/Portal.svelte';
+	import { format } from 'date-fns';
 	import type { ActionData, PageData } from './$types';
 	import { page } from '$app/stores';
-	import { goto, invalidate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
@@ -11,7 +11,6 @@
 	import Dropzone from '$lib/components/Dropzone.svelte';
 	import { addToast } from '$lib/components/Toast.svelte';
 	import { applyAction, enhance } from '$app/forms';
-	import { format } from 'date-fns';
 	import { MIME_JSON } from '$lib/constants';
 
 	const URL_USER_CREATE = `${$page.url.pathname}/create`;

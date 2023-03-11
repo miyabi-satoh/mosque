@@ -9,7 +9,7 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 
-	console.log(`frontend/src/routes/(pages)/admin/resources/+page.svelte`);
+	console.log(`/routes/(pages)/admin/resources/+page.svelte`);
 	export let data: PageData;
 
 	function movePage(event: CustomEvent<number>) {

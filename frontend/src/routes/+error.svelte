@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
 
-	// console.log($page);
+	console.log(`/routes/+error.svelte`);
 </script>
 
 <svelte:head>

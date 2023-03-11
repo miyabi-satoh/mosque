@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { ActionData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { addToast } from '$lib/components/Toast.svelte';
-	import { userStore } from '$lib/user';
+	// import { userStore } from '$lib/user';
 	import { fields } from '$lib/fields';
 
+	export let data: PageData;
 	export let form: ActionData;
 	$: if (form?.message) {
 		addToast(form.message, 'alert-error');
@@ -13,7 +14,7 @@
 	}
 </script>
 
-{#if !$userStore}
+{#if !data.user}
 	<p>このページはログインが必要です。</p>
 {:else}
 	<form method="POST">

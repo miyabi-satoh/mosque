@@ -1,8 +1,6 @@
 import type { Asset } from '@prisma/client';
 import type { PageLoad } from './$types';
 import { typeDetect } from './typeDetect';
-// import { apiUrl } from '$lib/api';
-// import type { BlobType } from '$schemas';
 
 type AssetData = Asset & {
 	status: number;
@@ -15,9 +13,7 @@ type AssetData = Asset & {
 export const ssr = false;
 
 export const load = (async ({ data, fetch }) => {
-	// console.log(data.assets);
-	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts`);
-
+	console.log(`/routes/(pages)/resources/[id=number]/+page.ts`);
 	// 実ファイル情報を取得する
 	let assets: AssetData[] = [];
 	for (const asset of data.assets) {
@@ -25,7 +21,6 @@ export const load = (async ({ data, fetch }) => {
 			let type: AssetData['type'] = 'error';
 			let mimeType = '';
 			let text = '';
-			// const blobUrl = apiUrl(`assets/${asset?.id}/${asset?.slug}`);
 			const blobUrl = `/api/asset/${asset?.id}/${asset?.slug}`;
 			const res = await fetch(blobUrl);
 			const status = res.status;
@@ -69,13 +64,10 @@ export const load = (async ({ data, fetch }) => {
 				blobUrl,
 				mimeType
 			};
-			// console.log(`newAsset: ${JSON.stringify(newAsset)}`);
 			assets = [...assets, newAsset];
 		}
 	}
 
-	// console.log(assets);
-	// console.log(`frontend/src/routes/(pages)/resources/[id]/+page.ts ${resources}`);
 	return {
 		...data,
 		assets

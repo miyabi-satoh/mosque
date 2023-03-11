@@ -6,11 +6,11 @@ import { prisma } from '$lib/server/prisma';
 const pageSize = 12;
 
 export const load = (async ({ url }) => {
+	console.log(`/routes/(pages)/infos/+page.server.ts`);
 	if (!url.searchParams.get('p')) {
 		throw redirect(302, `${url.pathname}?p=1&q=`);
 	}
 
-	// console.log(`load @ frontend/src/routes/(pages)/infos/+page.ts`);
 	const queryPage = normalizeNumber(url.searchParams.get('p'), 1);
 	const querySearch = url.searchParams.get('q') ?? '';
 

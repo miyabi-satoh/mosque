@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 
 // TODO: 不要な気がする
 export const GET = (async ({ locals }) => {
-	console.log(`frontend/src/routes/api/auth/me/+server.ts`);
+	console.log(`GET /routes/api/auth/me/+server.ts`);
 
 	return json({
 		user: locals.user

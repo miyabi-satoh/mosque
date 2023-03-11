@@ -6,11 +6,11 @@ import { normalizeNumber, normalizeSearch } from '$lib/utils';
 const pageSize = 12;
 
 export const load = (async ({ url }) => {
+	console.log(`/routes/(pages)/resources/+page.server.ts`);
 	if (!url.searchParams.get('p')) {
 		throw redirect(302, `${url.pathname}?p=1&q=`);
 	}
 
-	// console.log(`load @ frontend/src/routes/(pages)/resources/+page.ts`);
 	const queryPage = normalizeNumber(url.searchParams.get('p'), 1);
 	const querySearch = url.searchParams.get('q') ?? '';
 

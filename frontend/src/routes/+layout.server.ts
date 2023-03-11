@@ -2,8 +2,8 @@ import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 
-export const load = (async ({ url }) => {
-	console.log(`frontend/src/routes/+layout.server.ts`);
+export const load = (async ({ url, locals }) => {
+	console.log(`/routes/+layout.server.ts`);
 	// サイドメニューの項目を読み込み
 	const menuItems = await prisma.page.findMany({
 		where: { is_menuitem: true },
@@ -20,6 +20,7 @@ export const load = (async ({ url }) => {
 	});
 
 	return {
+		user: locals.user,
 		menuItems,
 		pageMeta
 	};

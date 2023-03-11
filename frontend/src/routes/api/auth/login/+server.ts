@@ -5,8 +5,8 @@ import { COOKIE_SESSION } from '$lib/constants';
 import { comparePassword } from '$lib/server/passwd';
 import { exclude } from '$lib/utils';
 
-// frontend/src/routes/api/auth/login/+server.ts
 export const POST = (async ({ request, cookies }) => {
+	console.log(`POST /routes/api/auth/login/+server.ts`);
 	const data: { username?: string; password?: string } = await request.json();
 	if (data && data.username && data.password) {
 		const user = await prisma.user.findFirst({

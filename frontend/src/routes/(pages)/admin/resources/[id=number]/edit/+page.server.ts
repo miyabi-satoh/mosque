@@ -3,10 +3,10 @@ import { fail } from '@sveltejs/kit';
 import type { User } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { exclude, fromRequest } from '$lib/utils';
+import { exclude, requestToObject } from '$lib/utils';
 
 export const load = (async ({ params, parent }) => {
-	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
+	console.log(`/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
 
 	const { breadcrumbParams } = await parent();
 	let user = await prisma.user.findUnique({
@@ -41,7 +41,7 @@ type FormError = {
 };
 export const actions = {
 	default: async ({ request }) => {
-		const user = await fromRequest<FormData>(request);
+		const user = await requestToObject<FormData>(request);
 		const userSchema = object({
 			username: string()
 				.required()

@@ -12,15 +12,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 			select: {
 				id: true,
 				username: true,
+				displayName: true,
 				type: true
 			}
 		});
 		if (user) {
-			event.locals.user = {
-				id: user.id,
-				username: user.username,
-				type: user.type
-			};
+			event.locals.user = user;
 		}
 	}
 

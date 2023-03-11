@@ -1,8 +1,8 @@
 import type { User } from '@prisma/client';
-import { writable } from 'svelte/store';
+// import { writable } from 'svelte/store';
 import type { Impartial } from './types';
 
-export const userStore = writable<User | null>(null);
+// export const userStore = writable<User | null>(null);
 
 type PickupField =
 	| 'id'

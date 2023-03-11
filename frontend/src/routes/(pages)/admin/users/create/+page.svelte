@@ -1,9 +1,9 @@
 <script lang="ts">
+	import type { ActionData } from './$types';
 	import UserForm from '$lib/components/form/UserForm.svelte';
 	import { addToast } from '$lib/components/Toast.svelte';
-	import type { ActionData } from './$types';
 
-	console.log(`frontend/src/routes/(pages)/admin/users/create/+page.svelte`);
+	console.log(`/routes/(pages)/admin/users/create/+page.svelte`);
 	export let form: ActionData;
 
 	if (form) {

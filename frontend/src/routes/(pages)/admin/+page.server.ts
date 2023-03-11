@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 
 export const load = (async () => {
-	console.log(`frontend/src/routes/(pages)/admin/+page.server.ts`);
+	console.log(`/routes/(pages)/admin/+page.server.ts`);
 
 	const pages = await prisma.page.findMany({
 		where: {

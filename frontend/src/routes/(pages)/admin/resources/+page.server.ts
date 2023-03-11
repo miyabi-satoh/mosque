@@ -5,7 +5,7 @@ import { normalizeNumber } from '$lib/utils';
 
 const pageSize = 10;
 export const load = (async ({ url }) => {
-	console.log(`frontend/src/routes/(pages)/admin/resources/+page.server.ts`);
+	console.log(`/routes/(pages)/admin/resources/+page.server.ts`);
 
 	if (!url.searchParams.get('p')) {
 		throw redirect(302, `${url.pathname}?p=1&q=`);
