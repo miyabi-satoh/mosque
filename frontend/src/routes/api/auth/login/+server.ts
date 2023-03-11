@@ -3,7 +3,6 @@ import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { COOKIE_SESSION } from '$lib/constants';
 import { comparePassword } from '$lib/server/passwd';
-import { exclude } from '$lib/utils';
 
 export const POST = (async ({ request, cookies }) => {
 	console.log(`POST /routes/api/auth/login/+server.ts`);
@@ -31,7 +30,7 @@ export const POST = (async ({ request, cookies }) => {
 				path: '/',
 				maxAge: 60 * 60 * 24 * 7
 			});
-			return json(exclude(user, ['password', 'token']));
+			return json({ success: true });
 		}
 	}
 
