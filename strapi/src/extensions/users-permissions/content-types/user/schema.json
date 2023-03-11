@@ -64,28 +64,41 @@
       "configurable": false
     },
     "displayName": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "sei": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "mei": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "seiKana": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "meiKana": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "abbrev": {
-      "type": "string"
+      "type": "string",
+      "unique": true,
+      "required": true
     },
     "token": {
-      "type": "string"
+      "type": "string",
+      "unique": true
     },
     "keyword": {
       "type": "text"
+    },
+    "type": {
+      "type": "integer",
+      "default": 0,
+      "required": true
     }
   }
 }

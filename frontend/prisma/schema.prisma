@@ -537,26 +537,27 @@ model up_roles {
 
 model User {
   id                                              Int                   @id @default(autoincrement())
-  username                                        String?               @db.VarChar(255)
-  email                                           String?               @db.VarChar(255)
-  provider                                        String?               @db.VarChar(255)
+  username                                        String                @unique @db.VarChar(255)
+  email                                           String                @db.VarChar(255)
+  provider                                        String                @db.VarChar(255)
   password                                        String?               @db.VarChar(255)
   reset_password_token                            String?               @db.VarChar(255)
   confirmation_token                              String?               @db.VarChar(255)
-  confirmed                                       Boolean?
-  blocked                                         Boolean?
-  createdAt                                       DateTime?             @map("created_at") @db.Timestamp(6)
-  updatedAt                                       DateTime?             @map("updated_at") @db.Timestamp(6)
-  created_by_id                                   Int?
-  updated_by_id                                   Int?
-  displayName                                     String?               @map("display_name") @db.VarChar(255)
-  sei                                             String?               @db.VarChar(255)
-  mei                                             String?               @db.VarChar(255)
-  seiKana                                         String?               @map("sei_kana") @db.VarChar(255)
-  meiKana                                         String?               @map("mei_kana") @db.VarChar(255)
-  abbrev                                          String?               @db.VarChar(255)
-  token                                           String?               @db.VarChar(255)
+  confirmed                                       Boolean
+  blocked                                         Boolean
+  createdAt                                       DateTime              @map("created_at") @db.Timestamp(6)
+  updatedAt                                       DateTime              @map("updated_at") @db.Timestamp(6)
+  created_by_id                                   Int
+  updated_by_id                                   Int
+  displayName                                     String                @map("display_name") @db.VarChar(255)
+  sei                                             String                @db.VarChar(255)
+  mei                                             String                @db.VarChar(255)
+  seiKana                                         String                @map("sei_kana") @db.VarChar(255)
+  meiKana                                         String                @map("mei_kana") @db.VarChar(255)
+  abbrev                                          String                @unique @db.VarChar(255)
+  token                                           String?               @unique @db.VarChar(255)
   keyword                                         String?               @db.VarChar(255)
+  type                                            Int
   admin_users_up_users_created_by_idToadmin_users admin_users?          @relation("up_users_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
   admin_users_up_users_updated_by_idToadmin_users admin_users?          @relation("up_users_updated_by_idToadmin_users", fields: [updated_by_id], references: [id], onUpdate: NoAction)
   up_users_role_links                             up_users_role_links[]

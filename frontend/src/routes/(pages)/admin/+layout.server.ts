@@ -1,11 +1,10 @@
 import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { getUser } from '$lib/server/session';
+import { userType } from '$lib/user';
 
-export const load = (async ({ cookies }) => {
+export const load = (async ({ locals }) => {
 	console.log(`frontend/src/routes/(pages)/admin/+layout.server.ts`);
-	const user = await getUser(cookies);
-	if (!user || user.id != 1) {
+	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(404, 'Not Found');
 	}
 }) satisfies LayoutServerLoad;

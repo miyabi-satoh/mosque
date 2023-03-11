@@ -2,13 +2,14 @@
 	import type { ActionData } from './$types';
 	import { addToast } from '$lib/components/Toast.svelte';
 	import { userStore } from '$lib/user';
+	import { fields } from '$lib/fields';
 
 	export let form: ActionData;
 	$: if (form?.message) {
-		addToast(form.message, form.user ? 'alert-success' : 'alert-error');
-		if (form.user) {
-			$userStore = form.user;
-		}
+		addToast(form.message, 'alert-error');
+		// if (form.user) {
+		// 	$userStore = form.user;
+		// }
 	}
 </script>
 
@@ -18,34 +19,38 @@
 	<form method="POST">
 		<div class="flex flex-col gap-4">
 			<div class="flex flex-col sm:col-span-2">
-				<label for="currrent_password">現在のパスワード</label>
+				<label for={fields.passwd.currentPassword.name}>{fields.passwd.currentPassword.label}</label
+				>
 				<input
 					type="password"
 					class="input input-bordered w-full"
-					id="currrent_password"
-					name="currrent_password"
+					id={fields.passwd.currentPassword.name}
+					name={fields.passwd.currentPassword.name}
 					required
 				/>
 			</div>
 			<div class="flex flex-col sm:col-span-2">
-				<label for="new_password">新しいパスワード(8文字以上)</label>
+				<label for={fields.passwd.newPassword.name}>
+					{fields.passwd.newPassword.label}
+					{fields.passwd.newPassword.helperText}
+				</label>
 				<input
 					type="password"
 					class="input input-bordered w-full"
-					id="new_password"
-					name="new_password"
-					minlength="8"
+					id={fields.passwd.newPassword.name}
+					name={fields.passwd.newPassword.name}
+					minlength={fields.passwd.newPassword.minlength}
 					required
 				/>
 			</div>
 			<div class="flex flex-col sm:col-span-2">
-				<label for="confirm_password">新しいパスワード(確認用)</label>
+				<label for={fields.passwd.confirmPassword.name}>{fields.passwd.confirmPassword.label}</label
+				>
 				<input
 					type="password"
 					class="input input-bordered w-full"
-					id="confirm_password"
-					name="confirm_password"
-					minlength="8"
+					id={fields.passwd.confirmPassword.name}
+					name={fields.passwd.confirmPassword.name}
 					required
 				/>
 			</div>

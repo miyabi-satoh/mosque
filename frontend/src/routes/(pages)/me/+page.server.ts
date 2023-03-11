@@ -1,36 +1,40 @@
+import { ValidationError } from 'yup';
 import type { Actions } from './$types';
-import { prisma } from '$lib/server/prisma';
-import { getUser } from '$lib/server/session';
-import { clearSecret } from '$lib/user';
+import { fromRequest, fromValidationError } from '$lib/utils';
+import { updateUser } from '$lib/server/user';
+import type { UserPostErrors, UserUpdate } from '$lib/user';
 
-// frontend/src/routes/(pages)/me/+page.server.ts
-export const actions = {
-	default: async ({ request, cookies }) => {
-		let user = await getUser(cookies);
-		if (user) {
-			const data = await request.formData();
-			const displayName = data.get('displayName');
-			if (displayName) {
-				user = await prisma.user.update({
-					where: {
-						id: user.id
-					},
-					data: {
-						displayName: String(displayName)
-					}
-				});
-				if (user) {
-					return {
-						message: `更新しました`,
-						user: clearSecret(user)
-					};
-				}
+type ActionResult = {
+	success?: boolean;
+	message?: string;
+	formData: UserUpdate;
+	errors?: UserPostErrors;
+};
+
+export const actions: Actions = {
+	default: async ({ request, locals }): Promise<ActionResult> => {
+		console.log(`POST frontend/src/routes/(pages)/me/+page.server.ts`);
+		const formData: UserUpdate = await fromRequest(request);
+
+		try {
+			if (!locals.user) {
+				throw new Error('権限がありません');
+			}
+			const _user = await updateUser(locals.user.id, formData);
+		} catch (err) {
+			if (err instanceof ValidationError) {
+				const message = `入力データに不備があります。`;
+				const errors = fromValidationError(err);
+				return { message, formData, errors };
+			} else if (err instanceof Error) {
+				const message = err.message;
+				return { message, formData };
 			}
 		}
 
 		return {
-			message: '更新に失敗しました',
-			user: null
+			success: true,
+			formData
 		};
 	}
-} satisfies Actions;
+};

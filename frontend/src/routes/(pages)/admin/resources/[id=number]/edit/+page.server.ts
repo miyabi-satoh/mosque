@@ -3,8 +3,7 @@ import { fail } from '@sveltejs/kit';
 import type { User } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { clearSecret } from '$lib/user';
-import { fromRequest } from '$lib/utils';
+import { exclude, fromRequest } from '$lib/utils';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
@@ -16,7 +15,7 @@ export const load = (async ({ params, parent }) => {
 		}
 	});
 	if (user) {
-		user = clearSecret(user);
+		user = exclude(user, ['password', 'token']) as User;
 	}
 
 	return {

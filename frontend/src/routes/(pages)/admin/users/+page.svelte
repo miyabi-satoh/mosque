@@ -1,19 +1,79 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import Portal from 'svelte-portal/src/Portal.svelte';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { page } from '$app/stores';
 	import { goto, invalidate } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
+	import Modal, { closeModal } from '$lib/components/Modal.svelte';
+	import Dropzone from '$lib/components/Dropzone.svelte';
+	import { addToast } from '$lib/components/Toast.svelte';
+	import { applyAction, enhance } from '$app/forms';
+	import { format } from 'date-fns';
+	import { MIME_JSON } from '$lib/constants';
 
 	const URL_USER_CREATE = `${$page.url.pathname}/create`;
 	const URL_USER_EDIT = (id: number) => `${$page.url.pathname}/${id}/edit`;
 	const URL_USER_DELETE = (id: number) => `${$page.url.pathname}/${id}/delete`;
+	const ID_IMPORT_USER = 'import-user-modal';
 
 	export let data: PageData;
-	let selectedFiles: FileList | null = null;
+	export let form: ActionData | undefined;
+	let selectedFiles: FileList | undefined;
+	let textData: string | undefined;
+	let useEnhance = false;
+
+	const handleEscKey = (event: KeyboardEvent) => {
+		if (event.key == 'Escape') {
+			closeModal(ID_IMPORT_USER);
+		}
+	};
+
+	const errorDetail = (key: string) => {
+		if (form && form.errors) {
+			return `${key}:${form.errors[key as keyof typeof form.errors]}`;
+		}
+		return '';
+	};
+
+	const showImportUserResult = () => {
+		console.log(`showImportUserResult`);
+		if (useEnhance) {
+			console.log(form);
+			if (form && form.success) {
+				closeModal(ID_IMPORT_USER);
+				addToast(form.message ?? '', 'alert-success');
+				selectedFiles = undefined;
+				textData = undefined;
+			}
+			// その他のエラーはモーダルに表示される
+		} else {
+			// モーダルは閉じられているので、トースト表示
+			if (form && form.message) {
+				if (form.success) {
+					addToast(form.message, 'alert-success');
+				} else {
+					addToast(form.message, 'alert-error');
+				}
+				if (form.errors) {
+					Object.keys(form.errors).map((key) => addToast(errorDetail(key), 'alert-error'));
+				}
+			}
+			form = undefined;
+		}
+	};
+	if (form) {
+		showImportUserResult();
+	}
+
+	const resetImportUserForm = () => {
+		console.log(`resetImportUserForm`);
+		selectedFiles = undefined;
+		textData = undefined;
+		form = undefined;
+	};
 
 	function movePage(event: CustomEvent<number>) {
 		refresh(false, event.detail);
@@ -36,7 +96,6 @@
 	$: if (selectedFiles) {
 		setPreview(selectedFiles);
 	}
-	let textData: string;
 	const setPreview = async (files: FileList) => {
 		const file = files[0];
 		if (file) {
@@ -45,16 +104,47 @@
 	};
 
 	const handleExport = async () => {
-		const res = await fetch(`/api/user/export`);
+		console.log(`handleExport`);
+		// loading = true;
+		const filter = {
+			where: {
+				id: {
+					not: 1
+				}
+			},
+			orderBy: {
+				id: 'asc'
+			},
+			select: {
+				id: true,
+				username: true,
+				password: true,
+				sei: true,
+				mei: true,
+				seiKana: true,
+				meiKana: true,
+				abbrev: true,
+				displayName: true,
+				blocked: true
+			}
+		};
+		const query = new URLSearchParams({ filter: encodeURIComponent(JSON.stringify(filter)) });
+		const res = await fetch(`/api/user?${query}`);
 		if (res.ok) {
-			const blob = await res.blob();
-			const url = URL.createObjectURL(blob);
+			const json = await res.json();
+			const data = JSON.stringify(json, null, '\t');
+
+			const blob = new Blob([data], { type: MIME_JSON });
 
 			const a = window.document.createElement('a');
-			a.download = `export_mosque_user.csv`;
-			a.href = url;
+			a.download = `export_mosque_user_${format(new Date(), 'yyyyMMddHHmmss')}.json`;
+			a.href = URL.createObjectURL(blob);
 			a.click();
+			URL.revokeObjectURL(a.href);
+		} else {
+			addToast(`${res.status}:${res.statusText}`, 'alert-error');
 		}
+		// loading = false;
 	};
 </script>
 
@@ -136,50 +226,48 @@
 	<p>データがありません</p>
 {/if}
 
-<Portal target="#modals">
-	<input type="checkbox" id="upload" class="modal-toggle" />
-	<label for="upload" class="modal cursor-pointer">
-		<label class="modal-box w-2/3" class:max-w-2xl={textData} for="">
-			<label for="upload" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-			<h4 class="my-0">インポート</h4>
-			{#if selectedFiles}
-				{#if textData}
-					<pre class="h-[40vh] overflow-scroll">{textData}</pre>
-				{/if}
-				<div class="flex items-center justify-between w-full mt-4">
-					<button
-						class="btn btn-default"
-						on:click|preventDefault={() => {
-							selectedFiles = null;
-							textData = '';
-						}}>再選択</button
-					>
-					<form method="POST" action="?/upload">
-						<input type="hidden" name="body" value={textData} />
-						<button class="btn btn-primary">インポート</button>
-					</form>
-				</div>
-			{:else}
-				<div class="flex items-center justify-center w-full mt-4">
-					<label
-						for="selected-file"
-						class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed rounded-lg cursor-pointer"
-					>
-						<div class="flex flex-col items-center justify-center p-6">
-							<Icon icon="mdi:cloud-upload-outline" height="auto" />
-							<p class="text-sm">ここにファイルをドロップするか、クリックしてファイルを選択</p>
-						</div>
-						<input
-							id="selected-file"
-							name="file"
-							type="file"
-							class="hidden"
-							bind:files={selectedFiles}
-							accept=".txt,.csv,.json"
-						/>
-					</label>
+<Modal id={ID_IMPORT_USER} class="w-2/3 {textData ? 'max-w-2xl' : ''}">
+	<h4 class="my-0">インポート</h4>
+	<form
+		on:keyup={handleEscKey}
+		method="POST"
+		use:enhance={() => {
+			useEnhance = true;
+
+			return async ({ result }) => {
+				console.log(result);
+				await applyAction(result);
+				showImportUserResult();
+			};
+		}}
+	>
+		{#if selectedFiles && selectedFiles.length > 0}
+			<p class="my-0">{selectedFiles[0].name}</p>
+			{#if textData !== undefined}
+				<pre class="my-0 h-[40vh] overflow-scroll">{textData}</pre>
+			{/if}
+			{#if form && !form.success && form.message}
+				<div class="my-4 p-2 bg-error text-error-content">
+					{form.message}
+					{#if form.errors}
+						<ul class="my-2">
+							{#each Object.keys(form.errors) as key}
+								<li>{errorDetail(key)}</li>
+							{/each}
+						</ul>
+					{/if}
 				</div>
 			{/if}
-		</label>
-	</label>
-</Portal>
+			<div class="flex items-center justify-between w-full mt-4">
+				<button class="btn btn-default" on:click|preventDefault={resetImportUserForm}>再選択</button
+				>
+				<input type="hidden" name="json" value={textData} />
+				<button class="btn btn-primary">インポート</button>
+			</div>
+		{:else}
+			<div class="not-prose flex items-center justify-center w-full mt-4">
+				<Dropzone id="selected-file" name="file" accept=".json" bind:files={selectedFiles} />
+			</div>
+		{/if}
+	</form>
+</Modal>

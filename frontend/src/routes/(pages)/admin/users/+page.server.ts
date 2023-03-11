@@ -1,9 +1,11 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { User } from '@prisma/client';
+import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { normalizeNumber } from '$lib/utils';
-import { clearSecret } from '$lib/user';
+import { exclude, fromRequest, fromValidationError, normalizeNumber } from '$lib/utils';
+import type { UserCreate, UserPostErrors, UserUpdate } from '$lib/user';
+import { createUser, updateUser } from '$lib/server/user';
 
 const pageSize = 10;
 export const load = (async ({ url }) => {
@@ -25,15 +27,10 @@ export const load = (async ({ url }) => {
 		.filter((term) => term)
 		.forEach((term) => {
 			keywords.push({
-				OR: [
-					{ username: { contains: term, mode: 'insensitive' } },
-					{ sei: { contains: term, mode: 'insensitive' } },
-					{ mei: { contains: term, mode: 'insensitive' } },
-					{ seiKana: { contains: term, mode: 'insensitive' } },
-					{ meiKana: { contains: term, mode: 'insensitive' } },
-					{ displayName: { contains: term, mode: 'insensitive' } },
-					{ abbrev: { contains: term, mode: 'insensitive' } }
-				]
+				keyword: {
+					contains: term,
+					mode: 'insensitive'
+				}
 			});
 		});
 
@@ -56,34 +53,58 @@ export const load = (async ({ url }) => {
 	return {
 		queryPage,
 		querySearch,
-		users: users.map((user) => clearSecret(user)) as User[],
+		users: users.map((user) => exclude(user, ['password', 'token'])) as User[],
 		pageSize,
 		count
 	};
 }) satisfies PageServerLoad;
 
-export const actions = {
-	remove: async ({ request }) => {
-		const data = await request.formData();
-		const id = data.get('id');
-		const deleteUser = await prisma.user.delete({
-			where: {
-				id: Number(id)
-			}
-		});
-		if (deleteUser) {
-			return {
-				deleteUser: clearSecret(deleteUser)
-			};
-		}
-		return fail(400, {
-			deleteUser: null
-		});
-	},
-	upload: async ({ request }) => {
-		const data = await request.formData();
-		const body = data.get('body');
+type FormData = {
+	json: string;
+};
 
-		console.log(body);
+type ActionResult = {
+	success?: boolean;
+	message?: string;
+	errors?: UserPostErrors;
+};
+
+export const actions: Actions = {
+	default: async ({ request }): Promise<ActionResult> => {
+		console.log(`POST frontend/src/routes/(pages)/admin/users/+page.server.ts`);
+		const success = true;
+		const formData = await fromRequest<FormData>(request);
+		const users = JSON.parse(formData.json) as UserUpdate[];
+		let progress = 0;
+		let created = 0;
+		let updated = 0;
+		for (const user of users) {
+			progress++;
+
+			try {
+				if (user.id) {
+					const _user = await updateUser(user.id, user);
+					updated++;
+				} else {
+					const _user = await createUser(user as UserCreate);
+					created++;
+				}
+			} catch (err) {
+				if (err instanceof ValidationError) {
+					const message = `${progress}件目の入力データに不備があります。`;
+					const errors = fromValidationError(err);
+					return { message, errors };
+				} else if (err instanceof Error) {
+					const message = err.message;
+					return { message };
+				}
+			}
+		}
+
+		const message = [
+			`${progress}件のデータを処理しました。`,
+			`新規：${created}件、更新：${updated}件`
+		].join('\n');
+		return { success, message };
 	}
-} satisfies Actions;
+};

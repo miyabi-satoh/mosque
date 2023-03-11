@@ -2,13 +2,13 @@
 	import type { ActionData } from './$types';
 	import { addToast } from '$lib/components/Toast.svelte';
 	import { userStore } from '$lib/user';
+	import Label from '$lib/components/form/Label.svelte';
+	import { fields } from '$lib/fields';
+	import InputText from '$lib/components/form/InputText.svelte';
 
 	export let form: ActionData;
 	$: if (form?.message) {
-		addToast(form.message, form.user ? 'alert-success' : 'alert-error');
-		if (form.user) {
-			$userStore = form.user;
-		}
+		addToast(form.message, form.success ? 'alert-success' : 'alert-error');
 	}
 </script>
 
@@ -18,59 +18,57 @@
 	<form method="POST">
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 			<div class="flex flex-col">
-				<label for="displayName">表示名(5文字以内)</label>
-				<input
-					class="input input-bordered w-full"
-					id="displayName"
-					name="displayName"
-					maxlength="5"
+				<Label for={fields.user.displayName.name}>
+					{fields.user.displayName.label}
+					{fields.user.displayName.helperText}
+				</Label>
+				<InputText
+					id={fields.user.displayName.name}
+					name={fields.user.displayName.name}
+					maxlength={fields.user.displayName.maxlength}
 					required
 					value={$userStore.displayName}
+					errorMessage={form?.errors?.displayName}
 				/>
 			</div>
 			<div class="flex items-end">
 				<button class="btn btn-primary">保存</button>
 			</div>
 		</div>
-		<div class="bg-base-300 mt-4 p-4">
-			以下のプロパティは編集できません。 修正が必要な場合は管理者に申請してください。
-			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-				<div class="flex flex-col">
-					<label for="sei">姓</label>
-					<input class="input input-bordered w-full" id="sei" disabled value={$userStore.sei} />
-				</div>
-				<div class="flex flex-col">
-					<label for="mei">名</label>
-					<input class="input input-bordered w-full" id="mei" disabled value={$userStore.mei} />
-				</div>
-				<div class="flex flex-col">
-					<label for="seiKana">姓(カナ)</label>
-					<input
-						class="input input-bordered w-full"
-						id="seiKana"
-						disabled
-						value={$userStore.seiKana}
-					/>
-				</div>
-				<div class="flex flex-col">
-					<label for="meiKana">名(カナ)</label>
-					<input
-						class="input input-bordered w-full"
-						id="meiKana"
-						disabled
-						value={$userStore.meiKana}
-					/>
-				</div>
-				<div class="flex flex-col">
-					<label for="abbrev">略称</label>
-					<input
-						class="input input-bordered w-full"
-						id="abbrev"
-						disabled
-						value={$userStore.abbrev}
-					/>
-				</div>
+	</form>
+	<div class="bg-base-300 mt-4 p-4">
+		以下のプロパティは編集できません。 修正が必要な場合は管理者に申請してください。
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+			<div class="flex flex-col">
+				<Label for={fields.user.sei.name}>
+					{fields.user.sei.label}
+				</Label>
+				<InputText id={fields.user.sei.name} disabled value={$userStore.sei} />
+			</div>
+			<div class="flex flex-col">
+				<Label for={fields.user.mei.name}>
+					{fields.user.mei.label}
+				</Label>
+				<InputText id={fields.user.mei.name} disabled value={$userStore.mei} />
+			</div>
+			<div class="flex flex-col">
+				<Label for={fields.user.seiKana.name}>
+					{fields.user.seiKana.label}
+				</Label>
+				<InputText id={fields.user.seiKana.name} disabled value={$userStore.seiKana} />
+			</div>
+			<div class="flex flex-col">
+				<Label for={fields.user.meiKana.name}>
+					{fields.user.meiKana.label}</Label
+				>
+				<InputText id={fields.user.meiKana.name} disabled value={$userStore.meiKana} />
+			</div>
+			<div class="flex flex-col">
+				<Label for={fields.user.abbrev.name}>
+					{fields.user.abbrev.label}</Label
+				>
+				<InputText id={fields.user.abbrev.name} disabled value={$userStore.abbrev} />
 			</div>
 		</div>
-	</form>
+	</div>
 {/if}

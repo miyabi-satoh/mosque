@@ -1,24 +1,21 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { clearSecret } from '$lib/user';
 import { URL_ADMIN_USERS } from '$lib/constants';
+import { exclude } from '$lib/utils';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`frontend/src/routes/(pages)/admin/users/[id=number]/delete/+page.server.ts`);
 
 	const { breadcrumbParams } = await parent();
-	let user = await prisma.user.findUnique({
+	const user = await prisma.user.findUnique({
 		where: {
 			id: Number(params.id)
 		}
 	});
-	if (user) {
-		user = clearSecret(user);
-	}
 
 	return {
-		user,
+		user: user ? exclude(user, ['password', 'token']) : null,
 		pageMeta: {
 			title: `ユーザー削除`
 		},

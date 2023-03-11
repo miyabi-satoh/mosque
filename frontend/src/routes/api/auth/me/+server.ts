@@ -1,11 +1,11 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getUser } from '$lib/server/session';
-import { clearSecret } from '$lib/user';
 
-export const GET = (async ({ cookies }) => {
+// TODO: 不要な気がする
+export const GET = (async ({ locals }) => {
 	console.log(`frontend/src/routes/api/auth/me/+server.ts`);
 
-	const user = await getUser(cookies);
-	return json(clearSecret(user));
+	return json({
+		user: locals.user
+	});
 }) satisfies RequestHandler;

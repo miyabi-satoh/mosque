@@ -2,16 +2,14 @@ import { error, json } from '@sveltejs/kit';
 import { ValidationError } from 'yup';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { isAdminSession } from '$lib/server/session';
-import { clearSecret, updateUserSchema, type UserUpdate } from '$lib/user';
-import { fromRequest, fromValidationError } from '$lib/utils';
-import { existsAbbrev, existsUsername } from '$lib/server/user';
-import { encryptPassword } from '$lib/server/passwd';
+import { userType, type UserUpdate } from '$lib/user';
+import { exclude, fromRequest, fromValidationError } from '$lib/utils';
+import { updateUser } from '$lib/server/user';
 
 // GET: ユーザーを返す
-export const GET = (async ({ cookies, params }) => {
+export const GET = (async ({ params, locals }) => {
 	console.log(`GET frontend/src/routes/api/user/[id=number]/+server.ts`);
-	if (!isAdminSession(cookies)) {
+	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}
 
@@ -22,68 +20,42 @@ export const GET = (async ({ cookies, params }) => {
 		}
 	});
 	if (user) {
-		return json(clearSecret(user));
+		return json(exclude(user, ['password', 'token']));
 	}
 
 	throw error(400, 'ユーザーの取得に失敗しました。');
 }) satisfies RequestHandler;
 
 // PUT: ユーザーを更新する
-export const PUT: RequestHandler = async ({ cookies, params, request }) => {
+export const PUT: RequestHandler = async ({ locals, params, request }) => {
 	console.log(`PUT frontend/src/routes/api/user/[id=number]/+server.ts`);
-	if (!isAdminSession(cookies)) {
+	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}
 
 	const id = Number(params.id);
-	const user = await fromRequest<UserUpdate>(request);
+	const user: UserUpdate = await fromRequest(request);
 
 	try {
-		const validated = await updateUserSchema.validate(user, { abortEarly: false });
-		// usernameのユニークチェック
-		if (user.username && (await existsUsername(user.username, id))) {
-			throw new ValidationError(`ユーザー名が重複しています。`, user.username, 'username');
-		}
-		// abbrevのユニークチェック
-		if (user.abbrev && (await existsAbbrev(user.abbrev, id))) {
-			throw new ValidationError(`略称が重複しています。`, user.abbrev, 'abbrev');
-		}
-
-		if (validated.password) {
-			validated.password = encryptPassword(validated.password);
-		}
-		const result = await prisma.user.update({
-			where: {
-				id
-			},
-			data: {
-				...validated,
-				email: validated.username ? `${validated.username}@mosque.local` : undefined,
-				updatedAt: new Date()
-			}
-		});
-
-		if (!result) {
-			const message = `データベースの更新に失敗しました。`;
-			console.log(message);
-			// return json({ message });
-			throw error(500, message);
-		}
+		const _user = await updateUser(id, user);
 	} catch (err) {
-		console.log(err);
-		const message = `入力データに不備があります。`;
-		const errors = fromValidationError(err);
-		console.log(errors);
-		return json({ message, errors });
+		if (err instanceof ValidationError) {
+			const message = `入力データに不備があります。`;
+			const errors = fromValidationError(err);
+			return json({ message, errors });
+		} else if (err instanceof Error) {
+			const message = err.message;
+			return json({ message });
+		}
 	}
 
 	return json({ success: true });
 };
 
 // DELETE: ユーザーを削除する
-export const DELETE: RequestHandler = async ({ cookies, params }) => {
+export const DELETE: RequestHandler = async ({ locals, params }) => {
 	console.log(`DELETE frontend/src/routes/api/user/[id=number]/+server.ts`);
-	if (!isAdminSession(cookies)) {
+	if (!locals.user || locals.user.type !== userType.sysadmin) {
 		throw error(401, 'アクセス権がありません。');
 	}
 
@@ -94,7 +66,7 @@ export const DELETE: RequestHandler = async ({ cookies, params }) => {
 		}
 	});
 	if (user) {
-		return json(clearSecret(user));
+		return json(exclude(user, ['password', 'token']));
 	}
 
 	throw error(400, 'ユーザーの削除に失敗しました。');

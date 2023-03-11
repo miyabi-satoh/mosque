@@ -2,8 +2,8 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { COOKIE_SESSION } from '$lib/constants';
-import { clearSecret } from '$lib/user';
 import { comparePassword } from '$lib/server/passwd';
+import { exclude } from '$lib/utils';
 
 // frontend/src/routes/api/auth/login/+server.ts
 export const POST = (async ({ request, cookies }) => {
@@ -31,7 +31,7 @@ export const POST = (async ({ request, cookies }) => {
 				path: '/',
 				maxAge: 60 * 60 * 24 * 7
 			});
-			return json(clearSecret(user));
+			return json(exclude(user, ['password', 'token']));
 		}
 	}
 

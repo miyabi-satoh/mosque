@@ -4,7 +4,8 @@
 	export let minlength: number | undefined = undefined;
 	export let maxlength: number | undefined = undefined;
 	export let required = false;
-	export let value: string = '';
+	export let disabled = false;
+	export let value: string | null | undefined = '';
 	export let errorMessage: string | undefined = undefined;
 	export let type: 'email' | 'password' | 'search' | 'tel' | 'text' | 'url' = 'text';
 
@@ -21,6 +22,7 @@
 	{minlength}
 	{maxlength}
 	{required}
+	{disabled}
 	{value}
 	on:input={handleInput}
 />

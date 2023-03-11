@@ -1,6 +1,15 @@
 import { ValidationError } from 'yup';
 import { hankakuToZenkakuKatakanaMap } from './constants';
 
+// https://www.prisma.io/docs/concepts/components/prisma-client/excluding-fields
+// Exclude keys from object
+export const exclude = <T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> => {
+	for (const key of keys) {
+		delete obj[key];
+	}
+	return obj;
+};
+
 // https://dev.to/danawoodman/getting-form-body-data-in-your-sveltekit-endpoints-4a85
 type StructuredFormData = string | boolean | number | File | StructuredFormData[];
 
