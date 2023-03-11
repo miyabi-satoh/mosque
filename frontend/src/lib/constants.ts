@@ -7,14 +7,6 @@ export const themeName = {
 	dark: 'dark'
 } as const;
 
-export const API = {
-	LOGIN: '/api/auth/login',
-	LOGOUT: '/api/auth/logout',
-	ME: '/api/auth/me',
-	USER: '/api/user',
-	ASSET: '/api/asset'
-} as const;
-
 export const URL_ADMIN_USERS = `/admin/users`;
 export const URL_ADMIN_USERS_CREATE = `${URL_ADMIN_USERS}/create`;
 
