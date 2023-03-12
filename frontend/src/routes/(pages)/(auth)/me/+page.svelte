@@ -4,6 +4,8 @@
 	import { addToast } from '$lib/components/Toast.svelte';
 	import { fields } from '$lib/fields';
 	import InputText from '$lib/components/form/InputText.svelte';
+	import { enhance } from '$app/forms';
+	console.log(`/routes/(pages)/(auth)/me/+page.svelte`);
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -15,7 +17,14 @@
 {#if !data.me}
 	<p>このページはログインが必要です。</p>
 {:else}
-	<form method="POST">
+	<form
+		method="POST"
+		use:enhance={() => {
+			return async ({ update }) => {
+				await update({ reset: false });
+			};
+		}}
+	>
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 			<div class="flex flex-col">
 				<InputText

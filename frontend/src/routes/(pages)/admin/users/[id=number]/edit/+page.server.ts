@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { requestToObject, validationErrorToAssoc } from '$lib/utils';
 import { updateUser } from '$lib/server/user';
-import type { UserCreate, UserPostErrors } from '$lib/user';
+import { userPublicFields, type UserCreate, type UserPostErrors } from '$lib/user';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
@@ -13,15 +13,7 @@ export const load = (async ({ params, parent }) => {
 		where: {
 			id: Number(params.id)
 		},
-		select: {
-			username: true,
-			displayName: true,
-			abbrev: true,
-			sei: true,
-			mei: true,
-			seiKana: true,
-			meiKana: true
-		}
+		select: userPublicFields
 	});
 
 	return {
@@ -32,7 +24,7 @@ export const load = (async ({ params, parent }) => {
 		breadcrumbParams: [
 			...breadcrumbParams,
 			{
-				name: `編集`
+				name: `ユーザー編集`
 			}
 		]
 	};

@@ -7,11 +7,13 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
-	import Modal, { closeModal } from '$lib/components/Modal.svelte';
+	import Modal, { closeModal, showModal } from '$lib/components/Modal.svelte';
 	import Dropzone from '$lib/components/Dropzone.svelte';
 	import { addToast } from '$lib/components/Toast.svelte';
 	import { applyAction, enhance } from '$app/forms';
 	import { MIME_JSON } from '$lib/constants';
+	import { fields } from '$lib/fields';
+	import { onMount } from 'svelte';
 
 	const URL_USER_CREATE = `${$page.url.pathname}/create`;
 	const URL_USER_EDIT = (id: number) => `${$page.url.pathname}/${id}/edit`;
@@ -21,8 +23,47 @@
 	export let data: PageData;
 	export let form: ActionData | undefined;
 	let selectedFiles: FileList | undefined;
-	let textData: string | undefined;
-	let useEnhance = false;
+	let fileName: string | undefined;
+	let jsonData: string | undefined;
+
+	$: formReaction(form);
+	$: searchReaction(data.querySearch);
+	$: fileSelectReaction(selectedFiles);
+	const formReaction = (_form: ActionData | undefined) => {
+		if (form) {
+			console.log(`form reaction`);
+			if (form.success) {
+				closeModal(ID_IMPORT_USER);
+				addToast(form.message ?? '', 'alert-success');
+				selectedFiles = undefined;
+				jsonData = undefined;
+				fileName = undefined;
+			} else {
+				fileName = form.formData?.file;
+				jsonData = form.formData?.json;
+			}
+		}
+	};
+	const searchReaction = (_search: string) => {
+		console.log(`search reaction`);
+		refresh(false);
+	};
+	const fileSelectReaction = (_files: FileList | undefined) => {
+		if (selectedFiles && selectedFiles.length > 0 && selectedFiles[0]) {
+			console.log(`selectedFiles reaction`);
+			const file = selectedFiles[0];
+			file.text().then((value) => {
+				fileName = file.name;
+				jsonData = value;
+			});
+		}
+	};
+
+	onMount(() => {
+		if (form && !form.success) {
+			showModal(ID_IMPORT_USER);
+		}
+	});
 
 	const handleEscKey = (event: KeyboardEvent) => {
 		if (event.key == 'Escape') {
@@ -37,40 +78,11 @@
 		return '';
 	};
 
-	const showImportUserResult = () => {
-		console.log(`showImportUserResult`);
-		if (useEnhance) {
-			console.log(form);
-			if (form && form.success) {
-				closeModal(ID_IMPORT_USER);
-				addToast(form.message ?? '', 'alert-success');
-				selectedFiles = undefined;
-				textData = undefined;
-			}
-			// その他のエラーはモーダルに表示される
-		} else {
-			// モーダルは閉じられているので、トースト表示
-			if (form && form.message) {
-				if (form.success) {
-					addToast(form.message, 'alert-success');
-				} else {
-					addToast(form.message, 'alert-error');
-				}
-				if (form.errors) {
-					Object.keys(form.errors).map((key) => addToast(errorDetail(key), 'alert-error'));
-				}
-			}
-			form = undefined;
-		}
-	};
-	if (form) {
-		showImportUserResult();
-	}
-
 	const resetImportUserForm = () => {
 		console.log(`resetImportUserForm`);
 		selectedFiles = undefined;
-		textData = undefined;
+		jsonData = undefined;
+		fileName = undefined;
 		form = undefined;
 	};
 
@@ -79,27 +91,20 @@
 	}
 
 	function refresh(force: boolean, p = 1) {
-		const search = `?p=${p}&q=${encodeURIComponent(data.querySearch)}`;
-		if (force || search != $page.url.search) {
-			goto(`${$page.url.pathname}${search}`, {
-				keepFocus: true
-			});
+		if (browser) {
+			const search = `?p=${p}&q=${encodeURIComponent(data.querySearch)}`;
+			if (force || search != $page.url.search) {
+				goto(`${$page.url.pathname}${search}`, {
+					keepFocus: true
+				});
+			}
 		}
 	}
 
-	$: if (browser) {
-		data.querySearch;
-		refresh(false);
-	}
-
-	$: if (selectedFiles) {
-		setPreview(selectedFiles);
-	}
-	const setPreview = async (files: FileList) => {
-		const file = files[0];
-		if (file) {
-			textData = await file.text();
-		}
+	const handleImport = () => {
+		console.log(`handleImport`);
+		resetImportUserForm();
+		showModal(ID_IMPORT_USER);
 	};
 
 	const handleExport = async () => {
@@ -117,7 +122,6 @@
 			select: {
 				id: true,
 				username: true,
-				password: true,
 				sei: true,
 				mei: true,
 				seiKana: true,
@@ -153,10 +157,10 @@
 	>
 
 	<div class="flex gap-4">
-		<label for="upload" class="btn btn-primary gap-2">
+		<button class="btn btn-primary gap-2" on:click={handleImport}>
 			<Icon icon="mdi:upload" height="20" />
 			<span>インポート</span>
-		</label>
+		</button>
 		<button class="btn btn-primary gap-2" on:click={handleExport}>
 			<Icon icon="mdi:download" height="20" />
 			<span>エクスポート</span>
@@ -179,11 +183,11 @@
 			<!-- head -->
 			<thead>
 				<tr>
-					<th>ユーザー名</th>
+					<th>{fields.user.username.label}</th>
 					<th>氏名</th>
 					<th>氏名カナ</th>
-					<th>略称</th>
-					<th>表示名</th>
+					<th>{fields.user.abbrev.label}</th>
+					<th>{fields.user.displayName.label}</th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -225,26 +229,12 @@
 	<p>データがありません</p>
 {/if}
 
-<Modal id={ID_IMPORT_USER} class="w-2/3 {textData ? 'max-w-2xl' : ''}">
+<Modal id={ID_IMPORT_USER} class="w-2/3 {jsonData ? 'max-w-2xl' : ''}">
 	<h4 class="my-0">インポート</h4>
-	<form
-		on:keyup={handleEscKey}
-		method="POST"
-		use:enhance={() => {
-			useEnhance = true;
-
-			return async ({ result }) => {
-				console.log(result);
-				await applyAction(result);
-				showImportUserResult();
-			};
-		}}
-	>
-		{#if selectedFiles && selectedFiles.length > 0}
-			<p class="my-0">{selectedFiles[0].name}</p>
-			{#if textData !== undefined}
-				<pre class="my-0 h-[40vh] overflow-scroll">{textData}</pre>
-			{/if}
+	<form on:keyup={handleEscKey} method="POST" use:enhance>
+		{#if fileName && jsonData}
+			<p class="my-0">{fileName}</p>
+			<pre class="my-0 h-[40vh] overflow-scroll">{jsonData}</pre>
 			{#if form && !form.success && form.message}
 				<div class="my-4 p-2 bg-error text-error-content">
 					{form.message}
@@ -260,7 +250,8 @@
 			<div class="flex items-center justify-between w-full mt-4">
 				<button class="btn btn-default" on:click|preventDefault={resetImportUserForm}>再選択</button
 				>
-				<input type="hidden" name="json" value={textData} />
+				<input type="hidden" name="file" value={fileName} />
+				<input type="hidden" name="json" value={jsonData} />
 				<button class="btn btn-primary">インポート</button>
 			</div>
 		{:else}

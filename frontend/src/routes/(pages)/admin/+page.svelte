@@ -6,7 +6,8 @@
 	import Modal, { closeModal } from '$lib/components/Modal.svelte';
 	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
 	import { page } from '$app/stores';
-	import { URL_ADMIN_USERS } from '$lib/constants';
+	console.log(`/routes/(pages)/admin/+page.svelte`);
+	// console.log($page);
 
 	const ID_UPDATE_CACHE = 'update-cache-modal';
 	const URL_RESOURCE_CREATE = `${$page.url.pathname}/resources/create`;
@@ -74,11 +75,11 @@
 
 <h2>メニュー</h2>
 <div class="my-6 bg-base-300 p-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-	<h3 class="my-0"><a href={URL_ADMIN_USERS} class="link">ユーザー管理</a></h3>
+	<h3 class="my-0"><a href={`${$page.url.pathname}/users`} class="link">ユーザー管理</a></h3>
 </div>
 
 <div class="my-6 bg-base-300 p-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-	<h3 class="my-0"><a href={URL_RESOURCE_READ} class="link">リソース管理</a></h3>
+	<h3 class="my-0"><a href={`${$page.url.pathname}/resources`} class="link">リソース管理</a></h3>
 	<div class="flex gap-4 items-center">
 		<IconLinkButton icon="mdi:file-plus" href={URL_RESOURCE_CREATE} class="btn-accent"
 			>追加</IconLinkButton

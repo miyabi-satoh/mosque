@@ -58,6 +58,8 @@ DBMS ... PostgreSQL 15.x
 
 ## TODO
 
+- handleEscKey()を撲滅しよう
+  - ModalFormコンポーネント
 - office文書をpdfに変換する
 - ホスト経由での印刷
 - データ更新時にkeywordを生成して更新

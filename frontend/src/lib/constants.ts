@@ -2,11 +2,6 @@ export const COOKIE_SESSION = 'session';
 export const ID_MODALS = 'modals';
 export const MIME_JSON = 'application/json';
 
-export const themeName = {
-	light: 'light',
-	dark: 'dark'
-} as const;
-
 export const URL_ADMIN_USERS = `/admin/users`;
 export const URL_ADMIN_USERS_CREATE = `${URL_ADMIN_USERS}/create`;
 

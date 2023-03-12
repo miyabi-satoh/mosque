@@ -1,16 +1,16 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import type { User } from '@prisma/client';
 	import type { LayoutData } from './$types';
 	import DarkMode from './DarkMode.svelte';
 	import { page } from '$app/stores';
 	import '../app.postcss';
 	import Toast from '$lib/components/Toast.svelte';
-	import { API, ID_MODALS, MIME_JSON } from '$lib/constants';
+	import { ID_MODALS, MIME_JSON } from '$lib/constants';
 	import InputText from '$lib/components/form/InputText.svelte';
 	import Modal, { closeModal } from '$lib/components/Modal.svelte';
 	import { userType } from '$lib/user';
 	import { fields } from '$lib/fields';
+	import { invalidateAll } from '$app/navigation';
 	console.log(`/routes/+layout.svelte`);
 
 	const ID_LOGIN = 'login-modal';
@@ -48,19 +48,15 @@
 
 	const handleLogin = async () => {
 		loginError = '';
-		const res = await fetch(API.LOGIN, {
+		const res = await fetch(`/api/auth/login`, {
 			method: 'POST',
 			headers: { 'Content-Type': MIME_JSON, Accept: MIME_JSON },
 			body: JSON.stringify({ username, password })
 		});
 
 		if (res.ok) {
-			const user: User = await res.json();
-			if (user) {
-				// $userStore = user;
-				closeModal(ID_LOGIN);
-				window.location.reload();
-			}
+			closeModal(ID_LOGIN);
+			window.location.reload();
 		} else {
 			loginError = `ユーザー名またはパスワードが違います`;
 			window.document.getElementById(ID_USERNAME)?.focus();
@@ -68,8 +64,8 @@
 	};
 
 	const handleLogout = async () => {
-		await fetch(API.LOGOUT);
-		window.location.reload();
+		await fetch(`/api/auth/logout`);
+		invalidateAll();
 	};
 </script>
 
@@ -87,7 +83,7 @@
 						<span class="text-xl sm:text-3xl font-bold text-base-content uppercase">MOSQUE</span>
 					</a>
 				</div>
-				<div class="flex flex-none gap-2 mr-2">
+				<div class="flex flex-none gap-4 mr-2">
 					{#if data.user}
 						<div class="dropdown dropdown-end">
 							<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -120,8 +116,8 @@
 				<div class="flex-1 w-full prose max-w-4xl px-4 mx-auto">
 					<slot />
 				</div>
-				<div class="divider" />
-				<footer class="footer mt-2 mb-6 px-4 gap-y-0 sm:grid-flow-col">
+				<div class="divider my-2" />
+				<footer class="footer px-4 mb-2 gap-y-0 sm:grid-flow-col">
 					<div class="justify-self-center sm:justify-self-start">
 						© 2023 miyabi-satoh . All Rights Reserved.
 					</div>

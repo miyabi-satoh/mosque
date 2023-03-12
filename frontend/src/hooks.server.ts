@@ -2,7 +2,9 @@ import type { Handle } from '@sveltejs/kit';
 import { COOKIE_SESSION } from '$lib/constants';
 import { prisma } from '$lib/server/prisma';
 
+// cookieからユーザー情報を取得する
 export const handle: Handle = async ({ event, resolve }) => {
+	console.log(`/hooks.server.ts`);
 	const session = event.cookies.get(COOKIE_SESSION);
 	if (session) {
 		const user = await prisma.user.findUnique({

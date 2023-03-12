@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { URL_ADMIN_USERS } from '$lib/constants';
-import { exclude } from '$lib/utils';
+import { userPublicFields } from '$lib/user';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`/routes/(pages)/admin/users/[id=number]/delete/+page.server.ts`);
@@ -11,18 +11,19 @@ export const load = (async ({ params, parent }) => {
 	const user = await prisma.user.findUnique({
 		where: {
 			id: Number(params.id)
-		}
+		},
+		select: userPublicFields
 	});
 
 	return {
-		user: user ? exclude(user, ['password', 'token']) : null,
+		user: user,
 		pageMeta: {
 			title: `ユーザー削除`
 		},
 		breadcrumbParams: [
 			...breadcrumbParams,
 			{
-				name: `削除`
+				name: `ユーザー削除`
 			}
 		]
 	};
@@ -44,7 +45,6 @@ export const actions: Actions = {
 
 		if (!result) {
 			const message = `データベースの更新に失敗しました。`;
-			// console.log(message);
 			return { message };
 		}
 

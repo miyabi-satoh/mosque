@@ -14,6 +14,10 @@ export const POST = (async ({ request, cookies }) => {
 				provider: 'local',
 				confirmed: true,
 				blocked: false
+			},
+			select: {
+				id: true,
+				password: true
 			}
 		});
 		if (user && comparePassword(data.password, user.password ?? '')) {

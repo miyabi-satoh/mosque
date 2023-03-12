@@ -1,61 +1,48 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
 	import { addToast } from '$lib/components/Toast.svelte';
-	// import { userStore } from '$lib/user';
 	import { fields } from '$lib/fields';
+	import { enhance } from '$app/forms';
+	import InputText from '$lib/components/form/InputText.svelte';
+	console.log(`/routes/(pages)/(auth)/passwd/+page.svelte`);
 
 	export let data: PageData;
 	export let form: ActionData;
 	$: if (form?.message) {
-		addToast(form.message, 'alert-error');
-		// if (form.user) {
-		// 	$userStore = form.user;
-		// }
+		addToast(form.message, form.success ? 'alert-success' : 'alert-error');
 	}
 </script>
 
 {#if !data.user}
 	<p>このページはログインが必要です。</p>
 {:else}
-	<form method="POST">
+	<form method="POST" use:enhance>
 		<div class="flex flex-col gap-4">
-			<div class="flex flex-col sm:col-span-2">
-				<label for={fields.passwd.currentPassword.name}>{fields.passwd.currentPassword.label}</label
-				>
-				<input
-					type="password"
-					class="input input-bordered w-full"
-					id={fields.passwd.currentPassword.name}
-					name={fields.passwd.currentPassword.name}
-					required
-				/>
-			</div>
-			<div class="flex flex-col sm:col-span-2">
-				<label for={fields.passwd.newPassword.name}>
-					{fields.passwd.newPassword.label}
-					{fields.passwd.newPassword.helperText}
-				</label>
-				<input
-					type="password"
-					class="input input-bordered w-full"
-					id={fields.passwd.newPassword.name}
-					name={fields.passwd.newPassword.name}
-					minlength={fields.passwd.newPassword.minlength}
-					required
-				/>
-			</div>
-			<div class="flex flex-col sm:col-span-2">
-				<label for={fields.passwd.confirmPassword.name}>{fields.passwd.confirmPassword.label}</label
-				>
-				<input
-					type="password"
-					class="input input-bordered w-full"
-					id={fields.passwd.confirmPassword.name}
-					name={fields.passwd.confirmPassword.name}
-					required
-				/>
-			</div>
-			<div class="flex items-end">
+			<InputText
+				type="password"
+				name={fields.passwd.currentPassword.name}
+				required
+				errorMessage={form?.errors?.currentPassword}
+				>{fields.passwd.currentPassword.label}</InputText
+			>
+			<InputText
+				type="password"
+				name={fields.passwd.newPassword.name}
+				minlength={fields.passwd.newPassword.minlength}
+				required
+				errorMessage={form?.errors?.newPassword}
+			>
+				{fields.passwd.newPassword.label}
+				{fields.passwd.newPassword.helperText}
+			</InputText>
+			<InputText
+				type="password"
+				name={fields.passwd.confirmPassword.name}
+				required
+				errorMessage={form?.errors?.confirmPassword}
+				>{fields.passwd.confirmPassword.label}
+			</InputText>
+			<div>
 				<button class="btn btn-primary">更新</button>
 			</div>
 		</div>

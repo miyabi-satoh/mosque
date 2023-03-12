@@ -3,20 +3,19 @@ import { fail } from '@sveltejs/kit';
 import type { User } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { exclude, requestToObject } from '$lib/utils';
+import { requestToObject } from '$lib/utils';
+import { userPublicFields } from '$lib/user';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
 
 	const { breadcrumbParams } = await parent();
-	let user = await prisma.user.findUnique({
+	const user = await prisma.user.findUnique({
 		where: {
 			id: Number(params.id)
-		}
+		},
+		select: userPublicFields
 	});
-	if (user) {
-		user = exclude(user, ['password', 'token']) as User;
-	}
 
 	return {
 		user,

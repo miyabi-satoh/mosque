@@ -27,3 +27,16 @@ export const userType = {
 	admin: 2,
 	user: 0
 } as const;
+
+export const userPublicFields = {
+	id: true,
+	username: true,
+	blocked: true,
+	displayName: true,
+	sei: true,
+	mei: true,
+	seiKana: true,
+	meiKana: true,
+	abbrev: true,
+	type: true
+} as const;

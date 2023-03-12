@@ -2,8 +2,8 @@ import { boolean, number, object, string } from 'yup';
 import type { User } from '@prisma/client';
 import { encryptPassword } from './passwd';
 import { prisma } from './prisma';
-import { convertToKatakana, exclude, normalizeSearch } from '$lib/utils';
-import type { UserCreate, UserUpdate } from '$lib/user';
+import { convertToKatakana, normalizeSearch } from '$lib/utils';
+import { userPublicFields, type UserCreate, type UserUpdate } from '$lib/user';
 import { fields } from '$lib/fields';
 
 // パスワードのバリデーションスキーマ
@@ -143,7 +143,8 @@ export const updateUser = async (id: number, data: UserUpdate) => {
 	const userInDB = await prisma.user.findUnique({
 		where: {
 			id
-		}
+		},
+		select: userPublicFields
 	});
 	if (!userInDB) {
 		throw new Error(`対象のデータが見つかりませんでした。`);
@@ -151,7 +152,7 @@ export const updateUser = async (id: number, data: UserUpdate) => {
 
 	// マージ
 	const merged = {
-		...exclude(userInDB, ['password']),
+		...userInDB,
 		...data
 	} as UserUpdate;
 

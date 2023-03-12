@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit';
 import { ValidationError } from 'yup';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { userType, type UserUpdate } from '$lib/user';
+import { userPublicFields, userType, type UserUpdate } from '$lib/user';
 import { exclude, requestToObject, validationErrorToAssoc } from '$lib/utils';
 import { updateUser } from '$lib/server/user';
 
@@ -17,10 +17,11 @@ export const GET = (async ({ params, locals }) => {
 	const user = await prisma.user.findUnique({
 		where: {
 			id
-		}
+		},
+		select: userPublicFields
 	});
 	if (user) {
-		return json(exclude(user, ['password', 'token']));
+		return json(user);
 	}
 
 	throw error(400, 'ユーザーの取得に失敗しました。');

@@ -1,25 +1,8 @@
 import { ValidationError } from 'yup';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import { requestToObject, validationErrorToAssoc } from '$lib/utils';
 import { createUser } from '$lib/server/user';
 import type { UserCreate, UserPostErrors } from '$lib/user';
-
-export const load = (async ({ parent }) => {
-	console.log(`/routes/(pages)/admin/users/create/+page.server.ts`);
-	const { breadcrumbParams } = await parent();
-	return {
-		breadcrumbParams: [
-			...breadcrumbParams,
-			{
-				href: '',
-				name: 'ユーザー追加'
-			}
-		],
-		pageMeta: {
-			title: 'ユーザー追加'
-		}
-	};
-}) satisfies PageServerLoad;
 
 type ActionResult = {
 	success?: boolean;

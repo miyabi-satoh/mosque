@@ -1,10 +1,9 @@
 import { redirect } from '@sveltejs/kit';
-import type { User } from '@prisma/client';
 import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { exclude, requestToObject, validationErrorToAssoc, normalizeNumber } from '$lib/utils';
-import type { UserCreate, UserPostErrors, UserUpdate } from '$lib/user';
+import { requestToObject, validationErrorToAssoc, normalizeNumber } from '$lib/utils';
+import { userPublicFields, type UserCreate, type UserPostErrors, type UserUpdate } from '$lib/user';
 import { createUser, updateUser } from '$lib/server/user';
 
 const pageSize = 10;
@@ -36,7 +35,7 @@ export const load = (async ({ url }) => {
 	const where = {
 		AND: keywords
 	};
-	console.log(where);
+	// console.log(where);
 	const count = await prisma.user.count({ where });
 	const users = await prisma.user.findMany({
 		skip: (queryPage - 1) * pageSize,
@@ -46,25 +45,28 @@ export const load = (async ({ url }) => {
 				id: 'asc'
 			}
 		],
-		where
+		where,
+		select: userPublicFields
 	});
 
 	return {
 		queryPage,
 		querySearch,
-		users: users.map((user) => exclude(user, ['password', 'token'])) as User[],
+		users,
 		pageSize,
 		count
 	};
 }) satisfies PageServerLoad;
 
 type FormData = {
+	file: string;
 	json: string;
 };
 
 type ActionResult = {
 	success?: boolean;
 	message?: string;
+	formData?: FormData;
 	errors?: UserPostErrors;
 };
 
@@ -92,10 +94,10 @@ export const actions: Actions = {
 				if (err instanceof ValidationError) {
 					const message = `${progress}件目の入力データに不備があります。`;
 					const errors = validationErrorToAssoc(err);
-					return { message, errors };
+					return { message, formData, errors };
 				} else if (err instanceof Error) {
 					const message = err.message;
-					return { message };
+					return { message, formData };
 				}
 			}
 		}

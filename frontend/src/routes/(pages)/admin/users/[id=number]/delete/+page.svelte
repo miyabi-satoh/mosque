@@ -3,12 +3,13 @@
 	import { addToast } from '$lib/components/Toast.svelte';
 	import { URL_ADMIN_USERS } from '$lib/constants';
 	import { fields } from '$lib/fields';
+	import { enhance } from '$app/forms';
 
 	console.log(`/routes/(pages)/admin/users/[id=number]/delete/+page.svelte`);
 	export let data: PageData;
 	export let form: ActionData;
 
-	if (form && form.message) {
+	$: if (form && form.message) {
 		addToast(form.message, `alert-error`);
 	}
 </script>
@@ -19,7 +20,7 @@
 		よろしいですか？
 	</p>
 	<div class="flex gap-4">
-		<form method="POST">
+		<form method="POST" use:enhance>
 			<button class="btn btn-error">削除する</button>
 		</form>
 		<a href={URL_ADMIN_USERS} class="btn btn-default">キャンセル</a>

@@ -1,17 +1,31 @@
 <script lang="ts" context="module">
+	import { browser } from '$app/environment';
+
 	export const toggleModal = (id: string) => {
-		window.document.getElementById(id)?.click();
+		if (browser) {
+			window.document.getElementById(id)?.click();
+		} else {
+			console.error(`no window`);
+		}
 	};
 	export const closeModal = (id: string) => {
-		const el = window.document.getElementById(id);
-		if (el) {
-			(el as HTMLInputElement).checked = false;
+		if (browser) {
+			const el = window.document.getElementById(id);
+			if (el) {
+				(el as HTMLInputElement).checked = false;
+			}
+		} else {
+			console.error(`no window`);
 		}
 	};
 	export const showModal = (id: string) => {
-		const el = window.document.getElementById(id);
-		if (el) {
-			(el as HTMLInputElement).checked = true;
+		if (browser) {
+			const el = window.document.getElementById(id);
+			if (el) {
+				(el as HTMLInputElement).checked = true;
+			}
+		} else {
+			console.error(`no window`);
 		}
 	};
 </script>

@@ -4,13 +4,20 @@
 	import type { UserCreate, UserPostErrors } from '$lib/user';
 	import { page } from '$app/stores';
 	import { fields } from '$lib/fields';
+	import { enhance } from '$app/forms';
 
 	export let data: UserCreate | undefined;
 	export let errors: UserPostErrors | undefined;
-	// console.log($page);
 </script>
 
-<form method="post">
+<form
+	method="post"
+	use:enhance={() => {
+		return async ({ update }) => {
+			await update({ reset: false });
+		};
+	}}
+>
 	<div class="grid gap-4 grid-cols-2">
 		<div class="col-span-2 sm:col-span-1">
 			<InputText
@@ -19,7 +26,8 @@
 				maxlength={fields.user.username.maxlength}
 				value={data?.username}
 				required
-				errorMessage={errors?.username}>{fields.user.username.label}</InputText
+				errorMessage={errors?.username}
+				>{fields.user.username.label}{fields.user.username.helperText}</InputText
 			>
 		</div>
 		<div class="col-span-2 sm:col-span-1">

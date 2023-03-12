@@ -1,8 +1,8 @@
 import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
-import { exclude, requestToObject, validationErrorToAssoc } from '$lib/utils';
+import { requestToObject, validationErrorToAssoc } from '$lib/utils';
 import { updateUser } from '$lib/server/user';
-import type { UserPostErrors, UserUpdate } from '$lib/user';
+import { userPublicFields, type UserPostErrors, type UserUpdate } from '$lib/user';
 import { prisma } from '$lib/server/prisma';
 
 export const load = (async ({ locals }) => {
@@ -10,10 +10,11 @@ export const load = (async ({ locals }) => {
 	const user = await prisma.user.findUnique({
 		where: {
 			id: locals.user.id
-		}
+		},
+		select: userPublicFields
 	});
 	return {
-		me: user ? exclude(user, ['password', 'token']) : null
+		me: user
 	};
 }) satisfies PageServerLoad;
 
@@ -45,8 +46,10 @@ export const actions: Actions = {
 			}
 		}
 
+		const message = `更新しました。`;
 		return {
 			success: true,
+			message,
 			formData
 		};
 	}

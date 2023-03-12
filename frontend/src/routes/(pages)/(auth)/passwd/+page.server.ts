@@ -31,6 +31,9 @@ export const actions: Actions = {
 		const user = await prisma.user.findUnique({
 			where: {
 				id: locals.user.id
+			},
+			select: {
+				password: true
 			}
 		});
 		const formData: FormData = await requestToObject(request);
@@ -58,17 +61,6 @@ export const actions: Actions = {
 				password: validated.newPassword
 			};
 			const _result = await updateUser(locals.user.id, data);
-			// const result = await prisma.user.update({
-			// 	where: {
-			// 		id: locals.user.id
-			// 	},
-			// 	data: {
-			// 		password: encryptPassword(validated.newPassword)
-			// 	}
-			// });
-			// if (!result) {
-			// 	throw new Error(`データベースの更新に失敗しました。`);
-			// }
 		} catch (err) {
 			if (err instanceof ValidationError) {
 				const message = `入力データに不備があります。`;
@@ -80,8 +72,10 @@ export const actions: Actions = {
 			}
 		}
 
+		const message = `更新しました。`;
 		return {
 			success: true,
+			message,
 			formData
 		};
 	}

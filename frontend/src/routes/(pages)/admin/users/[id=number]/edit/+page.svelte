@@ -9,16 +9,21 @@
 	export let form: ActionData;
 	let userData: UserCreate;
 
-	if (form) {
-		if (form.success) {
-			addToast(`ユーザー${form.formData.username}を保存しました。`, `alert-success`);
-		} else if (form.message) {
-			addToast(form.message, `alert-error`);
+	$: formReaction(form);
+
+	const formReaction = (_form: ActionData) => {
+		if (form) {
+			console.log('form reaction');
+			if (form.success) {
+				addToast(`ユーザー${form.formData.username}を保存しました。`, `alert-success`);
+			} else if (form.message) {
+				addToast(form.message, `alert-error`);
+			}
+			userData = form.formData;
+		} else if (data.user) {
+			userData = { ...data.user, password: '' };
 		}
-		userData = form.formData;
-	} else if (data.user) {
-		userData = data.user as UserCreate;
-	}
+	};
 </script>
 
 {#if userData}

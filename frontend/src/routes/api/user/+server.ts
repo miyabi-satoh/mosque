@@ -2,8 +2,8 @@ import { error, json } from '@sveltejs/kit';
 import { ValidationError } from 'yup';
 import type { RequestHandler } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { userType, type UserCreate } from '$lib/user';
-import { exclude, requestToObject, validationErrorToAssoc } from '$lib/utils';
+import { userPublicFields, userType, type UserCreate } from '$lib/user';
+import { requestToObject, validationErrorToAssoc } from '$lib/utils';
 import { createUser } from '$lib/server/user';
 
 // GET: ユーザーリストを返す
@@ -15,9 +15,12 @@ export const GET = (async ({ url, locals }) => {
 
 	const filter = url.searchParams.get('filter') ?? '';
 	const objFilter = filter ? JSON.parse(decodeURIComponent(filter)) : {};
-	const users = await prisma.user.findMany(objFilter);
+	const users = await prisma.user.findMany({
+		...objFilter,
+		select: userPublicFields
+	});
 	if (users) {
-		return json(users.map((user) => exclude(user, ['password', 'token'])));
+		return json(users);
 	}
 
 	throw error(400, 'ユーザーリストの取得に失敗しました。');
