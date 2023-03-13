@@ -7,30 +7,30 @@
 	import Pagination from '$lib/components/organisms/Pagination.svelte';
 
 	export let data: PageData;
-	let stateSearchTerm = data.querySearch;
+	$: searchReaction(data.querySearch);
+	const searchReaction = (_search: string) => {
+		refresh();
+	};
 
 	function movePage(event: CustomEvent<number>) {
 		refresh(event.detail);
 	}
 
 	function refresh(p = 1) {
-		const search = `?p=${p}&q=${encodeURIComponent(stateSearchTerm)}`;
-		if (search != $page.url.search) {
-			goto(`${$page.url.pathname}${search}`, {
-				keepFocus: true
-			});
+		if (browser) {
+			const search = `?p=${p}&q=${encodeURIComponent(data.querySearch)}`;
+			if (search != $page.url.search) {
+				goto(`${$page.url.pathname}${search}`, {
+					keepFocus: true
+				});
+			}
 		}
-	}
-
-	$: if (browser) {
-		stateSearchTerm;
-		refresh();
 	}
 </script>
 
 <div class="py-4 flex flex-col md:flex-row gap-2">
 	<input
-		bind:value={stateSearchTerm}
+		bind:value={data.querySearch}
 		type="text"
 		placeholder="Search keywords..."
 		class="input input-bordered md:flex-1"

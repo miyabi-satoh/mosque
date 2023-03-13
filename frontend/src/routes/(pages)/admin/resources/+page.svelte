@@ -12,8 +12,8 @@
 	import { addToast } from '$lib/components/organisms/Toast.svelte';
 	import IconLinkButton from '$lib/components/molecules/IconLinkButton.svelte';
 	import IconButton from '$lib/components/molecules/IconButton.svelte';
-	import Search from '$lib/components/atoms/Search.svelte';
 	import Pagination from '$lib/components/organisms/Pagination.svelte';
+	import { Search } from '$lib/components';
 
 	console.log(`/routes/(pages)/admin/resources/+page.svelte`);
 	const URL_EDIT = (id: number) => `${URL_ADMIN_RESOURCES}/${id}/edit`;

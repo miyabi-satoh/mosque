@@ -13,9 +13,9 @@
 	import Modal, { closeModal, showModal } from '$lib/components/organisms/Modal.svelte';
 	import { addToast } from '$lib/components/organisms/Toast.svelte';
 	import IconLinkButton from '$lib/components/molecules/IconLinkButton.svelte';
-	import Search from '$lib/components/atoms/Search.svelte';
 	import Pagination from '$lib/components/organisms/Pagination.svelte';
 	import Dropzone from '$lib/components/organisms/Dropzone.svelte';
+	import { Search } from '$lib/components';
 
 	const URL_EDIT = (id: number) => `${URL_ADMIN_USERS}/${id}/edit`;
 	const URL_DELETE = (id: number) => `${URL_ADMIN_USERS}/${id}/delete`;
@@ -208,7 +208,7 @@
 	<p>データがありません</p>
 {/if}
 
-<Modal id={ID_IMPORT_USER} class="w-2/3 {jsonData ? 'max-w-2xl' : ''}">
+<Modal id={ID_IMPORT_USER} class="w-11/12 max-w-4xl">
 	<h4 class="my-0">インポート</h4>
 	<form on:keyup={handleEscKey} method="POST" use:enhance>
 		{#if fileName && jsonData}

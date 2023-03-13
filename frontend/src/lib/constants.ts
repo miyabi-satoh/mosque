@@ -25,6 +25,18 @@ export const MSG = {
 	SAVE_OK: (text = '') => `${text ? '"' + text + '"を' : ''}保存しました。`
 } as const;
 
+type StatusType = {
+	code: number;
+	message: string;
+};
+export const Status = {
+	BadRequest: { code: 400, message: 'リクエストが不正です。' },
+	Unauthorized: { code: 401, message: 'ログインが必要です。' },
+	Forbidden: { code: 403, message: 'アクセスが禁止されています。' },
+	NotFound: { code: 404, message: 'ページが見つかりませんでした。' },
+	MethodNotAllowed: { code: 405, message: '権限がありません。' }
+} as const satisfies Record<string, StatusType>;
+
 export const hankakuToZenkakuKatakanaMap: Record<string, string> = {
 	ｧ: 'ァ',
 	ｨ: 'ィ',

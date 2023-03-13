@@ -12,8 +12,10 @@
 	class="flex flex-col items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer"
 >
 	<div class="flex flex-col items-center justify-center p-6">
-		<Icon icon="mdi:cloud-upload-outline" height="auto" />
-		<p class="text-sm">
+		<div>
+			<Icon icon="mdi:cloud-upload-outline" height="64" />
+		</div>
+		<p class="text-sm mt-4">
 			ここにファイルをドロップするか、クリックしてファイルを選択。
 			{#if $$slots.default}
 				<br />

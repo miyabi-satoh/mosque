@@ -9,9 +9,12 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	$: if (form && form.message) {
-		addToast(form.message, `alert-error`);
-	}
+	$: formReaction(form);
+	const formReaction = (_form: ActionData) => {
+		if (form?.message) {
+			addToast(form.message, `alert-error`);
+		}
+	};
 </script>
 
 {#if data.user}

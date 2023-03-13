@@ -22,7 +22,7 @@
 		};
 	}}
 >
-	<div class="grid gap-4 grid-cols-2">
+	<div class="grid gap-x-4 grid-cols-2">
 		<div class="col-span-2 sm:col-span-1">
 			<InputText
 				name={fields.user.username.name}
@@ -30,7 +30,8 @@
 				maxlength={fields.user.username.maxlength}
 				value={data?.username}
 				required
-				errorMessage={errors?.username}
+				error={!!errors?.username}
+				helperText={errors?.username}
 				>{fields.user.username.label}{fields.user.username.helperText}</InputText
 			>
 		</div>
@@ -40,7 +41,8 @@
 				minlength={fields.user.password.minlength}
 				type="password"
 				required={!$page.params.id}
-				errorMessage={errors?.password}
+				error={!!errors?.password}
+				helperText={errors?.password}
 				>{fields.user.password.label}
 				{#if $page.params.id}
 					(変更する場合に入力)
@@ -53,7 +55,8 @@
 				maxlength={fields.user.displayName.maxlength}
 				value={data?.displayName}
 				required
-				errorMessage={errors?.displayName}
+				error={!!errors?.displayName}
+				helperText={errors?.displayName}
 				>{fields.user.displayName.label}{fields.user.displayName.helperText}</InputText
 			>
 		</div>
@@ -63,17 +66,30 @@
 				maxlength={fields.user.abbrev.maxlength}
 				value={data?.abbrev}
 				required
-				errorMessage={errors?.abbrev}
+				error={!!errors?.abbrev}
+				helperText={errors?.abbrev}
 				>{fields.user.abbrev.label}{fields.user.abbrev.helperText}</InputText
 			>
 		</div>
 		<div>
-			<InputText name={fields.user.sei.name} value={data?.sei} required errorMessage={errors?.sei}>
+			<InputText
+				name={fields.user.sei.name}
+				value={data?.sei}
+				required
+				error={!!errors?.sei}
+				helperText={errors?.sei}
+			>
 				{fields.user.sei.label}</InputText
 			>
 		</div>
 		<div>
-			<InputText name={fields.user.mei.name} value={data?.mei} required errorMessage={errors?.mei}>
+			<InputText
+				name={fields.user.mei.name}
+				value={data?.mei}
+				required
+				error={!!errors?.mei}
+				helperText={errors?.mei}
+			>
 				{fields.user.mei.label}</InputText
 			>
 		</div>
@@ -82,7 +98,8 @@
 				name={fields.user.seiKana.name}
 				value={data?.seiKana}
 				required
-				errorMessage={errors?.seiKana}>{fields.user.seiKana.label}</InputText
+				error={!!errors?.seiKana}
+				helperText={errors?.seiKana}>{fields.user.seiKana.label}</InputText
 			>
 		</div>
 		<div>
@@ -90,7 +107,8 @@
 				name={fields.user.meiKana.name}
 				value={data?.meiKana}
 				required
-				errorMessage={errors?.meiKana}>{fields.user.meiKana.label}</InputText
+				error={!!errors?.meiKana}
+				helperText={errors?.meiKana}>{fields.user.meiKana.label}</InputText
 			>
 		</div>
 		<div class="form-control">
@@ -101,7 +119,7 @@
 				{/each}
 			</select>
 		</div>
-		<div class="form-control justify-center">
+		<div class="form-control justify-center pt-9">
 			<label class="label cursor-pointer justify-start gap-2">
 				<input
 					type="checkbox"

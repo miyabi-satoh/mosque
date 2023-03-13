@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Breadcrumb from '$lib/components/organisms/Breadcrumb.svelte';
+	import { Breadcrumb } from '$lib/components';
 
 	console.log(`/routes/(pages)/+layout.svelte`);
 </script>

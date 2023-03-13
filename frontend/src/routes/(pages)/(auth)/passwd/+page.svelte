@@ -8,9 +8,13 @@
 
 	export let data: PageData;
 	export let form: ActionData;
-	$: if (form?.message) {
-		addToast(form.message, form.success ? 'alert-success' : 'alert-error');
-	}
+
+	$: formReaction(form);
+	const formReaction = (_form: ActionData) => {
+		if (form?.message) {
+			addToast(form.message, form.success ? 'alert-success' : 'alert-error');
+		}
+	};
 </script>
 
 {#if !data.user}
@@ -22,15 +26,14 @@
 				type="password"
 				name={fields.passwd.currentPassword.name}
 				required
-				errorMessage={form?.errors?.currentPassword}
-				>{fields.passwd.currentPassword.label}</InputText
+				helperText={form?.errors?.currentPassword}>{fields.passwd.currentPassword.label}</InputText
 			>
 			<InputText
 				type="password"
 				name={fields.passwd.newPassword.name}
 				minlength={fields.passwd.newPassword.minlength}
 				required
-				errorMessage={form?.errors?.newPassword}
+				helperText={form?.errors?.newPassword}
 			>
 				{fields.passwd.newPassword.label}
 				{fields.passwd.newPassword.helperText}
@@ -39,7 +42,7 @@
 				type="password"
 				name={fields.passwd.confirmPassword.name}
 				required
-				errorMessage={form?.errors?.confirmPassword}
+				helperText={form?.errors?.confirmPassword}
 				>{fields.passwd.confirmPassword.label}
 			</InputText>
 			<div>

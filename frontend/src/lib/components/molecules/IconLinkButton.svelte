@@ -11,6 +11,6 @@
 <a {href} class="btn gap-2 {className}" on:click>
 	<Icon {icon} height={iconHeight} />
 	{#if $$slots.default}
-		<span><slot /></span>
+		<slot />
 	{/if}
 </a>

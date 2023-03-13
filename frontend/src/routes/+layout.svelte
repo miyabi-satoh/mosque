@@ -4,13 +4,9 @@
 	import DarkMode from './DarkMode.svelte';
 	import { page } from '$app/stores';
 	import '../app.postcss';
-	import { API, ID_MODALS, MIME_JSON } from '$lib/constants';
-	import { userType } from '$lib/user';
-	import { fields } from '$lib/fields';
 	import { invalidateAll } from '$app/navigation';
-	import Modal, { closeModal } from '$lib/components/organisms/Modal.svelte';
-	import Toast from '$lib/components/organisms/Toast.svelte';
-	import InputText from '$lib/components/molecules/InputText.svelte';
+	import { closeModal, InputText, Modal, Toast } from '$lib/components';
+	import { API, fields, ID_MODALS, MIME_JSON, userType } from '$lib';
 	console.log(`/routes/+layout.svelte`);
 
 	const ID_LOGIN = 'login-modal';

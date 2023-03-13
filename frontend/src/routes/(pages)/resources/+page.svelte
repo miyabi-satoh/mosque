@@ -7,26 +7,24 @@
 	import Pagination from '$lib/components/organisms/Pagination.svelte';
 
 	export let data: PageData;
-
-	let stateSearchTerm = data.querySearch;
-	$: stateResources = data.resources;
+	$: searchReaction(data.querySearch);
+	const searchReaction = (_search: string) => {
+		refresh();
+	};
 
 	function movePage(event: CustomEvent<number>) {
 		refresh(event.detail);
 	}
 
 	function refresh(p = 1) {
-		const search = `?p=${p}&q=${encodeURIComponent(stateSearchTerm)}`;
-		if (search != $page.url.search) {
-			goto(`${$page.url.pathname}${search}`, {
-				keepFocus: true
-			});
+		if (browser) {
+			const search = `?p=${p}&q=${encodeURIComponent(data.querySearch)}`;
+			if (search != $page.url.search) {
+				goto(`${$page.url.pathname}${search}`, {
+					keepFocus: true
+				});
+			}
 		}
-	}
-
-	$: if (browser) {
-		stateSearchTerm;
-		refresh();
 	}
 
 	const handleClick = async (id: number) => {
@@ -38,7 +36,7 @@
 
 <div class="py-4 flex flex-col md:flex-row gap-2">
 	<input
-		bind:value={stateSearchTerm}
+		bind:value={data.querySearch}
 		type="text"
 		placeholder="Search keywords..."
 		class="input input-bordered md:flex-1"
@@ -47,7 +45,7 @@
 
 {#if data.count > 0}
 	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 not-prose">
-		{#each stateResources as resource (resource.id)}
+		{#each data.resources as resource (resource.id)}
 			<a
 				class="card card-compact border-2 border-base-200 bg-base-300/25 hover:bg-gray-300/10 transition-all duration-200 hover:shadow hover:-translate-y-1"
 				href="{$page.url.pathname}/{resource.id}"

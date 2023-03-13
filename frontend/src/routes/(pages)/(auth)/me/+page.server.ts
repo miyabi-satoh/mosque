@@ -1,22 +1,24 @@
+import { error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { errorToResult, requestToObject } from '$lib/utils';
 import { updateUser } from '$lib/server/user';
 import { userPublicFields, type UserUpdate } from '$lib/user';
 import { prisma } from '$lib/server/prisma';
 import type { ActionResult } from '$lib/types';
-import { MSG } from '$lib/constants';
+import { MSG, Status } from '$lib/constants';
 
 export const load = (async ({ locals }) => {
 	console.log(`/routes/(pages)/(auth)/me/+page.server.ts`);
-	const user = await prisma.user.findUnique({
+	const me = await prisma.user.findUnique({
 		where: {
 			id: locals.user.id
 		},
 		select: userPublicFields
 	});
-	return {
-		me: user
-	};
+	if (me) {
+		return { me };
+	}
+	throw error(Status.Unauthorized.code, Status.Unauthorized.message);
 }) satisfies PageServerLoad;
 
 type Result = ActionResult<UserUpdate>;

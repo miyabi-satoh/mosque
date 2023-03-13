@@ -9,7 +9,7 @@
 	import Textarea from '../molecules/Textarea.svelte';
 	import IconLinkButton from '../molecules/IconLinkButton.svelte';
 	import IconButton from '../molecules/IconButton.svelte';
-	import Search from '../atoms/Search.svelte';
+	import { Search } from '..';
 
 	type Schema = ResourceUpdate;
 	export let data: Schema | undefined;
@@ -37,14 +37,14 @@
 				name={fields.resource.title.name}
 				value={data?.title}
 				required
-				errorMessage={errors?.title}>{fields.resource.title.label}</InputText
+				helperText={errors?.title}>{fields.resource.title.label}</InputText
 			>
 		</div>
 		<div class="col-span-2 sm:col-span-1">
 			<Textarea
 				name={fields.resource.description.name}
 				value={data?.description}
-				errorMessage={errors?.description}
+				helperText={errors?.description}
 				>{fields.resource.description.label}
 			</Textarea>
 		</div>
