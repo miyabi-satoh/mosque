@@ -2,6 +2,23 @@ import { ValidationError } from 'yup';
 import { hankakuToZenkakuKatakanaMap } from './constants';
 import type { ActionResult } from './types';
 
+// 複数語を重複なく半角スペースで連結
+export const createKeywords = (...keywords: string[]) => {
+	return normalizeSearch(keywords.join(' '))
+		.replaceAll(',', ' ')
+		.replaceAll('.', ' ')
+		.replaceAll('/', ' ')
+		.split(' ')
+		.filter((term) => term.length > 0)
+		.sort((a, b) => b.length - a.length)
+		.reduce((prev, cur) => {
+			if (!prev.includes(cur)) {
+				return `${prev} ${cur}`;
+			}
+			return prev;
+		}, '');
+};
+
 export const filterWords = (text: string) => {
 	return normalizeSearch(text)
 		.split(' ')
