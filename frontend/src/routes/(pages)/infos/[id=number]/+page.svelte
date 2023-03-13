@@ -1,6 +1,6 @@
 <script lang="ts">
+	import Markdown from '$lib/components/organisms/Markdown.svelte';
 	import type { PageData } from './$types';
-	import Markdown from '$lib/components/Markdown.svelte';
 
 	export let data: PageData;
 	$: source = data.info.text ?? '';

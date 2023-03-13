@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { formatDate } from '$lib/utils';
-	import Markdown from '$lib/components/Markdown.svelte';
-	import ScheduleItem from '$lib/components/ScheduleItem.svelte';
+	import Markdown from '$lib/components/organisms/Markdown.svelte';
+	import ScheduleItem from '$lib/components/organisms/ScheduleItem.svelte';
 
 	export let data: PageData;
 	$: pageMeta = data.pageMeta;

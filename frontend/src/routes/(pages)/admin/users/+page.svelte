@@ -4,18 +4,18 @@
 	import type { ActionData, PageData } from './$types';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
-	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
-	import Modal, { closeModal, showModal } from '$lib/components/Modal.svelte';
-	import Dropzone from '$lib/components/Dropzone.svelte';
-	import { addToast } from '$lib/components/Toast.svelte';
 	import { enhance } from '$app/forms';
 	import { API, MIME_JSON, URL_ADMIN_USERS, URL_ADMIN_USERS_CREATE } from '$lib/constants';
 	import { fields } from '$lib/fields';
 	import { onMount } from 'svelte';
-	import Search from '$lib/components/form/Search.svelte';
 	import { userPublicFields, userType, userTypeString } from '$lib/user';
+	import Modal, { closeModal, showModal } from '$lib/components/organisms/Modal.svelte';
+	import { addToast } from '$lib/components/organisms/Toast.svelte';
+	import IconLinkButton from '$lib/components/molecules/IconLinkButton.svelte';
+	import Search from '$lib/components/atoms/Search.svelte';
+	import Pagination from '$lib/components/organisms/Pagination.svelte';
+	import Dropzone from '$lib/components/organisms/Dropzone.svelte';
 
 	const URL_EDIT = (id: number) => `${URL_ADMIN_USERS}/${id}/edit`;
 	const URL_DELETE = (id: number) => `${URL_ADMIN_USERS}/${id}/delete`;

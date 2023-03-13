@@ -2,9 +2,9 @@
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
 	import { API } from '$lib/constants';
+	import Pagination from '$lib/components/organisms/Pagination.svelte';
 
 	export let data: PageData;
 

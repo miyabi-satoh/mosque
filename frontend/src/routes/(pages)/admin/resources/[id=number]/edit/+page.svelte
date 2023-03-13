@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ResourceForm from '$lib/components/form/ResourceForm.svelte';
+	import ResourceForm from '$lib/components/organisms/ResourceForm.svelte';
 	import { MSG } from '$lib/constants';
 	import type { ResourceUpdate } from '$lib/resource';
 	import type { ActionData, PageData } from './$types';

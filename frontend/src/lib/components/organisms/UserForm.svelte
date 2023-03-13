@@ -1,13 +1,13 @@
 <script lang="ts">
-	import IconButton from './IconButton.svelte';
-	import InputText from './InputText.svelte';
 	import { userType, userTypeString, type UserUpdate } from '$lib/user';
 	import { page } from '$app/stores';
 	import { fields } from '$lib/fields';
 	import { enhance } from '$app/forms';
 	import type { PostErros } from '$lib/types';
-	import IconLinkButton from './IconLinkButton.svelte';
 	import { URL_ADMIN_USERS } from '$lib/constants';
+	import InputText from '../molecules/InputText.svelte';
+	import IconLinkButton from '../molecules/IconLinkButton.svelte';
+	import IconButton from '../molecules/IconButton.svelte';
 
 	type Schema = UserUpdate;
 	export let data: Schema | undefined;

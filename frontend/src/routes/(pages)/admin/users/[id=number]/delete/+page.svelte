@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import { addToast } from '$lib/components/Toast.svelte';
 	import { MSG, URL_ADMIN_USERS } from '$lib/constants';
 	import { fields } from '$lib/fields';
 	import { enhance } from '$app/forms';
+	import { addToast } from '$lib/components/organisms/Toast.svelte';
 
 	console.log(`/routes/(pages)/admin/users/[id=number]/delete/+page.svelte`);
 	export let data: PageData;

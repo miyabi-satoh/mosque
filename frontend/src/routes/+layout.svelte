@@ -4,13 +4,13 @@
 	import DarkMode from './DarkMode.svelte';
 	import { page } from '$app/stores';
 	import '../app.postcss';
-	import Toast from '$lib/components/Toast.svelte';
 	import { API, ID_MODALS, MIME_JSON } from '$lib/constants';
-	import InputText from '$lib/components/form/InputText.svelte';
-	import Modal, { closeModal } from '$lib/components/Modal.svelte';
 	import { userType } from '$lib/user';
 	import { fields } from '$lib/fields';
 	import { invalidateAll } from '$app/navigation';
+	import Modal, { closeModal } from '$lib/components/organisms/Modal.svelte';
+	import Toast from '$lib/components/organisms/Toast.svelte';
+	import InputText from '$lib/components/molecules/InputText.svelte';
 	console.log(`/routes/+layout.svelte`);
 
 	const ID_LOGIN = 'login-modal';

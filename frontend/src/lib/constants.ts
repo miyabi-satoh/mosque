@@ -6,7 +6,7 @@ export const URL_ADMIN_USERS = `/admin/users`;
 export const URL_ADMIN_USERS_CREATE = `${URL_ADMIN_USERS}/create`;
 export const URL_ADMIN_RESOURCES = `/admin/resources`;
 export const URL_ADMIN_RESOURCES_CREATE = `${URL_ADMIN_RESOURCES}/create`;
-export const URL_ADMIN_DBMAINTE = '/admin/dbmainte/';
+export const URL_ADMIN_DBMAINTE = '/admin/dbmainte';
 export const URL_EDIT = (base: string, id: number | undefined) => `${base}/${id}/edit`;
 export const URL_DELETE = (base: string, id: number | undefined) => `${base}/${id}/delete`;
 

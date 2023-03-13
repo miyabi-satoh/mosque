@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { ActionData } from './$types';
 	import type { PageData } from './$types';
-	import { addToast } from '$lib/components/Toast.svelte';
 	import { fields } from '$lib/fields';
-	import InputText from '$lib/components/form/InputText.svelte';
 	import { enhance } from '$app/forms';
 	import { MSG } from '$lib/constants';
+	import { addToast } from '$lib/components/organisms/Toast.svelte';
+	import InputText from '$lib/components/molecules/InputText.svelte';
 	console.log(`/routes/(pages)/(auth)/me/+page.svelte`);
 
 	export let data: PageData;

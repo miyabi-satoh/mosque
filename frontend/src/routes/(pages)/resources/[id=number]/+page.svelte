@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { addToast } from '$lib/components/organisms/Toast.svelte';
 	import type { PageData } from './$types';
-	import { addToast } from '$lib/components/Toast.svelte';
 
 	export let data: PageData;
 	let objContainerClass = '';

@@ -3,9 +3,9 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { formatDate } from '$lib/utils';
-	import Pagination from '$lib/components/Pagination.svelte';
-	import ScheduleItem from '$lib/components/ScheduleItem.svelte';
 	import { browser } from '$app/environment';
+	import Pagination from '$lib/components/organisms/Pagination.svelte';
+	import ScheduleItem from '$lib/components/organisms/ScheduleItem.svelte';
 
 	export let data: PageData;
 

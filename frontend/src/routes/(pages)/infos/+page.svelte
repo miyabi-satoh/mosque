@@ -3,8 +3,8 @@
 	import { page } from '$app/stores';
 	import { formatDate } from '$lib/utils';
 	import { goto } from '$app/navigation';
-	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
+	import Pagination from '$lib/components/organisms/Pagination.svelte';
 
 	export let data: PageData;
 	let stateSearchTerm = data.querySearch;

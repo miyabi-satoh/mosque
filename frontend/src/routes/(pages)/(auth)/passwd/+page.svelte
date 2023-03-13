@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import { addToast } from '$lib/components/Toast.svelte';
 	import { fields } from '$lib/fields';
 	import { enhance } from '$app/forms';
-	import InputText from '$lib/components/form/InputText.svelte';
+	import { addToast } from '$lib/components/organisms/Toast.svelte';
+	import InputText from '$lib/components/molecules/InputText.svelte';
 	console.log(`/routes/(pages)/(auth)/passwd/+page.svelte`);
 
 	export let data: PageData;

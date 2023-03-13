@@ -1,24 +1,23 @@
 <script lang="ts">
-	import IconButton from './IconButton.svelte';
-	import InputText from './InputText.svelte';
 	import { fields } from '$lib/fields';
 	import { enhance } from '$app/forms';
 	import type { ResourceUpdate } from '$lib/resource';
-	import Textarea from './Textarea.svelte';
 	import type { PostErros } from '$lib/types';
-	import IconLinkButton from './IconLinkButton.svelte';
 	import { URL_ADMIN_RESOURCES } from '$lib/constants';
 	import type { Asset } from '@prisma/client';
-	import Search from './Search.svelte';
-	import { normalizeSearch } from '$lib/utils';
+	import InputText from '../molecules/InputText.svelte';
+	import Textarea from '../molecules/Textarea.svelte';
+	import IconLinkButton from '../molecules/IconLinkButton.svelte';
+	import IconButton from '../molecules/IconButton.svelte';
+	import Search from '../atoms/Search.svelte';
 
 	type Schema = ResourceUpdate;
 	export let data: Schema | undefined;
 	export let errors: PostErros<Schema> | undefined;
-	let search: string;
+	let searchValue: string;
 	let assets: Asset[] = [];
 
-	$: searchReaction(search);
+	$: searchReaction(searchValue);
 	const searchReaction = (_s: string) => {
 		console.log(`search reaction`);
 	};
@@ -52,7 +51,7 @@
 		<div>
 			<label for="" class="label label-text">添付ファイル</label>
 			<div class="flex flex-col gap-2">
-				<Search bind:value={search} />
+				<Search bind:value={searchValue} />
 				<select class="select select-bordered w-full">
 					<option disabled selected>添付ファイルを追加</option>
 					{#each assets as asset}

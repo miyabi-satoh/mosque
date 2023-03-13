@@ -5,15 +5,15 @@
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
-	import IconLinkButton from '$lib/components/form/IconLinkButton.svelte';
 	import { API, URL_ADMIN_RESOURCES, URL_ADMIN_RESOURCES_CREATE } from '$lib/constants';
-	import Modal, { closeModal } from '$lib/components/Modal.svelte';
-	import { addToast } from '$lib/components/Toast.svelte';
-	import IconButton from '$lib/components/form/IconButton.svelte';
 	import { fields } from '$lib/fields';
-	import Search from '$lib/components/form/Search.svelte';
+	import Modal, { closeModal } from '$lib/components/organisms/Modal.svelte';
+	import { addToast } from '$lib/components/organisms/Toast.svelte';
+	import IconLinkButton from '$lib/components/molecules/IconLinkButton.svelte';
+	import IconButton from '$lib/components/molecules/IconButton.svelte';
+	import Search from '$lib/components/atoms/Search.svelte';
+	import Pagination from '$lib/components/organisms/Pagination.svelte';
 
 	console.log(`/routes/(pages)/admin/resources/+page.svelte`);
 	const URL_EDIT = (id: number) => `${URL_ADMIN_RESOURCES}/${id}/edit`;

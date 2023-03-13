@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { ActionData } from './$types';
-	import { addToast } from '$lib/components/Toast.svelte';
-	import ResourceForm from '$lib/components/form/ResourceForm.svelte';
 	import { goto } from '$app/navigation';
 	import { MSG, URL_ADMIN_RESOURCES, URL_EDIT } from '$lib/constants';
+	import { addToast } from '$lib/components/organisms/Toast.svelte';
+	import ResourceForm from '$lib/components/organisms/ResourceForm.svelte';
 
 	console.log(`/routes/(pages)/admin/users/create/+page.svelte`);
 	export let form: ActionData;
