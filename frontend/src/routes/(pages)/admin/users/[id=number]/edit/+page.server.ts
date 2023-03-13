@@ -1,9 +1,10 @@
-import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { requestToObject, validationErrorToAssoc } from '$lib/utils';
+import { errorToResult, requestToObject } from '$lib/utils';
 import { updateUser } from '$lib/server/user';
-import { userPublicFields, type UserCreate, type UserPostErrors } from '$lib/user';
+import { userPublicFields, type UserUpdate } from '$lib/user';
+import type { ActionResult } from '$lib/types';
+import { MSG } from '$lib/constants';
 
 export const load = (async ({ params, parent }) => {
 	console.log(`/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
@@ -30,34 +31,28 @@ export const load = (async ({ params, parent }) => {
 	};
 }) satisfies PageServerLoad;
 
-type ActionResult = {
-	success?: boolean;
-	message?: string;
-	formData: UserCreate;
-	errors?: UserPostErrors;
-};
+type Result = ActionResult<UserUpdate>;
+
 export const actions: Actions = {
-	default: async ({ params, request }): Promise<ActionResult> => {
+	default: async ({ params, request }): Promise<Result> => {
 		console.log(`POST /routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
 		const id = Number(params.id);
-		const formData: UserCreate = await requestToObject(request);
+		const formData: Result['formData'] = await requestToObject(request);
 
 		try {
-			const _user = await updateUser(id, formData);
+			const result = await updateUser(id, formData);
+			return {
+				success: true,
+				formData,
+				id: result.id
+			};
 		} catch (err) {
-			if (err instanceof ValidationError) {
-				const message = `入力データに不備があります。`;
-				const errors = validationErrorToAssoc(err);
-				return { message, formData, errors };
-			} else if (err instanceof Error) {
-				const message = err.message;
-				return { message, formData };
+			const result = errorToResult(err, formData);
+			if (result !== undefined) {
+				return result;
 			}
 		}
 
-		return {
-			success: true,
-			formData
-		};
+		return { message: MSG.UKNOWN_ERROR, formData };
 	}
 };

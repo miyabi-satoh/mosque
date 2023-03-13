@@ -1,4 +1,5 @@
-import type { UserCreate } from './user';
+import type { ResourceUpdate } from './resource';
+import type { UserUpdate } from './user';
 
 type FieldType = {
 	name: string;
@@ -8,7 +9,22 @@ type FieldType = {
 	helperText?: string;
 };
 
+type Field<T> = {
+	[K in keyof T]: FieldType;
+};
+
 export const fields = {
+	resource: {
+		title: {
+			name: 'title',
+			label: 'タイトル'
+		},
+		description: {
+			name: 'description',
+			label: '説明'
+		}
+	} satisfies Field<ResourceUpdate>,
+
 	user: {
 		username: {
 			name: 'username',
@@ -41,9 +57,7 @@ export const fields = {
 		meiKana: { name: 'meiKana', label: '名(ふりがな)' },
 		blocked: { name: 'blocked', label: '使用不可' },
 		type: { name: 'type', label: '種別' }
-	} satisfies {
-		[K in keyof UserCreate]: FieldType;
-	},
+	} satisfies Field<UserUpdate>,
 
 	passwd: {
 		currentPassword: {

@@ -1,37 +1,31 @@
-import { ValidationError } from 'yup';
 import type { Actions } from './$types';
-import { requestToObject, validationErrorToAssoc } from '$lib/utils';
+import { errorToResult, requestToObject } from '$lib/utils';
 import { createUser } from '$lib/server/user';
-import type { UserCreate, UserPostErrors } from '$lib/user';
+import type { UserUpdate } from '$lib/user';
+import type { ActionResult } from '$lib/types';
+import { MSG } from '$lib/constants';
 
-type ActionResult = {
-	success?: boolean;
-	message?: string;
-	formData: UserCreate;
-	errors?: UserPostErrors;
-};
+type Result = ActionResult<UserUpdate>;
+
 export const actions: Actions = {
-	default: async ({ request }): Promise<ActionResult> => {
+	default: async ({ request }): Promise<Result> => {
 		console.log(`POST /routes/(pages)/admin/users/create/+page.server.ts`);
-		const formData: UserCreate = await requestToObject(request);
-		// console.log(formData);
+		const formData: Result['formData'] = await requestToObject(request);
 
 		try {
-			const _user = await createUser(formData);
+			const result = await createUser(formData);
+			return {
+				success: true,
+				formData,
+				id: result.id
+			};
 		} catch (err) {
-			if (err instanceof ValidationError) {
-				const message = `入力データに不備があります。`;
-				const errors = validationErrorToAssoc(err);
-				return { message, formData, errors };
-			} else if (err instanceof Error) {
-				const message = err.message;
-				return { message, formData };
+			const result = errorToResult(err, formData);
+			if (result !== undefined) {
+				return result;
 			}
 		}
 
-		return {
-			success: true,
-			formData
-		};
+		return { message: MSG.UKNOWN_ERROR, formData };
 	}
 };

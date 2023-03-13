@@ -1,5 +1,44 @@
-import type { ValidationError } from 'yup';
+import { ValidationError } from 'yup';
 import { hankakuToZenkakuKatakanaMap } from './constants';
+import type { ActionResult } from './types';
+
+export const filterWords = (text: string) => {
+	return normalizeSearch(text)
+		.split(' ')
+		.filter((term) => term.length > 0)
+		.sort((a, b) => b.length - a.length)
+		.reduce((prev, cur) => {
+			if (!prev.includes(cur)) {
+				return `${prev} ${cur}`;
+			}
+			return prev;
+		}, '')
+		.split(' ')
+		.filter((term) => term.length > 0)
+		.map((term) => {
+			const obj = {
+				contains: term,
+				mode: 'insensitive'
+			};
+			console.log(obj);
+			return obj;
+		});
+};
+
+export const errorToResult = <T>(
+	error: unknown,
+	formData: ActionResult<T>['formData']
+): ActionResult<T> | undefined => {
+	if (error instanceof ValidationError) {
+		const message = `入力データに不備があります。`;
+		const errors = validationErrorToAssoc(error);
+		return { message, formData, errors };
+	} else if (error instanceof Error) {
+		const message = error.message;
+		return { message, formData };
+	}
+	return undefined;
+};
 
 // https://www.prisma.io/docs/concepts/components/prisma-client/excluding-fields
 // Exclude keys from object

@@ -5,7 +5,7 @@
 	import { page } from '$app/stores';
 	import '../app.postcss';
 	import Toast from '$lib/components/Toast.svelte';
-	import { ID_MODALS, MIME_JSON } from '$lib/constants';
+	import { API, ID_MODALS, MIME_JSON } from '$lib/constants';
 	import InputText from '$lib/components/form/InputText.svelte';
 	import Modal, { closeModal } from '$lib/components/Modal.svelte';
 	import { userType } from '$lib/user';
@@ -48,7 +48,7 @@
 
 	const handleLogin = async () => {
 		loginError = '';
-		const res = await fetch(`/api/auth/login`, {
+		const res = await fetch(API.LOGIN, {
 			method: 'POST',
 			headers: { 'Content-Type': MIME_JSON, Accept: MIME_JSON },
 			body: JSON.stringify({ username, password })
@@ -64,7 +64,7 @@
 	};
 
 	const handleLogout = async () => {
-		await fetch(`/api/auth/logout`);
+		await fetch(API.LOGOUT);
 		invalidateAll();
 	};
 </script>

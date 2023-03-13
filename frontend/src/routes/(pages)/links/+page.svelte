@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
+	import { API } from '$lib/constants';
 
 	const ForTypes = {
 		all: '',
@@ -47,7 +48,7 @@
 
 	const handleClick = async (id: number) => {
 		// クリックカウントを更新
-		const _res = await fetch(`/api/link/${id}/click`);
+		const _res = await fetch(API.LINK_CLICK(id));
 	};
 </script>
 

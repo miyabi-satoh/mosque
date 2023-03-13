@@ -4,6 +4,26 @@ export const MIME_JSON = 'application/json';
 
 export const URL_ADMIN_USERS = `/admin/users`;
 export const URL_ADMIN_USERS_CREATE = `${URL_ADMIN_USERS}/create`;
+export const URL_ADMIN_RESOURCES = `/admin/resources`;
+export const URL_ADMIN_RESOURCES_CREATE = `${URL_ADMIN_RESOURCES}/create`;
+export const URL_ADMIN_DBMAINTE = '/admin/dbmainte/';
+export const URL_EDIT = (base: string, id: number | undefined) => `${base}/${id}/edit`;
+export const URL_DELETE = (base: string, id: number | undefined) => `${base}/${id}/delete`;
+
+export const API = {
+	ASSET: `/api/asset`,
+	LINK_CLICK: (id: number) => `/api/link/${id}/click`,
+	LOGIN: `/api/auth/login`,
+	LOGOUT: `/api/auth/logout`,
+	RESOURCE_CLICK: (id: number) => `/api/resource/${id}/click`,
+	USER: `/api/user`
+} as const;
+
+export const MSG = {
+	UKNOWN_ERROR: `不明なエラーです。`,
+	TARGET_NOT_FOUND: `対象のデータが見つかりませんでした。`,
+	SAVE_OK: (text = '') => `${text ? '"' + text + '"を' : ''}保存しました。`
+} as const;
 
 export const hankakuToZenkakuKatakanaMap: Record<string, string> = {
 	ｧ: 'ァ',

@@ -5,13 +5,23 @@
 	import { fields } from '$lib/fields';
 	import InputText from '$lib/components/form/InputText.svelte';
 	import { enhance } from '$app/forms';
+	import { MSG } from '$lib/constants';
 	console.log(`/routes/(pages)/(auth)/me/+page.svelte`);
 
 	export let data: PageData;
 	export let form: ActionData;
-	$: if (form?.message) {
-		addToast(form.message, form.success ? 'alert-success' : 'alert-error');
-	}
+
+	$: formReaction(form);
+	const formReaction = (_form: ActionData) => {
+		if (form) {
+			console.log(`form reaction`);
+			if (form.success) {
+				addToast(MSG.SAVE_OK(), 'alert-success');
+			} else if (form.message) {
+				addToast(form.message, 'alert-error');
+			}
+		}
+	};
 </script>
 
 {#if !data.me}

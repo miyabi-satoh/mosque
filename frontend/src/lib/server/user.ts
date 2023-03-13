@@ -3,8 +3,9 @@ import type { User } from '@prisma/client';
 import { encryptPassword } from './passwd';
 import { prisma } from './prisma';
 import { convertToKatakana, normalizeSearch } from '$lib/utils';
-import { userPublicFields, type UserCreate, type UserUpdate } from '$lib/user';
+import { userPublicFields, userType, type UserUpdate } from '$lib/user';
 import { fields } from '$lib/fields';
+import { MSG } from '$lib/constants';
 
 // パスワードのバリデーションスキーマ
 // パスワードのみを更新することがあるので独立させている
@@ -47,7 +48,7 @@ const getUserSchema = (id: number | undefined = undefined) => {
 		.matches(/^[\p{scx=Hiragana}\p{scx=Katakana}]+$/u, 'かなで入力してください')
 		.transform((c) => convertToKatakana(c));
 	const blocked = boolean().default(false);
-	const type = number().default(0);
+	const type = number().default(userType.user);
 
 	if (id) {
 		return object({
@@ -147,7 +148,7 @@ export const updateUser = async (id: number, data: UserUpdate) => {
 		select: userPublicFields
 	});
 	if (!userInDB) {
-		throw new Error(`対象のデータが見つかりませんでした。`);
+		throw new Error(MSG.TARGET_NOT_FOUND);
 	}
 
 	// マージ
@@ -160,7 +161,7 @@ export const updateUser = async (id: number, data: UserUpdate) => {
 };
 
 // ユーザーの作成
-export const createUser = async (data: UserCreate) => {
+export const createUser = async (data: UserUpdate) => {
 	return await upsertUser(data);
 };
 

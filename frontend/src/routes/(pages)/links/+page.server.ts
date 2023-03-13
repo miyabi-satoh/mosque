@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { normalizeNumber, normalizeSearch } from '$lib/utils';
+import { filterWords, normalizeNumber } from '$lib/utils';
 import { prisma } from '$lib/server/prisma';
 
 const pageSize = 12;
@@ -15,18 +15,23 @@ export const load = (async ({ url }) => {
 	const querySearch = url.searchParams.get('q') ?? '';
 	const queryFor = url.searchParams.get('f') ?? '';
 
-	const keywords: object[] = [];
-	normalizeSearch(decodeURIComponent(querySearch))
-		.split(' ')
-		.filter((term) => term)
-		.forEach((term) => {
-			keywords.push({
-				keyword: {
-					contains: term,
-					mode: 'insensitive'
-				}
-			});
-		});
+	const keywords = filterWords(decodeURIComponent(querySearch)).map((keyword) => {
+		return {
+			keyword
+		};
+	});
+	// const keywords: object[] = [];
+	// normalizeSearch(decodeURIComponent(querySearch))
+	// 	.split(' ')
+	// 	.filter((term) => term)
+	// 	.forEach((term) => {
+	// 		keywords.push({
+	// 			keyword: {
+	// 				contains: term,
+	// 				mode: 'insensitive'
+	// 			}
+	// 		});
+	// 	});
 
 	if (queryFor) {
 		keywords.push(JSON.parse(`{ "${queryFor}": true }`));
@@ -36,9 +41,8 @@ export const load = (async ({ url }) => {
 		AND: keywords
 	};
 
-	console.log(where);
 	const count = await prisma.link.count({
-		where
+		where: where as never
 	});
 	const links = await prisma.link.findMany({
 		skip: (queryPage - 1) * pageSize,
@@ -51,7 +55,7 @@ export const load = (async ({ url }) => {
 				updatedAt: 'desc'
 			}
 		],
-		where
+		where: where as never
 	});
 
 	return {

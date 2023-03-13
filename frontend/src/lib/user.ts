@@ -1,8 +1,4 @@
 import type { User } from '@prisma/client';
-// import { writable } from 'svelte/store';
-import type { Impartial } from './types';
-
-// export const userStore = writable<User | null>(null);
 
 type PickupField =
 	| 'id'
@@ -17,16 +13,21 @@ type PickupField =
 	| 'meiKana'
 	| 'blocked';
 export type UserUpdate = Partial<Pick<User, PickupField>>;
-export type UserCreate = Impartial<Required<Omit<UserUpdate, 'id'>>>;
-export type UserPostErrors = {
-	[K in keyof UserCreate]?: string;
-};
 
 export const userType = {
 	sysadmin: 1,
 	admin: 2,
 	user: 0
 } as const;
+
+export const userTypeString = (type: number) => {
+	if (type == userType.sysadmin) {
+		return `シスアド`;
+	} else if (type == userType.admin) {
+		return `管理者`;
+	}
+	return `一般`;
+};
 
 export const userPublicFields = {
 	id: true,

@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { browser } from '$app/environment';
+	import { API } from '$lib/constants';
 
 	export let data: PageData;
 
@@ -30,7 +31,7 @@
 
 	const handleClick = async (id: number) => {
 		// console.log(`handleClick ${id}`);
-		const res = await fetch(`/api/resource/${id}/click`);
+		const res = await fetch(API.RESOURCE_CLICK(id));
 		console.log(res.status);
 	};
 </script>

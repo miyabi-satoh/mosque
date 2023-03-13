@@ -3,8 +3,9 @@ import { ValidationError } from 'yup';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { requestToObject, validationErrorToAssoc, normalizeNumber } from '$lib/utils';
-import { userPublicFields, type UserCreate, type UserPostErrors, type UserUpdate } from '$lib/user';
+import { userPublicFields, type UserUpdate } from '$lib/user';
 import { createUser, updateUser } from '$lib/server/user';
+import type { ActionResult, PostErros } from '$lib/types';
 
 const pageSize = 10;
 export const load = (async ({ url }) => {
@@ -63,18 +64,13 @@ type FormData = {
 	json: string;
 };
 
-type ActionResult = {
-	success?: boolean;
-	message?: string;
-	formData?: FormData;
-	errors?: UserPostErrors;
-};
+type Result = ActionResult<FormData, PostErros<UserUpdate>>;
 
 export const actions: Actions = {
-	default: async ({ request }): Promise<ActionResult> => {
+	default: async ({ request }): Promise<Result> => {
 		console.log(`POST /routes/(pages)/admin/users/+page.server.ts`);
 		const success = true;
-		const formData = await requestToObject<FormData>(request);
+		const formData: Result['formData'] = await requestToObject(request);
 		const users = JSON.parse(formData.json) as UserUpdate[];
 		let progress = 0;
 		let created = 0;
@@ -87,7 +83,7 @@ export const actions: Actions = {
 					const _user = await updateUser(user.id, user);
 					updated++;
 				} else {
-					const _user = await createUser(user as UserCreate);
+					const _user = await createUser(user);
 					created++;
 				}
 			} catch (err) {
@@ -106,6 +102,6 @@ export const actions: Actions = {
 			`${progress}件のデータを処理しました。`,
 			`新規：${created}件、更新：${updated}件`
 		].join('\n');
-		return { success, message };
+		return { success, message, formData };
 	}
 };

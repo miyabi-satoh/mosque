@@ -1,87 +1,58 @@
-import { object, string, ValidationError } from 'yup';
-import { fail } from '@sveltejs/kit';
-import type { User } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 import { prisma } from '$lib/server/prisma';
-import { requestToObject } from '$lib/utils';
-import { userPublicFields } from '$lib/user';
+import { resourcePublicFields, type ResourceUpdate } from '$lib/resource';
+import { errorToResult, requestToObject } from '$lib/utils';
+import { updateResource } from '$lib/server/resource';
+import type { ActionResult } from '$lib/types';
+import { MSG } from '$lib/constants';
 
 export const load = (async ({ params, parent }) => {
-	console.log(`/routes/(pages)/admin/users/[id=number]/edit/+page.server.ts`);
+	console.log(`/routes/(pages)/admin/resources/[id=number]/edit/+page.server.ts`);
 
 	const { breadcrumbParams } = await parent();
-	const user = await prisma.user.findUnique({
+	const resource = await prisma.resource.findUnique({
 		where: {
 			id: Number(params.id)
 		},
-		select: userPublicFields
+		select: resourcePublicFields
 	});
 
 	return {
-		user,
+		resource,
 		pageMeta: {
-			title: `ユーザー編集`
+			title: `リソース編集`
 		},
 		breadcrumbParams: [
 			...breadcrumbParams,
 			{
-				name: `編集`
+				name: `リソース編集`
 			}
 		]
 	};
 }) satisfies PageServerLoad;
 
-type FormData = Pick<
-	User,
-	'username' | 'displayName' | 'abbrev' | 'sei' | 'mei' | 'seiKana' | 'meiKana'
->;
-type FormError = {
-	[key in keyof FormData]?: string;
-};
-export const actions = {
-	default: async ({ request }) => {
-		const user = await requestToObject<FormData>(request);
-		const userSchema = object({
-			username: string()
-				.required()
-				.min(4, '4文字以上で入力してください')
-				.max(20, '20文字以下で入力してください')
-				.matches(/^[0-9A-Za-z]+$/, '半角英数字のみ使用できます'),
-			displayName: string().required().max(5, '5文字以下で入力してください'),
-			abbrev: string().required().max(5, '5文字以下で入力してください'),
-			sei: string().required(),
-			mei: string().required(),
-			seiKana: string()
-				.required()
-				.matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください'),
-			meiKana: string()
-				.required()
-				.matches(/^[\p{scx=Katakana}]+$/u, 'カタカナで入力してください')
-		});
+type Result = ActionResult<ResourceUpdate>;
+
+export const actions: Actions = {
+	default: async ({ params, request }): Promise<Result> => {
+		console.log(`POST /routes/(pages)/admin/resources/[id=number]/edit/+page.server.ts`);
+		const id = Number(params.id);
+		const formData: Result['formData'] = await requestToObject(request);
 
 		try {
-			const _validated = await userSchema.validate(user, {
-				abortEarly: false
-			});
+			const result = await updateResource(id, formData);
 			return {
 				success: true,
-				user
+				formData,
+				id: result.id
 			};
-		} catch (error) {
-			if (error instanceof ValidationError) {
-				const errors = error.inner.reduce((acc, err) => {
-					return { ...acc, [err.path ?? 'error']: err.message };
-				}, {});
-
-				return {
-					errors: errors as FormError,
-					user
-				};
+		} catch (err) {
+			const result = errorToResult(err, formData);
+			if (result !== undefined) {
+				return result;
 			}
 		}
 
-		return fail(400, {
-			message: `予期せぬエラーが発生しました`
-		});
+		return { message: MSG.UKNOWN_ERROR, formData };
 	}
-} satisfies Actions;
+};

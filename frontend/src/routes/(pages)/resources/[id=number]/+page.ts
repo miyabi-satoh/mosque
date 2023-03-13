@@ -1,6 +1,7 @@
 import type { Asset } from '@prisma/client';
 import type { PageLoad } from './$types';
 import { typeDetect } from './typeDetect';
+import { API } from '$lib/constants';
 
 type AssetData = Asset & {
 	status: number;
@@ -21,7 +22,7 @@ export const load = (async ({ data, fetch }) => {
 			let type: AssetData['type'] = 'error';
 			let mimeType = '';
 			let text = '';
-			const blobUrl = `/api/asset/${asset?.id}/${asset?.slug}`;
+			const blobUrl = `${API.ASSET}/${asset?.id}/${asset?.slug}`;
 			const res = await fetch(blobUrl);
 			const status = res.status;
 			const blob = await res.blob();

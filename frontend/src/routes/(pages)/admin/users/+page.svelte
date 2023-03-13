@@ -10,14 +10,15 @@
 	import Modal, { closeModal, showModal } from '$lib/components/Modal.svelte';
 	import Dropzone from '$lib/components/Dropzone.svelte';
 	import { addToast } from '$lib/components/Toast.svelte';
-	import { applyAction, enhance } from '$app/forms';
-	import { MIME_JSON } from '$lib/constants';
+	import { enhance } from '$app/forms';
+	import { API, MIME_JSON, URL_ADMIN_USERS, URL_ADMIN_USERS_CREATE } from '$lib/constants';
 	import { fields } from '$lib/fields';
 	import { onMount } from 'svelte';
+	import Search from '$lib/components/form/Search.svelte';
+	import { userPublicFields, userType, userTypeString } from '$lib/user';
 
-	const URL_USER_CREATE = `${$page.url.pathname}/create`;
-	const URL_USER_EDIT = (id: number) => `${$page.url.pathname}/${id}/edit`;
-	const URL_USER_DELETE = (id: number) => `${$page.url.pathname}/${id}/delete`;
+	const URL_EDIT = (id: number) => `${URL_ADMIN_USERS}/${id}/edit`;
+	const URL_DELETE = (id: number) => `${URL_ADMIN_USERS}/${id}/delete`;
 	const ID_IMPORT_USER = 'import-user-modal';
 
 	export let data: PageData;
@@ -109,30 +110,14 @@
 
 	const handleExport = async () => {
 		console.log(`handleExport`);
-		// loading = true;
 		const filter = {
-			where: {
-				id: {
-					not: 1
-				}
-			},
 			orderBy: {
 				id: 'asc'
 			},
-			select: {
-				id: true,
-				username: true,
-				sei: true,
-				mei: true,
-				seiKana: true,
-				meiKana: true,
-				abbrev: true,
-				displayName: true,
-				blocked: true
-			}
+			select: userPublicFields
 		};
 		const query = new URLSearchParams({ filter: encodeURIComponent(JSON.stringify(filter)) });
-		const res = await fetch(`/api/user?${query}`);
+		const res = await fetch(`${API.USER}?${query}`);
 		if (res.ok) {
 			const json = await res.json();
 			const data = JSON.stringify(json, null, '\t');
@@ -147,12 +132,11 @@
 		} else {
 			addToast(`${res.status}:${res.statusText}`, 'alert-error');
 		}
-		// loading = false;
 	};
 </script>
 
 <div class="flex items-center justify-between">
-	<IconLinkButton icon="mdi:account-plus" href={URL_USER_CREATE} class="btn-accent"
+	<IconLinkButton icon="mdi:account-plus" href={URL_ADMIN_USERS_CREATE} class="btn-accent"
 		>追加</IconLinkButton
 	>
 
@@ -169,17 +153,12 @@
 </div>
 
 <div class="pt-4">
-	<input
-		bind:value={data.querySearch}
-		type="text"
-		placeholder="Search keywords..."
-		class="input input-bordered w-full"
-	/>
+	<Search bind:value={data.querySearch} />
 </div>
 
 {#if data.count > 0}
 	<div class="overflow-x-auto">
-		<table class="table table-zebra w-full mt-2">
+		<table class="table w-full mt-2">
 			<!-- head -->
 			<thead>
 				<tr>
@@ -188,25 +167,25 @@
 					<th>氏名カナ</th>
 					<th>{fields.user.abbrev.label}</th>
 					<th>{fields.user.displayName.label}</th>
+					<th>{fields.user.type.label}</th>
 					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
 				<!-- row -->
 				{#each data.users as user (user.id)}
-					<tr>
+					<tr class="cursor-pointer" on:click={() => goto(URL_EDIT(user.id))}>
 						<td>{user.username}</td>
 						<td>{user.sei} {user.mei}</td>
 						<td>{user.seiKana} {user.meiKana}</td>
 						<td>{user.abbrev}</td>
 						<td>{user.displayName}</td>
+						<td>{userTypeString(user.type)}</td>
 						<td>
 							<div class="flex items-center gap-4">
-								<a href={URL_USER_EDIT(user.id)} title="編集"
-									><Icon icon="mdi:edit" height="18" /></a
-								>
-								{#if user.id > 1}
-									<a href={URL_USER_DELETE(user.id)} title="削除"
+								<a href={URL_EDIT(user.id)} title="編集"><Icon icon="mdi:edit" height="18" /></a>
+								{#if user.type != userType.sysadmin}
+									<a href={URL_DELETE(user.id)} title="削除"
 										><Icon icon="mdi:trash" height="18" /></a
 									>
 								{/if}

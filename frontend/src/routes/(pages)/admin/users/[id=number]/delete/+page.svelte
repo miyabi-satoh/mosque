@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
 	import { addToast } from '$lib/components/Toast.svelte';
-	import { URL_ADMIN_USERS } from '$lib/constants';
+	import { MSG, URL_ADMIN_USERS } from '$lib/constants';
 	import { fields } from '$lib/fields';
 	import { enhance } from '$app/forms';
 
@@ -34,5 +34,5 @@
 		<div>{fields.user.blocked.label}: {data.user.blocked ? `オン` : `オフ`}</div>
 	</div>
 {:else}
-	<p>対象のデータが見つかりません。</p>
+	<p>{MSG.TARGET_NOT_FOUND}</p>
 {/if}

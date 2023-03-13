@@ -1,13 +1,17 @@
 <script lang="ts">
 	import IconButton from './IconButton.svelte';
 	import InputText from './InputText.svelte';
-	import type { UserCreate, UserPostErrors } from '$lib/user';
+	import { userType, userTypeString, type UserUpdate } from '$lib/user';
 	import { page } from '$app/stores';
 	import { fields } from '$lib/fields';
 	import { enhance } from '$app/forms';
+	import type { PostErros } from '$lib/types';
+	import IconLinkButton from './IconLinkButton.svelte';
+	import { URL_ADMIN_USERS } from '$lib/constants';
 
-	export let data: UserCreate | undefined;
-	export let errors: UserPostErrors | undefined;
+	type Schema = UserUpdate;
+	export let data: Schema | undefined;
+	export let errors: PostErros<Schema> | undefined;
 </script>
 
 <form
@@ -89,7 +93,15 @@
 				errorMessage={errors?.meiKana}>{fields.user.meiKana.label}</InputText
 			>
 		</div>
-		<div class="form-control col-span-2">
+		<div class="form-control">
+			<label for="" class="label label-text">{fields.user.type.label}</label>
+			<select class="select select-bordered w-full" name={fields.user.type.name}>
+				{#each Object.values(userType).reverse() as val}
+					<option value={val} selected={val === data?.type}>{userTypeString(val)}</option>
+				{/each}
+			</select>
+		</div>
+		<div class="form-control justify-center">
 			<label class="label cursor-pointer justify-start gap-2">
 				<input
 					type="checkbox"
@@ -101,7 +113,8 @@
 			</label>
 		</div>
 	</div>
-	<div class="my-4">
+	<div class="my-4 flex justify-between">
+		<IconLinkButton class="" icon="mdi:arrow-left" href={URL_ADMIN_USERS}>戻る</IconLinkButton>
 		<IconButton icon="mdi:check">保存</IconButton>
 	</div>
 </form>

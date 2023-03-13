@@ -334,14 +334,14 @@ model Page {
 
 model Resource {
   id                                               Int                      @id @default(autoincrement())
-  title                                            String?                  @db.VarChar(255)
+  title                                            String                   @db.VarChar(255)
   createdAt                                        DateTime?                @map("created_at") @db.Timestamp(6)
   updatedAt                                        DateTime?                @map("updated_at") @db.Timestamp(6)
   publishedAt                                      DateTime?                @map("published_at") @db.Timestamp(6)
   created_by_id                                    Int?
   updated_by_id                                    Int?
   keyword                                          String?
-  description                                      String?
+  description                                      String
   count                                            Int?
   admin_users_resources_created_by_idToadmin_users admin_users?             @relation("resources_created_by_idToadmin_users", fields: [created_by_id], references: [id], onUpdate: NoAction)
   admin_users_resources_updated_by_idToadmin_users admin_users?             @relation("resources_updated_by_idToadmin_users", fields: [updated_by_id], references: [id], onUpdate: NoAction)
