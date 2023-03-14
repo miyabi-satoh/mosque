@@ -29,12 +29,12 @@ DBMS ... PostgreSQL 15.x
 1. env.exampleを参考に、.envファイルを編集する
 
 2. .envのコピー
-    ```
+    ```sh
     ./copy_env.ps1
     ```
 
 3. 依存パッケージのインストール・更新
-    ```
+    ```sh
     ./post_pull.ps1
     ```
 
@@ -65,7 +65,6 @@ DBMS ... PostgreSQL 15.x
 - データ更新時にkeywordを生成して更新
 - 管理ページ
   - リソース
-    - 一覧(List)
     - 編集(Edit)
     - 追加(Create)
     - 削除(Delete)
