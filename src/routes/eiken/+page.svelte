@@ -47,22 +47,20 @@
 	}
 
 	let selectedKai = '';
-	let jaMediaUrl = '';
-	let enMediaUrl = '';
+	let mediaUrls = [];
 
 	async function handleChangeKai() {
-		jaMediaUrl = await getMediaUrl('J');
-		enMediaUrl = await getMediaUrl('E');
+		mediaUrls = await getMediaUrls();
 	}
 
-	async function getMediaUrl(subj: 'J' | 'E') {
-		const key = `${selectedYear},${selectedGrade},${selectedKai},${subj},`;
-		const url = `/data?key=${encodeURIComponent(key)}`;
+	async function getMediaUrls() {
+		const key = `${selectedYear},${selectedKai},${selectedGrade},`;
+		const url = `/data-eiken?key=${encodeURIComponent(key)}`;
 		const res = await fetch(url);
 		if (res.ok) {
-			return url;
+			return await res.json();
 		}
-		return '';
+		return [];
 	}
 
 	let audio: HTMLAudioElement;
@@ -240,7 +238,7 @@
 	</div>
 
 	<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-		{#each [jaMediaUrl, enMediaUrl] as url, index}
+		{#each mediaUrls as url, index}
 			<div class="card bg-neutral/25 border border-base-content/25 rounded w-full">
 				<div class="card-body p-4 justify-between">
 					<h2 class="card-title">
