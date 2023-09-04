@@ -47,20 +47,53 @@
 	}
 
 	let selectedKai = '';
-	let mediaUrls = [];
+	let mediaUrls = new Map<string, string>();
 
 	async function handleChangeKai() {
-		mediaUrls = await getMediaUrls();
+		mediaUrls.clear();
+		// 問題
+		let url = await getMediaUrl('Q');
+		if (url) {
+			mediaUrls.set('問題冊子', url);
+		}
+		// 解答
+		url = await getMediaUrl('A');
+		if (url) {
+			mediaUrls.set('解答', url);
+		}
+		// リスニング音源
+		const medias = data.csvData
+			.filter((obj) => {
+				return (
+					obj.year === selectedYear &&
+					obj.kai === selectedKai &&
+					obj.grade === selectedGrade &&
+					obj.type.toLowerCase().startsWith('part')
+				);
+			})
+			.sort(
+				(a, b) =>
+					Number(a.type.toLowerCase().replace('part', '')) -
+					Number(b.type.toLowerCase().replace('part', ''))
+			);
+
+		for (const media of medias) {
+			url = await getMediaUrl(media.type);
+			if (url) {
+				mediaUrls.set(`リスニング音源（${media.type}）`, url);
+			}
+		}
+		mediaUrls = mediaUrls;
 	}
 
-	async function getMediaUrls() {
-		const key = `${selectedYear},${selectedKai},${selectedGrade},`;
+	async function getMediaUrl(type: string): Promise<string> {
+		const key = `${selectedYear},${selectedKai},${selectedGrade},${type},`;
 		const url = `/data-eiken?key=${encodeURIComponent(key)}`;
 		const res = await fetch(url);
 		if (res.ok) {
-			return await res.json();
+			return url;
 		}
-		return [];
+		return '';
 	}
 
 	let audio: HTMLAudioElement;
@@ -198,7 +231,7 @@
 </script>
 
 <main class="container mx-auto max-w-3xl flex-1">
-	<h1 class="p-4 text-4xl font-semibold">英検過去問</h1>
+	<h1 class="p-4 text-4xl font-semibold">英検過去問配信サービス</h1>
 	<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4">
 		<select
 			id="select-grade"
@@ -238,30 +271,28 @@
 	</div>
 
 	<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-		{#each mediaUrls as url, index}
+		{#each [...mediaUrls.entries()] as [key, url]}
 			<div class="card bg-neutral/25 border border-base-content/25 rounded w-full">
 				<div class="card-body p-4 justify-between">
-					<h2 class="card-title">
-						{#if index === 0}
-							国語&emsp;聞き取り問題
-						{:else}
-							英語&emsp;リスニング問題
-						{/if}
-					</h2>
+					<h2 class="card-title">{key}</h2>
 					<div class="card-actions justify-center mt-4">
-						<button
-							on:click={() => handleClickPlayPause(url)}
-							disabled={!url}
-							class="btn btn-sm btn-info rounded-3xl w-16 {audio && audio.src.endsWith(url)
-								? ''
-								: 'btn-outline'}"
-						>
-							{#if audio && audio.src.endsWith(url) && !audio.paused}
-								<Icon icon="mdi:pause" height="auto" />
-							{:else}
-								<Icon icon="mdi:play" height="auto" />
-							{/if}
-						</button>
+						{#if key.toLowerCase().includes('part')}
+							<button
+								on:click={() => handleClickPlayPause(url)}
+								disabled={!url}
+								class="btn btn-sm btn-info rounded-3xl w-16 {audio && audio.src.endsWith(url)
+									? ''
+									: 'btn-outline'}"
+							>
+								{#if audio && audio.src.endsWith(url) && !audio.paused}
+									<Icon icon="mdi:pause" height="auto" />
+								{:else}
+									<Icon icon="mdi:play" height="auto" />
+								{/if}
+							</button>
+						{:else}
+							<a href={url} target="_blank" class="btn btn-primary">新しいタブで開く</a>
+						{/if}
 					</div>
 				</div>
 			</div>

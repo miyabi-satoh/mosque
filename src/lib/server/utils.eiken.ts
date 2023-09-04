@@ -18,15 +18,11 @@ export function loadEikenMediaData(): EikenMediaT[] {
 	});
 }
 
-export function findMediaData(key: string): EikenMediaT[] | EikenMediaT | undefined {
+export function findMediaData(key: string): EikenMediaT | undefined {
 	const buffer = fs.readFileSync(EIKEN_MEDIA_CSV).toString();
 	const data = buffer.split('\n').find((line) => line.startsWith(key));
 	if (data) {
-		if (data.length === 0) {
-			return parse(data, { columns: columnKeys })[0];
-		} else {
-			return parse(data, { columns: columnKeys });
-		}
+		return parse(data, { columns: columnKeys })[0];
 	}
 	return undefined;
 }

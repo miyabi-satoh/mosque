@@ -17,9 +17,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		throw error(400, `Invalid`);
 	}
 
-	if (Array.isArray(data)) {
-		// TODO:JSONを返す
-	} else if (fs.existsSync(data.path)) {
+	if (fs.existsSync(data.path)) {
 		const stats = fs.statSync(data.path);
 		const filename = path.basename(data.path);
 		const contentType = mime.getType(data.path);
@@ -29,7 +27,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				headers: {
 					'Content-Type': contentType,
 					'Content-Length': `${stats.size}`,
-					'Content-Disposition': `attachment; filename=${encodeURI(filename)}`,
+					'Content-Disposition': `inline; filename=${encodeURI(filename)}`,
 					// これが無いとシーク不可になる
 					'Accept-Ranges': 'bytes'
 				}
