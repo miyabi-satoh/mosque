@@ -1,9 +1,12 @@
 import { error } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
-import { findMediaData } from '$lib/server/utils.eiken';
+
+import mime from 'mime';
 import fs from 'node:fs';
 import path from 'node:path';
-import mime from 'mime';
+
+import { findMediaData } from '$lib/server/utils.eiken';
+
+import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url }) => {
 	let key = url.searchParams.get('key');

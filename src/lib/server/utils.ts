@@ -1,6 +1,7 @@
-import { CTEST_MEDIA_CSV } from '$env/static/private';
-import fs from 'node:fs';
 import { parse } from 'csv-parse/sync';
+import fs from 'node:fs';
+
+import { CTEST_MEDIA_CSV } from '$env/static/private';
 
 type CTestMediaT = {
 	year: string;

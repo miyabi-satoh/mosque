@@ -1,4 +1,5 @@
 import { loadEikenMediaData } from '$lib/server/utils.eiken';
+
 import type { PageServerLoad } from './$types';
 
 export const load = (async () => {

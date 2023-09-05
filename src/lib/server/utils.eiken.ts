@@ -1,5 +1,6 @@
-import fs from 'node:fs';
 import { parse } from 'csv-parse/sync';
+import fs from 'node:fs';
+
 import { EIKEN_MEDIA_CSV } from '$env/static/private';
 
 type EikenMediaT = {

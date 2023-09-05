@@ -16,14 +16,14 @@
 <main class="container mx-auto max-w-3xl flex-1">
 	<h1 class="p-4 text-4xl font-semibold">MOSQUE</h1>
 
-	<div class="p-4 grid grid-cols-1 gap-4">
+	<div class="grid grid-cols-1 gap-4 p-4">
 		{#each menus as menu}
 			<a href={menu.url}>
 				<div
-					class="w-full border-2 border-base-content/25 rounded-lg bg-base-300/50 hover:bg-base-300/5"
+					class="w-full rounded-lg border-2 border-base-content/25 bg-base-300/50 hover:bg-base-300/5"
 				>
 					<div class="flex items-center text-accent">
-						<h2 class="flex-1 text-2xl font-semibold pl-4">{menu.name}</h2>
+						<h2 class="flex-1 pl-4 text-2xl font-semibold">{menu.name}</h2>
 						<Icon icon="mdi:chevron-right" height="64px" />
 					</div>
 				</div>

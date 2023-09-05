@@ -72,7 +72,7 @@
 				title: '英語&emsp;リスニング問題'
 			}
 		];
-		console.log(tracks);
+		// console.log(tracks);
 	}
 
 	async function getMediaUrl(subj: 'J' | 'E') {
@@ -100,7 +100,7 @@
 
 <main class="container mx-auto max-w-3xl flex-1">
 	<h1 class="p-4 text-4xl font-semibold">Ｃテスト音声配信サービス</h1>
-	<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4">
+	<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-3">
 		<select
 			id="select-grade"
 			bind:value={selectedGrade}
@@ -138,20 +138,20 @@
 		</select>
 	</div>
 
-	<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+	<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
 		{#each tracks as track}
-			<div class="card bg-base-200 dark:bg-neutral/25 border border-base-content/20 rounded w-full">
-				<div class="card-body p-4 justify-between">
+			<div class="card w-full rounded border border-base-content/20 bg-base-200 dark:bg-neutral/25">
+				<div class="card-body justify-between p-4">
 					<h2 class="card-title">
 						<!-- eslint-disable-next-line -->
 						{@html track.title}
 					</h2>
-					<div class="card-actions justify-center mt-4">
+					<div class="card-actions mt-4 justify-center">
 						<button
 							on:click={() => handleClickPlayPause(track)}
 							disabled={!track.src}
 							class:btn-outline={!audioSrc.endsWith(track.src)}
-							class="btn btn-sm btn-info rounded-3xl w-16"
+							class="btn btn-info btn-sm w-16 rounded-3xl"
 						>
 							<Icon
 								icon={audioSrc.endsWith(track.src) && !audioPaused ? 'mdi:pause' : 'mdi:play'}
