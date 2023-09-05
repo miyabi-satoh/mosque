@@ -74,6 +74,7 @@
 	<div class="flex flex-col flex-1 gap-y-2">
 		<div class="flex gap-x-2" class:text-gray-600={!src}>
 			<span>{format(time)}</span>
+			<!-- eslint-disable-next-line -->
 			<span class="flex-1 text-center">{@html title}</span>
 			<span>{format(duration - time)}</span>
 		</div>
