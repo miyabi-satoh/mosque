@@ -1,29 +1,18 @@
 import { parse } from 'csv-parse/sync';
 import fs from 'node:fs';
 
-import { CTEST_MEDIA_CSV } from '$env/static/private';
-
-type CTestMediaT = {
-	year: string;
-	grade: string;
-	month: string;
-	subj: string;
-	path: string;
-};
-
-const columnKeys = ['year', 'grade', 'month', 'subj', 'path'];
-
-export function loadCTestMediaData(): CTestMediaT[] {
-	return parse(fs.readFileSync(CTEST_MEDIA_CSV).toString(), {
-		columns: () => columnKeys
+export function parseCsv(csvFile: string) {
+	return parse(fs.readFileSync(csvFile).toString(), {
+		columns: true
 	});
 }
 
-export function findMediaData(key: string): CTestMediaT | undefined {
-	const buffer = fs.readFileSync(CTEST_MEDIA_CSV).toString();
-	const data = buffer.split('\n').find((line) => line.startsWith(key));
+export function findByHead(csvFile: string, head: string) {
+	const buffer = fs.readFileSync(csvFile).toString();
+	const lines = buffer.split('\n');
+	const data = lines.find((line) => line.startsWith(head));
 	if (data) {
-		return parse(data, { columns: columnKeys })[0];
+		return parse(lines[0] + '\n' + data, { columns: true })[0];
 	}
 	return undefined;
 }

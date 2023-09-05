@@ -4,7 +4,9 @@ import mime from 'mime';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { findMediaData } from '$lib/server/utils';
+import { CTEST_MEDIA_CSV } from '$env/static/private';
+
+import { findByHead } from '$lib/server/utils';
 
 import type { RequestHandler } from './$types';
 
@@ -15,7 +17,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	}
 	key = decodeURIComponent(key);
 
-	const data = findMediaData(key);
+	const data = findByHead(CTEST_MEDIA_CSV, key);
 	if (data && fs.existsSync(data.path)) {
 		const stats = fs.statSync(data.path);
 		const filename = path.basename(data.path);
