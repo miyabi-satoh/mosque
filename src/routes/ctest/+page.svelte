@@ -77,7 +77,7 @@
 
 	async function getMediaUrl(subj: 'J' | 'E') {
 		const key = `${selectedYear},${selectedGrade},${selectedMonth},${subj},`;
-		const url = `/data?key=${encodeURIComponent(key)}`;
+		const url = `/api/data/ctest?key=${encodeURIComponent(key)}`;
 		const res = await fetch(url);
 		if (res.ok) {
 			return url;

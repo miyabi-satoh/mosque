@@ -91,7 +91,7 @@
 
 	async function getMediaUrl(type: string): Promise<string> {
 		const key = `${selectedYear},${selectedKai},${selectedGrade},${type},`;
-		const url = `/data-eiken?key=${encodeURIComponent(key)}`;
+		const url = `/api/data/eiken?key=${encodeURIComponent(key)}`;
 		const res = await fetch(url);
 		if (res.ok) {
 			return url;
