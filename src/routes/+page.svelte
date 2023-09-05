@@ -20,7 +20,7 @@
 		{#each menus as menu}
 			<a href={menu.url}>
 				<div
-					class="w-full border-2 border-base-content/25 rounded-lg bg-neutral/25 hover:bg-neutral/75"
+					class="w-full border-2 border-base-content/25 rounded-lg bg-base-300/50 hover:bg-base-300/5"
 				>
 					<div class="flex items-center text-accent">
 						<h2 class="flex-1 text-2xl font-semibold pl-4">{menu.name}</h2>
