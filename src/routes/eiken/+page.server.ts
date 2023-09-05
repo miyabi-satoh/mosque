@@ -1,8 +1,19 @@
-import { loadEikenMediaData } from '$lib/server/utils.eiken';
+import { EIKEN_MEDIA_CSV } from '$env/static/private';
+
+import { parseCsv } from '$lib/server/utils';
+
 import type { PageServerLoad } from './$types';
 
+type EikenMediaT = {
+	year: string;
+	kai: string;
+	grade: string;
+	type: string;
+	path: string;
+};
+
 export const load = (async () => {
-	const csvData = loadEikenMediaData();
+	const csvData: EikenMediaT[] = parseCsv(EIKEN_MEDIA_CSV);
 	const grades = new Map<string, string>();
 	const gradeSet = new Set<number>();
 	csvData.forEach((obj) => {

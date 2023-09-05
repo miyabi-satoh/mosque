@@ -6,9 +6,9 @@
 	<title>MOSQUE</title>
 </svelte:head>
 
-<div class="min-h-screen flex flex-col">
+<div class="flex min-h-screen flex-col">
 	<slot />
-	<footer class="text-sm text-base-content/50 text-right p-4">
+	<footer class="p-4 text-right text-sm text-base-content/50">
 		Copyright &copy; 2023 miyabi-satoh.
 	</footer>
 </div>
