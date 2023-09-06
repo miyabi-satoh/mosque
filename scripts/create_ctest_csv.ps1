@@ -1,10 +1,10 @@
 #!/usr/bin/env pwsh
 
-if ($IsWindows) {
-    $sep = '\'
-} else {
-    $sep = '/'
-}
+# if ($IsWindows) {
+#     $sep = '\'
+# } else {
+#     $sep = '/'
+# }
 
 $a = @('year', 'grade', 'month', 'subj', 'path')
 $line = $a -join ","
