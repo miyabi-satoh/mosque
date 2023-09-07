@@ -4,11 +4,11 @@ $a = @('year', 'kai', 'grade', 'type', 'path')
 $line = $a -join ","
 Write-Output $line
 
-$items = Get-ChildItem '/Users/masayuki/Library/Mobile Documents/com~apple~CloudDocs/Documents/eiken' -Recurse
+$items = Get-ChildItem '.' -Recurse
 foreach ($item in $items) {
     $f = $item.FullName
     if ($f.EndsWith('.mp3') -Or $f.EndsWith('.pdf')) {
-        $data = $item.FullName.Split('/') | Select-Object -Last 4
+        $data = $item.FullName.Split('\') | Select-Object -Last 4
         $nendo = $data[0]
         $kai = $data[1].Replace('第', '').Replace('回', '')
         $grade = $data[2].Replace('級', '').Replace('準', 'P')
