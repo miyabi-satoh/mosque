@@ -18,23 +18,28 @@ export const GET: RequestHandler = async ({ url }) => {
 	key = decodeURIComponent(key);
 
 	const data = findByHead(CTEST_MEDIA_CSV, key);
-	if (data && fs.existsSync(data.path)) {
+	if (data) {
+		if (!fs.existsSync(data.path)) {
+			console.log(data.path);
+			throw error(404, `Not found, ${data.path}`);
+		}
 		const stats = fs.statSync(data.path);
 		const filename = path.basename(data.path);
 		const contentType = mime.getType(data.path);
-		if (contentType !== null) {
-			return new Response(fs.readFileSync(data.path), {
-				status: 200,
-				headers: {
-					'Content-Type': contentType,
-					'Content-Length': `${stats.size}`,
-					'Content-Disposition': `inline; filename=${encodeURI(filename)}`,
-					// これが無いとシーク不可になる
-					'Accept-Ranges': 'bytes'
-				}
-			});
+		if (!contentType) {
+			throw error(415, `Unsupported Media Type, ${data.path}`);
 		}
+		return new Response(fs.readFileSync(data.path), {
+			status: 200,
+			headers: {
+				'Content-Type': contentType,
+				'Content-Length': `${stats.size}`,
+				'Content-Disposition': `inline; filename=${encodeURI(filename)}`,
+				// これが無いとシーク不可になる
+				'Accept-Ranges': 'bytes'
+			}
+		});
 	}
 
-	throw error(400, `Invalid`);
+	throw error(404, `Not found, ${key}`);
 };
