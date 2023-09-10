@@ -9,5 +9,8 @@ export default {
 		},
 		extend: {}
 	},
-	plugins: [require('daisyui')]
+	plugins: [require('daisyui')],
+	daisyui: {
+		logs: false
+	}
 };
