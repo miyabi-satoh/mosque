@@ -4,20 +4,20 @@ import mime from 'mime';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { CTEST_MEDIA_CSV } from '$env/static/private';
+import { CTEST_MEDIA_CSV, EIKEN_MEDIA_CSV } from '$env/static/private';
 
 import { findByHead } from '$lib/server/utils';
 
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ url }) => {
+function getMediaFile(url: URL, csvFile: string) {
 	let key = url.searchParams.get('key');
 	if (key === null) {
 		throw error(400, `Invalid`);
 	}
 	key = decodeURIComponent(key);
 
-	const data = findByHead(CTEST_MEDIA_CSV, key);
+	const data = findByHead(csvFile, key);
 	if (data) {
 		if (!fs.existsSync(data.path)) {
 			console.log(data.path);
@@ -42,4 +42,16 @@ export const GET: RequestHandler = async ({ url }) => {
 	}
 
 	throw error(404, `Not found, ${key}`);
+}
+
+export const GET: RequestHandler = async ({ params, url }) => {
+	const type = params.type.toLowerCase();
+	switch (type) {
+		case 'ctest':
+			return getMediaFile(url, CTEST_MEDIA_CSV);
+		case 'eiken':
+			return getMediaFile(url, EIKEN_MEDIA_CSV);
+	}
+
+	throw error(404, 'Not Found');
 };
