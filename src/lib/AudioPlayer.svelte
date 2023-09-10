@@ -44,7 +44,7 @@
 	}
 </script>
 
-<div class="flex p-4 gap-4 items-center">
+<div class="flex items-center gap-4 p-4">
 	<audio
 		{src}
 		bind:currentTime={time}
@@ -66,12 +66,12 @@
 		on:click={() => (paused = !paused)}
 		class="btn btn-circle btn-info h-16 w-16"
 	>
-		<Icon icon={paused ? 'mdi:play' : 'mdi:pause'} height="64px" />
+		<Icon icon={paused ? 'mdi:play' : 'mdi:pause'} height="48px" />
 	</button>
 	<button disabled={!src} class="btn btn-square btn-ghost" on:click={() => (time += 10)}>
 		<Icon icon="fluent:skip-forward-10-32-regular" height="32px" />
 	</button>
-	<div class="flex flex-col flex-1 gap-y-2">
+	<div class="flex flex-1 flex-col gap-y-2">
 		<div class="flex gap-x-2" class:text-gray-600={!src}>
 			<span>{format(time)}</span>
 			<!-- eslint-disable-next-line -->
@@ -104,7 +104,7 @@
 	input[type='range']::-webkit-slider-thumb,
 	input[type='range']::-moz-range-thumb,
 	input[type='range']::-ms-thumb {
-		@apply w-6 h-6 rounded-[50%] cursor-ew-resize;
+		@apply h-6 w-6 cursor-ew-resize rounded-[50%];
 		-webkit-appearance: none;
 		appearance: none;
 		-moz-appearance: none;
@@ -118,7 +118,7 @@
 	input[type='range']::-webkit-slider-runnable-track,
 	input[type='range']::-moz-range-track,
 	input[type='range']::-ms-track {
-		@apply shadow-none border-none bg-transparent;
+		@apply border-none bg-transparent shadow-none;
 		-webkit-appearance: none;
 		appearance: none;
 		-moz-appearance: none;

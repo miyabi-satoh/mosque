@@ -154,7 +154,7 @@
 
 	<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
 		{#each [...mediaUrls.entries()] as [key, url]}
-			<div class="card w-full rounded border border-base-content/20 bg-base-200 dark:bg-neutral/25">
+			<div class="card w-full rounded-md border border-base-content/20">
 				<div class="card-body justify-between p-4">
 					<h2 class="card-title">{key}</h2>
 					<div class="card-actions mt-4 justify-center">

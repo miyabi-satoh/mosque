@@ -14,8 +14,6 @@
 </script>
 
 <main class="container mx-auto max-w-3xl flex-1">
-	<h1 class="p-4 text-4xl font-semibold">MOSQUE</h1>
-
 	<div class="grid grid-cols-1 gap-4 p-4">
 		{#each menus as menu}
 			<a href={menu.url}>
