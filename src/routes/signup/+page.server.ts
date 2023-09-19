@@ -1,8 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
 
+import { UserRole } from '@prisma/client';
 import { superValidate } from 'sveltekit-superforms/server';
 
 import { signupSchema } from '$lib/schemas/signupSchema';
+import { db } from '$lib/server/db';
 import { auth } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
@@ -28,7 +30,6 @@ export const actions: Actions = {
 		}
 		// サインアップ処理
 		try {
-			console.log(form.data);
 			const user = await auth.createUser({
 				key: {
 					providerId: 'username',
@@ -36,7 +37,8 @@ export const actions: Actions = {
 					password: form.data.password
 				},
 				attributes: {
-					username: form.data.username
+					username: form.data.username,
+					role: (await db.user.count()) === 0 ? UserRole.ADMIN : UserRole.USER
 				}
 			});
 			const session = await auth.createSession({

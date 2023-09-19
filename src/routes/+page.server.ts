@@ -1,11 +1,17 @@
 import { fail, redirect } from '@sveltejs/kit';
 
+import { db } from '$lib/server/db';
 import { auth } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async () => {
-	return {};
+	const exam = await db.exam.findMany({
+		orderBy: { sortOrder: 'asc' }
+	});
+	return {
+		exam
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

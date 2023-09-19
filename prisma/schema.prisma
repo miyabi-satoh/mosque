@@ -10,9 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
-  id       String  @id @unique
-  username String? @unique
+  id       String   @id @unique
+  username String?  @unique
+  role     UserRole @default(USER)
 
   auth_session Session[]
   key          Key[]
@@ -39,4 +45,59 @@ model Key {
 
   @@index([user_id])
   @@map("auth_key")
+}
+
+enum ExamType {
+  ctest
+  eiken
+}
+
+model Exam {
+  examType   ExamType @id @map("exam_type")
+  shortName  String   @map("short_name")
+  fullName   String   @map("full_name")
+  sortOrder  Int      @map("sort_order")
+  labelGrade String   @map("label_grade")
+  labelNumOf String   @map("label_numof")
+
+  @@map("exam")
+}
+
+model Resource {
+  id         String   @id @default(cuid())
+  examType   ExamType @map("exam_type")
+  year       Int
+  grade      Int
+  numOf      Int      @map("num_of")
+  category   Int
+  title      String
+  shortTitle String   @map("short_title")
+  path       String
+
+  @@index([examType])
+  @@map("resource")
+}
+
+enum ResourceState {
+  ok
+  new
+  missing
+}
+
+model ResourceTemp {
+  id         String        @default(cuid())
+  session    String
+  state      ResourceState
+  examType   ExamType      @map("exam_type")
+  year       Int
+  grade      Int
+  numOf      Int           @map("num_of")
+  category   Int
+  title      String
+  shortTitle String        @map("short_title")
+  path       String
+
+  @@id([id, session])
+  @@index([examType])
+  @@map("resource_temp")
 }

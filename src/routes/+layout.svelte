@@ -5,6 +5,16 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
+	import { URLS } from '$lib/consts';
+	import { loadingStore, submittingStore } from '$lib/stores';
+	import { navigating } from '$app/stores';
+	import { LoadingOverlay } from '$lib';
+
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { AppBar, LightSwitch, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+
+	import { storePopup } from '@skeletonlabs/skeleton';
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	export let data: LayoutData;
 	let details: HTMLDetailsElement;
@@ -12,50 +22,65 @@
 	onMount(() => {
 		if (browser) {
 			document.documentElement.addEventListener('click', () => {
-				if (details.open) {
+				if (details?.open) {
 					details.open = false;
 				}
 			});
-			details.onclick = (e: Event) => {
-				e.stopPropagation();
-			};
 		}
 	});
+
+	$: if ($navigating) $submittingStore = false;
+	$: $loadingStore = !!$navigating || $submittingStore;
+
+	const popupMenu: PopupSettings = {
+		event: 'focus-click',
+		target: 'popupMenu',
+		placement: 'bottom',
+		closeQuery: '.menu-item'
+	};
 </script>
 
 <svelte:head>
 	<title>MOSQUE</title>
 </svelte:head>
 
-<form class="h-0 w-0" method="POST" action="/?/logout" use:enhance>
+{#if $loadingStore}
+	<LoadingOverlay />
+{/if}
+
+<form class="h-0 w-0" method="POST" action={URLS.LOGOUT} use:enhance>
 	<button type="submit" id="logout" />
 </form>
 
 <div class="flex h-screen flex-col">
 	<div class="container mx-auto max-w-3xl">
-		<div class="navbar bg-base-100">
-			<div class="flex-1">
-				<a href="/" class="btn btn-ghost text-xl normal-case">MOSQUE</a>
-			</div>
-			<div class="flex-none">
+		<AppBar background="bg-surface-50-900-token">
+			<svelte:fragment slot="lead">
+				<a href="/" class="btn-ghost btn text-xl normal-case">MOSQUE</a>
+			</svelte:fragment>
+			<svelte:fragment slot="trail">
 				{#if data.user}
-					<details class="dropdown dropdown-end" bind:this={details}>
-						<summary class="btn btn-ghost flex gap-x-2">
-							<Icon icon="mdi:account-circle" height="auto" />
-							{data.user.username}
-						</summary>
-						<ul
-							class="menu dropdown-content z-[1] w-52 rounded-md border border-base-content/25 bg-base-100 p-2"
-						>
-							<li><label for="logout">ログアウト</label></li>
-						</ul>
-					</details>
+					<button class="btn flex gap-x-2" use:popup={popupMenu}>
+						<Icon icon="mdi:account-circle" height="auto" />
+						{data.user.username}
+					</button>
+					<div class="card w-52 p-2 shadow-xl" data-popup="popupMenu">
+						<div class="flex flex-col gap-y-2">
+							<a href={URLS.ADMIN} class="menu-item btn w-full hover:variant-filled-surface"
+								>管理ページ</a
+							>
+							<label for="logout" class="menu-item btn w-full hover:variant-filled-surface"
+								>ログアウト</label
+							>
+						</div>
+					</div>
 				{/if}
-			</div>
-		</div>
+				<LightSwitch />
+			</svelte:fragment>
+		</AppBar>
 	</div>
 	<slot />
-	<footer class="p-4 text-right text-sm text-base-content/50">
+	<footer class="text-surface-500-400-token p-4 text-right text-sm">
 		Copyright &copy; 2023 miyabi-satoh.
 	</footer>
 </div>

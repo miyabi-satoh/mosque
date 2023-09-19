@@ -55,20 +55,20 @@
 		}}
 	/>
 
-	<button disabled={!src} class="btn btn-square btn-ghost" on:click={() => (time = 0)}>
-		<Icon icon="mdi:skip-previous" height="48px" />
+	<button disabled={!src} class="btn px-2" on:click={() => (time = 0)}>
+		<Icon icon="mdi:skip-previous" height="32px" />
 	</button>
-	<button disabled={!src} class="btn btn-square btn-ghost" on:click={() => (time -= 10)}>
+	<button disabled={!src} class="btn px-2" on:click={() => (time -= 10)}>
 		<Icon icon="fluent:skip-back-10-32-regular" height="32px" />
 	</button>
 	<button
 		disabled={!src}
+		class="variant-ghost btn rounded-full p-3"
 		on:click={() => (paused = !paused)}
-		class="btn btn-circle btn-info h-16 w-16"
 	>
 		<Icon icon={paused ? 'mdi:play' : 'mdi:pause'} height="48px" />
 	</button>
-	<button disabled={!src} class="btn btn-square btn-ghost" on:click={() => (time += 10)}>
+	<button disabled={!src} class="btn px-2" on:click={() => (time += 10)}>
 		<Icon icon="fluent:skip-forward-10-32-regular" height="32px" />
 	</button>
 	<div class="flex flex-1 flex-col gap-y-2">
@@ -94,7 +94,7 @@
 
 <style lang="postcss">
 	input[type='range'] {
-		@apply h-2 rounded bg-base-200 bg-no-repeat;
+		@apply bg-surface-400-500-token h-2 rounded bg-no-repeat;
 		appearance: none;
 		background-image: linear-gradient(#38bdf8, #38bdf8);
 		background-size: 0% 100%;
