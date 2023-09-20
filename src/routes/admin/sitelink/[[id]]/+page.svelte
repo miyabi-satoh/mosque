@@ -13,7 +13,7 @@
 <main class="container mx-auto max-w-3xl flex-1">
 	<h1 class="p-4 text-4xl font-semibold">外部サイトへのリンク{$form.id ? `更新` : `作成`}</h1>
 	{#if $message}
-		<span class="text-error-400-500-token">{$message}</span>
+		<span class="text-success-400-500-token">{$message}</span>
 	{/if}
 	<form class="space-y-8 p-4" method="POST" use:enhance>
 		<input type="hidden" name="id" bind:value={$form.id} />
@@ -22,7 +22,7 @@
 				<span>Url</span>
 				<input
 					class="input"
-					class:input-error={$errors.url || $message}
+					class:input-error={$errors.url}
 					type="text"
 					name="url"
 					bind:value={$form.url}
@@ -40,7 +40,7 @@
 				<span>Title</span>
 				<input
 					class="input"
-					class:input-error={$errors.title || $message}
+					class:input-error={$errors.title}
 					type="text"
 					name="title"
 					bind:value={$form.title}
@@ -57,7 +57,7 @@
 				<span>Sort Order</span>
 				<input
 					class="input"
-					class:input-error={$errors.sortOrder || $message}
+					class:input-error={$errors.sortOrder}
 					type="number"
 					name="title"
 					bind:value={$form.sortOrder}
