@@ -101,3 +101,12 @@ model ResourceTemp {
   @@index([examType])
   @@map("resource_temp")
 }
+
+model SiteLink {
+  id        String @id @default(cuid())
+  url       String
+  title     String
+  sortOrder Int    @map("sort_order")
+
+  @@map("site_link")
+}

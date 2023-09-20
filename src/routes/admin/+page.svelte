@@ -14,4 +14,8 @@
 			>
 		{/each}
 	</div>
+	<div class="mt-8 flex items-center">
+		<h1 class="flex-1 p-4 text-4xl font-semibold">外部サイトへのリンク</h1>
+		<a href={URLS.ADMIN_SITELINK} class="variant-ghost-primary btn">追加</a>
+	</div>
 </main>
