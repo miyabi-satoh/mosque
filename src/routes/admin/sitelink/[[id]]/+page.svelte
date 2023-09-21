@@ -1,0 +1,88 @@
+<script lang="ts">
+	import { superForm } from 'sveltekit-superforms/client';
+	import type { PageData } from './$types';
+	import { submittingStore } from '$lib/stores';
+
+	export let data: PageData;
+	const { form, message, errors, submitting, enhance, capture, restore } = superForm(data.form);
+	export const snapshot = { capture, restore };
+
+	$: $submittingStore = $submitting;
+</script>
+
+<main class="container mx-auto flex-1 lg:max-w-3xl">
+	<h1 class="p-4 text-4xl font-semibold">外部サイトへのリンク{$form.id ? `更新` : `作成`}</h1>
+	{#if $message}
+		<div class="p-4">
+			<span class="text-success-400-500-token">{$message}</span>
+		</div>
+	{/if}
+	<form class="space-y-8 p-4" method="POST" use:enhance>
+		<input type="hidden" name="id" bind:value={$form.id} />
+		<div>
+			<label class="label">
+				<span>Url</span>
+				<input
+					class="input"
+					class:input-error={$errors.url}
+					type="text"
+					name="url"
+					bind:value={$form.url}
+					disabled={$submitting}
+					autocomplete="url"
+				/>
+			</label>
+			{#if $errors.url}
+				<span class="text-error-400-500-token">{$errors.url[0]}</span>
+			{/if}
+		</div>
+
+		<div>
+			<label class="label">
+				<span>Title</span>
+				<input
+					class="input"
+					class:input-error={$errors.title}
+					type="text"
+					name="title"
+					bind:value={$form.title}
+					disabled={$submitting}
+				/>
+			</label>
+			{#if $errors.title}
+				<span class="text-error-400-500-token">{$errors.title[0]}</span>
+			{/if}
+		</div>
+
+		<div>
+			<label class="label">
+				<span>Sort Order</span>
+				<input
+					class="input"
+					class:input-error={$errors.sortOrder}
+					type="number"
+					name="title"
+					bind:value={$form.sortOrder}
+					disabled={$submitting}
+				/>
+			</label>
+			{#if $errors.sortOrder}
+				<span class="text-error-400-500-token">{$errors.sortOrder[0]}</span>
+			{/if}
+		</div>
+
+		<div class="flex justify-end gap-x-4">
+			{#if $form.id}
+				<button
+					name="delete"
+					on:click={(e) => !confirm('削除しますか？') && e.preventDefault()}
+					class="variant-filled-error btn"
+					disabled={$submitting}
+				>
+					削除
+				</button>
+			{/if}
+			<button class="variant-filled-primary btn" disabled={$submitting}>保存</button>
+		</div>
+	</form>
+</main>

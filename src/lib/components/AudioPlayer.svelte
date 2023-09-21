@@ -42,9 +42,13 @@
 			e.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
 		}
 	}
+
+	$: if (!src) {
+		time = duration = 0;
+	}
 </script>
 
-<div class="flex p-4 gap-4 items-center">
+<div class="flex items-center gap-4 p-4">
 	<audio
 		{src}
 		bind:currentTime={time}
@@ -55,27 +59,26 @@
 		}}
 	/>
 
-	<button disabled={!src} class="btn btn-square btn-ghost" on:click={() => (time = 0)}>
-		<Icon icon="mdi:skip-previous" height="48px" />
+	<button disabled={!src} class="btn px-2" on:click={() => (time = 0)}>
+		<Icon icon="mdi:skip-previous" height="32px" />
 	</button>
-	<button disabled={!src} class="btn btn-square btn-ghost" on:click={() => (time -= 10)}>
+	<button disabled={!src} class="btn px-2" on:click={() => (time -= 10)}>
 		<Icon icon="fluent:skip-back-10-32-regular" height="32px" />
 	</button>
 	<button
 		disabled={!src}
+		class="variant-ghost btn rounded-full p-3"
 		on:click={() => (paused = !paused)}
-		class="btn btn-circle btn-info h-16 w-16"
 	>
-		<Icon icon={paused ? 'mdi:play' : 'mdi:pause'} height="64px" />
+		<Icon icon={paused ? 'mdi:play' : 'mdi:pause'} height="48px" />
 	</button>
-	<button disabled={!src} class="btn btn-square btn-ghost" on:click={() => (time += 10)}>
+	<button disabled={!src} class="btn px-2" on:click={() => (time += 10)}>
 		<Icon icon="fluent:skip-forward-10-32-regular" height="32px" />
 	</button>
-	<div class="flex flex-col flex-1 gap-y-2">
-		<div class="flex gap-x-2" class:text-gray-600={!src}>
+	<div class="flex flex-1 flex-col gap-y-2">
+		<div class="flex items-center justify-between gap-x-2" class:text-surface-400-500-token={!src}>
 			<span>{format(time)}</span>
-			<!-- eslint-disable-next-line -->
-			<span class="flex-1 text-center">{@html title}</span>
+			<span>{title}</span>
 			<span>{format(duration - time)}</span>
 		</div>
 		<input
@@ -94,7 +97,7 @@
 
 <style lang="postcss">
 	input[type='range'] {
-		@apply h-2 rounded bg-base-200 bg-no-repeat;
+		@apply bg-surface-400-500-token h-2 rounded bg-no-repeat;
 		appearance: none;
 		background-image: linear-gradient(#38bdf8, #38bdf8);
 		background-size: 0% 100%;
@@ -104,7 +107,7 @@
 	input[type='range']::-webkit-slider-thumb,
 	input[type='range']::-moz-range-thumb,
 	input[type='range']::-ms-thumb {
-		@apply w-6 h-6 rounded-[50%] cursor-ew-resize;
+		@apply h-6 w-6 cursor-ew-resize rounded-[50%];
 		-webkit-appearance: none;
 		appearance: none;
 		-moz-appearance: none;
@@ -118,7 +121,7 @@
 	input[type='range']::-webkit-slider-runnable-track,
 	input[type='range']::-moz-range-track,
 	input[type='range']::-ms-track {
-		@apply shadow-none border-none bg-transparent;
+		@apply border-none bg-transparent shadow-none;
 		-webkit-appearance: none;
 		appearance: none;
 		-moz-appearance: none;

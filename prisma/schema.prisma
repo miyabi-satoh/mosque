@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id       String   @id @unique
+  username String?  @unique
+  role     UserRole @default(USER)
+
+  auth_session Session[]
+  key          Key[]
+
+  @@map("auth_user")
+}
+
+model Session {
+  id             String @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  resource_temp ResourceTemp[]
+
+  @@index([user_id])
+  @@map("auth_session")
+}
+
+model Key {
+  id              String  @id @unique
+  hashed_password String?
+  user_id         String
+  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_key")
+}
+
+enum ExamType {
+  ctest
+  eiken
+}
+
+model Exam {
+  examType   ExamType @id @map("exam_type")
+  shortName  String   @map("short_name")
+  fullName   String   @map("full_name")
+  sortOrder  Int      @map("sort_order")
+  labelGrade String   @map("label_grade")
+  labelNumOf String   @map("label_numof")
+
+  @@map("exam")
+}
+
+model Resource {
+  id         String   @id @default(cuid())
+  examType   ExamType @map("exam_type")
+  year       Int
+  grade      Int
+  numOf      Int      @map("num_of")
+  category   Int
+  title      String
+  shortTitle String   @map("short_title")
+  path       String
+
+  @@index([examType])
+  @@map("resource")
+}
+
+enum ResourceState {
+  ok
+  new
+  missing
+}
+
+model ResourceTemp {
+  id         String        @default(cuid())
+  sessionId  String        @map("session_id")
+  session    Session       @relation(references: [id], fields: [sessionId], onDelete: Cascade)
+  state      ResourceState
+  examType   ExamType      @map("exam_type")
+  year       Int
+  grade      Int
+  numOf      Int           @map("num_of")
+  category   Int
+  title      String
+  shortTitle String        @map("short_title")
+  path       String
+
+  @@id([id, sessionId])
+  @@index([examType])
+  @@map("resource_temp")
+}
+
+model SiteLink {
+  id        String @id @default(cuid())
+  url       String
+  title     String
+  sortOrder Int    @map("sort_order")
+
+  @@map("site_link")
+}
