@@ -1,8 +1,9 @@
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 
 import { message, superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
+import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
 
 import type { Actions, PageServerLoad } from './$types';
@@ -35,27 +36,41 @@ export const load = (async ({ params }) => {
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const form = await superValidate(request, schema);
+		const formData = await request.formData();
+		const form = await superValidate(formData, schema);
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
 		try {
 			if (!form.data.id) {
-				await db.siteLink.create({
+				// create
+				const siteLink = await db.siteLink.create({
 					data: form.data
 				});
+				form.data.id = siteLink.id;
 				return message(form, '作成しました。');
-			} else {
+			}
+
+			if (!formData.has('delete')) {
+				// update
 				await db.siteLink.update({
 					where: { id: form.data.id },
 					data: form.data
 				});
 				return message(form, `更新しました。`);
 			}
+
+			// delete
+			await db.siteLink.delete({
+				where: { id: form.data.id }
+			});
+			// catch-blockの後でredirect
 		} catch (e) {
 			console.log(e);
 			return fail(400, { form: { ...form, message: 'エラー' } });
 		}
+
+		throw redirect(303, URLS.ADMIN);
 	}
 };

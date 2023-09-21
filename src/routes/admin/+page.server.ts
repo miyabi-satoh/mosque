@@ -7,7 +7,11 @@ export const load: PageServerLoad = async () => {
 		orderBy: { sortOrder: 'asc' }
 	});
 
+	const siteLinks = await db.siteLink.findMany({
+		orderBy: { sortOrder: 'asc' }
+	});
 	return {
-		exam
+		exam,
+		siteLinks
 	};
 };

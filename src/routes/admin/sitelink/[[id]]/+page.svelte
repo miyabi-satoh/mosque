@@ -13,7 +13,9 @@
 <main class="container mx-auto max-w-3xl flex-1">
 	<h1 class="p-4 text-4xl font-semibold">外部サイトへのリンク{$form.id ? `更新` : `作成`}</h1>
 	{#if $message}
-		<span class="text-success-400-500-token">{$message}</span>
+		<div class="p-4">
+			<span class="text-success-400-500-token">{$message}</span>
+		</div>
 	{/if}
 	<form class="space-y-8 p-4" method="POST" use:enhance>
 		<input type="hidden" name="id" bind:value={$form.id} />
@@ -69,7 +71,17 @@
 			{/if}
 		</div>
 
-		<div class="flex justify-end">
+		<div class="flex justify-end gap-x-4">
+			{#if $form.id}
+				<button
+					name="delete"
+					on:click={(e) => !confirm('削除しますか？') && e.preventDefault()}
+					class="variant-filled-error btn"
+					disabled={$submitting}
+				>
+					削除
+				</button>
+			{/if}
 			<button class="variant-filled-primary btn" disabled={$submitting}>保存</button>
 		</div>
 	</form>
