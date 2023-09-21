@@ -1,37 +1,10 @@
 import { ExamType, type Exam, type Resource } from '@prisma/client';
-import { parse } from 'csv-parse/sync';
 import fs from 'node:fs';
 import path from 'node:path';
 
 import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR } from '$env/static/private';
 
 import { categories } from '$lib/consts';
-
-function readCsv(csvFile: string) {
-	const buffer = fs
-		.readFileSync(csvFile)
-		.toString()
-		.replace(/\r?\n|\r/g, '\n');
-	return buffer;
-}
-
-export function parseCsv(csvFile: string) {
-	return parse(readCsv(csvFile), {
-		columns: true
-	});
-}
-
-export function findByHead(csvFile: string, head: string) {
-	const buffer = readCsv(csvFile);
-	const lines = buffer.split('\n');
-	const data = lines.find((line) => line.startsWith(head));
-	if (data) {
-		// console.log(head);
-		// console.log(data);
-		return parse(lines[0] + '\n' + data, { columns: true })[0];
-	}
-	return undefined;
-}
 
 export function searchFiles(dirPath: string, ext: RegExp) {
 	// console.log(dirPath);
