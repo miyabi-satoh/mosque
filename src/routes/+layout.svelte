@@ -53,7 +53,7 @@
 </form>
 
 <div class="flex h-screen flex-col">
-	<div class="container mx-auto max-w-3xl">
+	<div class="container mx-auto lg:max-w-3xl">
 		<AppBar background="bg-surface-50-900-token">
 			<svelte:fragment slot="lead">
 				<a href="/" class="btn-ghost btn text-xl normal-case">MOSQUE</a>

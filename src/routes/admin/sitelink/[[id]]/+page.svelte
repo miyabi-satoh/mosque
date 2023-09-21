@@ -10,7 +10,7 @@
 	$: $submittingStore = $submitting;
 </script>
 
-<main class="container mx-auto max-w-3xl flex-1">
+<main class="container mx-auto flex-1 lg:max-w-3xl">
 	<h1 class="p-4 text-4xl font-semibold">外部サイトへのリンク{$form.id ? `更新` : `作成`}</h1>
 	{#if $message}
 		<div class="p-4">

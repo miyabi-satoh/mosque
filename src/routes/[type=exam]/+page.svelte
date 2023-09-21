@@ -3,6 +3,7 @@
 	import type { PageData } from './$types';
 	import { tick } from 'svelte';
 	import { AudioPlayer } from '$lib';
+	import { submittingStore } from '$lib/stores';
 
 	type CsvDataArrayT = PageData['csvData'];
 	type CsvDataT = CsvDataArrayT[0];
@@ -88,8 +89,12 @@
 	$: if (selectedGrade && selectedYear && selectedNumOf) {
 		updateResources();
 	}
-	function updateResources() {
-		resources = data.csvData
+	async function updateResources() {
+		$submittingStore = true;
+		resources = [];
+		await tick();
+
+		const newResources = data.csvData
 			.filter(
 				(obj) =>
 					`${obj.grade.value}` === selectedGrade &&
@@ -102,24 +107,28 @@
 					url: `/api/data/${data.exam.examType}/${obj.id}`
 				};
 			});
-		(async () => {
-			for (const obj of resources) {
-				try {
-					const res = await fetch(obj.url);
-					if (res.ok) {
-						continue;
-					} else {
-						console.log(res.statusText);
-					}
-				} catch (err) {
-					if (err instanceof Error) {
-						console.log(err.message);
-					}
+
+		for (const obj of newResources) {
+			try {
+				const res = await fetch(obj.url);
+				if (res.ok) {
+					continue;
+				} else {
+					console.log(res.statusText);
 				}
-				obj.url = '';
+			} catch (err) {
+				if (err instanceof Error) {
+					console.log(err.message);
+				}
 			}
-			resources = resources;
-		})();
+			obj.url = '';
+		}
+		resources = newResources;
+		$submittingStore = false;
+	}
+
+	function handleClearClick() {
+		selectedGrade = selectedYear = selectedNumOf = '';
 	}
 </script>
 
@@ -130,7 +139,7 @@
 
 	<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
 
-	<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-3">
+	<div class="flex flex-col gap-4 p-4 sm:flex-row sm:justify-between">
 		<select id="select-grade" bind:value={selectedGrade} class="select w-full">
 			<option value="" disabled selected>{data.exam.labelGrade}</option>
 			{#each getGradeList(selectedYear, selectedNumOf) as [value, label]}
@@ -151,6 +160,8 @@
 				<option {value}>{label}</option>
 			{/each}
 		</select>
+
+		<button class="variant-filled btn" on:click={handleClearClick}>Clear</button>
 	</div>
 
 	<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">

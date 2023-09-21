@@ -5,7 +5,7 @@
 	export let data: PageData;
 </script>
 
-<main class="container mx-auto flex max-w-3xl flex-1 flex-col overflow-y-hidden">
+<main class="container mx-auto flex flex-1 flex-col overflow-y-hidden lg:max-w-3xl">
 	<h1 class="p-4 text-4xl font-semibold">試験データ更新</h1>
 	<div class="grid grid-cols-2 gap-4 p-4">
 		{#each data.exam as exam}

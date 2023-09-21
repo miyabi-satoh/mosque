@@ -34,7 +34,7 @@
 </script>
 
 <!-- <SuperDebug data={$form} display={true} /> -->
-<main class="container mx-auto flex max-w-3xl flex-1 flex-col overflow-y-hidden">
+<main class="container mx-auto flex flex-1 flex-col overflow-y-hidden lg:max-w-3xl">
 	{#if data.entries.length > 0}
 		<div class="flex items-center p-4">
 			<p class="flex-1">
