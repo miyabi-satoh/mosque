@@ -56,9 +56,6 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.15
     version: 10.4.15(postcss@8.4.30)
-  csv-parse:
-    specifier: ^5.5.0
-    version: 5.5.0
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
@@ -1384,10 +1381,6 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
-    dev: true
-
-  /csv-parse@5.5.0:
-    resolution: {integrity: sha512-RxruSK3M4XgzcD7Trm2wEN+SJ26ChIb903+IWxNOcB5q4jT2Cs+hFr6QP39J05EohshRFEvyzEBoZ/466S2sbw==}
     dev: true
 
   /debug@4.3.4:
