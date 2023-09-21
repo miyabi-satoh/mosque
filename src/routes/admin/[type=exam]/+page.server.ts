@@ -41,7 +41,7 @@ export const load = (async ({ locals, params }) => {
 
 	await db.resourceTemp.deleteMany({
 		where: {
-			session: session.sessionId,
+			sessionId: session.sessionId,
 			examType: examType
 		}
 	});
@@ -116,7 +116,7 @@ export const load = (async ({ locals, params }) => {
 			data: {
 				...data,
 				id: data.id ?? undefined,
-				session: session.sessionId,
+				sessionId: session.sessionId,
 				state: data.id ? ResourceState.ok : ResourceState.new,
 				examType: examType
 			}
@@ -127,7 +127,7 @@ export const load = (async ({ locals, params }) => {
 			await db.resourceTemp.create({
 				data: {
 					...data,
-					session: session.sessionId,
+					sessionId: session.sessionId,
 					state: ResourceState.missing
 				}
 			});
@@ -137,7 +137,7 @@ export const load = (async ({ locals, params }) => {
 
 	const tempData = await db.resourceTemp.findMany({
 		where: {
-			session: session.sessionId,
+			sessionId: session.sessionId,
 			examType
 		},
 		orderBy: [
@@ -195,7 +195,7 @@ export const actions: Actions = {
 		const session = await locals.auth.validate();
 		if (!session) {
 			console.error('Cannot read session');
-			throw fail(500, { form, message: 'Internal Server Error' });
+			return fail(500, { form, message: 'Internal Server Error' });
 		}
 
 		const examType = params.type.toLowerCase() as ExamType;
@@ -220,16 +220,10 @@ export const actions: Actions = {
 
 			// 本テーブルを更新
 			await db.resource.createMany({
-				data: res.map((r) => exclude(r, ['session', 'state']))
+				data: res.map((r) => exclude(r, ['sessionId', 'state']))
 			});
 
-			// 一時テーブルを削除
-			await db.resourceTemp.deleteMany({
-				where: {
-					examType: examType,
-					session: session.sessionId
-				}
-			});
+			// 一時テーブルを削除 -> load()で
 		} catch (e) {
 			console.log(e);
 			return fail(400, { form: { ...form, message: 'DB更新エラー' } });
