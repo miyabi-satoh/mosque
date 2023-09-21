@@ -42,6 +42,10 @@
 			e.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
 		}
 	}
+
+	$: if (!src) {
+		time = duration = 0;
+	}
 </script>
 
 <div class="flex items-center gap-4 p-4">
@@ -72,10 +76,9 @@
 		<Icon icon="fluent:skip-forward-10-32-regular" height="32px" />
 	</button>
 	<div class="flex flex-1 flex-col gap-y-2">
-		<div class="flex gap-x-2" class:text-gray-600={!src}>
+		<div class="flex items-center justify-between gap-x-2" class:text-surface-400-500-token={!src}>
 			<span>{format(time)}</span>
-			<!-- eslint-disable-next-line -->
-			<span class="flex-1 text-center">{@html title}</span>
+			<span>{title}</span>
 			<span>{format(duration - time)}</span>
 		</div>
 		<input

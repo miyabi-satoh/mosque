@@ -129,6 +129,9 @@
 
 	function handleClearClick() {
 		selectedGrade = selectedYear = selectedNumOf = '';
+		resources = [];
+		audioPaused = true;
+		audioSrc = audioTitle = '';
 	}
 </script>
 
