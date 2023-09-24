@@ -16,22 +16,14 @@ const schema = z.object({
 });
 
 export const load = (async ({ params }) => {
-	const siteLink = await (async (id) => {
-		if (id) {
-			const siteLink = await db.siteLink.findUnique({
-				where: { id }
-			});
-
-			if (!siteLink) {
-				throw error(404, 'Not Found');
-			}
-			return siteLink;
-		}
-		return undefined;
-	})(params.id);
+	const siteLinks = await db.siteLink.findMany({
+		orderBy: { sortOrder: 'asc' }
+	});
+	const siteLink = siteLinks.find((s) => s.id === params.id);
+	if (params.id && !siteLink) throw error(404, `指定された外部リンクデータが見つかりません。`);
 
 	const form = await superValidate(siteLink, schema);
-	return { form };
+	return { form, siteLinks };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
