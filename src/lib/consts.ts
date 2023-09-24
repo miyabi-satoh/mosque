@@ -6,6 +6,7 @@ export const URLS = {
 	SIGNUP: '/signup',
 	ADMIN: '/admin',
 	ADMIN_SITELINK: '/admin/sitelink',
+	ADMIN_STAFF: '/admin/staff',
 	BOARD: '/board',
 	BOARD_AUTH: '/board/auth',
 	API_FETCH: '/api/fetch?url='
