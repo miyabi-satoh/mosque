@@ -30,7 +30,7 @@ export const load: PageServerLoad = async () => {
 			label: `ユーザ`
 		},
 		{
-			href: ``,
+			href: URLS.ADMIN_STAFF,
 			label: `スタッフ`
 		}
 	);
