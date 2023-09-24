@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
-import { STAFF_NAME, STAFF_PASS } from '$env/static/private';
+import { SCHOOL_CODE, STAFF_NAME, STAFF_PASS } from '$env/static/private';
 
 import { URLS } from '$lib/consts';
 import { auth } from '$lib/server/lucia';
@@ -13,7 +13,7 @@ import { hasStaffRole } from '$lib/utils';
 import type { Actions, PageServerLoad } from './$types';
 
 function isValidCode(code: string): boolean {
-	const validCode = format(new Date(), 'cccddMMMLL').toLowerCase();
+	const validCode = format(new Date(), 'iiiddLLL').toLowerCase() + SCHOOL_CODE;
 	return code === validCode;
 }
 const authSchema = z

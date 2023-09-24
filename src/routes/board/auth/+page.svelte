@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
-	import Icon from '@iconify/svelte';
-	import { formatRFC7231 } from 'date-fns';
+	import { format } from 'date-fns';
 	import { onMount } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -19,7 +19,7 @@
 	$: $submittingStore = $submitting;
 
 	function formatNow() {
-		return formatRFC7231(new Date());
+		return format(new Date(), 'iii, dd LLL y HH:mm:ss');
 	}
 	let now = formatNow();
 
@@ -31,7 +31,7 @@
 	});
 </script>
 
-<main class="container mx-auto flex flex-1 flex-col lg:max-w-3xl">
+<MainContainer>
 	<p class="text-center">{now}</p>
 	<form method="POST" use:enhance class="mx-auto w-96 space-y-4 p-4">
 		<label class="label">
@@ -47,14 +47,7 @@
 		</label>
 		<button class="variant-filled btn w-full">送信</button>
 		{#if $errors.code}
-			<aside class="alert variant-filled-error">
-				<!-- Icon -->
-				<div><Icon icon="mdi:alert-circle" height="auto" /></div>
-				<!-- Message -->
-				<div class="alert-message">
-					{$errors.code}
-				</div>
-			</aside>
+			<div class="text-error-500-400-token p-2 text-center">{$errors.code}</div>
 		{/if}
 	</form>
-</main>
+</MainContainer>
