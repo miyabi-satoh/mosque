@@ -1,3 +1,6 @@
+import { UserRole } from '@prisma/client';
+import type { User } from 'lucia';
+
 // https://note.affi-sapo-sv.com/js-convert-full-width-numbers.php
 export const convertFullWidthNumbersToHalf = (() => {
 	// 全角数字と半角数字の差分を計算
@@ -16,4 +19,11 @@ export function exclude<T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
 		delete objCopy[key];
 	}
 	return objCopy;
+}
+
+export function hasAdminRole(user: User): boolean {
+	return user.role === UserRole.ADMIN;
+}
+export function hasStaffRole(user: User): boolean {
+	return user.role === UserRole.STAFF || user.role === UserRole.ADMIN;
 }
