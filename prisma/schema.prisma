@@ -13,6 +13,7 @@ datasource db {
 enum UserRole {
   USER
   ADMIN
+  STAFF
 }
 
 model User {
@@ -20,8 +21,9 @@ model User {
   username String?  @unique
   role     UserRole @default(USER)
 
-  auth_session Session[]
-  key          Key[]
+  auth_session     Session[]
+  key              Key[]
+  staff_user_links StaffUserLink[]
 
   @@map("auth_user")
 }
@@ -112,4 +114,54 @@ model SiteLink {
   sortOrder Int    @map("sort_order")
 
   @@map("site_link")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  username  String
+  password  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  comments Comment[]
+
+  @@map("post")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  message   String
+  username  String
+  password  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  postId String @map("post_id")
+  post   Post   @relation(references: [id], fields: [postId], onDelete: Cascade)
+
+  @@map("comment")
+}
+
+model Staff {
+  id      String @id @default(cuid())
+  sei     String
+  mei     String
+  seiKana String @map("sei_kana")
+  meiKana String @map("mei_kana")
+
+  staff_user_links StaffUserLink[]
+
+  @@map("staff")
+}
+
+model StaffUserLink {
+  id      String @id @default(cuid())
+  staffId String @map("staff_id")
+  staff   Staff  @relation(references: [id], fields: [staffId], onDelete: Cascade)
+  userId  String @map("user_id")
+  user    User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@map("staff_user_link")
 }
