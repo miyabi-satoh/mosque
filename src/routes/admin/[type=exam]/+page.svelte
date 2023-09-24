@@ -1,18 +1,17 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { submittingStore } from '$lib/stores';
+	import Icon from '@iconify/svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	import { submittingStore } from '$lib/stores';
-	import { browser } from '$app/environment';
-	import Icon from '@iconify/svelte';
 
 	export let data: PageData;
 	let allChecked: boolean = false;
 
-	const { form, submitting, capture, restore, enhance } = superForm(data.form, {
+	const { form, submitting, enhance, capture, restore } = superForm(data.form, {
 		taintedMessage: false
 	});
 	export const snapshot = { capture, restore };
-
 	$: $submittingStore = $submitting;
 
 	$: if (browser) {
