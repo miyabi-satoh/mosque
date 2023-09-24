@@ -7,7 +7,8 @@ export const URLS = {
 	ADMIN: '/admin',
 	ADMIN_SITELINK: '/admin/sitelink',
 	BOARD: '/board',
-	BOARD_AUTH: '/board/auth'
+	BOARD_AUTH: '/board/auth',
+	API_FETCH: '/api/fetch?url='
 } as const;
 
 export const categories = {
