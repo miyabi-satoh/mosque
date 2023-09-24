@@ -1,0 +1,304 @@
+<script lang="ts">
+	import { browser } from '$app/environment';
+	import { submittingStore } from '$lib/stores';
+	import Icon from '@iconify/svelte';
+	import { Accordion, AccordionItem, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { formatDistanceToNow } from 'date-fns';
+	import ja from 'date-fns/locale/ja';
+	import { onMount, tick } from 'svelte';
+	import { superForm } from 'sveltekit-superforms/client';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+	type Post = PageData['posts'][0];
+
+	const { form, errors, constraints, submitting, enhance, capture, restore } = superForm(
+		data.form,
+		{
+			resetForm: true,
+			taintedMessage: false
+		}
+	);
+	export const snapshot = { capture, restore };
+	$: $submittingStore = $submitting;
+	type FormDataT = typeof $form;
+
+	const popupHover: PopupSettings = {
+		event: 'hover',
+		target: 'popupHover',
+		placement: 'top'
+	};
+
+	let focusOnTextarea = false;
+	let currentPost: Post | undefined = undefined;
+	let textareaRows = 1;
+
+	function calcRows(focus: boolean, content: string) {
+		if (focus || content) {
+			const rows = ((content: string) => {
+				if (!content) {
+					return 0;
+				}
+				const rows = (content.match(/\n/g) ?? []).length;
+				// 改行だけでなく、折り返しの行数も考慮
+				const e = window.document.getElementById('form-content')!;
+				const fontSize =
+					parseInt(
+						window.getComputedStyle(e, null).getPropertyValue('font-size').replace('px', ''),
+						10
+					) + 1;
+				const width = e.clientWidth;
+				const wordsPerLine = width / fontSize;
+				const lines = content.length / wordsPerLine;
+				return Math.max(lines, rows);
+			})(content);
+			console.log(`calcRows`, rows, focus, content);
+
+			return Math.floor(Math.min(rows + 1, 20));
+		}
+		return 1;
+	}
+
+	function handleBlurTextarea() {
+		console.log(`handleBlurTextarea`);
+		focusOnTextarea = false;
+		const content = $form.content.replace(/\n{2,}/g, '\n').trim();
+		textareaRows = calcRows(focusOnTextarea, content);
+		$form.content = content;
+	}
+
+	// テキストエリアでの入力時に行数を調整する
+	$: if (focusOnTextarea) {
+		textareaRows = calcRows(focusOnTextarea, $form.content);
+	}
+	// テキストエリアをクリアしたら、行数を1にする
+	$: if ($form.content.length === 0) {
+		textareaRows = 1;
+	}
+
+	function handleClickCancel() {
+		$form = {
+			id: undefined,
+			content: '',
+			title: '',
+			password: '',
+			username: '',
+			delete: undefined
+		} satisfies FormDataT;
+		currentPost = undefined;
+	}
+
+	async function handleClickEdit(post: Post) {
+		currentPost = post;
+		$form = {
+			...post,
+			password: ''
+		};
+		await tick();
+		const el = window.document.getElementById('form-content');
+		if (el) {
+			const e = el as HTMLTextAreaElement;
+			e.selectionStart = 0;
+			e.focus();
+		}
+		textareaRows = calcRows(true, post.content);
+	}
+
+	function handleClickDelete(post: Post) {
+		currentPost = post;
+		$form = {
+			...post,
+			password: '',
+			delete: true
+		};
+	}
+
+	function formatDate(date: Date) {
+		return formatDistanceToNow(date, { locale: ja, addSuffix: true });
+	}
+
+	async function handleResize() {
+		const elements = window.document.querySelectorAll('.truncate');
+		elements.forEach((el) => {
+			const e = el as HTMLElement;
+			e.innerText = '';
+		});
+
+		await tick();
+
+		elements.forEach((el) => {
+			const e = el as HTMLElement;
+			// 改行、スペースを置換
+			const content = e.dataset.content
+				?.replace(/\r?\n/g, '')
+				.replace(/\x20+/g, ' ')
+				.replace(/\u3000+/g, ' ');
+			if (content) {
+				// 参考 - https://qiita.com/s_yasunaga/items/00e1cba8d695d759d5f7
+				const fontSize =
+					parseInt(
+						window.getComputedStyle(e, null).getPropertyValue('font-size').replace('px', ''),
+						10
+					) + 1;
+				const width = e.clientWidth;
+				if (width > fontSize * 15) {
+					const words = width / fontSize;
+					e.innerText = content.length > words ? `${content.slice(0, words)}...` : content;
+				}
+			}
+		});
+	}
+
+	onMount(() => {
+		if (browser) {
+			handleResize();
+		}
+	});
+</script>
+
+<svelte:window on:resize={handleResize} />
+<main class="container mx-auto flex flex-1 flex-col overflow-hidden lg:max-w-3xl">
+	<div class=" flex-1 overflow-y-scroll">
+		<form method="POST" use:enhance>
+			<input type="hidden" name="id" value={$form.id} />
+			<div
+				class="border-surface-400-500-token mb-2 grid grid-cols-1 gap-4 border-b px-4 py-2 sm:grid-cols-2"
+			>
+				<!-- {#if checkAction($form) === 'delete'}
+					<div class="sm:col-span-2">
+						<aside class="alert variant-filled-error flex-row">
+							<div class="mr-4"><Icon icon="mdi:alert-circle" height="auto" /></div>
+							<div class="alert-message !m-0">
+								削除したデータは復元できません。削除してもよろしいですか？
+							</div>
+						</aside>
+					</div>
+				{:else} -->
+				<textarea
+					class="textarea sm:col-span-2"
+					class:input-error={$errors.content}
+					name="content"
+					id="form-content"
+					rows={textareaRows}
+					placeholder="本文"
+					bind:value={$form.content}
+					on:focus={() => (focusOnTextarea = true)}
+					on:blur={handleBlurTextarea}
+					{...$constraints.content}
+				/>
+
+				{#if $form.content}
+					<div class="sm:col-span-2">
+						<label class="label">
+							<span>タイトル</span>
+							<input
+								class="input"
+								class:input-error={$errors.title}
+								type="text"
+								name="title"
+								bind:value={$form.title}
+								{...$constraints.title}
+							/>
+						</label>
+						{#if $errors.title}
+							<span class="text-error-500">{$errors.title}</span>
+						{/if}
+					</div>
+
+					<div>
+						<label class="label">
+							<span>発信者</span>
+							<input
+								class="input"
+								class:input-error={$errors.username}
+								type="text"
+								name="username"
+								bind:value={$form.username}
+								{...$constraints.username}
+							/>
+						</label>
+						{#if $errors.username}
+							<span class="text-error-500">{$errors.username}</span>
+						{/if}
+					</div>
+					{#if !currentPost || currentPost.password}
+						<div>
+							<label class="label">
+								<span class="flex items-center">
+									編集キー
+									<button class="[&>*]:pointer-events-none" use:popup={popupHover}>
+										<Icon icon="mdi:help-circle" height="auto" />
+									</button>
+								</span>
+								<div class="card variant-filled-secondary p-4" data-popup="popupHover">
+									<p>内容の編集や削除の際に入力します</p>
+									<div class="variant-filled-secondary arrow" />
+								</div>
+								<input
+									class="input"
+									class:input-error={$errors.password}
+									type="password"
+									name="password"
+									bind:value={$form.password}
+									{...$constraints.password}
+								/>
+							</label>
+							{#if $errors.password}
+								<span class="text-error-500">{$errors.password}</span>
+							{/if}
+						</div>
+					{/if}
+					{#if $form.title && $form.username}
+						<div class="mb-1 flex justify-end gap-x-4 sm:col-span-2">
+							<button class="variant-filled btn" on:click|preventDefault={handleClickCancel}
+								>キャンセル</button
+							>
+							<button class="variant-filled-primary btn">送信する</button>
+						</div>
+					{/if}
+				{/if}
+			</div>
+		</form>
+		<div class="px-4">
+			{#if data.posts.length > 0}
+				<Accordion>
+					{#each data.posts as post (post.id)}
+						<AccordionItem>
+							<svelte:fragment slot="summary">
+								<div class="flex items-baseline gap-x-4">
+									<h2 class="text-lg font-bold">{post.title}</h2>
+									<span class="text-surface-500-400-token text-sm">
+										{post.username}・{formatDate(post.updatedAt)}
+									</span>
+									<div
+										class="text-surface-500-400-token flex-1 truncate text-sm"
+										data-content={post.content}
+									/>
+								</div>
+							</svelte:fragment>
+							<svelte:fragment slot="content">
+								<p class="pl-2">
+									{post.content}
+								</p>
+								{#if post.password && !$form.id}
+									<div class="flex justify-end gap-x-4">
+										<button
+											class="variant-filled-primary btn"
+											on:click={() => handleClickEdit(post)}>編集</button
+										>
+										<button
+											class="variant-filled-error btn"
+											on:click={() => handleClickDelete(post)}>削除</button
+										>
+									</div>
+								{/if}
+							</svelte:fragment>
+						</AccordionItem>
+					{/each}
+				</Accordion>
+			{:else}
+				データがありません。
+			{/if}
+		</div>
+	</div>
+</main>
