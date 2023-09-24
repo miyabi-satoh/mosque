@@ -5,7 +5,9 @@ export const URLS = {
 	LOGOUT: '/?/logout',
 	SIGNUP: '/signup',
 	ADMIN: '/admin',
-	ADMIN_SITELINK: '/admin/sitelink'
+	ADMIN_SITELINK: '/admin/sitelink',
+	BOARD: '/board',
+	BOARD_AUTH: '/board/auth'
 } as const;
 
 export const categories = {
