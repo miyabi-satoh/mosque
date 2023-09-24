@@ -1,12 +1,14 @@
 import { error } from '@sveltejs/kit';
 
-import { UserRole } from '@prisma/client';
+import { hasAdminRole } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ locals }) => {
+	// ログインセッションを取得
 	const session = await locals.auth.validate();
-	if (!session || session.user.role !== UserRole.ADMIN) {
+	// 認可
+	if (!session || !hasAdminRole(session.user)) {
 		throw error(404, 'Not found');
 	}
 
