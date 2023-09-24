@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { MainContainer } from '$lib';
 	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 </script>
 
-<main class="container mx-auto flex flex-1 flex-col overflow-y-hidden lg:max-w-3xl">
+<MainContainer innerScroll>
 	<div class="flex-1 space-y-4 overflow-y-scroll p-4">
 		{#each data.exam as exam}
 			<a href="/{exam.examType}" class="card flex min-h-[64px] w-full items-center">
@@ -24,4 +25,4 @@
 			</a>
 		{/each}
 	</div>
-</main>
+</MainContainer>

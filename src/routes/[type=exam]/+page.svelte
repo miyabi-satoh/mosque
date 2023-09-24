@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AudioPlayer } from '$lib';
+	import { AudioPlayer, MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
 	import { tick } from 'svelte';
@@ -135,7 +135,7 @@
 	}
 </script>
 
-<main class="container mx-auto flex max-w-3xl flex-1 flex-col overflow-y-hidden">
+<MainContainer innerScroll>
 	<h1 class="p-4 text-4xl font-semibold">
 		{data.exam?.fullName}<span class="ml-4">音声配信</span>
 	</h1>
@@ -191,7 +191,7 @@
 								<a href={res.url} target="_blank">新しいタブで開く</a>
 							</button>
 						{:else}
-							<button disabled class="variant-filled-secondary btn"> 新しいタブで開く </button>
+							<button disabled class="variant-filled-secondary btn">新しいタブで開く</button>
 						{/if}
 					</div>
 				</div>
@@ -201,4 +201,4 @@
 			</div>
 		{/each}
 	</div>
-</main>
+</MainContainer>

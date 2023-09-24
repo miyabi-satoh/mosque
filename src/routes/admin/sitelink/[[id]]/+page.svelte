@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MainContainer } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -49,7 +50,7 @@
 	}
 </script>
 
-<main class="container mx-auto flex-1 lg:max-w-3xl">
+<MainContainer>
 	<form method="POST" use:enhance>
 		<input type="hidden" name="id" bind:value={$form.id} />
 		<div class="border-surface-400-500-token mb-2 flex flex-col gap-4 border-b px-4 py-2">
@@ -137,4 +138,4 @@
 			</div>
 		{/each}
 	</div>
-</main>
+</MainContainer>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -12,8 +13,8 @@
 	$: $submittingStore = $submitting;
 </script>
 
-<div class="flex-1">
-	<div class="mx-auto w-full max-w-lg rounded-md p-6 shadow-2xl">
+<MainContainer>
+	<div class="w-modal-slim mx-auto rounded-md p-6 shadow-2xl">
 		<h1 class="text-center text-3xl font-semibold">ログイン</h1>
 		{#if $message}
 			<span class="text-error-400-500-token">{$message}</span>
@@ -60,4 +61,4 @@
 			<button class="variant-filled btn w-full" disabled={$submitting}>ログイン</button>
 		</form>
 	</div>
-</div>
+</MainContainer>

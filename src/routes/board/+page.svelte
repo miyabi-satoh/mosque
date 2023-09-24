@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
 	import { Accordion, AccordionItem, popup, type PopupSettings } from '@skeletonlabs/skeleton';
@@ -157,7 +158,7 @@
 </script>
 
 <svelte:window on:resize={handleResize} />
-<main class="container mx-auto flex flex-1 flex-col overflow-hidden lg:max-w-3xl">
+<MainContainer innerScroll>
 	<div class=" flex-1 overflow-y-scroll">
 		<form method="POST" use:enhance>
 			<input type="hidden" name="id" value={$form.id} />
@@ -301,4 +302,4 @@
 			{/if}
 		</div>
 	</div>
-</main>
+</MainContainer>

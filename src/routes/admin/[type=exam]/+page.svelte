@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -32,8 +33,7 @@
 	}
 </script>
 
-<!-- <SuperDebug data={$form} display={true} /> -->
-<main class="container mx-auto flex flex-1 flex-col overflow-y-hidden lg:max-w-3xl">
+<MainContainer innerScroll>
 	{#if data.entries.length > 0}
 		<div class="flex items-center p-4">
 			<p class="flex-1">
@@ -98,4 +98,4 @@
 	{:else}
 		<div class="p-4">{data.exam?.shortName}関連ファイルが見つかりませんでした。</div>
 	{/if}
-</main>
+</MainContainer>
