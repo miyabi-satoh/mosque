@@ -159,9 +159,9 @@ model Staff {
 model StaffUserLink {
   id      String @id @default(cuid())
   staffId String @map("staff_id")
-  staff   Staff  @relation(references: [id], fields: [staffId], onDelete: Cascade)
+  staff   Staff  @relation(references: [id], fields: [staffId])
   userId  String @map("user_id")
-  user    User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+  user    User   @relation(references: [id], fields: [userId])
 
   @@map("staff_user_link")
 }
