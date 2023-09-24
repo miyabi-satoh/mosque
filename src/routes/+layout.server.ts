@@ -1,15 +1,12 @@
-import { redirect } from '@sveltejs/kit';
-
-import { URLS } from '$lib/consts';
-import { db } from '$lib/server/db';
+import { createBuiltinUsers } from '$lib/server/lucia';
 
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ locals, url }) => {
-	const count = await db.user.count();
-	if (count === 0 && url.pathname !== URLS.SIGNUP) {
-		throw redirect(302, URLS.SIGNUP);
-	}
+export const load = (async ({ locals }) => {
+	// ビルトインユーザーを作成
+	await createBuiltinUsers();
+
+	// ログインセッションを取得
 	const session = await locals.auth.validate();
 	return {
 		user: session ? session.user : undefined

@@ -1,8 +1,16 @@
 import { prisma } from '@lucia-auth/adapter-prisma';
+import { UserRole } from '@prisma/client';
 import { lucia } from 'lucia';
 import { sveltekit } from 'lucia/middleware';
 
-import { ACTIVE_PERIOD_MINUTES, IDLE_PERIOD_MINUTES } from '$env/static/private';
+import {
+	ACTIVE_PERIOD_MINUTES,
+	ADMIN_NAME,
+	ADMIN_PASS,
+	IDLE_PERIOD_MINUTES,
+	STAFF_NAME,
+	STAFF_PASS
+} from '$env/static/private';
 
 import { db } from '$lib/server/db';
 
@@ -27,3 +35,35 @@ export const auth = lucia({
 });
 
 export type Auth = typeof auth;
+
+// ビルトインユーザーを作成
+export async function createBuiltinUsers() {
+	const count = await db.user.count();
+	if (count === 0) {
+		const users = [
+			{
+				username: ADMIN_NAME,
+				password: ADMIN_PASS,
+				role: UserRole.ADMIN
+			},
+			{
+				username: STAFF_NAME,
+				password: STAFF_PASS,
+				role: UserRole.STAFF
+			}
+		];
+		for (const user of users) {
+			await auth.createUser({
+				key: {
+					providerId: 'username',
+					providerUserId: user.username.toLowerCase(),
+					password: user.password
+				},
+				attributes: {
+					username: user.username,
+					role: user.role
+				}
+			});
+		}
+	}
+}
