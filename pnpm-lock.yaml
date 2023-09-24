@@ -41,6 +41,9 @@ devDependencies:
   '@trivago/prettier-plugin-sort-imports':
     specifier: ^4.2.0
     version: 4.2.0(prettier@3.0.3)
+  '@types/bcryptjs':
+    specifier: ^2.4.4
+    version: 2.4.4
   '@types/mime':
     specifier: ^3.0.1
     version: 3.0.1
@@ -56,6 +59,12 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.15
     version: 10.4.15(postcss@8.4.30)
+  bcryptjs:
+    specifier: ^2.4.3
+    version: 2.4.3
+  date-fns:
+    specifier: ^2.30.0
+    version: 2.30.0
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
@@ -209,6 +218,13 @@ packages:
     hasBin: true
     dependencies:
       '@babel/types': 7.17.0
+    dev: true
+
+  /@babel/runtime@7.22.15:
+    resolution: {integrity: sha512-T0O+aa+4w0u06iNmapipJXMV4HoUir03hpx3/YqXXhu9xim3w+dVphjFWl1OH8NbZHw5Lbm9k45drDkgq2VNNA==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.14.0
     dev: true
 
   /@babel/template@7.22.15:
@@ -863,6 +879,10 @@ packages:
       - supports-color
     dev: true
 
+  /@types/bcryptjs@2.4.4:
+    resolution: {integrity: sha512-9wlJI7k5gRyJEC4yrV7DubzNQFTPiykYxUA6lBtsk5NlOfW9oWLJ1HdIA4YtE+6C3i3mTpDQQEosJ2rVZfBWnw==}
+    dev: true
+
   /@types/chai-subset@1.3.3:
     resolution: {integrity: sha512-frBecisrNGz+F4T6bcc+NLeolfiojh5FxW2klu669+8BARtyQv2C/GkNW6FUodVe4BroGMP/wER/YDGc7rEllw==}
     dependencies:
@@ -1187,6 +1207,10 @@ packages:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
     dev: true
 
+  /bcryptjs@2.4.3:
+    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
+    dev: true
+
   /binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
@@ -1381,6 +1405,13 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
+    dev: true
+
+  /date-fns@2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
+    dependencies:
+      '@babel/runtime': 7.22.15
     dev: true
 
   /debug@4.3.4:
@@ -2559,6 +2590,10 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.1
+    dev: true
+
+  /regenerator-runtime@0.14.0:
+    resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}
     dev: true
 
   /resolve-from@4.0.0:
