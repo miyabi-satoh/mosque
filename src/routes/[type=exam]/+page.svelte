@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
-	import type { PageData } from './$types';
-	import { tick } from 'svelte';
 	import { AudioPlayer } from '$lib';
 	import { submittingStore } from '$lib/stores';
+	import Icon from '@iconify/svelte';
+	import { tick } from 'svelte';
+	import type { PageData } from './$types';
 
 	type CsvDataArrayT = PageData['csvData'];
 	type CsvDataT = CsvDataArrayT[0];
