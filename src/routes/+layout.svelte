@@ -1,36 +1,31 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
-	import '../app.css';
-	import Icon from '@iconify/svelte';
-	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import { URLS } from '$lib/consts';
-	import { loadingStore, submittingStore } from '$lib/stores';
 	import { navigating } from '$app/stores';
 	import { LoadingOverlay } from '$lib';
-
-	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-	import { AppBar, LightSwitch, popup, type PopupSettings } from '@skeletonlabs/skeleton';
-
-	import { storePopup } from '@skeletonlabs/skeleton';
-	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+	import { URLS } from '$lib/consts';
+	import { loadingStore, submittingStore } from '$lib/stores';
+	import { hasAdminRole, hasStaffRole } from '$lib/utils';
+	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+	import Icon from '@iconify/svelte';
+	import {
+		AppBar,
+		LightSwitch,
+		popup,
+		storePopup,
+		type PopupSettings
+	} from '@skeletonlabs/skeleton';
+	import '../app.css';
+	import type { LayoutData } from './$types';
 
 	export let data: LayoutData;
-	let details: HTMLDetailsElement;
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
-	onMount(() => {
-		if (browser) {
-			document.documentElement.addEventListener('click', () => {
-				if (details?.open) {
-					details.open = false;
-				}
-			});
-		}
-	});
-
-	$: if ($navigating) $submittingStore = false;
-	$: $loadingStore = !!$navigating || $submittingStore;
+	// 参考 - https://zenn.dev/gawarago/articles/f75f5113a3803d
+	// ページ遷移が起きた場合はsubmittingストアをリセット
+	$: if (browser && !!$navigating) $submittingStore = false;
+	// ページ遷移中もしくはsubmitting
+	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
 
 	const popupMenu: PopupSettings = {
 		event: 'focus-click',
@@ -66,9 +61,16 @@
 					</button>
 					<div class="card w-52 p-2 shadow-xl" data-popup="popupMenu">
 						<div class="flex flex-col gap-y-2">
-							<a href={URLS.ADMIN} class="menu-item btn w-full hover:variant-filled-surface"
-								>管理ページ</a
-							>
+							{#if hasAdminRole(data.user)}
+								<a href={URLS.ADMIN} class="menu-item btn w-full hover:variant-filled-surface"
+									>管理ページ</a
+								>
+							{/if}
+							{#if hasStaffRole(data.user)}
+								<a href={URLS.BOARD} class="menu-item btn w-full hover:variant-filled-surface"
+									>ボード</a
+								>
+							{/if}
 							<label for="logout" class="menu-item btn w-full hover:variant-filled-surface"
 								>ログアウト</label
 							>
