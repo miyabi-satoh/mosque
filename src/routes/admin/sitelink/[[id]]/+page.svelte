@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -29,6 +30,22 @@
 			title: '',
 			sortOrder: 0
 		} satisfies FormDataT;
+	}
+	$: if ($form.url.length > 7 && !$form.title) fetchTitle();
+	async function fetchTitle() {
+		try {
+			const url = encodeURIComponent($form.url);
+			const res = await fetch(`${URLS.API_FETCH}${url}`);
+			if (res.ok) {
+				const html = await res.text();
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(html, 'text/html');
+				console.log(doc.title);
+				$form.title = doc.title;
+			}
+		} catch (e) {
+			console.log(e);
+		}
 	}
 </script>
 
@@ -110,8 +127,13 @@
 	<div class="flex flex-col gap-4 p-4">
 		{#each data.siteLinks as siteLink (siteLink.id)}
 			<div class="flex items-center gap-4">
-				<a href={siteLink.url}>{siteLink.sortOrder} - {siteLink.title}</a>
-				<button class="variant-filled btn" on:click={() => handleClickEdit(siteLink)}>編集</button>
+				<span>
+					{siteLink.sortOrder} -
+					<a class="anchor" href={siteLink.url}>{siteLink.title}</a>
+				</span>
+				<button class="variant-filled btn btn-sm" on:click={() => handleClickEdit(siteLink)}
+					>編集</button
+				>
 			</div>
 		{/each}
 	</div>
