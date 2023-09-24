@@ -145,7 +145,7 @@ model Comment {
 }
 
 model Staff {
-  id      String @id @default(cuid())
+  id      String @id @unique
   sei     String
   mei     String
   seiKana String @map("sei_kana")
