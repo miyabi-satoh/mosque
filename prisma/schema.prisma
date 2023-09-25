@@ -145,11 +145,12 @@ model Comment {
 }
 
 model Staff {
-  id      String @id @unique
-  sei     String
-  mei     String
-  seiKana String @map("sei_kana")
-  meiKana String @map("mei_kana")
+  id       String  @id @unique
+  sei      String
+  mei      String
+  seiKana  String  @map("sei_kana")
+  meiKana  String  @map("mei_kana")
+  nickname String?
 
   staff_user_links StaffUserLink[]
 
