@@ -5,12 +5,9 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	const { form, errors, constraints, submitting, enhance, capture, restore } = superForm(
-		data.form,
-		{
-			taintedMessage: false
-		}
-	);
+	const { form, submitting, enhance, capture, restore } = superForm(data.form, {
+		taintedMessage: false
+	});
 	export const snapshot = { capture, restore };
 	$: $submittingStore = $submitting;
 </script>
