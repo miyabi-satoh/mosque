@@ -26,8 +26,8 @@ export const load: PageServerLoad = async () => {
 			label: `外部リンク`
 		},
 		{
-			href: ``,
-			label: `ユーザ`
+			href: URLS.ADMIN_USER,
+			label: `アカウント`
 		},
 		{
 			href: URLS.ADMIN_STAFF,
