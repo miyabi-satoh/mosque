@@ -1,13 +1,17 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-import { superValidate } from 'sveltekit-superforms/server';
+import { LuciaError } from 'lucia';
+import { message, superValidate } from 'sveltekit-superforms/server';
 
-import { loginSchema } from '$lib/schemas/loginSchema';
 import { auth } from '$lib/server/lucia';
+import { z } from '$lib/zod';
 
 import type { Actions, PageServerLoad } from './$types';
 
-const schema = loginSchema;
+const schema = z.object({
+	username: z.string().min(1, `入力してください。`),
+	password: z.string().min(1, `入力してください。`)
+});
 
 export const load = (async ({ parent }) => {
 	const data = await parent();
@@ -40,9 +44,19 @@ export const actions: Actions = {
 			});
 			event.locals.auth.setSession(session);
 		} catch (e) {
-			console.log(e);
-			return fail(400, { form: { ...form, message: 'ログインエラー' } });
+			if (e instanceof LuciaError) {
+				if (e.message === 'AUTH_INVALID_PASSWORD' || e.message === 'AUTH_INVALID_KEY_ID') {
+					return message(form, 'ログインIDまたはパスワードが違います。', {
+						status: 400
+					});
+				}
+				console.log({ ...e });
+			} else {
+				console.log(e);
+			}
 		}
-		return { form };
+		return message(form, 'ログインエラー', {
+			status: 400
+		});
 	}
 };
