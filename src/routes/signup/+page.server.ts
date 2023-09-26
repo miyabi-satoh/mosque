@@ -11,9 +11,9 @@ import type { Actions, PageServerLoad } from './$types';
 
 const schema = signupSchema;
 
-export const load = (async ({ locals }) => {
-	const session = await locals.auth.validate();
-	if (session) {
+export const load = (async ({ parent }) => {
+	const data = await parent();
+	if (data.user) {
 		throw redirect(302, '/');
 	}
 

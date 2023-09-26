@@ -4,11 +4,10 @@ import { hasAdminRole } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ locals }) => {
-	// ログインセッションを取得
-	const session = await locals.auth.validate();
+export const load = (async ({ parent }) => {
+	const data = await parent();
 	// 認可
-	if (!session || !hasAdminRole(session.user)) {
+	if (!data.user || !hasAdminRole(data.user)) {
 		throw error(404, 'Not found');
 	}
 
