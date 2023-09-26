@@ -3,6 +3,7 @@ import type { LabelValueT } from './types';
 export const URLS = {
 	LOGIN: '/login',
 	LOGOUT: '/?/logout',
+	PROFILE: '/profile',
 	SIGNUP: '/signup',
 	ADMIN: '/admin',
 	ADMIN_SITELINK: '/admin/sitelink',
