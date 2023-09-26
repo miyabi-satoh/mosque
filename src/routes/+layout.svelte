@@ -5,7 +5,6 @@
 	import { LoadingOverlay } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { loadingStore, submittingStore } from '$lib/stores';
-	import { hasAdminRole, hasStaffRole } from '$lib/utils';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import Icon from '@iconify/svelte';
 	import {
@@ -61,16 +60,9 @@
 					</button>
 					<div class="card w-52 p-2 shadow-xl" data-popup="popupMenu">
 						<div class="flex flex-col gap-y-2">
-							{#if hasAdminRole(data.user)}
-								<a href={URLS.ADMIN} class="menu-item btn w-full hover:variant-filled-surface"
-									>管理ページ</a
-								>
-							{/if}
-							{#if hasStaffRole(data.user)}
-								<a href={URLS.BOARD} class="menu-item btn w-full hover:variant-filled-surface"
-									>ボード</a
-								>
-							{/if}
+							{#each data.userMenus as [href, label]}
+								<a {href} class="menu-item btn w-full hover:variant-filled-surface">{label}</a>
+							{/each}
 							<label for="logout" class="menu-item btn w-full hover:variant-filled-surface"
 								>ログアウト</label
 							>
