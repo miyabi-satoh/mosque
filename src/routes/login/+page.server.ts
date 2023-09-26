@@ -33,6 +33,7 @@ export const actions: Actions = {
 				form.data.username.toLowerCase(),
 				form.data.password
 			);
+			await auth.deleteDeadUserSessions(key.userId);
 			const session = await auth.createSession({
 				userId: key.userId,
 				attributes: {}
