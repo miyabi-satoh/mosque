@@ -1,16 +1,15 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 
 import { message, superValidate } from 'sveltekit-superforms/client';
-import { z } from 'zod';
 
-import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
+import { z } from '$lib/zod';
 
 import type { Actions, PageServerLoad } from './$types';
 
 const schema = z.object({
 	id: z.string().optional(),
-	url: z.string().url('無効なURLです'),
+	url: z.string().url(),
 	title: z.string().min(1, '入力してください'),
 	sortOrder: z.number().default(0)
 });
@@ -57,12 +56,12 @@ export const actions: Actions = {
 			await db.siteLink.delete({
 				where: { id: form.data.id }
 			});
+			return message(form, `削除しました。`);
+
 			// catch-blockの後でredirect
 		} catch (e) {
 			console.log(e);
 			return fail(400, { form: { ...form, message: 'エラー' } });
 		}
-
-		throw redirect(303, URLS.ADMIN);
 	}
 };
