@@ -5,6 +5,7 @@ import path from 'node:path';
 import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
+import { ResourceSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
 import { getExamConfig, searchFiles } from '$lib/server/utils';
 import type { LabelValueT } from '$lib/types';
@@ -23,6 +24,15 @@ type EntryT = {
 };
 const schema = z.object({
 	checked: z.string().array()
+});
+const parseSchema = ResourceSchema.pick({
+	year: true,
+	grade: true,
+	numOf: true,
+	category: true,
+	title: true,
+	shortTitle: true,
+	path: true
 });
 
 export const load = (async ({ locals, params }) => {
@@ -88,27 +98,31 @@ export const load = (async ({ locals, params }) => {
 			...config.parse(filename, config.valueGrade),
 			path: file
 		};
-
-		const found = dataInDB.find((data) => {
-			return (
-				data.year === res.year &&
-				data.grade === res.grade &&
-				data.numOf === res.numOf &&
-				data.category === res.category &&
-				data.title === res.title &&
-				data.shortTitle === res.shortTitle &&
-				data.path === res.path
-			);
-		});
-		if (found) {
-			res.id = found.id;
-			count.ok++;
+		const result = parseSchema.safeParse(res);
+		if (!result.success) {
+			console.log('invalid data', res);
 		} else {
-			count.new++;
+			const found = dataInDB.find((data) => {
+				return (
+					data.year === res.year &&
+					data.grade === res.grade &&
+					data.numOf === res.numOf &&
+					data.category === res.category &&
+					data.title === res.title &&
+					data.shortTitle === res.shortTitle &&
+					data.path === res.path
+				);
+			});
+			if (found) {
+				res.id = found.id;
+				count.ok++;
+			} else {
+				count.new++;
+			}
+			dataOnDisk.push({
+				...res
+			});
 		}
-		dataOnDisk.push({
-			...res
-		});
 	}
 
 	for (const data of dataOnDisk) {
