@@ -55,6 +55,7 @@ export const actions: Actions = {
 				attributes: {}
 			});
 			event.locals.auth.setSession(session);
+			return { form };
 		} catch (e) {
 			if (e instanceof Prisma.PrismaClientKnownRequestError) {
 				console.log({ ...e });

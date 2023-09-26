@@ -43,6 +43,7 @@ export const actions: Actions = {
 				attributes: {}
 			});
 			event.locals.auth.setSession(session);
+			return { form };
 		} catch (e) {
 			if (e instanceof LuciaError) {
 				if (e.message === 'AUTH_INVALID_PASSWORD' || e.message === 'AUTH_INVALID_KEY_ID') {
