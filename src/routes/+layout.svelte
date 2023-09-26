@@ -27,10 +27,9 @@
 	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
 
 	const popupMenu: PopupSettings = {
-		event: 'focus-click',
+		event: 'click',
 		target: 'popupMenu',
-		placement: 'bottom',
-		closeQuery: '.menu-item'
+		placement: 'bottom'
 	};
 </script>
 
@@ -61,11 +60,9 @@
 					<div class="card w-52 p-2 shadow-xl" data-popup="popupMenu">
 						<div class="flex flex-col gap-y-2">
 							{#each data.userMenus as [href, label]}
-								<a {href} class="menu-item btn w-full hover:variant-filled-surface">{label}</a>
+								<a {href} class="btn w-full hover:variant-filled-surface">{label}</a>
 							{/each}
-							<label for="logout" class="menu-item btn w-full hover:variant-filled-surface"
-								>ログアウト</label
-							>
+							<label for="logout" class="btn w-full hover:variant-filled-surface">ログアウト</label>
 						</div>
 					</div>
 				{/if}
