@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 
 import { Prisma, UserRole } from '@prisma/client';
 import { message, superValidate } from 'sveltekit-superforms/server';
@@ -20,10 +20,15 @@ const schema = z
 		path: ['confirmPassword']
 	});
 
-export const load = (async ({ parent }) => {
+export const load = (async ({ parent, request }) => {
 	const data = await parent();
 	if (data.user) {
 		throw redirect(302, '/');
+	}
+
+	const ua = request.headers.get('user-agent')?.toLowerCase();
+	if (!ua || !ua.match(/(windows nt)|(mac os x)/)) {
+		throw error(404, 'Not found');
 	}
 
 	const form = await superValidate(schema);
