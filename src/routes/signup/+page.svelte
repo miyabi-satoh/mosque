@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MainContainer } from '$lib';
+	import { HelperText, MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -14,7 +14,10 @@
 
 <MainContainer>
 	<div class="w-modal-slim mx-auto rounded-md p-6 shadow-2xl">
-		<h1 class="h1 text-center">サインアップ</h1>
+		<HelperText class="text-center">
+			{$message ?? ''}
+		</HelperText>
+
 		<form method="POST" use:enhance>
 			<div class="my-2">
 				<label class="label">
@@ -30,9 +33,9 @@
 						autocomplete="username"
 					/>
 				</label>
-				{#if $errors.username}
-					<span class="text-error-400-500-token">{$errors.username[0]}</span>
-				{/if}
+				<HelperText>
+					{$errors.username ? $errors.username[0] : ''}
+				</HelperText>
 			</div>
 
 			<div class="my-2">
@@ -49,9 +52,9 @@
 						autocomplete="new-password"
 					/>
 				</label>
-				{#if $errors.password}
-					<span class="text-error-400-500-token">{$errors.password[0]}</span>
-				{/if}
+				<HelperText>
+					{$errors.password ? $errors.password[0] : ''}
+				</HelperText>
 			</div>
 
 			<div class="my-2">
@@ -68,17 +71,14 @@
 						autocomplete="new-password"
 					/>
 				</label>
-				{#if $errors.confirmPassword}
-					<span class="text-error-400-500-token">{$errors.confirmPassword[0]}</span>
-				{/if}
+				<HelperText>
+					{$errors.confirmPassword ? $errors.confirmPassword[0] : ''}
+				</HelperText>
 			</div>
 
 			<div class="my-4">
 				<button class="variant-filled btn w-full" disabled={$submitting}>サインアップ</button>
 			</div>
 		</form>
-		{#if $message}
-			<div class="text-error-400-500-token">{$message}</div>
-		{/if}
 	</div>
 </MainContainer>

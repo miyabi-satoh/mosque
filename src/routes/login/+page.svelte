@@ -14,8 +14,7 @@
 
 <MainContainer>
 	<div class="w-modal-slim mx-auto rounded-md p-6 shadow-2xl">
-		<h1 class="h1 my-2 text-center">ログイン</h1>
-		<HelperText>
+		<HelperText class="text-center">
 			{$message ?? ''}
 		</HelperText>
 
