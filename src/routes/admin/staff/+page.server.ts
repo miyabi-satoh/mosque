@@ -1,5 +1,6 @@
 import { fail } from '@sveltejs/kit';
 
+import type { Staff } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
@@ -11,18 +12,27 @@ import type { Actions, PageServerLoad } from './$types';
 const schema = z.object({
 	csv: z.string().min(1, `入力してください`)
 });
-const header = ['id', 'name', 'kana'].join(',') + '\n';
+const header = ['id', 'name', 'kana', 'retired'].join(',') + '\n';
 type CsvT = {
 	id: string;
 	name: string;
 	kana: string;
+	retired: boolean;
 };
+
+function csvFromStaff(staff: Staff[]) {
+	return staff
+		.map(
+			(s) => `${s.id},${s.sei} ${s.mei},${s.seiKana} ${s.meiKana},${s.retired ? 'true' : 'false'}`
+		)
+		.join('\n');
+}
 
 export const load = (async () => {
 	const staff = await db.staff.findMany({
 		orderBy: { id: 'asc' }
 	});
-	const csv = staff.map((s) => `${s.id},${s.sei} ${s.mei},${s.seiKana} ${s.meiKana}`).join('\n');
+	const csv = csvFromStaff(staff);
 	const form = await superValidate({ csv }, schema);
 
 	return { form };
@@ -42,7 +52,7 @@ export const actions: Actions = {
 				columns: true
 			});
 			console.log(staffArray);
-			const staffData = staffArray.map((data: CsvT) => {
+			const staffData: Staff[] = staffArray.map((data: CsvT) => {
 				const [sei, mei] = ((src: string) =>
 					src.includes('　') ? src.split('　') : src.split(' '))(data.name);
 				const [seiKana, meiKana] = ((src: string) => {
@@ -60,12 +70,15 @@ export const actions: Actions = {
 					sei,
 					mei,
 					seiKana,
-					meiKana
-				};
+					meiKana,
+					nickname: null,
+					retired: data.retired
+				} satisfies Staff;
 			});
 
 			await db.staff.deleteMany();
 			await db.staff.createMany({ data: staffData });
+			form.data.csv = csvFromStaff(staffData);
 
 			return message(form, '作成しました。');
 		} catch (e) {
@@ -75,21 +88,23 @@ export const actions: Actions = {
 	}
 };
 
-//muddy
-const D_MUD = 'ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポヴヷヺ';
-const S_MUD = 'ｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｳﾞﾜﾞｦﾞ';
-//kiyone
-const D_KIY =
-	'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ' +
-	'マミムメモヤユヨラリルレロワヲンァィゥェォッャュョ。、ー「」・';
-const S_KIY = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮ｡､ｰ｢｣･';
+const toZenKata = (() => {
+	//muddy
+	const D_MUD = 'ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポヴヷヺ';
+	const S_MUD = 'ｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｳﾞﾜﾞｦﾞ';
+	//kiyone
+	const D_KIY =
+		'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ' +
+		'マミムメモヤユヨラリルレロワヲンァィゥェォッャュョ。、ー「」・';
+	const S_KIY = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮ｡､ｰ｢｣･';
 
-const toZenKata = (str: string) => {
-	for (let i = 0, len = D_MUD.length; i < len; i++) {
-		str = str.split(S_MUD.slice(i * 2, i * 2 + 2)).join(D_MUD.slice(i, i + 1));
-	}
-	for (let i = 0, len = D_KIY.length; i < len; i++) {
-		str = str.split(S_KIY.slice(i, i + 1)).join(D_KIY.slice(i, i + 1));
-	}
-	return str;
-};
+	return (str: string) => {
+		for (let i = 0, len = D_MUD.length; i < len; i++) {
+			str = str.split(S_MUD.slice(i * 2, i * 2 + 2)).join(D_MUD.slice(i, i + 1));
+		}
+		for (let i = 0, len = D_KIY.length; i < len; i++) {
+			str = str.split(S_KIY.slice(i, i + 1)).join(D_KIY.slice(i, i + 1));
+		}
+		return str;
+	};
+})();

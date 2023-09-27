@@ -7,4 +7,5 @@
 
 <MainContainer>
 	<div>Profile</div>
+	<div>{data.user?.username}</div>
 </MainContainer>
