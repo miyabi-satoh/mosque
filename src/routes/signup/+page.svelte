@@ -77,7 +77,8 @@
 			</div>
 
 			<div class="my-4">
-				<button class="variant-filled btn w-full" disabled={$submitting}>サインアップ</button>
+				<button class="variant-ghost-primary btn w-full" disabled={$submitting}>サインアップ</button
+				>
 			</div>
 		</form>
 	</div>

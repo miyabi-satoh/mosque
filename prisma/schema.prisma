@@ -38,9 +38,15 @@ enum UserRole {
 }
 
 model User {
-  id       String   @id @unique
-  username String?  @unique
-  role     UserRole @default(USER)
+  id          String    @id @unique
+  username    String    @unique
+  role        UserRole  @default(USER)
+  sei         String?
+  mei         String?
+  seiKana     String?
+  meiKana     String?
+  birthday    DateTime? @db.Date
+  displayName String?   @map("display_name")
 
   auth_session     Session[]
   key              Key[]

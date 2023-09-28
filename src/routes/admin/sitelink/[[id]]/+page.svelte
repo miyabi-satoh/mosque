@@ -1,38 +1,20 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { MainContainer } from '$lib';
+	import HelperText from '$lib/components/HelperText.svelte';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	const { form, errors, constraints, submitting, enhance, capture, restore } = superForm(
-		data.form,
-		{
-			resetForm: true,
-			taintedMessage: false
-		}
-	);
-	export const snapshot = { capture, restore };
+	const { form, message, errors, constraints, submitting, enhance } = superForm(data.form, {
+		resetForm: true,
+		taintedMessage: false
+	});
 	$: $submittingStore = $submitting;
-	type FormDataT = typeof $form;
 
-	type SiteLinkT = PageData['siteLinks'][0];
-	function handleClickEdit(siteLink: SiteLinkT) {
-		$form = {
-			...siteLink
-		};
-	}
-
-	function handleClickCancel() {
-		$form = {
-			id: undefined,
-			url: '',
-			title: '',
-			sortOrder: 0
-		} satisfies FormDataT;
-	}
-	$: if ($form.url.length > 7 && !$form.title) fetchTitle();
+	$: if ($form.url.match(/^https?:\/\/[^/]/) && !$form.title) fetchTitle();
 	async function fetchTitle() {
 		try {
 			const url = encodeURIComponent($form.url);
@@ -50,10 +32,12 @@
 	}
 </script>
 
-<MainContainer>
+<MainContainer innerScroll>
 	<form method="POST" use:enhance>
-		<input type="hidden" name="id" bind:value={$form.id} />
 		<div class="border-surface-400-500-token mb-2 flex flex-col gap-4 border-b px-4 py-2">
+			<HelperText usePageStatus size="base">
+				{$message ?? ''}
+			</HelperText>
 			<div>
 				<input
 					class="input"
@@ -67,9 +51,9 @@
 					autocomplete="url"
 					{...$constraints.url}
 				/>
-				{#if $errors.url}
-					<span class="text-error-400-500-token">{$errors.url[0]}</span>
-				{/if}
+				<HelperText>
+					{$errors.url ? $errors.url[0] : ''}
+				</HelperText>
 			</div>
 			{#if $form.url}
 				<div class="flex gap-4">
@@ -107,20 +91,19 @@
 				</div>
 
 				<div class="flex justify-end gap-x-4">
-					{#if $form.id}
-						<button class="variant-filled btn" on:click|preventDefault={handleClickCancel}
-							>キャンセル</button
-						>
+					{#if $page.params.id}
+						<a class="variant-filled btn" href={URLS.ADMIN_SITELINK}>Cancel</a>
 						<button
 							name="delete"
-							on:click={(e) => !confirm('削除しますか？') && e.preventDefault()}
-							class="variant-ghost-error btn"
+							on:click={(e) =>
+								!confirm('Are you sure you want to delete this link?') && e.preventDefault()}
+							class="variant-ghost-warning btn"
 							disabled={$submitting}
 						>
-							削除
+							Delete
 						</button>
 					{/if}
-					<button class="variant-ghost-primary btn" disabled={$submitting}>保存</button>
+					<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 				</div>
 			{/if}
 		</div>
@@ -132,9 +115,7 @@
 					{siteLink.sortOrder} -
 					<a class="anchor" href={siteLink.url}>{siteLink.title}</a>
 				</span>
-				<button class="variant-filled btn btn-sm" on:click={() => handleClickEdit(siteLink)}
-					>編集</button
-				>
+				<a class="variant-filled btn btn-sm" href={`${URLS.ADMIN_SITELINK}/${siteLink.id}`}>Edit</a>
 			</div>
 		{/each}
 	</div>

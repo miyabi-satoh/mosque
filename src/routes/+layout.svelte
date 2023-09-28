@@ -19,18 +19,15 @@
 
 	export let data: LayoutData;
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
-
-	// 参考 - https://zenn.dev/gawarago/articles/f75f5113a3803d
-	// ページ遷移が起きた場合はsubmittingストアをリセット
-	$: if (browser && !!$navigating) $submittingStore = false;
-	// ページ遷移中もしくはsubmitting
-	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
-
 	const popupMenu: PopupSettings = {
 		event: 'click',
 		target: 'popupMenu',
 		placement: 'bottom'
 	};
+
+	// 参考 - https://zenn.dev/gawarago/articles/f75f5113a3803d
+	$: if (browser && !!$navigating) $submittingStore = false;
+	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
 </script>
 
 <svelte:head>
@@ -55,14 +52,14 @@
 				{#if data.user}
 					<button class="btn flex gap-x-2" use:popup={popupMenu}>
 						<Icon icon="mdi:account-circle" height="auto" />
-						{data.user.username}
+						{data.user.displayName}
 					</button>
 					<div class="card w-52 p-2 shadow-xl" data-popup="popupMenu">
 						<div class="flex flex-col gap-y-2">
 							{#each data.userMenus as [href, label]}
 								<a {href} class="btn w-full hover:variant-filled-surface">{label}</a>
 							{/each}
-							<label for="logout" class="btn w-full hover:variant-filled-surface">ログアウト</label>
+							<label for="logout" class="btn w-full hover:variant-filled-surface">Logout</label>
 						</div>
 					</div>
 				{/if}

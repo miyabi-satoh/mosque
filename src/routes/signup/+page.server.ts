@@ -2,10 +2,11 @@ import { error, fail, redirect } from '@sveltejs/kit';
 
 import { Prisma, UserRole } from '@prisma/client';
 import { message, superValidate } from 'sveltekit-superforms/server';
+import { z } from 'zod';
 
+import { PROVIDERID_USERNAME } from '$lib/consts';
 import { db } from '$lib/server/db';
 import { auth } from '$lib/server/lucia';
-import { z } from '$lib/zod';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -46,13 +47,19 @@ export const actions: Actions = {
 		try {
 			const user = await auth.createUser({
 				key: {
-					providerId: 'username',
+					providerId: PROVIDERID_USERNAME,
 					providerUserId: form.data.username.toLowerCase(),
 					password: form.data.password
 				},
 				attributes: {
 					username: form.data.username,
-					role: (await db.user.count()) === 0 ? UserRole.ADMIN : UserRole.USER
+					role: (await db.user.count()) === 0 ? UserRole.ADMIN : UserRole.USER,
+					birthday: null,
+					displayName: null,
+					mei: null,
+					meiKana: null,
+					sei: null,
+					seiKana: null
 				}
 			});
 			const session = await auth.createSession({

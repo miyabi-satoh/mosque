@@ -1,5 +1,7 @@
 import type { LabelValueT } from './types';
 
+export const PROVIDERID_USERNAME = `username`;
+
 export const URLS = {
 	LOGIN: '/login',
 	LOGOUT: '/?/logout',
@@ -9,6 +11,7 @@ export const URLS = {
 	ADMIN_SITELINK: '/admin/sitelink',
 	ADMIN_STAFF: '/admin/staff',
 	ADMIN_USER: '/admin/user',
+	ADMIN_USER_CREATE: '/admin/user/create',
 	BOARD: '/board',
 	BOARD_AUTH: '/board/auth',
 	API_FETCH: '/api/fetch?url='

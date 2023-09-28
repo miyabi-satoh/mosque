@@ -7,5 +7,7 @@ export const load = (async ({ parent }) => {
 	if (!data.user) {
 		throw error(404, 'Not found');
 	}
-	return {};
+	return {
+		user: data.user
+	};
 }) satisfies LayoutServerLoad;

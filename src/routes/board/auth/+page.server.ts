@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { SCHOOL_CODE, STAFF_NAME, STAFF_PASS } from '$env/static/private';
 
-import { URLS } from '$lib/consts';
+import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
 import { auth } from '$lib/server/lucia';
 import { hasStaffRole } from '$lib/utils';
 
@@ -47,7 +47,7 @@ export const actions: Actions = {
 		}
 		// 認証処理
 		try {
-			const key = await auth.useKey('username', STAFF_NAME.toLowerCase(), STAFF_PASS);
+			const key = await auth.useKey(PROVIDERID_USERNAME, STAFF_NAME.toLowerCase(), STAFF_PASS);
 			const session = await auth.createSession({
 				userId: key.userId,
 				attributes: {}

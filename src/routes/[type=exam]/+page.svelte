@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { AudioPlayer, MainContainer } from '$lib';
+	import HelperText from '$lib/components/HelperText.svelte';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
 	import { tick } from 'svelte';
@@ -188,15 +189,15 @@
 							</button>
 						{:else if res.url}
 							<button class="variant-filled-secondary btn">
-								<a href={res.url} target="_blank">新しいタブで開く</a>
+								<a href={res.url} target="_blank">Open in new tab</a>
 							</button>
 						{:else}
-							<button disabled class="variant-filled-secondary btn">新しいタブで開く</button>
+							<button disabled class="variant-filled-secondary btn">Open in new tab</button>
 						{/if}
 					</div>
 				</div>
 				{#if !res.url}
-					<div class="text-error-500">ファイルにアクセスできません。</div>
+					<HelperText>Failed to get file.</HelperText>
 				{/if}
 			</div>
 		{/each}

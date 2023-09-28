@@ -37,18 +37,24 @@
 	{#if data.entries.length > 0}
 		<div class="flex items-center p-4">
 			<p class="flex-1">
-				{data.count.ok}件のデータがデータベースに登録されています。
+				{#if data.count.ok === 0}
+					There are no files registered in the database.
+				{:else}
+					{data.count.ok} {data.count.ok > 1 ? `files are` : `file is`} registered in the database.
+				{/if}
 				{#if data.count.new > 0}
 					<br />
-					{data.count.new}件の未登録データがあります。
+					{data.count.new}
+					{data.count.ok > 1 ? `files are` : `file is`} not registered in the database.
 				{/if}
 				{#if data.count.missing > 0}
 					<br />
-					存在しないファイルが{data.count.missing}件あります。
+					{data.count.missing}
+					{data.count.ok > 1 ? `files are` : `file is`} not on the disk.
 				{/if}
 			</p>
 			<button class="variant-ghost-primary btn" disabled={$submitting} on:click={handleClick}
-				>更新</button
+				>Save</button
 			>
 		</div>
 
@@ -96,6 +102,6 @@
 			{/each}
 		</form>
 	{:else}
-		<div class="p-4">{data.exam?.shortName}関連ファイルが見つかりませんでした。</div>
+		<div class="p-4">{data.exam?.shortName}No files found.</div>
 	{/if}
 </MainContainer>

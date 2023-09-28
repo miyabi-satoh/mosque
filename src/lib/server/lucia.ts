@@ -2,6 +2,7 @@ import { prisma } from '@lucia-auth/adapter-prisma';
 import { UserRole } from '@prisma/client';
 import { lucia } from 'lucia';
 import { sveltekit } from 'lucia/middleware';
+import 'lucia/polyfill/node';
 
 import {
 	ACTIVE_PERIOD_MINUTES,
@@ -12,6 +13,7 @@ import {
 	STAFF_PASS
 } from '$env/static/private';
 
+import { PROVIDERID_USERNAME } from '$lib/consts';
 import { db } from '$lib/server/db';
 
 // import { dev } from '$app/environment';
@@ -27,8 +29,19 @@ export const auth = lucia({
 	},
 
 	getUserAttributes: (data) => {
+		const displayName = ((data) => {
+			if (data.displayName) {
+				return data.displayName;
+			}
+			if (data.sei || data.mei) {
+				return `${data.sei} ${data.mei}`.trim();
+			}
+			return data.username;
+		})(data);
+
 		return {
 			username: data.username,
+			displayName,
 			role: data.role
 		};
 	}
@@ -36,7 +49,7 @@ export const auth = lucia({
 
 export type Auth = typeof auth;
 
-// ビルトインユーザーを作成
+// create built-in users
 export async function createBuiltinUsers() {
 	const count = await db.user.count();
 	if (count === 0) {
@@ -55,13 +68,19 @@ export async function createBuiltinUsers() {
 		for (const user of users) {
 			await auth.createUser({
 				key: {
-					providerId: 'username',
+					providerId: PROVIDERID_USERNAME,
 					providerUserId: user.username.toLowerCase(),
 					password: user.password
 				},
 				attributes: {
 					username: user.username,
-					role: user.role
+					role: user.role,
+					sei: null,
+					mei: null,
+					seiKana: null,
+					meiKana: null,
+					birthday: null,
+					displayName: null
 				}
 			});
 		}

@@ -1,16 +1,16 @@
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 
 import { message, superValidate } from 'sveltekit-superforms/client';
+import { z } from 'zod';
 
+import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
-import { z } from '$lib/zod';
 
 import type { Actions, PageServerLoad } from './$types';
 
 const schema = z.object({
-	id: z.string().optional(),
 	url: z.string().url(),
-	title: z.string().min(1, '入力してください'),
+	title: z.string(),
 	sortOrder: z.number().default(0)
 });
 
@@ -19,49 +19,47 @@ export const load = (async ({ params }) => {
 		orderBy: { sortOrder: 'asc' }
 	});
 	const siteLink = siteLinks.find((s) => s.id === params.id);
-	if (params.id && !siteLink) throw error(404, `指定された外部リンクデータが見つかりません。`);
+	if (params.id && !siteLink) throw error(404, `Not found`);
 
 	const form = await superValidate(siteLink, schema);
 	return { form, siteLinks };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	default: async ({ request, params }) => {
 		const formData = await request.formData();
 		const form = await superValidate(formData, schema);
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
+		let redirectTo = '';
 		try {
-			if (!form.data.id) {
-				// create
-				const siteLink = await db.siteLink.create({
-					data: form.data
-				});
-				form.data.id = siteLink.id;
-				return message(form, '作成しました。');
-			}
-
 			if (!formData.has('delete')) {
-				// update
-				await db.siteLink.update({
-					where: { id: form.data.id },
-					data: form.data
+				// upsert
+				await db.siteLink.upsert({
+					where: { id: params.id ?? '' },
+					create: form.data,
+					update: form.data
 				});
-				return message(form, `更新しました。`);
+				return message(form, `The link has been saved.`);
+			} else if (params.id) {
+				// delete
+				await db.siteLink.delete({
+					where: { id: params.id }
+				});
+				redirectTo = URLS.ADMIN_SITELINK;
 			}
-
-			// delete
-			await db.siteLink.delete({
-				where: { id: form.data.id }
-			});
-			return message(form, `削除しました。`);
-
-			// catch-blockの後でredirect
 		} catch (e) {
 			console.log(e);
-			return fail(400, { form: { ...form, message: 'エラー' } });
 		}
+
+		if (redirectTo) {
+			throw redirect(303, redirectTo);
+		}
+
+		return message(form, 'An error occurred.', {
+			status: 400
+		});
 	}
 };

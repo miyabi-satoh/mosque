@@ -23,21 +23,14 @@ export const load: PageServerLoad = async () => {
 	menus.push(
 		{
 			href: URLS.ADMIN_SITELINK,
-			label: `外部リンク`
+			label: `Links`
 		},
 		{
 			href: URLS.ADMIN_USER,
-			label: `アカウント`
-		},
-		{
-			href: URLS.ADMIN_STAFF,
-			label: `スタッフ`
+			label: `Accounts`
 		}
 	);
 
-	// const siteLinks = await db.siteLink.findMany({
-	// 	orderBy: { sortOrder: 'asc' }
-	// });
 	return {
 		menus
 	};

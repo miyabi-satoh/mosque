@@ -2,11 +2,11 @@ import { fail, redirect } from '@sveltejs/kit';
 
 import bcrypt from 'bcryptjs';
 import { superValidate } from 'sveltekit-superforms/server';
+import { z } from 'zod';
 
 import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
 import { exclude } from '$lib/utils';
-import { z } from '$lib/zod';
 
 import type { Actions, PageServerLoad } from './$types';
 

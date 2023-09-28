@@ -15,7 +15,17 @@ export const TransactionIsolationLevelSchema = z.enum([
 	'Serializable'
 ]);
 
-export const UserScalarFieldEnumSchema = z.enum(['id', 'username', 'role']);
+export const UserScalarFieldEnumSchema = z.enum([
+	'id',
+	'username',
+	'role',
+	'sei',
+	'mei',
+	'seiKana',
+	'meiKana',
+	'birthday',
+	'displayName'
+]);
 
 export const SessionScalarFieldEnumSchema = z.enum([
 	'id',
@@ -124,7 +134,13 @@ export type ResourceStateType = `${z.infer<typeof ResourceStateSchema>}`;
 export const UserSchema = z.object({
 	role: UserRoleSchema,
 	id: z.string(),
-	username: z.string().nullable()
+	username: z.string(),
+	sei: z.string().nullable(),
+	mei: z.string().nullable(),
+	seiKana: z.string().nullable(),
+	meiKana: z.string().nullable(),
+	birthday: z.coerce.date().nullable(),
+	displayName: z.string().nullable()
 });
 
 export type User = z.infer<typeof UserSchema>;

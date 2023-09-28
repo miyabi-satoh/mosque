@@ -1,5 +1,3 @@
-import { UserRole } from '@prisma/client';
-
 import { URLS } from '$lib/consts';
 import { createBuiltinUsers } from '$lib/server/lucia';
 import { hasAdminRole } from '$lib/utils';
@@ -7,23 +5,21 @@ import { hasAdminRole } from '$lib/utils';
 import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ locals }) => {
-	// ビルトインユーザを作成
+	// create built-in users(admin, staff)
 	await createBuiltinUsers();
 
-	// ログインセッションを取得
+	// validate requests
 	const session = await locals.auth.validate();
 	const user = session?.user;
 
-	// ユーザーメニュー
 	const userMenus = [];
 	if (user) {
+		// add user menu items if user is authenticated
 		if (hasAdminRole(user)) {
-			userMenus.push([URLS.ADMIN, `管理ページ`]);
+			userMenus.push([URLS.ADMIN, `Dashboard`]);
 		}
-		userMenus.push([URLS.BOARD, `ボード`]);
-		if (user.role !== UserRole.STAFF) {
-			userMenus.push([URLS.PROFILE, `プロフィール`]);
-		}
+		userMenus.push([URLS.BOARD, `Board`]);
+		userMenus.push([URLS.PROFILE, `Edit Profile`]);
 	}
 
 	return {

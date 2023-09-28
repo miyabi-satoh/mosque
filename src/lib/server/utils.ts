@@ -7,7 +7,6 @@ import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR } from '$env/static/private';
 import { categories } from '$lib/consts';
 
 export function searchFiles(dirPath: string, ext: RegExp) {
-	// console.log(dirPath);
 	const allDirents = fs.readdirSync(dirPath, { withFileTypes: true });
 
 	const files: string[] = [];

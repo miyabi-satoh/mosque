@@ -8,7 +8,6 @@
 
 	let time = 0;
 	let duration = 0;
-	// let seeking = false;
 
 	function format(t: number) {
 		if (isNaN(t)) return '...';
@@ -20,16 +19,13 @@
 	}
 
 	function handleInputRange(event: Event) {
-		// seeking = true;
 		const target = event.target as HTMLInputElement;
 		time = Number(target.value);
 	}
 
 	function handleChangeRange(event: Event) {
-		// console.log(`handleChangeRange`);
 		const target = event.target as HTMLInputElement;
 		time = Number(target.value);
-		// seeking = false;
 	}
 
 	$: if (browser && time >= 0) {
