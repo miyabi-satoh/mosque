@@ -7,21 +7,21 @@
 </script>
 
 <MainContainer innerScroll>
-	<div class="flex-1 space-y-4 overflow-y-scroll p-4">
+	<div class="m-4 flex-1 space-y-4 overflow-y-scroll">
 		{#each data.exam as exam}
-			<a href="/{exam.examType}" class="card flex min-h-[64px] w-full items-center">
-				<h2 class="flex-1 py-4 pl-4 text-2xl font-semibold">
-					{exam.fullName}<span class="ml-6">音声配信</span>
+			<a href="/{exam.examType}" class="card flex min-h-[64px] w-full items-center p-4">
+				<h2 class="h2 flex-1">
+					{exam.fullName} archives
 				</h2>
-				<Icon icon="mdi:chevron-right" class="mr-4" height="32px" />
+				<Icon icon="mdi:chevron-right" height="32px" />
 			</a>
 		{/each}
-		{#each data.siteLinks as siteLink}
-			<a href={siteLink.url} class="card flex min-h-[64px] w-full items-center" target="_blank">
-				<h2 class="flex-1 py-4 pl-4 text-2xl font-semibold">
-					{siteLink.title}
+		{#each data.links as link}
+			<a href={link.url} class="card flex min-h-[64px] w-full items-center p-4" target="_blank">
+				<h2 class="h2 flex-1">
+					{link.title}
 				</h2>
-				<Icon icon="mdi:open-in-new" class="mr-4" height="32px" />
+				<Icon icon="mdi:open-in-new" height="32px" />
 			</a>
 		{/each}
 	</div>

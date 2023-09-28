@@ -159,22 +159,10 @@
 
 <svelte:window on:resize={handleResize} />
 <MainContainer innerScroll>
-	<div class=" flex-1 overflow-y-scroll">
+	{#if data.user}
 		<form method="POST" use:enhance>
 			<input type="hidden" name="id" value={$form.id} />
-			<div
-				class="border-surface-400-500-token mb-2 grid grid-cols-1 gap-4 border-b px-4 py-2 sm:grid-cols-2"
-			>
-				<!-- {#if checkAction($form) === 'delete'}
-					<div class="sm:col-span-2">
-						<aside class="alert variant-filled-error flex-row">
-							<div class="mr-4"><Icon icon="mdi:alert-circle" height="auto" /></div>
-							<div class="alert-message !m-0">
-								削除したデータは復元できません。削除してもよろしいですか？
-							</div>
-						</aside>
-					</div>
-				{:else} -->
+			<div class="mx-4 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
 				<textarea
 					class="textarea sm:col-span-2"
 					class:input-error={$errors.content}
@@ -260,46 +248,45 @@
 				{/if}
 			</div>
 		</form>
-		<div class="px-4">
-			{#if data.posts.length > 0}
-				<Accordion>
-					{#each data.posts as post (post.id)}
-						<AccordionItem>
-							<svelte:fragment slot="summary">
-								<div class="flex items-baseline gap-x-4">
-									<h2 class="text-lg font-bold">{post.title}</h2>
-									<span class="text-surface-500-400-token text-sm">
-										{post.username}・{formatDate(post.updatedAt)}
-									</span>
-									<div
-										class="text-surface-500-400-token flex-1 truncate text-sm"
-										data-content={post.content}
-									/>
+		<hr />
+	{/if}
+	<div class="m-4 flex-1 overflow-y-scroll">
+		{#if data.posts.length > 0}
+			<Accordion>
+				{#each data.posts as post (post.id)}
+					<AccordionItem>
+						<svelte:fragment slot="summary">
+							<div class="flex items-baseline gap-x-4">
+								<h2 class="text-lg font-bold">{post.title}</h2>
+								<span class="text-surface-500-400-token text-sm">
+									{post.username}・{formatDate(post.updatedAt)}
+								</span>
+								<div
+									class="text-surface-500-400-token flex-1 truncate text-sm"
+									data-content={post.content}
+								/>
+							</div>
+						</svelte:fragment>
+						<svelte:fragment slot="content">
+							<p class="pl-2">
+								{post.content}
+							</p>
+							{#if post.password && !$form.id}
+								<div class="flex justify-end gap-x-4">
+									<button class="variant-filled-primary btn" on:click={() => handleClickEdit(post)}
+										>編集</button
+									>
+									<button class="variant-filled-error btn" on:click={() => handleClickDelete(post)}
+										>削除</button
+									>
 								</div>
-							</svelte:fragment>
-							<svelte:fragment slot="content">
-								<p class="pl-2">
-									{post.content}
-								</p>
-								{#if post.password && !$form.id}
-									<div class="flex justify-end gap-x-4">
-										<button
-											class="variant-filled-primary btn"
-											on:click={() => handleClickEdit(post)}>編集</button
-										>
-										<button
-											class="variant-filled-error btn"
-											on:click={() => handleClickDelete(post)}>削除</button
-										>
-									</div>
-								{/if}
-							</svelte:fragment>
-						</AccordionItem>
-					{/each}
-				</Accordion>
-			{:else}
-				データがありません。
-			{/if}
-		</div>
+							{/if}
+						</svelte:fragment>
+					</AccordionItem>
+				{/each}
+			</Accordion>
+		{:else}
+			データがありません。
+		{/if}
 	</div>
 </MainContainer>

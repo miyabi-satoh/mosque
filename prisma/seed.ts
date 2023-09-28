@@ -10,8 +10,8 @@ async function main() {
 		update: {},
 		create: {
 			examType: ExamType.ctest,
-			shortName: 'Cテスト',
-			fullName: 'コンピュータテスト',
+			shortName: 'C Test',
+			fullName: 'Computer Test',
 			sortOrder: 1,
 			labelGrade: '学年',
 			labelNumOf: '月号'
@@ -24,8 +24,8 @@ async function main() {
 		update: {},
 		create: {
 			examType: ExamType.eiken,
-			shortName: '英検',
-			fullName: '実用英語技能検定',
+			shortName: 'EIKEN',
+			fullName: 'EIKEN',
 			sortOrder: 2,
 			labelGrade: '級',
 			labelNumOf: '実施回'

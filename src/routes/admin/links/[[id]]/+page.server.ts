@@ -15,14 +15,14 @@ const schema = z.object({
 });
 
 export const load = (async ({ params }) => {
-	const siteLinks = await db.siteLink.findMany({
+	const links = await db.link.findMany({
 		orderBy: { sortOrder: 'asc' }
 	});
-	const siteLink = siteLinks.find((s) => s.id === params.id);
-	if (params.id && !siteLink) throw error(404, `Not found`);
+	const link = links.find((s) => s.id === params.id);
+	if (params.id && !link) throw error(404, `Not found`);
 
-	const form = await superValidate(siteLink, schema);
-	return { form, siteLinks };
+	const form = await superValidate(link, schema);
+	return { form, links };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -37,7 +37,7 @@ export const actions: Actions = {
 		try {
 			if (!formData.has('delete')) {
 				// upsert
-				await db.siteLink.upsert({
+				await db.link.upsert({
 					where: { id: params.id ?? '' },
 					create: form.data,
 					update: form.data
@@ -45,10 +45,10 @@ export const actions: Actions = {
 				return message(form, `The link has been saved.`);
 			} else if (params.id) {
 				// delete
-				await db.siteLink.delete({
+				await db.link.delete({
 					where: { id: params.id }
 				});
-				redirectTo = URLS.ADMIN_SITELINK;
+				redirectTo = URLS.ADMIN_LINKS;
 			}
 		} catch (e) {
 			console.log(e);

@@ -1,8 +1,14 @@
 import { ExamType, type Exam, type Resource } from '@prisma/client';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createTransport } from 'nodemailer';
 
-import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR } from '$env/static/private';
+import {
+	CTEST_RESOURCE_DIR,
+	EIKEN_RESOURCE_DIR,
+	MAIL_ACCOUNT,
+	MAIL_PASSWORD
+} from '$env/static/private';
 
 import { categories } from '$lib/consts';
 
@@ -126,4 +132,23 @@ export function getExamConfig(exam: Exam) {
 			}
 		};
 	}
+}
+
+export async function sendmail(to: string, subject: string, text: string) {
+	const transporter = createTransport({
+		port: 465,
+		host: 'smtp.gmail.com',
+		secure: true,
+		auth: {
+			user: MAIL_ACCOUNT,
+			pass: MAIL_PASSWORD
+		}
+	});
+
+	await transporter.sendMail({
+		from: MAIL_ACCOUNT,
+		to,
+		subject,
+		text
+	});
 }

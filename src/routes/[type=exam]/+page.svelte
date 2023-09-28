@@ -138,28 +138,28 @@
 
 <MainContainer innerScroll>
 	<h1 class="p-4 text-4xl font-semibold">
-		{data.exam?.fullName}<span class="ml-4">音声配信</span>
+		{data.exam?.fullName} archives
 	</h1>
 
 	<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
 
 	<div class="flex flex-col gap-4 p-4 sm:flex-row sm:justify-between">
 		<select id="select-grade" bind:value={selectedGrade} class="select w-full">
-			<option value="" disabled selected>{data.exam.labelGrade}</option>
+			<option value="" disabled selected>grade</option>
 			{#each getGradeList(selectedYear, selectedNumOf) as [value, label]}
 				<option {value}>{label}</option>
 			{/each}
 		</select>
 
 		<select id="select-year" bind:value={selectedYear} class="select w-full">
-			<option value="" disabled selected>年度</option>
+			<option value="" disabled selected>year</option>
 			{#each getYearList(selectedGrade, selectedNumOf) as [value, label]}
 				<option {value}>{label}</option>
 			{/each}
 		</select>
 
 		<select id="select-numof" bind:value={selectedNumOf} class="select w-full">
-			<option value="" disabled selected>{data.exam.labelNumOf}</option>
+			<option value="" disabled selected>session</option>
 			{#each getNumOfList(selectedGrade, selectedYear) as [value, label]}
 				<option {value}>{label}</option>
 			{/each}

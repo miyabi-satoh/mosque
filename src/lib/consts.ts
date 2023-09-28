@@ -6,14 +6,11 @@ export const URLS = {
 	LOGIN: '/login',
 	LOGOUT: '/?/logout',
 	PROFILE: '/profile',
-	SIGNUP: '/signup',
 	ADMIN: '/admin',
-	ADMIN_SITELINK: '/admin/sitelink',
-	ADMIN_STAFF: '/admin/staff',
-	ADMIN_USER: '/admin/user',
-	ADMIN_USER_CREATE: '/admin/user/create',
+	ADMIN_LINKS: '/admin/links',
+	ADMIN_ACCOUNTS: '/admin/accounts',
+	ADMIN_ACCOUNTS_CREATE: '/admin/accounts/create',
 	BOARD: '/board',
-	BOARD_AUTH: '/board/auth',
 	API_FETCH: '/api/fetch?url='
 } as const;
 

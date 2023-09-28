@@ -10,13 +10,13 @@ export const load = (async () => {
 		orderBy: { sortOrder: 'asc' }
 	});
 
-	const siteLinks = await db.siteLink.findMany({
+	const links = await db.link.findMany({
 		orderBy: { sortOrder: 'asc' }
 	});
 
 	return {
 		exam,
-		siteLinks
+		links
 	};
 }) satisfies PageServerLoad;
 

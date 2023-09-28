@@ -33,26 +33,22 @@ generator zod {
 
 enum UserRole {
   USER
-  ADMIN
   STAFF
+  ADMIN
 }
 
 model User {
-  id          String    @id @unique
-  username    String    @unique
-  role        UserRole  @default(USER)
-  sei         String?
-  mei         String?
-  seiKana     String?
-  meiKana     String?
-  birthday    DateTime? @db.Date
-  displayName String?   @map("display_name")
+  id          String   @id @unique
+  username    String   @unique
+  role        UserRole @default(USER)
+  fullName    String?  @map("full_name")
+  displayName String?  @map("display_name")
+  email       String?
 
-  auth_session     Session[]
-  key              Key[]
-  staff_user_links StaffUserLink[]
+  auth_session Session[]
+  key          Key[]
 
-  @@map("auth_user")
+  @@map("auth_users")
 }
 
 model Session {
@@ -65,7 +61,7 @@ model Session {
   resource_temp ResourceTemp[]
 
   @@index([user_id])
-  @@map("auth_session")
+  @@map("auth_sessions")
 }
 
 model Key {
@@ -75,7 +71,7 @@ model Key {
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("auth_key")
+  @@map("auth_keys")
 }
 
 enum ExamType {
@@ -91,7 +87,7 @@ model Exam {
   labelGrade String   @map("label_grade")
   labelNumOf String   @map("label_numof")
 
-  @@map("exam")
+  @@map("exams")
 }
 
 model Resource {
@@ -106,7 +102,7 @@ model Resource {
   path       String
 
   @@index([examType])
-  @@map("resource")
+  @@map("resources")
 }
 
 enum ResourceState {
@@ -131,16 +127,16 @@ model ResourceTemp {
 
   @@id([id, sessionId])
   @@index([examType])
-  @@map("resource_temp")
+  @@map("temp_resources")
 }
 
-model SiteLink {
+model Link {
   id        String @id @default(cuid())
   url       String
   title     String
   sortOrder Int    @map("sort_order")
 
-  @@map("site_link")
+  @@map("links")
 }
 
 model Post {
@@ -154,7 +150,7 @@ model Post {
 
   comments Comment[]
 
-  @@map("post")
+  @@map("posts")
 }
 
 model Comment {
@@ -168,29 +164,5 @@ model Comment {
   postId String @map("post_id")
   post   Post   @relation(references: [id], fields: [postId], onDelete: Cascade)
 
-  @@map("comment")
-}
-
-model Staff {
-  id       String  @id @unique
-  sei      String
-  mei      String
-  seiKana  String  @map("sei_kana")
-  meiKana  String  @map("mei_kana")
-  nickname String?
-  retired  Boolean @default(false)
-
-  staff_user_links StaffUserLink[]
-
-  @@map("staff")
-}
-
-model StaffUserLink {
-  id      String @id @default(cuid())
-  staffId String @map("staff_id")
-  staff   Staff  @relation(references: [id], fields: [staffId])
-  userId  String @map("user_id")
-  user    User   @relation(references: [id], fields: [userId])
-
-  @@map("staff_user_link")
+  @@map("comments")
 }

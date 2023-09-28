@@ -8,9 +8,7 @@ import {
 	ACTIVE_PERIOD_MINUTES,
 	ADMIN_NAME,
 	ADMIN_PASS,
-	IDLE_PERIOD_MINUTES,
-	STAFF_NAME,
-	STAFF_PASS
+	IDLE_PERIOD_MINUTES
 } from '$env/static/private';
 
 import { PROVIDERID_USERNAME } from '$lib/consts';
@@ -33,16 +31,17 @@ export const auth = lucia({
 			if (data.displayName) {
 				return data.displayName;
 			}
-			if (data.sei || data.mei) {
-				return `${data.sei} ${data.mei}`.trim();
+			if (data.fullName) {
+				return data.fullName;
 			}
 			return data.username;
 		})(data);
 
 		return {
 			username: data.username,
-			displayName,
-			role: data.role
+			role: data.role,
+			fullName: data.fullName ?? undefined,
+			displayName
 		};
 	}
 });
@@ -58,11 +57,6 @@ export async function createBuiltinUsers() {
 				username: ADMIN_NAME,
 				password: ADMIN_PASS,
 				role: UserRole.ADMIN
-			},
-			{
-				username: STAFF_NAME,
-				password: STAFF_PASS,
-				role: UserRole.STAFF
 			}
 		];
 		for (const user of users) {
@@ -75,11 +69,7 @@ export async function createBuiltinUsers() {
 				attributes: {
 					username: user.username,
 					role: user.role,
-					sei: null,
-					mei: null,
-					seiKana: null,
-					meiKana: null,
-					birthday: null,
+					fullName: null,
 					displayName: null
 				}
 			});

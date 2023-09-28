@@ -6,6 +6,7 @@ import type { PageServerLoad } from './$types';
 type MenuT = {
 	href: string;
 	label: string;
+	icon?: string;
 };
 export const load: PageServerLoad = async () => {
 	const menus: MenuT[] = [];
@@ -16,18 +17,21 @@ export const load: PageServerLoad = async () => {
 		...exam.map((e) => {
 			return {
 				href: `${URLS.ADMIN}/${e.examType}`,
-				label: `${e.shortName}`
+				label: `Manage ${e.fullName}`,
+				icon: 'mdi:file-multiple'
 			} satisfies MenuT;
 		})
 	);
 	menus.push(
 		{
-			href: URLS.ADMIN_SITELINK,
-			label: `Links`
+			href: URLS.ADMIN_LINKS,
+			label: 'Manage external links',
+			icon: 'mdi:web'
 		},
 		{
-			href: URLS.ADMIN_USER,
-			label: `Accounts`
+			href: URLS.ADMIN_ACCOUNTS,
+			label: 'Manage user accounts',
+			icon: 'mdi:account-multiple'
 		}
 	);
 

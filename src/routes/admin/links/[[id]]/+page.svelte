@@ -92,7 +92,7 @@
 
 				<div class="flex justify-end gap-x-4">
 					{#if $page.params.id}
-						<a class="variant-filled btn" href={URLS.ADMIN_SITELINK}>Cancel</a>
+						<a class="variant-filled btn" href={URLS.ADMIN_LINKS}>Cancel</a>
 						<button
 							name="delete"
 							on:click={(e) =>
@@ -109,13 +109,13 @@
 		</div>
 	</form>
 	<div class="flex flex-col gap-4 p-4">
-		{#each data.siteLinks as siteLink (siteLink.id)}
+		{#each data.links as link (link.id)}
 			<div class="flex items-center gap-4">
 				<span>
-					{siteLink.sortOrder} -
-					<a class="anchor" href={siteLink.url}>{siteLink.title}</a>
+					{link.sortOrder} -
+					<a class="anchor" href={link.url}>{link.title}</a>
 				</span>
-				<a class="variant-filled btn btn-sm" href={`${URLS.ADMIN_SITELINK}/${siteLink.id}`}>Edit</a>
+				<a class="variant-filled btn btn-sm" href={`${URLS.ADMIN_LINKS}/${link.id}`}>Edit</a>
 			</div>
 		{/each}
 	</div>

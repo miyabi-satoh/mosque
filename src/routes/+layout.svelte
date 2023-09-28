@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
+	import { afterNavigate } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { navigating } from '$app/stores';
 	import { LoadingOverlay } from '$lib';
 	import { URLS } from '$lib/consts';
@@ -25,7 +27,13 @@
 		placement: 'bottom'
 	};
 
-	// 参考 - https://zenn.dev/gawarago/articles/f75f5113a3803d
+	// https://stackoverflow.com/questions/71564541/going-back-to-the-previous-page-with-goto-sveltekit-navigation
+	let previousPage: string = base;
+	afterNavigate(({ from }) => {
+		previousPage = from?.url.pathname || previousPage;
+	});
+
+	// https://zenn.dev/gawarago/articles/f75f5113a3803d
 	$: if (browser && !!$navigating) $submittingStore = false;
 	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
 </script>
@@ -46,22 +54,41 @@
 	<div class="container mx-auto lg:max-w-3xl">
 		<AppBar background="bg-surface-50-900-token">
 			<svelte:fragment slot="lead">
-				<a href="/" class="btn-ghost btn text-xl normal-case">MOSQUE</a>
+				<a href={previousPage}><Icon icon="mdi:arrow-left" height="36" /></a>
 			</svelte:fragment>
+			<h1 class="h1"><a href="/">MOSQUE</a></h1>
 			<svelte:fragment slot="trail">
 				{#if data.user}
 					<button class="btn flex gap-x-2" use:popup={popupMenu}>
 						<Icon icon="mdi:account-circle" height="auto" />
 						{data.user.displayName}
 					</button>
-					<div class="card w-52 p-2 shadow-xl" data-popup="popupMenu">
+					<div class="card w-48 p-2 shadow-xl" data-popup="popupMenu">
 						<div class="flex flex-col gap-y-2">
-							{#each data.userMenus as [href, label]}
-								<a {href} class="btn w-full hover:variant-filled-surface">{label}</a>
+							{#each data.userMenus as [href, label, icon]}
+								<a {href} class="btn w-full justify-start text-left hover:variant-filled-surface">
+									<Icon {icon} height="auto" />
+									<span class="ml-2">{label}</span>
+								</a>
 							{/each}
-							<label for="logout" class="btn w-full hover:variant-filled-surface">Logout</label>
+							<label
+								for="logout"
+								class="btn w-full justify-start text-left hover:variant-filled-surface"
+							>
+								<Icon icon="mdi:logout" height="auto" />
+								<span class="ml-2">Logout</span>
+							</label>
 						</div>
 					</div>
+				{:else}
+					<a href={URLS.LOGIN} title="Login">
+						<Icon icon="mdi:login" height="auto" />
+					</a>
+				{/if}
+				{#if data.isPC || data.user}
+					<a href={URLS.BOARD} title="Board">
+						<Icon icon="mdi:bulletin-board" height="auto" />
+					</a>
 				{/if}
 				<LightSwitch />
 			</svelte:fragment>

@@ -4,26 +4,32 @@ import { hasAdminRole } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ locals }) => {
+export const load = (async ({ locals, request }) => {
 	// create built-in users(admin, staff)
 	await createBuiltinUsers();
 
-	// validate requests
+	// get session
 	const session = await locals.auth.validate();
 	const user = session?.user;
+
+	// check user-agent
+	const isPC = (() => {
+		const ua = request.headers.get('user-agent')?.toLowerCase();
+		return ua?.match(/(windows nt)|(mac os x)/);
+	})();
 
 	const userMenus = [];
 	if (user) {
 		// add user menu items if user is authenticated
 		if (hasAdminRole(user)) {
-			userMenus.push([URLS.ADMIN, `Dashboard`]);
+			userMenus.push([URLS.ADMIN, `Dashboard`, 'mdi:view-dashboard']);
 		}
-		userMenus.push([URLS.BOARD, `Board`]);
-		userMenus.push([URLS.PROFILE, `Edit Profile`]);
+		userMenus.push([URLS.PROFILE, `Edit Profile`, 'mdi:account-edit']);
 	}
 
 	return {
 		user,
-		userMenus
+		userMenus,
+		isPC
 	};
 }) satisfies LayoutServerLoad;
