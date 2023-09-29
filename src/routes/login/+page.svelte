@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { HelperText, MainContainer } from '$lib';
+	import { HelperText, MainContainer, ModalContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -13,8 +13,7 @@
 </script>
 
 <MainContainer>
-	<div class="border-surface-200-700-token w-modal-slim mx-auto rounded-3xl border p-6 shadow-2xl">
-		<h1 class="h1 text-center">Login</h1>
+	<ModalContainer title="Login">
 		<HelperText class="my-4 text-center">
 			{$message ?? ''}
 		</HelperText>
@@ -60,5 +59,5 @@
 				<button class="variant-ghost-primary btn w-full" disabled={$submitting}>Submit</button>
 			</div>
 		</form>
-	</div>
+	</ModalContainer>
 </MainContainer>

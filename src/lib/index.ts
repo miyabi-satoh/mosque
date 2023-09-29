@@ -3,3 +3,4 @@ export { default as AudioPlayer } from './components/AudioPlayer.svelte';
 export { default as HelperText } from './components/HelperText.svelte';
 export { default as LoadingOverlay } from './components/LoadingOverlay.svelte';
 export { default as MainContainer } from './components/MainContainer.svelte';
+export { default as ModalContainer } from './components/ModalContainer.svelte';

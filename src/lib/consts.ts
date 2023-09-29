@@ -6,6 +6,7 @@ export const URLS = {
 	LOGIN: '/login',
 	LOGOUT: '/?/logout',
 	PROFILE: '/profile',
+	PASSWD: '/passwd',
 	ADMIN: '/admin',
 	ADMIN_LINKS: '/admin/links',
 	ADMIN_ACCOUNTS: '/admin/accounts',

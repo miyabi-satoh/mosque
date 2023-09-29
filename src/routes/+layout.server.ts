@@ -25,6 +25,7 @@ export const load = (async ({ locals, request }) => {
 			userMenus.push([URLS.ADMIN, `Dashboard`, 'mdi:view-dashboard']);
 		}
 		userMenus.push([URLS.PROFILE, `Edit Profile`, 'mdi:account-edit']);
+		userMenus.push([URLS.PASSWD, `Change Password`, 'mdi:lock']);
 	}
 
 	return {
