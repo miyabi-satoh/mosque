@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit';
 import type { ExamType } from '@prisma/client';
 
 import { db } from '$lib/server/db';
-import { getExamConfig } from '$lib/server/utils';
+import { getExamConfig } from '$lib/server/exam';
 
 import type { PageServerLoad } from './$types';
 

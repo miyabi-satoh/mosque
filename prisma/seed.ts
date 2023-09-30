@@ -7,11 +7,14 @@ async function main() {
 		where: {
 			examType: ExamType.ctest
 		},
-		update: {},
+		update: {
+			shortName: 'Ｃテスト',
+			fullName: 'Ｃテスト'
+		},
 		create: {
 			examType: ExamType.ctest,
-			shortName: 'C Test',
-			fullName: 'Computer Test',
+			shortName: 'Ｃテスト',
+			fullName: 'Ｃテスト',
 			sortOrder: 1,
 			labelGrade: '学年',
 			labelNumOf: '月号'
@@ -21,17 +24,35 @@ async function main() {
 		where: {
 			examType: ExamType.eiken
 		},
-		update: {},
+		update: {
+			shortName: '英検',
+			fullName: '英検'
+		},
 		create: {
 			examType: ExamType.eiken,
-			shortName: 'EIKEN',
-			fullName: 'EIKEN',
+			shortName: '英検',
+			fullName: '英検',
 			sortOrder: 2,
 			labelGrade: '級',
 			labelNumOf: '実施回'
 		}
 	});
-	console.log({ ctest, eiken });
+	const kyote = await prisma.exam.upsert({
+		where: {
+			examType: ExamType.kyote
+		},
+		update: {},
+		create: {
+			examType: ExamType.kyote,
+			shortName: '共テ模試',
+			fullName: '共通テスト模試',
+			sortOrder: 3,
+			labelGrade: '',
+			labelNumOf: ''
+		}
+	});
+
+	console.log({ ctest, eiken, kyote });
 }
 main()
 	.then(async () => {

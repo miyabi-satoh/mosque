@@ -71,7 +71,8 @@ export async function createBuiltinUsers() {
 					role: user.role,
 					fullName: null,
 					displayName: null,
-					email: null
+					email: null,
+					code: null
 				}
 			});
 		}

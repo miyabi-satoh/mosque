@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 
+import type { ExamType } from '@prisma/client';
 import mime from 'mime';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,8 +11,9 @@ import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ params }) => {
 	const id = params.id;
+	const examType = params.type as ExamType;
 	const res = await db.resource.findUnique({
-		where: { id }
+		where: { id_examType: { id, examType } }
 	});
 	if (res) {
 		if (!fs.existsSync(res.path)) {

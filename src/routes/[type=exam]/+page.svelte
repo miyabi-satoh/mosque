@@ -137,9 +137,9 @@
 </script>
 
 <MainContainer innerScroll>
-	<h1 class="p-4 text-4xl font-semibold">
-		{data.exam?.fullName} archives
-	</h1>
+	<h2 class="h2 m-4">
+		{data.exam?.fullName}アーカイブ
+	</h2>
 
 	<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
 

@@ -44,7 +44,7 @@ export const actions: Actions = {
 			let count = 0;
 			for (const user of users) {
 				const found = await db.user.findFirst({
-					where: { fullName: user.fullName }
+					where: { code: user.username }
 				});
 				if (!found) {
 					await auth.createUser({
@@ -57,7 +57,8 @@ export const actions: Actions = {
 							...exclude(user, ['birthday']),
 							role: UserRole.USER,
 							displayName: null,
-							email: null
+							email: null,
+							code: user.username
 						}
 					});
 					count++;

@@ -8,7 +8,8 @@ import { z } from 'zod';
 
 import { ResourceSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
-import { getExamConfig, searchFiles } from '$lib/server/utils';
+import { getExamConfig } from '$lib/server/exam';
+import { searchFiles } from '$lib/server/utils';
 // import type { LabelValueT } from '$lib/types';
 import { convertFullWidthNumbersToHalf, exclude } from '$lib/utils';
 
@@ -81,7 +82,11 @@ async function refreshTempResources(sessionId: string, exam: Exam) {
 		if (!result.success) {
 			console.log('invalid data', res);
 		} else {
-			const found = await db.resource.findUnique({ where: { id: res.id } });
+			const found = await db.resource.findUnique({
+				where: {
+					id_examType: { id: res.id, examType: exam.examType }
+				}
+			});
 			await db.tempResource.create({
 				data: {
 					...res,

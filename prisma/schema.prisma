@@ -78,6 +78,7 @@ model Key {
 enum ExamType {
   ctest
   eiken
+  kyote
 }
 
 model Exam {
