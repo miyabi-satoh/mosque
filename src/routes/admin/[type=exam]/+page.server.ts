@@ -1,6 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 
-import { ExamType, ResourceState, type Resource } from '@prisma/client';
+import { ExamType, ResourceState, type Exam, type TempResource } from '@prisma/client';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
@@ -8,20 +9,20 @@ import { z } from 'zod';
 import { ResourceSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
 import { getExamConfig, searchFiles } from '$lib/server/utils';
-import type { LabelValueT } from '$lib/types';
+// import type { LabelValueT } from '$lib/types';
 import { convertFullWidthNumbersToHalf, exclude } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
 
-type EntryT = {
-	id: string;
-	state: ResourceState;
-	year: LabelValueT;
-	grade: LabelValueT;
-	numOf: LabelValueT;
-	category: LabelValueT;
-	path: string;
-};
+// type EntryT = {
+// 	id: string;
+// 	state: ResourceState;
+// 	year: LabelValueT;
+// 	grade: LabelValueT;
+// 	numOf: LabelValueT;
+// 	category: LabelValueT;
+// 	path: string;
+// };
 const schema = z.object({
 	checked: z.string().array()
 });
@@ -35,42 +36,19 @@ const parseSchema = ResourceSchema.pick({
 	path: true
 });
 
-export const load = (async ({ locals, params }) => {
-	const session = await locals.auth.validate();
-	if (!session) {
-		console.error('Cannot read session');
-		throw error(500, 'Internal Server Error');
-	}
-
-	const examType = params.type.toLowerCase() as ExamType;
-	const exam = await db.exam.findUnique({ where: { examType: examType } });
-	if (!exam) {
-		console.error(`Cannot read exam(examType = '${examType}')`);
-		throw error(500, 'Internal Server Error');
-	}
-
-	await db.resourceTemp.deleteMany({
+async function refreshTempResources(sessionId: string, exam: Exam) {
+	// clear resouce-temp
+	await db.tempResource.deleteMany({
 		where: {
-			sessionId: session.sessionId,
-			examType: examType
+			sessionId,
+			examType: exam.examType
 		}
 	});
 
-	const dataInDB = await db.resource.findMany({ where: { examType: examType } });
-	const count = {
-		ok: 0,
-		new: 0,
-		missing: 0
-	};
-
 	const config = getExamConfig(exam);
-
-	const dataOnDisk: Resource[] = [];
 	const files = searchFiles(config.baseDir, /\.(mp3|pdf)$/).sort();
-	const re = new RegExp(`^${config.baseDir}${path.sep}?`, 'i');
-
 	for (const file of files) {
-		let res = {} as Resource;
+		let res = {} as TempResource;
 		const convertedPath = convertFullWidthNumbersToHalf(file).toLowerCase();
 		const filename = path.basename(convertedPath);
 
@@ -96,60 +74,44 @@ export const load = (async ({ locals, params }) => {
 		res = {
 			...res,
 			...config.parse(filename, config.valueGrade),
-			path: file
+			path: file,
+			id: createHash('sha256').update(convertedPath).digest('hex')
 		};
 		const result = parseSchema.safeParse(res);
 		if (!result.success) {
 			console.log('invalid data', res);
 		} else {
-			const found = dataInDB.find((data) => {
-				return (
-					data.year === res.year &&
-					data.grade === res.grade &&
-					data.numOf === res.numOf &&
-					data.category === res.category &&
-					data.title === res.title &&
-					data.shortTitle === res.shortTitle &&
-					data.path === res.path
-				);
-			});
-			if (found) {
-				res.id = found.id;
-				count.ok++;
-			} else {
-				count.new++;
-			}
-			dataOnDisk.push({
-				...res
-			});
-		}
-	}
-
-	for (const data of dataOnDisk) {
-		await db.resourceTemp.create({
-			data: {
-				...data,
-				id: data.id ?? undefined,
-				sessionId: session.sessionId,
-				state: data.id ? ResourceState.ok : ResourceState.new,
-				examType: examType
-			}
-		});
-	}
-	for (const data of dataInDB) {
-		if (!dataOnDisk.some((dod) => dod.id === data.id)) {
-			await db.resourceTemp.create({
+			const found = await db.resource.findUnique({ where: { id: res.id } });
+			await db.tempResource.create({
 				data: {
-					...data,
-					sessionId: session.sessionId,
-					state: ResourceState.missing
+					...res,
+					sessionId: sessionId,
+					state: found ? ResourceState.ok : ResourceState.new,
+					examType: exam.examType
 				}
 			});
-			count.missing++;
 		}
 	}
+}
 
-	const tempData = await db.resourceTemp.findMany({
+export const load = (async ({ locals, params }) => {
+	const session = await locals.auth.validate();
+	if (!session) {
+		console.error('Cannot read session');
+		throw error(500, 'Internal Server Error');
+	}
+
+	const examType = params.type.toLowerCase() as ExamType;
+	const exam = await db.exam.findUnique({ where: { examType: examType } });
+	if (!exam) {
+		console.error(`Cannot read exam(examType = '${examType}')`);
+		throw error(500, 'Internal Server Error');
+	}
+
+	// refresh resouce-temp
+	await refreshTempResources(session.sessionId, exam);
+
+	const tempData = await db.tempResource.findMany({
 		where: {
 			sessionId: session.sessionId,
 			examType
@@ -162,10 +124,18 @@ export const load = (async ({ locals, params }) => {
 			{ category: 'asc' }
 		]
 	});
+	await db.tempResource.deleteMany({
+		where: {
+			sessionId: session.sessionId,
+			examType
+		}
+	});
 
+	const config = getExamConfig(exam);
 	const initialData = {
 		checked: [] as string[]
 	};
+	const re = new RegExp(`^${config.baseDir}${path.sep}?`, 'i');
 	const entries = tempData.map((data) => {
 		if (re.test(data.path)) {
 			data.path = data.path.replace(re, '');
@@ -183,7 +153,7 @@ export const load = (async ({ locals, params }) => {
 			grade: { label: config.labelGrade(data.grade), value: data.grade },
 			category: { label: data.shortTitle, value: data.category },
 			path: data.path
-		} satisfies EntryT;
+		};
 	});
 
 	const form = await superValidate(initialData, schema);
@@ -193,7 +163,7 @@ export const load = (async ({ locals, params }) => {
 		entries,
 		headers: config.headers,
 		exam,
-		count,
+		// count,
 		ResourceState
 	};
 }) satisfies PageServerLoad;
@@ -213,15 +183,28 @@ export const actions: Actions = {
 		}
 
 		const examType = params.type.toLowerCase() as ExamType;
+		const exam = await db.exam.findUnique({ where: { examType: examType } });
+		if (!exam) {
+			console.error(`Cannot read exam(examType = '${examType}')`);
+			throw error(500, 'Internal Server Error');
+		}
 
 		// 更新処理
 		try {
 			// 一時テーブルの該当レコードを取得
-			const res = await db.resourceTemp.findMany({
+			await refreshTempResources(session.sessionId, exam);
+			const res = await db.tempResource.findMany({
 				where: {
 					id: {
 						in: form.data.checked
 					}
+				}
+			});
+			// 一時テーブルのレコードを削除
+			await db.tempResource.deleteMany({
+				where: {
+					sessionId: session.sessionId,
+					examType
 				}
 			});
 
@@ -236,8 +219,6 @@ export const actions: Actions = {
 			await db.resource.createMany({
 				data: res.map((r) => exclude(r, ['sessionId', 'state']))
 			});
-
-			// 一時テーブルを削除 -> load()で
 		} catch (e) {
 			console.log(e);
 			return fail(400, { form: { ...form, message: 'DB更新エラー' } });

@@ -15,9 +15,10 @@ const schema = z.object({
 	username: z.string().min(4),
 	displayName: z.string().min(2),
 	password: z.string().min(1),
-	fullName: z.string().optional(),
+	fullName: z.string().nullish(),
 	role: UserRoleSchema.optional(),
-	newPassword: z.string().optional()
+	newPassword: z.string().optional(),
+	email: z.string().nullish()
 });
 
 export const load = (async ({ parent, params }) => {
@@ -38,7 +39,6 @@ export const load = (async ({ parent, params }) => {
 		...form.data,
 		...user
 	};
-	console.log();
 
 	return { form };
 }) satisfies PageServerLoad;
@@ -64,6 +64,7 @@ export const actions: Actions = {
 				}
 				return false;
 			}, 'Incorrect password')
+			// TODO: email validation
 		});
 
 		// validation
@@ -89,6 +90,7 @@ export const actions: Actions = {
 				displayName: form.data.displayName,
 				fullName: form.data.fullName ?? undefined,
 				role: form.data.role ?? undefined
+				// TODO: update email
 			});
 			// update password
 			if (form.data.newPassword) {

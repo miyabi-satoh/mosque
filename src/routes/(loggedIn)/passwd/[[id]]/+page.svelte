@@ -6,7 +6,6 @@
 
 	export let data: PageData;
 	const { form, message, constraints, errors, submitting, enhance } = superForm(data.form, {
-		resetForm: true,
 		taintedMessage: false
 	});
 	$: $submittingStore = $submitting;
@@ -14,7 +13,7 @@
 
 <MainContainer>
 	<ModalContainer title="Change password">
-		<HelperText class="my-4 text-center">
+		<HelperText class="my-4 text-center" usePageStatus>
 			{$message ?? ''}
 		</HelperText>
 
@@ -22,8 +21,8 @@
 			<div class="my-4">
 				<input
 					class="input"
-					class:input-error={$errors.password || $message}
-					type="text"
+					class:input-error={$errors.password}
+					type="password"
 					name="password"
 					id="password"
 					placeholder="Enter your current password"
@@ -40,7 +39,7 @@
 			<div class="my-4">
 				<input
 					class="input"
-					class:input-error={$errors.newPassword || $message}
+					class:input-error={$errors.newPassword}
 					type="password"
 					name="newPassword"
 					id="newPassword"
@@ -57,7 +56,7 @@
 			<div class="my-4">
 				<input
 					class="input"
-					class:input-error={$errors.confirmPassword || $message}
+					class:input-error={$errors.confirmPassword}
 					type="password"
 					name="confirmPassword"
 					id="confirmPassword"

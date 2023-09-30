@@ -63,7 +63,7 @@
 						<Icon icon="mdi:account-circle" height="auto" />
 						{data.user.displayName}
 					</button>
-					<div class="card w-60 p-2 shadow-xl" data-popup="popupMenu">
+					<div class="card z-30 w-60 p-2 shadow-xl" data-popup="popupMenu">
 						<div class="flex flex-col gap-y-2">
 							{#each data.userMenus as [href, label, icon]}
 								<a {href} class="btn w-full justify-start text-left hover:variant-filled-surface">

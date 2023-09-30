@@ -13,6 +13,7 @@ import {
 
 import { PROVIDERID_USERNAME } from '$lib/consts';
 import { db } from '$lib/server/db';
+import { exclude } from '$lib/utils';
 
 // import { dev } from '$app/environment';
 
@@ -37,10 +38,9 @@ export const auth = lucia({
 			return data.username;
 		})(data);
 
+		const attributes = exclude(data, ['id']);
 		return {
-			username: data.username,
-			role: data.role,
-			fullName: data.fullName ?? undefined,
+			...attributes,
 			displayName
 		};
 	}
@@ -70,7 +70,8 @@ export async function createBuiltinUsers() {
 					username: user.username,
 					role: user.role,
 					fullName: null,
-					displayName: null
+					displayName: null,
+					email: null
 				}
 			});
 		}

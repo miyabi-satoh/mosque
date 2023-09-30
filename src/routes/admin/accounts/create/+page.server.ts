@@ -56,7 +56,8 @@ export const actions: Actions = {
 						attributes: {
 							...exclude(user, ['birthday']),
 							role: UserRole.USER,
-							displayName: null
+							displayName: null,
+							email: null
 						}
 					});
 					count++;

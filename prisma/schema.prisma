@@ -44,6 +44,7 @@ model User {
   fullName    String?  @map("full_name")
   displayName String?  @map("display_name")
   email       String?
+  code        String?  @unique
 
   auth_session Session[]
   key          Key[]
@@ -58,7 +59,7 @@ model Session {
   idle_expires   BigInt
   user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  resource_temp ResourceTemp[]
+  temp_resources TempResource[]
 
   @@index([user_id])
   @@map("auth_sessions")
@@ -91,7 +92,7 @@ model Exam {
 }
 
 model Resource {
-  id         String   @id @default(cuid())
+  id         String
   examType   ExamType @map("exam_type")
   year       Int
   grade      Int
@@ -101,6 +102,7 @@ model Resource {
   shortTitle String   @map("short_title")
   path       String
 
+  @@id([id, examType])
   @@index([examType])
   @@map("resources")
 }
@@ -111,8 +113,8 @@ enum ResourceState {
   missing
 }
 
-model ResourceTemp {
-  id         String        @default(cuid())
+model TempResource {
+  id         String
   sessionId  String        @map("session_id")
   session    Session       @relation(references: [id], fields: [sessionId], onDelete: Cascade)
   state      ResourceState
