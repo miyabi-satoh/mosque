@@ -4,5 +4,5 @@
 </script>
 
 <MainContainer>
-	<h1 class="h1 m-4">{$page.status} {$page.error?.message}</h1>
+	<h2 class="h2 m-4">{$page.status} {$page.error?.message}</h2>
 </MainContainer>
