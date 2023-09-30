@@ -1,24 +1,25 @@
 import { fail } from '@sveltejs/kit';
 
-import { UserRole, type User } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
-import { format } from 'date-fns';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
 import { PROVIDERID_USERNAME } from '$lib/consts';
 import { db } from '$lib/server/db';
 import { auth } from '$lib/server/lucia';
-import { exclude } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
 
 const schema = z.object({
 	csv: z.string().min(1)
 });
-const csvHeader = ['username', 'fullName', 'birthday'].join(',');
-type UserPropT = Pick<User, 'fullName' | 'username'> & {
-	birthday: string;
+
+// unique code, full name(space separeted)
+const csvHeader = ['code', 'fullName'].join(',');
+type UserPropT = {
+	code: string;
+	fullName: string;
 };
 
 export const load = (async () => {
@@ -43,22 +44,26 @@ export const actions: Actions = {
 			});
 			let count = 0;
 			for (const user of users) {
+				// check whether the user exists or not
 				const found = await db.user.findFirst({
-					where: { code: user.username }
+					where: { code: user.code }
 				});
 				if (!found) {
+					// new user
+					// use code for username, password
 					await auth.createUser({
 						key: {
 							providerId: PROVIDERID_USERNAME,
-							providerUserId: user.username.toLowerCase(),
-							password: format(new Date(user.birthday), 'yyyyMMdd')
+							providerUserId: user.code.toLowerCase(),
+							password: user.code
 						},
 						attributes: {
-							...exclude(user, ['birthday']),
+							username: user.code,
+							fullName: user.fullName,
 							role: UserRole.USER,
 							displayName: null,
 							email: null,
-							code: user.username
+							code: user.code
 						}
 					});
 					count++;
@@ -68,7 +73,9 @@ export const actions: Actions = {
 			return message(form, `Created ${count} account(s).`);
 		} catch (e) {
 			console.log(e);
-			return fail(400, { form: { ...form, message: 'エラー' } });
+			return message(form, 'An error occurred.', {
+				status: 400
+			});
 		}
 	}
 };
