@@ -94,6 +94,6 @@
 			</div>
 		</form>
 	{:else}
-		<div class="p-4">{data.exam?.shortName}No files found.</div>
+		<div class="p-4">No files found.</div>
 	{/if}
 </MainContainer>

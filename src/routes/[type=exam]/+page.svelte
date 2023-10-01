@@ -156,7 +156,7 @@
 </script>
 
 <MainContainer innerScroll>
-	<h2 class="h2 m-4">{data.exam?.fullName}アーカイブ</h2>
+	<h2 class="h2 m-4">{data.exam.name}アーカイブ</h2>
 
 	<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
 

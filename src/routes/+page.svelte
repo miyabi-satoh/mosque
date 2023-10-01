@@ -11,7 +11,7 @@
 		{#each data.exam as exam}
 			<a href="/{exam.examType}" class="card flex min-h-[64px] w-full items-center p-4">
 				<h2 class="h2 flex-1">
-					{exam.fullName}アーカイブ
+					{exam.name}アーカイブ
 				</h2>
 				<Icon icon="mdi:chevron-right" height="32px" />
 			</a>

@@ -17,7 +17,7 @@ export const load: PageServerLoad = async () => {
 		...exam.map((e) => {
 			return {
 				href: `${URLS.ADMIN}/${e.examType}`,
-				label: `${e.fullName} ファイル管理`,
+				label: `${e.name} ファイル管理`,
 				icon: 'mdi:file-multiple'
 			} satisfies MenuT;
 		})

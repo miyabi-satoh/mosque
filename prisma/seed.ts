@@ -1,54 +1,39 @@
-import { ExamType, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
 	const ctest = await prisma.exam.upsert({
 		where: {
-			examType: ExamType.ctest
+			examType: 'ctest'
 		},
-		update: {
-			shortName: 'Ｃテスト',
-			fullName: 'Ｃテスト'
-		},
+		update: {},
 		create: {
-			examType: ExamType.ctest,
-			shortName: 'Ｃテスト',
-			fullName: 'Ｃテスト',
-			sortOrder: 1,
-			labelGrade: '学年',
-			labelNumOf: '月号'
+			examType: 'ctest',
+			name: 'Ｃテスト',
+			sortOrder: 1
 		}
 	});
 	const eiken = await prisma.exam.upsert({
 		where: {
-			examType: ExamType.eiken
+			examType: 'eiken'
 		},
-		update: {
-			shortName: '英検',
-			fullName: '英検'
-		},
+		update: {},
 		create: {
-			examType: ExamType.eiken,
-			shortName: '英検',
-			fullName: '英検',
-			sortOrder: 2,
-			labelGrade: '級',
-			labelNumOf: '実施回'
+			examType: 'eiken',
+			name: '英検',
+			sortOrder: 2
 		}
 	});
 	const kyote = await prisma.exam.upsert({
 		where: {
-			examType: ExamType.kyote
+			examType: 'kyote'
 		},
 		update: {},
 		create: {
-			examType: ExamType.kyote,
-			shortName: '共テ模試',
-			fullName: '共通テスト模試',
-			sortOrder: 3,
-			labelGrade: '',
-			labelNumOf: ''
+			examType: 'kyote',
+			name: '共テ模試',
+			sortOrder: 3
 		}
 	});
 

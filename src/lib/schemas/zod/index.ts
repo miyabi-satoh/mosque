@@ -34,14 +34,7 @@ export const SessionScalarFieldEnumSchema = z.enum([
 
 export const KeyScalarFieldEnumSchema = z.enum(['id', 'hashed_password', 'user_id']);
 
-export const ExamScalarFieldEnumSchema = z.enum([
-	'examType',
-	'shortName',
-	'fullName',
-	'sortOrder',
-	'labelGrade',
-	'labelNumOf'
-]);
+export const ExamScalarFieldEnumSchema = z.enum(['examType', 'name', 'sortOrder']);
 
 export const ResourceScalarFieldEnumSchema = z.enum([
 	'id',
@@ -162,11 +155,8 @@ export type Key = z.infer<typeof KeySchema>;
 
 export const ExamSchema = z.object({
 	examType: ExamTypeEnumSchema,
-	shortName: z.string(),
-	fullName: z.string(),
-	sortOrder: z.number().int(),
-	labelGrade: z.string(),
-	labelNumOf: z.string()
+	name: z.string(),
+	sortOrder: z.number().int()
 });
 
 export type Exam = z.infer<typeof ExamSchema>;

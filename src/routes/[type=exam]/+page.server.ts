@@ -20,18 +20,6 @@ export const load = (async ({ params }) => {
 		orderBy: [{ year: 'desc' }, { numOf: 'desc' }, { grade: 'asc' }, { category: 'asc' }]
 	});
 
-	// const config = getExamConfig(exam);
-	// const csvData = resources.map((data) => {
-	// 	return {
-	// 		id: data.id,
-	// 		year: { label: config.labelYear(data.year), value: data.year },
-	// 		numOf: { label: config.labelNumOf(data.numOf), value: data.numOf },
-	// 		grade: { label: config.labelGrade(data.grade), value: data.grade },
-	// 		category: data.category,
-	// 		title: data.title
-	// 	};
-	// });
-
 	return {
 		csvData: resources.map((r) => exclude(r, ['examType', 'path', 'shortTitle'])),
 		exam

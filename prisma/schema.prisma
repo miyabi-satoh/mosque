@@ -86,12 +86,9 @@ enum ExamTypeEnum {
 }
 
 model Exam {
-  examType   ExamTypeEnum @id @map("exam_type")
-  shortName  String       @map("short_name")
-  fullName   String       @map("full_name")
-  sortOrder  Int          @map("sort_order")
-  labelGrade String       @map("label_grade")
-  labelNumOf String       @map("label_numof")
+  examType  ExamTypeEnum @id @map("exam_type")
+  name      String
+  sortOrder Int          @map("sort_order")
 
   @@map("exams")
 }
