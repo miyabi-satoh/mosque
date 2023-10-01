@@ -7,13 +7,9 @@ import { categories } from '$lib/consts';
 type LabelFunc = (val: number) => string;
 type ValueFunc = (val: number, opt: string) => number;
 type ParseFunc = (filename: string, valueGrade: ValueFunc) => TempResource;
-type HeaderT = {
-	label: string;
-	classOpt: string;
-};
 type ExamConfig = {
 	baseDir: string;
-	headers: HeaderT[];
+	headers: string[];
 	labelYear: LabelFunc;
 	labelNumOf: LabelFunc;
 	labelGrade: LabelFunc;
@@ -27,13 +23,7 @@ export function getExamConfig(exam: Exam): ExamConfig {
 		case 'kyote':
 			return {
 				baseDir: KYOTE_RESOURCE_DIR,
-				headers: [
-					{ label: '年度', classOpt: 'w-[5.5em]' },
-					{ label: exam.labelNumOf, classOpt: 'w-[4em]' },
-					{ label: exam.labelGrade, classOpt: 'w-[4em]' },
-					{ label: '種類', classOpt: 'w-[6em]' },
-					{ label: 'パス', classOpt: 'flex-1' }
-				],
+				headers: ['年度', exam.labelNumOf, exam.labelGrade, '種類', 'パス'],
 				labelYear,
 				labelNumOf: (numOf: number) => `第${numOf}回`,
 				labelGrade: (_: number) => ``,
@@ -60,13 +50,7 @@ export function getExamConfig(exam: Exam): ExamConfig {
 		case 'ctest':
 			return {
 				baseDir: CTEST_RESOURCE_DIR,
-				headers: [
-					{ label: '年度', classOpt: 'w-[5.5em]' },
-					{ label: exam.labelNumOf, classOpt: 'w-[4em]' },
-					{ label: exam.labelGrade, classOpt: 'w-[4em]' },
-					{ label: '種類', classOpt: 'w-[6em]' },
-					{ label: 'パス', classOpt: 'flex-1' }
-				],
+				headers: ['年度', exam.labelNumOf, exam.labelGrade, '種類', 'パス'],
 				labelYear,
 				labelNumOf: (numOf: number) => `${numOf}月号`,
 				labelGrade: (grade: number) => `中${grade - 6}`,
@@ -93,13 +77,7 @@ export function getExamConfig(exam: Exam): ExamConfig {
 		case 'eiken':
 			return {
 				baseDir: EIKEN_RESOURCE_DIR,
-				headers: [
-					{ label: '年度', classOpt: 'w-[5.5em]' },
-					{ label: exam.labelNumOf, classOpt: 'w-[4.5em]' },
-					{ label: exam.labelGrade, classOpt: 'w-[4em]' },
-					{ label: '種類', classOpt: 'w-[6.5em]' },
-					{ label: 'パス', classOpt: 'flex-1' }
-				],
+				headers: ['年度', exam.labelNumOf, exam.labelGrade, '種類', 'パス'],
 				labelYear,
 				labelNumOf: (numOf: number) => `第${numOf}回`,
 				labelGrade: (grade: number) => {

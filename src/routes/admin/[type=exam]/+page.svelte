@@ -62,7 +62,7 @@
 							</th>
 							{#each data.headers as head}
 								<th class="bg-surface-100-800-token sticky top-0 z-10 whitespace-nowrap p-2">
-									{head.label}
+									{head}
 								</th>
 							{/each}
 						</tr>
