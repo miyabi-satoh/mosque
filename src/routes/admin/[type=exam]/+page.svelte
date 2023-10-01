@@ -23,12 +23,17 @@
 		});
 	}
 
-	$: countOk = data.entries.filter((e) => e.state === 'ok').length;
-	$: countNew = data.entries.filter((e) => e.state === 'new').length;
+	type ColumnValues = (typeof data.columnValues)[0];
+	function showValue(values: ColumnValues, key: string) {
+		return `${values[key as keyof ColumnValues]}`;
+	}
+
+	$: countOk = data.columnValues.filter((e) => e.state === 'ok').length;
+	$: countNew = data.columnValues.filter((e) => e.state === 'new').length;
 </script>
 
 <MainContainer innerScroll>
-	{#if data.entries.length > 0}
+	{#if data.columnValues.length > 0}
 		<form
 			class="flex flex-1 flex-col overflow-y-hidden"
 			method="POST"
@@ -56,11 +61,11 @@
 			<div class="mx-4 flex-1 overflow-scroll">
 				<table class="w-full table-auto">
 					<thead>
-						<tr class="bg-surface-100-800-token sticky top-0">
+						<tr class="bg-surface-100-800-token sticky top-0 text-sm">
 							<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">
 								<input type="checkbox" class="checkbox" bind:checked={allChecked} />
 							</th>
-							{#each data.headers as head}
+							{#each Object.values(data.columnLabels) as head}
 								<th class="bg-surface-100-800-token sticky top-0 z-10 whitespace-nowrap p-2">
 									{head}
 								</th>
@@ -68,22 +73,20 @@
 						</tr>
 					</thead>
 					<tbody class="text-xs">
-						{#each data.entries as entry}
+						{#each data.columnValues as values}
 							<tr class="odd:bg-surface-50-900-token even:bg-surface-200-700-token">
-								<td class="p-2">
+								<td class="p-2 text-center">
 									<input
 										type="checkbox"
 										class="entry checkbox px-2"
 										bind:group={$form.checked}
 										name="checked"
-										value={entry.id}
+										value={values.id}
 									/>
 								</td>
-								<td class="whitespace-nowrap p-2">{entry.year?.label}</td>
-								<td class="whitespace-nowrap p-2">{entry.numOf?.label}</td>
-								<td class="whitespace-nowrap p-2">{entry.grade?.label}</td>
-								<td class="whitespace-nowrap p-2">{entry.category?.label}</td>
-								<td class="whitespace-nowrap p-2">{entry.path}</td>
+								{#each Object.keys(data.columnLabels) as key}
+									<td class="whitespace-nowrap p-2">{showValue(values, key)}</td>
+								{/each}
 							</tr>
 						{/each}
 					</tbody>

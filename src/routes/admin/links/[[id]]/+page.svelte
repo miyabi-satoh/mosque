@@ -23,7 +23,6 @@
 				const html = await res.text();
 				const parser = new DOMParser();
 				const doc = parser.parseFromString(html, 'text/html');
-				console.log(doc.title);
 				$form.title = doc.title;
 			}
 		} catch (e) {

@@ -17,7 +17,6 @@ export const GET: RequestHandler = async ({ params }) => {
 	});
 	if (res) {
 		if (!fs.existsSync(res.path)) {
-			console.log(res.path);
 			throw error(404, `Not found, ${res.path}`);
 		}
 		const stats = fs.statSync(res.path);

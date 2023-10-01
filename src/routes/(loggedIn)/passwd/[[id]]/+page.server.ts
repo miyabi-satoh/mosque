@@ -22,7 +22,6 @@ export const load = (async () => {
 
 export const actions: Actions = {
 	default: async ({ request, params, locals }) => {
-		console.log(params);
 		// get session
 		const session = await locals.auth.validate();
 		if (!session) {

@@ -100,6 +100,7 @@ model Resource {
   id         String
   examType   ExamTypeEnum @map("exam_type")
   year       Int
+  publisher  String
   grade      Int
   numOf      Int          @map("num_of")
   category   Int
@@ -126,6 +127,7 @@ model TempResource {
   state      ResourceStateEnum
   examType   ExamTypeEnum      @map("exam_type")
   year       Int
+  publisher  String
   grade      Int
   numOf      Int               @map("num_of")
   category   Int

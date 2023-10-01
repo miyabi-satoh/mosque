@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { AudioPlayer, MainContainer } from '$lib';
-	import HelperText from '$lib/components/HelperText.svelte';
+	import { AudioPlayer, HelperText, MainContainer } from '$lib';
+	import { getExamConfig } from '$lib/exam';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
 	import { tick } from 'svelte';
@@ -18,32 +18,34 @@
 	let selectedGrade = '';
 	let selectedYear = '';
 	let selectedNumOf = '';
+	let selectedPublisher = '';
 
 	function filterByGrade(src: CsvDataArrayT, grade: string) {
 		if (!grade) {
 			return src;
 		}
-		return src.filter((obj) => `${obj.grade.value}` === grade);
+		return src.filter((obj) => `${obj.grade}` === grade);
 	}
 	function filterByYear(src: CsvDataArrayT, year: string) {
 		if (!year) {
 			return src;
 		}
-		return src.filter((obj) => `${obj.year.value}` === year);
+		return src.filter((obj) => `${obj.year}` === year);
 	}
 	function filterByNumOf(src: CsvDataArrayT, numOf: string) {
 		if (!numOf) {
 			return src;
 		}
-		return src.filter((obj) => `${obj.numOf.value}` === numOf);
+		return src.filter((obj) => `${obj.numOf}` === numOf);
 	}
 
+	const config = getExamConfig(data.exam);
 	function getGradeList(year: string, numOf: string) {
 		const filtered = filterByYear(filterByNumOf(data.csvData, numOf), year);
 		const map = new Map<number, string>();
 		filtered.forEach((obj) => {
-			if (map.get(obj.grade.value) === undefined) {
-				map.set(obj.grade.value, obj.grade.label);
+			if (map.get(obj.grade) === undefined) {
+				map.set(obj.grade, config.labelGrade(obj.grade));
 			}
 		});
 		const keys = [...map.keys()].sort((a, b) => a - b);
@@ -54,8 +56,8 @@
 		const filtered = filterByGrade(filterByNumOf(data.csvData, numOf), grade);
 		const map = new Map<number, string>();
 		filtered.forEach((obj) => {
-			if (map.get(obj.year.value) === undefined) {
-				map.set(obj.year.value, obj.year.label);
+			if (map.get(obj.year) === undefined) {
+				map.set(obj.year, config.labelYear(obj.year));
 			}
 		});
 		const keys = [...map.keys()].sort((a, b) => b - a);
@@ -66,12 +68,23 @@
 		const filtered = filterByGrade(filterByYear(data.csvData, year), grade);
 		const map = new Map<number, string>();
 		filtered.forEach((obj) => {
-			if (map.get(obj.numOf.value) === undefined) {
-				map.set(obj.numOf.value, obj.numOf.label);
+			if (map.get(obj.numOf) === undefined) {
+				map.set(obj.numOf, config.labelNumOf(obj.numOf));
 			}
 		});
 		const keys = [...map.keys()].sort((a, b) => b - a);
 		return keys.map((key) => [`${key}`, map.get(key)]);
+	}
+
+	function getPublisherList(year: string) {
+		const filtered = filterByYear(data.csvData, year);
+		const set = new Set<string>();
+		filtered.forEach((obj) => {
+			if (!set.has(obj.publisher)) {
+				set.add(obj.publisher);
+			}
+		});
+		return set.entries();
 	}
 
 	async function handleClickPlayPause(res: ResourceT) {
@@ -87,7 +100,12 @@
 	}
 
 	let resources: ResourceT[] = [];
-	$: if (selectedGrade && selectedYear && selectedNumOf) {
+	$: if (
+		(selectedGrade || !config.columnLabels.grade) &&
+		(selectedYear || !config.columnLabels.year) &&
+		(selectedNumOf || !config.columnLabels.numOf) &&
+		(selectedPublisher || !config.columnLabels.publisher)
+	) {
 		updateResources();
 	}
 	async function updateResources() {
@@ -98,9 +116,10 @@
 		const newResources = data.csvData
 			.filter(
 				(obj) =>
-					`${obj.grade.value}` === selectedGrade &&
-					`${obj.year.value}` === selectedYear &&
-					`${obj.numOf.value}` === selectedNumOf
+					(!config.columnLabels.grade || `${obj.grade}` === selectedGrade) &&
+					(!config.columnLabels.year || `${obj.year}` === selectedYear) &&
+					(!config.columnLabels.numOf || `${obj.numOf}` === selectedNumOf) &&
+					(!config.columnLabels.publisher || obj.publisher === selectedPublisher)
 			)
 			.map((obj) => {
 				return {
@@ -142,26 +161,41 @@
 	<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
 
 	<div class="flex flex-col gap-4 p-4 sm:flex-row sm:justify-between">
-		<select id="select-grade" bind:value={selectedGrade} class="select w-full">
-			<option value="" disabled selected>grade</option>
-			{#each getGradeList(selectedYear, selectedNumOf) as [value, label]}
-				<option {value}>{label}</option>
-			{/each}
-		</select>
+		{#if config.columnLabels.grade}
+			<select id="select-grade" bind:value={selectedGrade} class="select w-full">
+				<option value="" disabled selected>{config.columnLabels.grade}</option>
+				{#each getGradeList(selectedYear, selectedNumOf) as [value, label]}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		{/if}
 
-		<select id="select-year" bind:value={selectedYear} class="select w-full">
-			<option value="" disabled selected>year</option>
-			{#each getYearList(selectedGrade, selectedNumOf) as [value, label]}
-				<option {value}>{label}</option>
-			{/each}
-		</select>
+		{#if config.columnLabels.year}
+			<select id="select-year" bind:value={selectedYear} class="select w-full">
+				<option value="" disabled selected>{config.columnLabels.year}</option>
+				{#each getYearList(selectedGrade, selectedNumOf) as [value, label]}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		{/if}
 
-		<select id="select-numof" bind:value={selectedNumOf} class="select w-full">
-			<option value="" disabled selected>session</option>
-			{#each getNumOfList(selectedGrade, selectedYear) as [value, label]}
-				<option {value}>{label}</option>
-			{/each}
-		</select>
+		{#if config.columnLabels.numOf}
+			<select id="select-numof" bind:value={selectedNumOf} class="select w-full">
+				<option value="" disabled selected>{config.columnLabels.numOf}</option>
+				{#each getNumOfList(selectedGrade, selectedYear) as [value, label]}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		{/if}
+
+		{#if config.columnLabels.publisher}
+			<select id="select-publisher" bind:value={selectedPublisher} class="select w-full">
+				<option value="" disabled selected>{config.columnLabels.publisher}</option>
+				{#each getPublisherList(selectedYear) as [value, label]}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		{/if}
 
 		<button class="variant-filled btn" on:click={handleClearClick}>Clear</button>
 	</div>

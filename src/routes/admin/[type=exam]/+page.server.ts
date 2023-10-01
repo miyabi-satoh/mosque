@@ -6,24 +6,27 @@ import path from 'node:path';
 import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
+import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR, KYOTE_RESOURCE_DIR } from '$env/static/private';
+
+import { getExamConfig } from '$lib/exam';
 import { ResourceSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
-import { getExamConfig } from '$lib/server/exam';
 import { searchFiles } from '$lib/server/utils';
-// import type { LabelValueT } from '$lib/types';
 import { convertFullWidthNumbersToHalf, exclude } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
 
-// type EntryT = {
-// 	id: string;
-// 	state: ResourceState;
-// 	year: LabelValueT;
-// 	grade: LabelValueT;
-// 	numOf: LabelValueT;
-// 	category: LabelValueT;
-// 	path: string;
-// };
+type ResourceRequiredKeys = keyof Pick<TempResource, 'id' | 'path' | 'state' | 'year'>;
+type ResourceOptionalKeys = keyof Pick<
+	TempResource,
+	'grade' | 'numOf' | 'publisher' | 'shortTitle'
+>;
+type ColumnValues = {
+	[key in ResourceRequiredKeys]: string;
+} & {
+	[key in ResourceOptionalKeys]?: string;
+};
+
 const schema = z.object({
 	checked: z.string().array()
 });
@@ -31,12 +34,23 @@ const parseSchema = ResourceSchema.pick({
 	year: true,
 	grade: true,
 	numOf: true,
+	publisher: true,
 	category: true,
 	title: true,
 	shortTitle: true,
 	path: true
 });
 
+function getBaseDir(exam: Exam) {
+	switch (exam.examType) {
+		case 'ctest':
+			return CTEST_RESOURCE_DIR;
+		case 'eiken':
+			return EIKEN_RESOURCE_DIR;
+		case 'kyote':
+			return KYOTE_RESOURCE_DIR;
+	}
+}
 async function refreshTempResources(sessionId: string, exam: Exam) {
 	// clear resouce-temp
 	await db.tempResource.deleteMany({
@@ -47,15 +61,27 @@ async function refreshTempResources(sessionId: string, exam: Exam) {
 	});
 
 	const config = getExamConfig(exam);
-	const files = searchFiles(config.baseDir, /\.(mp3|pdf)$/).sort();
+	const baseDir = getBaseDir(exam);
+	const files = searchFiles(baseDir, /\.(mp3|pdf)$/).sort();
+	const convertPath = (file: string) => {
+		const convertedPath = convertFullWidthNumbersToHalf(file).toLowerCase();
+		const convertedFile = path.basename(file);
+		const convertedDir = convertedPath.slice(
+			baseDir.length + 1,
+			convertedPath.length - convertedFile.length - 1
+		);
+		return {
+			convertedDir,
+			convertedFile
+		};
+	};
+
 	for (const file of files) {
 		let res = {} as TempResource;
-		const convertedPath = convertFullWidthNumbersToHalf(file).toLowerCase();
-		const filename = path.basename(convertedPath);
+		const { convertedDir, convertedFile } = convertPath(file);
 
-		// ディレクトリ名から類推
-		const paths = convertedPath.split(path.sep);
-		paths.forEach((pathItem) => {
+		// 変換後のディレクトリ名から類推
+		convertedDir.split(path.sep).forEach((pathItem) => {
 			const m = pathItem.match(/^(?<year>20\d\d)(年度?)?$/);
 			if (m && m.groups) {
 				res.year = Number(m.groups.year);
@@ -67,21 +93,23 @@ async function refreshTempResources(sessionId: string, exam: Exam) {
 					const m = pathItem.match(/^(?<numOf>\d{1,2})月号?$/);
 					if (m && m.groups) {
 						res.numOf = Number(m.groups.numOf);
+					} else {
+						res.publisher = pathItem.toUpperCase();
 					}
 				}
 			}
 		});
 
+		const filename = path.basename(convertedFile);
 		res = {
 			...res,
-			...config.parse(filename, config.valueGrade),
+			...config.parse(filename),
+			publisher: res.publisher ?? '',
 			path: file,
-			id: createHash('sha256').update(convertedPath).digest('hex')
+			id: createHash('sha256').update(file).digest('hex')
 		};
-		const result = parseSchema.safeParse(res);
-		if (!result.success) {
-			console.log('invalid data', res);
-		} else {
+
+		if (parseSchema.safeParse(res).success) {
 			const found = await db.resource.findUnique({
 				where: {
 					id_examType: { id: res.id, examType: exam.examType }
@@ -95,6 +123,8 @@ async function refreshTempResources(sessionId: string, exam: Exam) {
 					examType: exam.examType
 				}
 			});
+		} else {
+			console.log('invalid data', res);
 		}
 	}
 }
@@ -126,7 +156,8 @@ export const load = (async ({ locals, params }) => {
 			{ year: 'desc' },
 			{ numOf: 'desc' },
 			{ grade: 'asc' },
-			{ category: 'asc' }
+			{ category: 'asc' },
+			{ title: 'asc' }
 		]
 	});
 	await db.tempResource.deleteMany({
@@ -137,11 +168,12 @@ export const load = (async ({ locals, params }) => {
 	});
 
 	const config = getExamConfig(exam);
+	const baseDir = getBaseDir(exam);
 	const initialData = {
 		checked: [] as string[]
 	};
-	const re = new RegExp(`^${config.baseDir}${path.sep}?`, 'i');
-	const entries = tempData.map((data) => {
+	const re = new RegExp(`^${baseDir}${path.sep}?`, 'i');
+	const columnValues = tempData.map((data) => {
 		if (re.test(data.path)) {
 			data.path = data.path.replace(re, '');
 		} else {
@@ -151,25 +183,20 @@ export const load = (async ({ locals, params }) => {
 			initialData.checked.push(data.id);
 		}
 		return {
-			id: data.id,
-			state: data.state,
-			year: { label: config.labelYear(data.year), value: data.year },
-			numOf: { label: config.labelNumOf(data.numOf), value: data.numOf },
-			grade: { label: config.labelGrade(data.grade), value: data.grade },
-			category: { label: data.shortTitle, value: data.category },
-			path: data.path
-		};
+			...data,
+			year: config.labelYear(data.year),
+			numOf: config.labelNumOf(data.numOf),
+			grade: config.labelGrade(data.grade)
+		} satisfies ColumnValues;
 	});
 
 	const form = await superValidate(initialData, schema);
 
 	return {
 		form,
-		entries,
-		headers: config.headers,
+		columnValues,
+		columnLabels: config.columnLabels,
 		exam
-		// count,
-		// ResourceState
 	};
 }) satisfies PageServerLoad;
 

@@ -77,7 +77,6 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		console.log(form.data);
 		try {
 			const userId = params.id ?? session.user.userId;
 			// get user
