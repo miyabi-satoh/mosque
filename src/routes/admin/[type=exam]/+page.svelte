@@ -3,7 +3,6 @@
 	import { MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
-	import { ResourceState } from '@prisma/client';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 
@@ -25,8 +24,8 @@
 		});
 	}
 
-	$: countOk = data.entries.filter((e) => e.state === ResourceState.ok).length;
-	$: countNew = data.entries.filter((e) => e.state === ResourceState.new).length;
+	$: countOk = data.entries.filter((e) => e.state === 'ok').length;
+	$: countNew = data.entries.filter((e) => e.state === 'new').length;
 </script>
 
 <MainContainer innerScroll>
@@ -71,7 +70,7 @@
 			<div class="mx-4 flex-1 space-y-2 overflow-y-scroll py-2">
 				{#each data.entries as entry}
 					<label class="flex items-center px-2 hover:text-primary-500">
-						{#if entry.state !== data.ResourceState.missing}
+						{#if entry.state !== 'missing'}
 							<input
 								type="checkbox"
 								class="entry checkbox px-2"

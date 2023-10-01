@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-import type { ExamType } from '@prisma/client';
+import type { ExamTypeEnum } from '@prisma/client';
 
 import { db } from '$lib/server/db';
 import { getExamConfig } from '$lib/server/exam';
@@ -8,7 +8,7 @@ import { getExamConfig } from '$lib/server/exam';
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ params }) => {
-	const examType = params.type.toLowerCase() as ExamType;
+	const examType = params.type.toLowerCase() as ExamTypeEnum;
 	const exam = await db.exam.findUnique({ where: { examType: examType } });
 	if (!exam) {
 		console.error(`Cannot read exam(examType = '${examType}')`);

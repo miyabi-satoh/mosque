@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-import type { ExamType } from '@prisma/client';
+import type { ExamTypeEnum } from '@prisma/client';
 import mime from 'mime';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,7 +11,7 @@ import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ params }) => {
 	const id = params.id;
-	const examType = params.type as ExamType;
+	const examType = params.type as ExamTypeEnum;
 	const res = await db.resource.findUnique({
 		where: { id_examType: { id, examType } }
 	});

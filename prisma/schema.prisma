@@ -31,20 +31,22 @@ generator zod {
   // prismaClientPath                 = "./path/to/prisma/client" // default is client output path}
 }
 
-enum UserRole {
+enum UserRoleEnum {
   USER
   STAFF
   ADMIN
+
+  @@map("UserRole")
 }
 
 model User {
-  id          String   @id @unique
-  username    String   @unique
-  role        UserRole @default(USER)
-  fullName    String?  @map("full_name")
-  displayName String?  @map("display_name")
+  id          String       @id @unique
+  username    String       @unique
+  role        UserRoleEnum @default(USER)
+  fullName    String?      @map("full_name")
+  displayName String?      @map("display_name")
   email       String?
-  code        String?  @unique
+  code        String?      @unique
 
   auth_session Session[]
   key          Key[]
@@ -75,32 +77,34 @@ model Key {
   @@map("auth_keys")
 }
 
-enum ExamType {
+enum ExamTypeEnum {
   ctest
   eiken
   kyote
+
+  @@map("ExamType")
 }
 
 model Exam {
-  examType   ExamType @id @map("exam_type")
-  shortName  String   @map("short_name")
-  fullName   String   @map("full_name")
-  sortOrder  Int      @map("sort_order")
-  labelGrade String   @map("label_grade")
-  labelNumOf String   @map("label_numof")
+  examType   ExamTypeEnum @id @map("exam_type")
+  shortName  String       @map("short_name")
+  fullName   String       @map("full_name")
+  sortOrder  Int          @map("sort_order")
+  labelGrade String       @map("label_grade")
+  labelNumOf String       @map("label_numof")
 
   @@map("exams")
 }
 
 model Resource {
   id         String
-  examType   ExamType @map("exam_type")
+  examType   ExamTypeEnum @map("exam_type")
   year       Int
   grade      Int
-  numOf      Int      @map("num_of")
+  numOf      Int          @map("num_of")
   category   Int
   title      String
-  shortTitle String   @map("short_title")
+  shortTitle String       @map("short_title")
   path       String
 
   @@id([id, examType])
@@ -108,24 +112,26 @@ model Resource {
   @@map("resources")
 }
 
-enum ResourceState {
+enum ResourceStateEnum {
   ok
   new
   missing
+
+  @@map("ResourceState")
 }
 
 model TempResource {
   id         String
-  sessionId  String        @map("session_id")
-  session    Session       @relation(references: [id], fields: [sessionId], onDelete: Cascade)
-  state      ResourceState
-  examType   ExamType      @map("exam_type")
+  sessionId  String            @map("session_id")
+  session    Session           @relation(references: [id], fields: [sessionId], onDelete: Cascade)
+  state      ResourceStateEnum
+  examType   ExamTypeEnum      @map("exam_type")
   year       Int
   grade      Int
-  numOf      Int           @map("num_of")
+  numOf      Int               @map("num_of")
   category   Int
   title      String
-  shortTitle String        @map("short_title")
+  shortTitle String            @map("short_title")
   path       String
 
   @@id([id, sessionId])

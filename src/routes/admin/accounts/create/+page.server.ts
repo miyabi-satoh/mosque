@@ -1,6 +1,5 @@
 import { fail } from '@sveltejs/kit';
 
-import { UserRole } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
@@ -60,7 +59,7 @@ export const actions: Actions = {
 						attributes: {
 							username: user.code,
 							fullName: user.fullName,
-							role: UserRole.USER,
+							role: 'USER',
 							displayName: null,
 							email: null,
 							code: user.code

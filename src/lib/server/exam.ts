@@ -1,4 +1,4 @@
-import { ExamType, type Exam, type TempResource } from '@prisma/client';
+import type { Exam, TempResource } from '@prisma/client';
 
 import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR, KYOTE_RESOURCE_DIR } from '$env/static/private';
 
@@ -24,7 +24,7 @@ const labelYear = (year: number) => `${year}年度`;
 
 export function getExamConfig(exam: Exam): ExamConfig {
 	switch (exam.examType) {
-		case ExamType.kyote:
+		case 'kyote':
 			return {
 				baseDir: KYOTE_RESOURCE_DIR,
 				headers: [
@@ -57,7 +57,7 @@ export function getExamConfig(exam: Exam): ExamConfig {
 					return retObj;
 				}
 			};
-		case ExamType.ctest:
+		case 'ctest':
 			return {
 				baseDir: CTEST_RESOURCE_DIR,
 				headers: [
@@ -90,7 +90,7 @@ export function getExamConfig(exam: Exam): ExamConfig {
 					return retObj;
 				}
 			};
-		case ExamType.eiken:
+		case 'eiken':
 			return {
 				baseDir: EIKEN_RESOURCE_DIR,
 				headers: [

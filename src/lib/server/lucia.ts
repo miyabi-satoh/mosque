@@ -1,5 +1,5 @@
 import { prisma } from '@lucia-auth/adapter-prisma';
-import { UserRole } from '@prisma/client';
+import type { UserRoleEnum } from '@prisma/client';
 import { lucia } from 'lucia';
 import { sveltekit } from 'lucia/middleware';
 import 'lucia/polyfill/node';
@@ -56,7 +56,7 @@ export async function createBuiltinUsers() {
 			{
 				username: ADMIN_NAME,
 				password: ADMIN_PASS,
-				role: UserRole.ADMIN
+				role: 'ADMIN' as UserRoleEnum
 			}
 		];
 		for (const user of users) {

@@ -97,17 +97,17 @@ export const QueryModeSchema = z.enum(['default', 'insensitive']);
 
 export const NullsOrderSchema = z.enum(['first', 'last']);
 
-export const UserRoleSchema = z.enum(['USER', 'STAFF', 'ADMIN']);
+export const UserRoleEnumSchema = z.enum(['USER', 'STAFF', 'ADMIN']);
 
-export type UserRoleType = `${z.infer<typeof UserRoleSchema>}`;
+export type UserRoleEnumType = `${z.infer<typeof UserRoleEnumSchema>}`;
 
-export const ExamTypeSchema = z.enum(['ctest', 'eiken', 'kyote']);
+export const ExamTypeEnumSchema = z.enum(['ctest', 'eiken', 'kyote']);
 
-export type ExamTypeType = `${z.infer<typeof ExamTypeSchema>}`;
+export type ExamTypeEnumType = `${z.infer<typeof ExamTypeEnumSchema>}`;
 
-export const ResourceStateSchema = z.enum(['ok', 'new', 'missing']);
+export const ResourceStateEnumSchema = z.enum(['ok', 'new', 'missing']);
 
-export type ResourceStateType = `${z.infer<typeof ResourceStateSchema>}`;
+export type ResourceStateEnumType = `${z.infer<typeof ResourceStateEnumSchema>}`;
 
 /////////////////////////////////////////
 // MODELS
@@ -118,7 +118,7 @@ export type ResourceStateType = `${z.infer<typeof ResourceStateSchema>}`;
 /////////////////////////////////////////
 
 export const UserSchema = z.object({
-	role: UserRoleSchema,
+	role: UserRoleEnumSchema,
 	id: z.string(),
 	username: z.string(),
 	fullName: z.string().nullable(),
@@ -159,7 +159,7 @@ export type Key = z.infer<typeof KeySchema>;
 /////////////////////////////////////////
 
 export const ExamSchema = z.object({
-	examType: ExamTypeSchema,
+	examType: ExamTypeEnumSchema,
 	shortName: z.string(),
 	fullName: z.string(),
 	sortOrder: z.number().int(),
@@ -174,7 +174,7 @@ export type Exam = z.infer<typeof ExamSchema>;
 /////////////////////////////////////////
 
 export const ResourceSchema = z.object({
-	examType: ExamTypeSchema,
+	examType: ExamTypeEnumSchema,
 	id: z.string(),
 	year: z.number().int(),
 	grade: z.number().int(),
@@ -192,8 +192,8 @@ export type Resource = z.infer<typeof ResourceSchema>;
 /////////////////////////////////////////
 
 export const TempResourceSchema = z.object({
-	state: ResourceStateSchema,
-	examType: ExamTypeSchema,
+	state: ResourceStateEnumSchema,
+	examType: ExamTypeEnumSchema,
 	id: z.string(),
 	sessionId: z.string(),
 	year: z.number().int(),

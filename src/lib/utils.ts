@@ -1,4 +1,3 @@
-import { UserRole } from '@prisma/client';
 import type { User } from 'lucia';
 
 // https://note.affi-sapo-sv.com/js-convert-full-width-numbers.php
@@ -22,8 +21,8 @@ export function exclude<T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
 }
 
 export function hasAdminRole(user: User): boolean {
-	return user.role === UserRole.ADMIN;
+	return user.role === 'ADMIN';
 }
 export function hasStaffRole(user: User): boolean {
-	return user.role === UserRole.STAFF || user.role === UserRole.ADMIN;
+	return user.role === 'STAFF' || user.role === 'ADMIN';
 }

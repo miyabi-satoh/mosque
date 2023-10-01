@@ -3,7 +3,6 @@
 	import { MainContainer } from '$lib';
 	import HelperText from '$lib/components/HelperText.svelte';
 	import { submittingStore } from '$lib/stores';
-	import { UserRole } from '@prisma/client';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 
@@ -78,7 +77,7 @@
 					<label class="label">
 						<span>Role</span>
 						<select class="select" name="role" bind:value={$form.role}>
-							{#each Object.keys(UserRole) as role}
+							{#each data.userRoles as role}
 								<option>{role}</option>
 							{/each}
 						</select>

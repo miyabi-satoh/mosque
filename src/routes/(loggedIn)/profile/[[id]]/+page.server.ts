@@ -1,10 +1,11 @@
 import { error, fail } from '@sveltejs/kit';
 
+import { UserRoleEnum } from '@prisma/client';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
 import { PROVIDERID_USERNAME } from '$lib/consts';
-import { UserRoleSchema } from '$lib/schemas/zod';
+import { UserRoleEnumSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
 import { auth } from '$lib/server/lucia';
 import { hasAdminRole } from '$lib/utils';
@@ -16,7 +17,7 @@ const schema = z.object({
 	displayName: z.string().min(2),
 	password: z.string().min(1),
 	fullName: z.string().nullish(),
-	role: UserRoleSchema.optional(),
+	role: UserRoleEnumSchema.optional(),
 	newPassword: z.string().optional(),
 	email: z.string().nullish()
 });
@@ -40,7 +41,10 @@ export const load = (async ({ parent, params }) => {
 		...user
 	};
 
-	return { form };
+	return {
+		form,
+		userRoles: Object.values(UserRoleEnum)
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

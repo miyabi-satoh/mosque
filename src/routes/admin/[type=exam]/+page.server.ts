@@ -1,6 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 
-import { ExamType, ResourceState, type Exam, type TempResource } from '@prisma/client';
+import type { Exam, ExamTypeEnum, TempResource } from '@prisma/client';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { superValidate } from 'sveltekit-superforms/server';
@@ -91,7 +91,7 @@ async function refreshTempResources(sessionId: string, exam: Exam) {
 				data: {
 					...res,
 					sessionId: sessionId,
-					state: found ? ResourceState.ok : ResourceState.new,
+					state: found ? 'ok' : 'new',
 					examType: exam.examType
 				}
 			});
@@ -106,7 +106,7 @@ export const load = (async ({ locals, params }) => {
 		throw error(500, 'Internal Server Error');
 	}
 
-	const examType = params.type.toLowerCase() as ExamType;
+	const examType = params.type.toLowerCase() as ExamTypeEnum;
 	const exam = await db.exam.findUnique({ where: { examType: examType } });
 	if (!exam) {
 		console.error(`Cannot read exam(examType = '${examType}')`);
@@ -147,7 +147,7 @@ export const load = (async ({ locals, params }) => {
 		} else {
 			data.path = '...' + path.sep + path.basename(data.path);
 		}
-		if (data.state === ResourceState.ok) {
+		if (data.state === 'ok') {
 			initialData.checked.push(data.id);
 		}
 		return {
@@ -167,9 +167,9 @@ export const load = (async ({ locals, params }) => {
 		form,
 		entries,
 		headers: config.headers,
-		exam,
+		exam
 		// count,
-		ResourceState
+		// ResourceState
 	};
 }) satisfies PageServerLoad;
 
@@ -187,7 +187,7 @@ export const actions: Actions = {
 			return fail(500, { form, message: 'Internal Server Error' });
 		}
 
-		const examType = params.type.toLowerCase() as ExamType;
+		const examType = params.type.toLowerCase() as ExamTypeEnum;
 		const exam = await db.exam.findUnique({ where: { examType: examType } });
 		if (!exam) {
 			console.error(`Cannot read exam(examType = '${examType}')`);
