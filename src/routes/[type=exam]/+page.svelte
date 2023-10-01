@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { AudioPlayer, HelperText, MainContainer } from '$lib';
+	import { URLS } from '$lib/consts';
 	import { getExamConfig } from '$lib/exam';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
@@ -124,7 +125,7 @@
 			.map((obj) => {
 				return {
 					...obj,
-					url: `/api/data/${data.exam.examType}/${obj.id}`
+					url: `${URLS.API_DATA}/${data.exam.examType}/${obj.id}`
 				};
 			});
 
