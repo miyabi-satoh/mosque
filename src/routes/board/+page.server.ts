@@ -14,9 +14,9 @@ const postSchema = z
 	.object({
 		id: z.string().optional(),
 		delete: z.boolean().optional(),
-		title: z.string().min(1, { message: '入力してください' }),
-		content: z.string().min(1, { message: '入力してください' }),
-		username: z.string().min(1, { message: '入力してください' }),
+		title: z.string().min(1),
+		content: z.string().min(1),
+		username: z.string().min(1),
 		password: z.string()
 	})
 	.refine(
