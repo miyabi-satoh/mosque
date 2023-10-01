@@ -2,7 +2,6 @@
 	import { browser } from '$app/environment';
 	import { MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
-	import Icon from '@iconify/svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 
@@ -61,7 +60,7 @@
 							<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">
 								<input type="checkbox" class="checkbox" bind:checked={allChecked} />
 							</th>
-							{#each data.headers as head, i}
+							{#each data.headers as head}
 								<th class="bg-surface-100-800-token sticky top-0 z-10 whitespace-nowrap p-2">
 									{head.label}
 								</th>
@@ -72,17 +71,13 @@
 						{#each data.entries as entry}
 							<tr class="odd:bg-surface-50-900-token even:bg-surface-200-700-token">
 								<td class="p-2">
-									{#if entry.state !== 'missing'}
-										<input
-											type="checkbox"
-											class="entry checkbox px-2"
-											bind:group={$form.checked}
-											name="checked"
-											value={entry.id}
-										/>
-									{:else}
-										<Icon icon="mdi:close-circle" height="auto" />
-									{/if}
+									<input
+										type="checkbox"
+										class="entry checkbox px-2"
+										bind:group={$form.checked}
+										name="checked"
+										value={entry.id}
+									/>
 								</td>
 								<td class="whitespace-nowrap p-2">{entry.year?.label}</td>
 								<td class="whitespace-nowrap p-2">{entry.numOf?.label}</td>

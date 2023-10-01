@@ -105,7 +105,7 @@ export const ExamTypeEnumSchema = z.enum(['ctest', 'eiken', 'kyote']);
 
 export type ExamTypeEnumType = `${z.infer<typeof ExamTypeEnumSchema>}`;
 
-export const ResourceStateEnumSchema = z.enum(['ok', 'new', 'missing']);
+export const ResourceStateEnumSchema = z.enum(['ok', 'new']);
 
 export type ResourceStateEnumType = `${z.infer<typeof ResourceStateEnumSchema>}`;
 
