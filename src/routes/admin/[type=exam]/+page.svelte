@@ -54,40 +54,45 @@
 				<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 			</div>
 
-			<div class="bg-surface-200-700-token mx-4">
-				<div class="flex items-center px-2">
-					<input type="checkbox" class="checkbox p-2" bind:checked={allChecked} />
-					{#each data.headers as head, i}
-						<span
-							class:border-l={i !== 0}
-							class="border-surface-300-600-token p-2 text-center {head.classOpt}"
-						>
-							{head.label}
-						</span>
-					{/each}
-				</div>
-			</div>
-			<div class="mx-4 flex-1 space-y-2 overflow-y-scroll py-2">
-				{#each data.entries as entry}
-					<label class="flex items-center px-2 hover:text-primary-500">
-						{#if entry.state !== 'missing'}
-							<input
-								type="checkbox"
-								class="entry checkbox px-2"
-								bind:group={$form.checked}
-								name="checked"
-								value={entry.id}
-							/>
-						{:else}
-							<Icon icon="mdi:close-circle" height="auto" />
-						{/if}
-						<span class="{data.headers[0].classOpt} px-2">{entry.year?.label}</span>
-						<span class="{data.headers[1].classOpt} px-2 text-center">{entry.numOf?.label}</span>
-						<span class="{data.headers[2].classOpt} px-2 text-center">{entry.grade?.label}</span>
-						<span class="{data.headers[3].classOpt} px-2 text-center">{entry.category?.label}</span>
-						<span class="{data.headers[4].classOpt} px-2">{entry.path}</span>
-					</label>
-				{/each}
+			<div class="mx-4 flex-1 overflow-scroll">
+				<table class="w-full table-auto">
+					<thead>
+						<tr class="bg-surface-100-800-token sticky top-0">
+							<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">
+								<input type="checkbox" class="checkbox" bind:checked={allChecked} />
+							</th>
+							{#each data.headers as head, i}
+								<th class="bg-surface-100-800-token sticky top-0 z-10 whitespace-nowrap p-2">
+									{head.label}
+								</th>
+							{/each}
+						</tr>
+					</thead>
+					<tbody class="text-xs">
+						{#each data.entries as entry}
+							<tr class="odd:bg-surface-50-900-token even:bg-surface-200-700-token">
+								<td class="p-2">
+									{#if entry.state !== 'missing'}
+										<input
+											type="checkbox"
+											class="entry checkbox px-2"
+											bind:group={$form.checked}
+											name="checked"
+											value={entry.id}
+										/>
+									{:else}
+										<Icon icon="mdi:close-circle" height="auto" />
+									{/if}
+								</td>
+								<td class="whitespace-nowrap p-2">{entry.year?.label}</td>
+								<td class="whitespace-nowrap p-2">{entry.numOf?.label}</td>
+								<td class="whitespace-nowrap p-2">{entry.grade?.label}</td>
+								<td class="whitespace-nowrap p-2">{entry.category?.label}</td>
+								<td class="whitespace-nowrap p-2">{entry.path}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
 			</div>
 		</form>
 	{:else}
