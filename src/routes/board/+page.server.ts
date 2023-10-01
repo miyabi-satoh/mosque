@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 
 import bcrypt from 'bcryptjs';
-import { superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
 import { URLS } from '$lib/consts';
@@ -80,7 +80,9 @@ export const actions: Actions = {
 			}
 		} catch (e) {
 			console.log(e);
-			return fail(400, { form: { ...form, message: 'データベースの更新に失敗しました。' } });
+			return message(form, 'Failed to update data.', {
+				status: 400
+			});
 		}
 
 		throw redirect(302, URLS.BOARD);
