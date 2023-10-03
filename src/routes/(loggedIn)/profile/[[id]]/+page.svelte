@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { MainContainer } from '$lib';
-	import HelperText from '$lib/components/HelperText.svelte';
+	import { HelperText, MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
