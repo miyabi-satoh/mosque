@@ -1,6 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 
-import { UserRoleEnum } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
@@ -44,7 +44,7 @@ export const load = (async ({ parent, params }) => {
 
 	return {
 		form,
-		userRoles: Object.values(UserRoleEnum)
+		userRoles: ['USER', 'STAFF', 'ADMIN'] as User['role'][]
 	};
 }) satisfies PageServerLoad;
 
