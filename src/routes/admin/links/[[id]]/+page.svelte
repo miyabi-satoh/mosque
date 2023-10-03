@@ -8,10 +8,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	const { form, message, errors, constraints, submitting, enhance } = superForm(data.form, {
-		resetForm: true,
-		taintedMessage: false
-	});
+	const { form, message, errors, constraints, submitting, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 
 	$: if ($form.url.match(/^https?:\/\/[^/]/) && !$form.title) fetchTitle();
@@ -68,9 +65,7 @@
 							disabled={$submitting}
 							{...$constraints.title}
 						/>
-						{#if $errors.title}
-							<span class="text-error-400-500-token">{$errors.title[0]}</span>
-						{/if}
+						<HelperText>{$errors.title ? $errors.title[0] : ''}</HelperText>
 					</div>
 					<div>
 						<input
@@ -83,9 +78,7 @@
 							disabled={$submitting}
 							{...$constraints.sortOrder}
 						/>
-						{#if $errors.sortOrder}
-							<span class="text-error-400-500-token">{$errors.sortOrder[0]}</span>
-						{/if}
+						<HelperText>{$errors.sortOrder ? $errors.sortOrder[0] : ''}</HelperText>
 					</div>
 				</div>
 
@@ -107,6 +100,7 @@
 			{/if}
 		</div>
 	</form>
+	<!-- todo: inner scroll table -->
 	<div class="flex flex-col gap-4 p-4">
 		{#each data.links as link (link.id)}
 			<div class="flex items-center gap-4">

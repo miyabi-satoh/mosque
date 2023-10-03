@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { MainContainer } from '$lib';
+	import { HelperText, MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
-	import Icon from '@iconify/svelte';
-	import { Accordion, AccordionItem, popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { Accordion, AccordionItem, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { formatDistanceToNow } from 'date-fns';
 	import ja from 'date-fns/locale/ja';
 	import { onMount, tick } from 'svelte';
@@ -13,14 +12,7 @@
 	export let data: PageData;
 	type Post = PageData['posts'][0];
 
-	const { form, errors, constraints, submitting, enhance, capture, restore } = superForm(
-		data.form,
-		{
-			resetForm: true,
-			taintedMessage: false
-		}
-	);
-	export const snapshot = { capture, restore };
+	const { form, errors, constraints, submitting, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 	type FormDataT = typeof $form;
 
@@ -179,7 +171,7 @@
 				{#if $form.content}
 					<div class="sm:col-span-2">
 						<label class="label">
-							<span>タイトル</span>
+							<span>Title</span>
 							<input
 								class="input"
 								class:input-error={$errors.title}
@@ -189,62 +181,14 @@
 								{...$constraints.title}
 							/>
 						</label>
-						{#if $errors.title}
-							<span class="text-error-500">{$errors.title}</span>
-						{/if}
+						<HelperText>{$errors.title ? $errors.title[0] : ''}</HelperText>
 					</div>
-
-					<div>
-						<label class="label">
-							<span>発信者</span>
-							<input
-								class="input"
-								class:input-error={$errors.username}
-								type="text"
-								name="username"
-								bind:value={$form.username}
-								{...$constraints.username}
-							/>
-						</label>
-						{#if $errors.username}
-							<span class="text-error-500">{$errors.username}</span>
-						{/if}
+					<div class="mb-1 flex justify-end gap-x-4 sm:col-span-2">
+						<button class="variant-filled btn" on:click|preventDefault={handleClickCancel}
+							>Cancel</button
+						>
+						<button class="variant-filled-primary btn">Save</button>
 					</div>
-					{#if !currentPost || currentPost.password}
-						<div>
-							<label class="label">
-								<span class="flex items-center">
-									編集キー
-									<button class="[&>*]:pointer-events-none" use:popup={popupHover}>
-										<Icon icon="mdi:help-circle" height="auto" />
-									</button>
-								</span>
-								<div class="card variant-filled-secondary p-4" data-popup="popupHover">
-									<p>内容の編集や削除の際に入力します</p>
-									<div class="variant-filled-secondary arrow" />
-								</div>
-								<input
-									class="input"
-									class:input-error={$errors.password}
-									type="password"
-									name="password"
-									bind:value={$form.password}
-									{...$constraints.password}
-								/>
-							</label>
-							{#if $errors.password}
-								<span class="text-error-500">{$errors.password}</span>
-							{/if}
-						</div>
-					{/if}
-					{#if $form.title && $form.username}
-						<div class="mb-1 flex justify-end gap-x-4 sm:col-span-2">
-							<button class="variant-filled btn" on:click|preventDefault={handleClickCancel}
-								>キャンセル</button
-							>
-							<button class="variant-filled-primary btn">送信する</button>
-						</div>
-					{/if}
 				{/if}
 			</div>
 		</form>
@@ -274,10 +218,10 @@
 							{#if post.password && !$form.id}
 								<div class="flex justify-end gap-x-4">
 									<button class="variant-filled-primary btn" on:click={() => handleClickEdit(post)}
-										>編集</button
+										>Edit</button
 									>
 									<button class="variant-filled-error btn" on:click={() => handleClickDelete(post)}
-										>削除</button
+										>Delete</button
 									>
 								</div>
 							{/if}
@@ -286,7 +230,7 @@
 				{/each}
 			</Accordion>
 		{:else}
-			データがありません。
+			No items.
 		{/if}
 	</div>
 </MainContainer>

@@ -28,7 +28,7 @@ export const actions: Actions = {
 			throw error(400, 'Not found');
 		}
 
-		// validate
+		// validate form
 		const updateSchema = schema
 			.extend({
 				password: schema.shape.password.refine(async (val) => {
@@ -47,6 +47,7 @@ export const actions: Actions = {
 		const form = await superValidate(request, updateSchema);
 		if (!form.valid) return fail(400, { form });
 
+		// update database
 		try {
 			// get user
 			const userId = params.id ?? session.user.userId;

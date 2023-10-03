@@ -5,8 +5,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	const { form, message, constraints, errors, submitting, enhance } = superForm(data.form, {
-		resetForm: true,
+	const { form, message, errors, submitting, enhance } = superForm(data.form, {
 		taintedMessage: false
 	});
 	$: $submittingStore = $submitting;
@@ -14,7 +13,7 @@
 
 <MainContainer>
 	<ModalContainer title="Login">
-		<HelperText class="my-4 text-center">
+		<HelperText class="my-4 text-center" usePageStatus>
 			{$message ?? ''}
 		</HelperText>
 
@@ -30,7 +29,6 @@
 					bind:value={$form.username}
 					disabled={$submitting}
 					autocomplete="username"
-					{...$constraints.username}
 				/>
 				<HelperText>
 					{$errors.username ? $errors.username[0] : ''}
@@ -48,7 +46,6 @@
 					bind:value={$form.password}
 					disabled={$submitting}
 					autocomplete="current-password"
-					{...$constraints.password}
 				/>
 				<HelperText>
 					{$errors.password ? $errors.password[0] : ''}

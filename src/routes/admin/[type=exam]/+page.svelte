@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { MainContainer } from '$lib';
+	import { HelperText, MainContainer } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -8,9 +8,7 @@
 	export let data: PageData;
 	let allChecked: boolean = false;
 
-	const { form, submitting, enhance } = superForm(data.form, {
-		taintedMessage: false
-	});
+	const { form, message, submitting, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 
 	$: if (browser) {
@@ -44,6 +42,7 @@
 		>
 			<div class="flex items-center p-4">
 				<p class="flex-1">
+					<HelperText usePageStatus>{$message ?? ''}</HelperText>
 					{#if countOk === 0}
 						There are no files registered in the database.
 					{:else}

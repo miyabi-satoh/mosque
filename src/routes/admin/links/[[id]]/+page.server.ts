@@ -42,6 +42,11 @@ export const actions: Actions = {
 					create: form.data,
 					update: form.data
 				});
+
+				// clear form
+				form.data.sortOrder = 0;
+				form.data.title = '';
+				form.data.url = '';
 				return message(form, `The link has been saved.`);
 			} else if (params.id) {
 				// delete

@@ -16,10 +16,11 @@ const schema = z.object({
 	username: z.string().min(4),
 	displayName: z.string().min(2),
 	password: z.string().min(1),
+	// TODO: add email
+	// email: z.string().email().nullish().or(z.literal('')),
 	fullName: z.string().nullish(),
 	role: UserRoleEnumSchema.optional(),
-	newPassword: z.string().optional(),
-	email: z.string().nullish()
+	newPassword: z.string().optional()
 });
 
 export const load = (async ({ parent, params }) => {
@@ -119,6 +120,7 @@ export const actions: Actions = {
 
 			return message(form, 'Account details have been saved.');
 		} catch (e) {
+			// todo: unique violation
 			console.log(e);
 		}
 		return message(form, 'Failed to save', {

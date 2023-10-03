@@ -3,7 +3,7 @@ import { error, fail } from '@sveltejs/kit';
 import type { Exam, ExamTypeEnum, TempResource } from '@prisma/client';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
-import { superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
 import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR, KYOTE_RESOURCE_DIR } from '$env/static/private';
@@ -253,8 +253,10 @@ export const actions: Actions = {
 			});
 		} catch (e) {
 			console.log(e);
-			return fail(400, { form: { ...form, message: 'DB更新エラー' } });
+			return message(form, 'Failed to update database.', {
+				status: 400
+			});
 		}
-		return { form };
+		return message(form, 'Updated database successfully.');
 	}
 };
