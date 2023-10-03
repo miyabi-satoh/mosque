@@ -10,7 +10,7 @@ import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR, KYOTE_RESOURCE_DIR } from '$env
 
 import { getExamConfig } from '$lib/exam';
 import { ResourceSchema } from '$lib/schemas/zod';
-import { db } from '$lib/server/db';
+import { db, type PrismaInnerTransaction } from '$lib/server/db';
 import { searchFiles } from '$lib/server/utils';
 import { convertFullWidthNumbersToHalf, exclude } from '$lib/utils';
 
@@ -51,7 +51,8 @@ function getBaseDir(exam: Exam) {
 			return KYOTE_RESOURCE_DIR;
 	}
 }
-async function refreshTempResources(sessionId: string, exam: Exam) {
+
+async function refreshTempResources(db: PrismaInnerTransaction, sessionId: string, exam: Exam) {
 	// clear resouce-temp
 	await db.tempResource.deleteMany({
 		where: {
@@ -143,29 +144,38 @@ export const load = (async ({ locals, params }) => {
 		throw error(500, 'Internal Server Error');
 	}
 
-	// refresh resouce-temp
-	await refreshTempResources(session.sessionId, exam);
+	const tempData = await db.$transaction(
+		async (db) => {
+			// refresh resouce-temp
+			await refreshTempResources(db, session.sessionId, exam);
 
-	const tempData = await db.tempResource.findMany({
-		where: {
-			sessionId: session.sessionId,
-			examType
+			const tempData = await db.tempResource.findMany({
+				where: {
+					sessionId: session.sessionId,
+					examType
+				},
+				orderBy: [
+					{ state: 'asc' },
+					{ year: 'desc' },
+					{ numOf: 'desc' },
+					{ grade: 'asc' },
+					{ category: 'asc' },
+					{ title: 'asc' }
+				]
+			});
+			await db.tempResource.deleteMany({
+				where: {
+					sessionId: session.sessionId,
+					examType
+				}
+			});
+
+			return tempData;
 		},
-		orderBy: [
-			{ state: 'asc' },
-			{ year: 'desc' },
-			{ numOf: 'desc' },
-			{ grade: 'asc' },
-			{ category: 'asc' },
-			{ title: 'asc' }
-		]
-	});
-	await db.tempResource.deleteMany({
-		where: {
-			sessionId: session.sessionId,
-			examType
+		{
+			timeout: 1000 * 60 * 5 // 5 min
 		}
-	});
+	);
 
 	const config = getExamConfig(exam);
 	const baseDir = getBaseDir(exam);
@@ -223,34 +233,41 @@ export const actions: Actions = {
 
 		// 更新処理
 		try {
-			// 一時テーブルの該当レコードを取得
-			await refreshTempResources(session.sessionId, exam);
-			const res = await db.tempResource.findMany({
-				where: {
-					id: {
-						in: form.data.checked
-					}
-				}
-			});
-			// 一時テーブルのレコードを削除
-			await db.tempResource.deleteMany({
-				where: {
-					sessionId: session.sessionId,
-					examType
-				}
-			});
+			await db.$transaction(
+				async (db) => {
+					// 一時テーブルの該当レコードを取得
+					await refreshTempResources(db, session.sessionId, exam);
+					const res = await db.tempResource.findMany({
+						where: {
+							id: {
+								in: form.data.checked
+							}
+						}
+					});
+					// 一時テーブルのレコードを削除
+					await db.tempResource.deleteMany({
+						where: {
+							sessionId: session.sessionId,
+							examType
+						}
+					});
 
-			// 本テーブルのレコードを削除
-			await db.resource.deleteMany({
-				where: {
-					examType: examType
-				}
-			});
+					// 本テーブルのレコードを削除
+					await db.resource.deleteMany({
+						where: {
+							examType: examType
+						}
+					});
 
-			// 本テーブルを更新
-			await db.resource.createMany({
-				data: res.map((r) => exclude(r, ['sessionId', 'state']))
-			});
+					// 本テーブルを更新
+					await db.resource.createMany({
+						data: res.map((r) => exclude(r, ['sessionId', 'state']))
+					});
+				},
+				{
+					timeout: 1000 * 60 * 5
+				}
+			);
 		} catch (e) {
 			console.log(e);
 			return message(form, 'Failed to update database.', {
