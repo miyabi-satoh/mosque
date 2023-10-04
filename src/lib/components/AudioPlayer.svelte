@@ -50,13 +50,14 @@
 		}
 	}
 
-	$: if (!src) {
+	$: disabled = !src;
+	$: if (disabled) {
 		time = duration = 0;
 		updateRangeBackground();
 	}
 </script>
 
-<div class="flex items-center gap-4 p-4">
+<div class="flex flex-col items-center gap-x-4 sm:flex-row">
 	<audio
 		{src}
 		bind:currentTime={time}
@@ -67,30 +68,37 @@
 		}}
 	/>
 
-	<button disabled={!src} class="btn px-2" on:click={() => (time = 0)}>
-		<Icon icon="mdi:skip-previous" height="32px" />
-	</button>
-	<button disabled={!src} class="btn px-2" on:click={() => (time -= 10)}>
-		<Icon icon="fluent:skip-back-10-32-regular" height="32px" />
-	</button>
-	<button
-		disabled={!src}
-		class="variant-ghost btn rounded-full p-3"
-		on:click={() => (paused = !paused)}
-	>
-		<Icon icon={paused ? 'mdi:play' : 'mdi:pause'} height="48px" />
-	</button>
-	<button disabled={!src} class="btn px-2" on:click={() => (time += 10)}>
-		<Icon icon="fluent:skip-forward-10-32-regular" height="32px" />
-	</button>
-	<div class="flex flex-1 flex-col gap-y-2">
-		<div class="flex items-center justify-between gap-x-2" class:text-surface-400-500-token={!src}>
+	<div class="flex justify-center gap-x-4">
+		<button {disabled} class="btn hidden px-2 sm:inline-flex" on:click={() => (time = 0)}>
+			<Icon icon="mdi:skip-previous" height="32px" />
+		</button>
+		<button {disabled} class="btn px-2" on:click={() => (time -= 10)}>
+			<Icon icon="fluent:skip-back-10-32-regular" height="32px" />
+		</button>
+		<button
+			{disabled}
+			class:variant-ghost={disabled}
+			class:variant-ghost-primary={!disabled}
+			class="btn rounded-full p-3"
+			on:click={() => (paused = !paused)}
+		>
+			<Icon icon={paused ? 'mdi:play' : 'mdi:pause'} height="48px" />
+		</button>
+		<button {disabled} class="btn px-2" on:click={() => (time += 10)}>
+			<Icon icon="fluent:skip-forward-10-32-regular" height="32px" />
+		</button>
+	</div>
+	<div class="flex w-full flex-col gap-y-2">
+		<div
+			class="flex items-center justify-between gap-x-2"
+			class:text-surface-400-500-token={disabled}
+		>
 			<span>{format(time)}</span>
 			<span>{title}</span>
 			<span>{format(duration - time)}</span>
 		</div>
 		<input
-			disabled={!src}
+			{disabled}
 			id="range-audio"
 			type="range"
 			value={time}
