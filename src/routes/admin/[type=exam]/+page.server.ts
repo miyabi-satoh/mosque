@@ -42,14 +42,18 @@ const parseSchema = ResourceSchema.pick({
 });
 
 function getBaseDir(exam: Exam) {
-	switch (exam.examType) {
-		case 'ctest':
-			return CTEST_RESOURCE_DIR;
-		case 'eiken':
-			return EIKEN_RESOURCE_DIR;
-		case 'kyote':
-			return KYOTE_RESOURCE_DIR;
-	}
+	return (() => {
+		switch (exam.examType) {
+			case 'ctest':
+				return CTEST_RESOURCE_DIR;
+			case 'eiken':
+				return EIKEN_RESOURCE_DIR;
+			case 'kyote':
+				return KYOTE_RESOURCE_DIR;
+		}
+	})()
+		.split(path.sep)
+		.join(path.sep);
 }
 
 async function refreshTempResources(db: PrismaInnerTransaction, sessionId: string, exam: Exam) {
@@ -182,10 +186,18 @@ export const load = (async ({ locals, params }) => {
 	const initialData = {
 		checked: [] as string[]
 	};
-	const re = new RegExp(`^${baseDir}${path.sep}?`, 'i');
+	// const re = new RegExp(`^${baseDir}${path.sep}?`, 'i');
 	const columnValues = tempData.map((data) => {
-		if (re.test(data.path)) {
-			data.path = data.path.replace(re, '');
+		// if (re.test(data.path)) {
+		// 	data.path = data.path.replace(re, '');
+		// } else {
+		// 	data.path = '...' + path.sep + path.basename(data.path);
+		// }
+		if (data.path.startsWith(baseDir)) {
+			data.path = data.path.slice(baseDir.length);
+			while (data.path.startsWith(path.sep)) {
+				data.path = data.path.slice(1);
+			}
 		} else {
 			data.path = '...' + path.sep + path.basename(data.path);
 		}
