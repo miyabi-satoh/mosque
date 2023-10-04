@@ -4,19 +4,13 @@ import { hasAdminRole } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
-export const load = (async ({ locals, request }) => {
+export const load = (async ({ locals }) => {
 	// create built-in users(admin, staff)
 	await createBuiltinUsers();
 
 	// get session
 	const session = await locals.auth.validate();
 	const user = session?.user;
-
-	// check user-agent
-	const isPC = (() => {
-		const ua = request.headers.get('user-agent')?.toLowerCase();
-		return ua?.match(/(windows nt)|(mac os x)/);
-	})();
 
 	const userMenus = [];
 	if (user) {
@@ -30,7 +24,6 @@ export const load = (async ({ locals, request }) => {
 
 	return {
 		user,
-		userMenus,
-		isPC
+		userMenus
 	};
 }) satisfies LayoutServerLoad;

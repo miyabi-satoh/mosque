@@ -16,6 +16,7 @@
 		storePopup,
 		type PopupSettings
 	} from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
 	import '../app.css';
 	import type { LayoutData } from './$types';
 
@@ -26,6 +27,24 @@
 		target: 'popupMenu',
 		placement: 'bottom'
 	};
+
+	let hasTouchScreen = false;
+	onMount(() => {
+		if (browser) {
+			hasTouchScreen = (() => {
+				if (window.navigator.maxTouchPoints > 0) {
+					return true;
+				}
+				if (window.matchMedia('(pointer:coarse)').matches) {
+					return true;
+				}
+				if ('orientation' in window) {
+					return true; // deprecated, but good fallback
+				}
+				return false;
+			})();
+		}
+	});
 
 	// https://stackoverflow.com/questions/71564541/going-back-to-the-previous-page-with-goto-sveltekit-navigation
 	let previousPage: string = base;
@@ -85,7 +104,7 @@
 						<Icon icon="mdi:login" height="auto" />
 					</a>
 				{/if}
-				{#if data.isPC || data.user}
+				{#if data.user || !hasTouchScreen}
 					<a href={URLS.BOARD} title="Board">
 						<Icon icon="mdi:bulletin-board" height="auto" />
 					</a>
