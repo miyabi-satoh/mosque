@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import Icon from '@iconify/svelte';
+	import { tick } from 'svelte';
 
 	export let src: string;
 	export let title: string;
@@ -28,19 +29,30 @@
 		time = Number(target.value);
 	}
 
-	$: if (browser && time >= 0) {
-		const e = window.document.getElementById('range-audio') as HTMLInputElement;
-		if (e) {
-			const min = Number(e.min);
-			const max = Number(e.max);
-			const val = Number(e.value);
-
-			e.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
+	$: if (time >= 0) {
+		updateRangeBackground();
+	}
+	async function updateRangeBackground() {
+		if (browser) {
+			await tick();
+			const e = window.document.getElementById('range-audio') as HTMLInputElement;
+			if (e) {
+				const min = Number(e.min);
+				const max = Number(e.max);
+				const val = Number(e.value);
+				if (max - min > 0) {
+					e.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
+				} else {
+					e.style.backgroundSize = '0% 100%';
+					console.log(e.style.backgroundSize);
+				}
+			}
 		}
 	}
 
 	$: if (!src) {
 		time = duration = 0;
+		updateRangeBackground();
 	}
 </script>
 
