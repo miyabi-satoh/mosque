@@ -5,18 +5,41 @@ import { auth } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
-export const load = (async () => {
-	const exam = await db.exam.findMany({
+type ItemT = {
+	href: string;
+	title: string;
+	external: boolean;
+};
+export const load = (async ({ parent }) => {
+	const data = await parent();
+
+	const exams = await db.exam.findMany({
 		orderBy: { sortOrder: 'asc' }
 	});
 
-	const siteLinks = await db.siteLink.findMany({
+	const links = await db.link.findMany({
 		orderBy: { sortOrder: 'asc' }
+	});
+
+	const items: ItemT[] = [];
+	exams.forEach((exam) => {
+		items.push({
+			href: `/${exam.examType}`,
+			title: `${exam.name}アーカイブ`,
+			external: false
+		});
+	});
+	links.forEach((link) => {
+		items.push({
+			href: link.url,
+			title: link.title,
+			external: true
+		});
 	});
 
 	return {
-		exam,
-		siteLinks
+		items,
+		breadcrumbs: data.breadcrumbs
 	};
 }) satisfies PageServerLoad;
 
@@ -25,7 +48,8 @@ export const actions: Actions = {
 		const session = await locals.auth.validate();
 		if (!session) return fail(401);
 		await auth.invalidateSession(session.sessionId); // invalidate session
+		await auth.deleteDeadUserSessions(session.user.userId);
 		locals.auth.setSession(null); // remove cookie
-		throw redirect(302, '/'); // redirect to login page
+		throw redirect(302, '/'); // redirect to root page
 	}
 };

@@ -1,27 +1,17 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import Icon from '@iconify/svelte';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 </script>
 
-<main class="container mx-auto flex flex-1 flex-col overflow-y-hidden lg:max-w-3xl">
-	<div class="flex-1 space-y-4 overflow-y-scroll p-4">
-		{#each data.exam as exam}
-			<a href="/{exam.examType}" class="card flex min-h-[64px] w-full items-center">
-				<h2 class="flex-1 py-4 pl-4 text-2xl font-semibold">
-					{exam.fullName}<span class="ml-6">音声配信</span>
-				</h2>
-				<Icon icon="mdi:chevron-right" class="mr-4" height="32px" />
-			</a>
-		{/each}
-		{#each data.siteLinks as siteLink}
-			<a href={siteLink.url} class="card flex min-h-[64px] w-full items-center" target="_blank">
-				<h2 class="flex-1 py-4 pl-4 text-2xl font-semibold">
-					{siteLink.title}
-				</h2>
-				<Icon icon="mdi:open-in-new" class="mr-4" height="32px" />
-			</a>
-		{/each}
-	</div>
-</main>
+<div class="mx-4 space-y-4">
+	{#each data.items as { href, title, external }}
+		<a {href} class="block" target={external ? '_blank' : '_self'}>
+			<div class="card variant-ghost-tertiary card-hover flex items-center p-4">
+				<h1 class="h6 flex-1 sm:h3">{title}</h1>
+				<Icon icon={external ? 'mdi:open-in-new' : 'mdi:chevron-right'} height="auto" />
+			</div>
+		</a>
+	{/each}
+</div>

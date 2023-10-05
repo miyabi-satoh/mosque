@@ -1,11 +1,19 @@
 import type { LabelValueT } from './types';
 
+export const PROVIDERID_USERNAME = `username`;
+
 export const URLS = {
 	LOGIN: '/login',
 	LOGOUT: '/?/logout',
-	SIGNUP: '/signup',
+	PROFILE: '/profile',
+	PASSWD: '/passwd',
 	ADMIN: '/admin',
-	ADMIN_SITELINK: '/admin/sitelink'
+	ADMIN_LINKS: '/admin/links',
+	ADMIN_ACCOUNTS: '/admin/accounts',
+	ADMIN_ACCOUNTS_CREATE: '/admin/accounts/create',
+	BOARD: '/board',
+	API_DATA: '/api/data',
+	API_FETCH: '/api/fetch?url='
 } as const;
 
 export const categories = {

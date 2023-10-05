@@ -10,20 +10,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
+generator zod {
+  provider               = "zod-prisma-types"
+  // 自動生成されたファイルが配置されるパス
+  output                 = "../src/lib/schemas/zod"
+  // useMultipleFiles                 = true // default is false
+  // writeBarrelFiles                 = false // default is true
+  createInputTypes       = false // default is true
+  // createModelTypes       = false // default is true
+  addInputTypeValidation = false // default is true
+  addIncludeType         = false // default is true
+  addSelectType          = false // default is true
+  // validateWhereUniqueInput         = true // default is false
+  // createOptionalDefaultValuesTypes = true // default is false
+  // createRelationValuesTypes        = true // default is false
+  // createPartialTypes               = true // default is false
+  // useDefaultValidators             = false // default is true
+  // coerceDate                       = false // default is true
+  // writeNullishInModelTypes         = true // default is false
+  // prismaClientPath                 = "./path/to/prisma/client" // default is client output path}
+}
+
+enum UserRoleEnum {
   USER
+  STAFF
   ADMIN
+
+  @@map("UserRole")
 }
 
 model User {
-  id       String   @id @unique
-  username String?  @unique
-  role     UserRole @default(USER)
+  id          String       @id @unique
+  username    String       @unique
+  role        UserRoleEnum @default(USER)
+  fullName    String?      @map("full_name")
+  displayName String?      @map("display_name")
+  email       String?
+  code        String?      @unique
 
   auth_session Session[]
   key          Key[]
 
-  @@map("auth_user")
+  @@map("auth_users")
 }
 
 model Session {
@@ -33,10 +61,10 @@ model Session {
   idle_expires   BigInt
   user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  resource_temp ResourceTemp[]
+  temp_resources TempResource[]
 
   @@index([user_id])
-  @@map("auth_session")
+  @@map("auth_sessions")
 }
 
 model Key {
@@ -46,70 +74,102 @@ model Key {
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("auth_key")
+  @@map("auth_keys")
 }
 
-enum ExamType {
+enum ExamTypeEnum {
   ctest
   eiken
+  kyote
+
+  @@map("ExamType")
 }
 
 model Exam {
-  examType   ExamType @id @map("exam_type")
-  shortName  String   @map("short_name")
-  fullName   String   @map("full_name")
-  sortOrder  Int      @map("sort_order")
-  labelGrade String   @map("label_grade")
-  labelNumOf String   @map("label_numof")
+  examType  ExamTypeEnum @id @map("exam_type")
+  name      String
+  sortOrder Int          @map("sort_order")
 
-  @@map("exam")
+  @@map("exams")
 }
 
 model Resource {
-  id         String   @id @default(cuid())
-  examType   ExamType @map("exam_type")
+  id         String
+  examType   ExamTypeEnum @map("exam_type")
   year       Int
+  publisher  String
   grade      Int
-  numOf      Int      @map("num_of")
+  numOf      Int          @map("num_of")
   category   Int
   title      String
-  shortTitle String   @map("short_title")
+  shortTitle String       @map("short_title")
   path       String
 
+  @@id([id, examType])
   @@index([examType])
-  @@map("resource")
+  @@map("resources")
 }
 
-enum ResourceState {
+enum ResourceStateEnum {
   ok
   new
-  missing
+
+  @@map("ResourceState")
 }
 
-model ResourceTemp {
-  id         String        @default(cuid())
-  sessionId  String        @map("session_id")
-  session    Session       @relation(references: [id], fields: [sessionId], onDelete: Cascade)
-  state      ResourceState
-  examType   ExamType      @map("exam_type")
+model TempResource {
+  id         String
+  sessionId  String            @map("session_id")
+  session    Session           @relation(references: [id], fields: [sessionId], onDelete: Cascade)
+  state      ResourceStateEnum
+  examType   ExamTypeEnum      @map("exam_type")
   year       Int
+  publisher  String
   grade      Int
-  numOf      Int           @map("num_of")
+  numOf      Int               @map("num_of")
   category   Int
   title      String
-  shortTitle String        @map("short_title")
+  shortTitle String            @map("short_title")
   path       String
 
   @@id([id, sessionId])
   @@index([examType])
-  @@map("resource_temp")
+  @@map("temp_resources")
 }
 
-model SiteLink {
+model Link {
   id        String @id @default(cuid())
   url       String
   title     String
   sortOrder Int    @map("sort_order")
 
-  @@map("site_link")
+  @@map("links")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  username  String
+  password  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  comments Comment[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  message   String
+  username  String
+  password  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  postId String @map("post_id")
+  post   Post   @relation(references: [id], fields: [postId], onDelete: Cascade)
+
+  @@map("comments")
 }

@@ -1,43 +1,59 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
-	import '../app.css';
-	import Icon from '@iconify/svelte';
-	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
+	import { afterNavigate } from '$app/navigation';
+	import { base } from '$app/paths';
+	import { navigating, page } from '$app/stores';
+	import { LoadingOverlay, Navigation } from '$lib';
 	import { URLS } from '$lib/consts';
-	import { loadingStore, submittingStore } from '$lib/stores';
-	import { navigating } from '$app/stores';
-	import { LoadingOverlay } from '$lib';
+	import { innerScrollStore, loadingStore, submittingStore } from '$lib/stores';
+	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+	import Icon from '@iconify/svelte';
+	import {
+		AppBar,
+		AppShell,
+		Drawer,
+		LightSwitch,
+		getDrawerStore,
+		initializeStores,
+		storePopup
+	} from '@skeletonlabs/skeleton';
+	import { tick } from 'svelte';
+	import '../app.css';
+	import type { LayoutData } from './$types';
 
-	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-	import { AppBar, LightSwitch, popup, type PopupSettings } from '@skeletonlabs/skeleton';
-
-	import { storePopup } from '@skeletonlabs/skeleton';
+	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
-	export let data: LayoutData;
-	let details: HTMLDetailsElement;
-
-	onMount(() => {
-		if (browser) {
-			document.documentElement.addEventListener('click', () => {
-				if (details?.open) {
-					details.open = false;
-				}
-			});
+	// https://www.skeleton.dev/blog/how-to-implement-a-responsive-sidebar-drawer
+	const drawerStore = getDrawerStore();
+	async function drawerOpen() {
+		drawerStore.open({});
+		await tick();
+		const el = window.document.querySelector('.drawer') as HTMLDivElement;
+		if (el) {
+			el.click();
 		}
+	}
+	function drawerClose() {
+		drawerStore.close();
+	}
+
+	export let data: LayoutData;
+	$: user = data.user;
+	$: overflowHidden = $innerScrollStore ? 'overflow-hidden' : '';
+	$: breadcrumbs = $page.data.breadcrumbs;
+	$: pathname = $page.url.pathname;
+
+	// https://stackoverflow.com/questions/71564541/going-back-to-the-previous-page-with-goto-sveltekit-navigation
+	let previousPage: string = base;
+	afterNavigate(({ from }) => {
+		previousPage = from?.url.pathname || previousPage;
 	});
 
-	$: if ($navigating) $submittingStore = false;
-	$: $loadingStore = !!$navigating || $submittingStore;
-
-	const popupMenu: PopupSettings = {
-		event: 'focus-click',
-		target: 'popupMenu',
-		placement: 'bottom',
-		closeQuery: '.menu-item'
-	};
+	// https://zenn.dev/gawarago/articles/f75f5113a3803d
+	$: if (browser && !!$navigating) $submittingStore = false;
+	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
 </script>
 
 <svelte:head>
@@ -48,39 +64,90 @@
 	<LoadingOverlay />
 {/if}
 
-<form class="h-0 w-0" method="POST" action={URLS.LOGOUT} use:enhance>
+<form
+	class="h-0 w-0"
+	method="POST"
+	action={URLS.LOGOUT}
+	use:enhance={() => {
+		return async ({ update }) => {
+			drawerClose();
+			update();
+		};
+	}}
+>
 	<button type="submit" id="logout" />
 </form>
 
-<div class="flex h-screen flex-col">
-	<div class="container mx-auto lg:max-w-3xl">
+<Drawer width="w-64">
+	<div class="pt-12">
+		<Navigation loggedIn={!!user} userMenus={data.userMenus} />
+	</div>
+</Drawer>
+
+<AppShell
+	slotFooter="text-surface-500-400-token text-right text-sm m-4"
+	slotSidebarLeft="w-0 {user ? 'md:w-64' : ''}"
+	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-3xl {overflowHidden}"
+	regionPage={overflowHidden}
+>
+	<!-- Header Slot -->
+	<svelte:fragment slot="header">
 		<AppBar background="bg-surface-50-900-token">
 			<svelte:fragment slot="lead">
-				<a href="/" class="btn-ghost btn text-xl normal-case">MOSQUE</a>
+				<div class="flex items-center">
+					{#if user}
+						<button class="btn btn-sm pl-0 lg:hidden" on:click={drawerOpen}>
+							<Icon icon="mdi:menu" height="auto" />
+						</button>
+					{/if}
+					<a href="/" class="text-xl uppercase">mosque</a>
+				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				{#if data.user}
-					<button class="btn flex gap-x-2" use:popup={popupMenu}>
+				{#if user}
+					<div class="flex gap-x-2">
 						<Icon icon="mdi:account-circle" height="auto" />
-						{data.user.username}
-					</button>
-					<div class="card w-52 p-2 shadow-xl" data-popup="popupMenu">
-						<div class="flex flex-col gap-y-2">
-							<a href={URLS.ADMIN} class="menu-item btn w-full hover:variant-filled-surface"
-								>管理ページ</a
-							>
-							<label for="logout" class="menu-item btn w-full hover:variant-filled-surface"
-								>ログアウト</label
-							>
-						</div>
+						{user.displayName}
 					</div>
+				{:else}
+					<a href={URLS.LOGIN} title="Login">
+						<Icon icon="mdi:login" height="auto" />
+					</a>
+				{/if}
+				{#if user || !data.isMobile}
+					<a href={URLS.BOARD} title="Board">
+						<Icon icon="mdi:bulletin-board" height="auto" />
+					</a>
 				{/if}
 				<LightSwitch />
 			</svelte:fragment>
 		</AppBar>
-	</div>
+	</svelte:fragment>
+
+	<!-- Left Sidebar Slot -->
+	<svelte:fragment slot="sidebarLeft">
+		<Navigation loggedIn={!!user} userMenus={data.userMenus} />
+	</svelte:fragment>
+
+	<!-- Breadcrumbs -->
+	{#key pathname}
+		{#if breadcrumbs?.length > 1}
+			<ol class="breadcrumb mx-4 mb-8 text-sm">
+				{#each breadcrumbs as crumb, i}
+					<!-- If crumb index is less than the breadcrumb length minus 1 -->
+					{#if i < breadcrumbs.length - 1}
+						<li class="crumb"><a class="anchor" href={crumb.link}>{crumb.label}</a></li>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
+					{:else}
+						<li class="crumb">{crumb.label}</li>
+					{/if}
+				{/each}
+			</ol>
+		{/if}
+	{/key}
+	<!-- Default Page Content Slot -->
 	<slot />
-	<footer class="text-surface-500-400-token p-4 text-right text-sm">
-		Copyright &copy; 2023 miyabi-satoh.
-	</footer>
-</div>
+
+	<!-- Footer Slot -->
+	<svelte:fragment slot="footer">Copyright &copy; 2023 miyabi-satoh.</svelte:fragment>
+</AppShell>
