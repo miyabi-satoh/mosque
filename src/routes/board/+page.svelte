@@ -16,11 +16,11 @@
 	$: $submittingStore = $submitting;
 	type FormDataT = typeof $form;
 
-	const popupHover: PopupSettings = {
-		event: 'hover',
-		target: 'popupHover',
-		placement: 'top'
-	};
+	// const popupHover: PopupSettings = {
+	// 	event: 'hover',
+	// 	target: 'popupHover',
+	// 	placement: 'top'
+	// };
 
 	let focusOnTextarea = false;
 	let currentPost: Post | undefined = undefined;
@@ -160,7 +160,7 @@
 				name="content"
 				id="form-content"
 				rows={textareaRows}
-				placeholder="本文"
+				placeholder="Message"
 				bind:value={$form.content}
 				on:focus={() => (focusOnTextarea = true)}
 				on:blur={handleBlurTextarea}

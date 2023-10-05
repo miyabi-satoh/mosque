@@ -16,8 +16,7 @@
 		LightSwitch,
 		getDrawerStore,
 		initializeStores,
-		storePopup,
-		type PopupSettings
+		storePopup
 	} from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
 	import '../app.css';
@@ -39,11 +38,6 @@
 
 	export let data: LayoutData;
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
-	const popupMenu: PopupSettings = {
-		event: 'click',
-		target: 'popupMenu',
-		placement: 'bottom'
-	};
 
 	let hasTouchScreen = false;
 	onMount(() => {
@@ -127,25 +121,6 @@
 						<Icon icon="mdi:account-circle" height="auto" />
 						{data.user.displayName}
 					</div>
-					<!-- <button class="btn flex gap-x-2 p-0" use:popup={popupMenu}>
-					</button>
-					<div class="card z-30 w-56 p-2 shadow-xl" data-popup="popupMenu">
-						<div class="flex flex-col gap-y-2">
-							{#each data.userMenus as [href, label, icon]}
-								<a {href} class="btn w-full justify-start text-left hover:variant-filled-surface">
-									<Icon {icon} height="auto" />
-									<span class="ml-2">{label}</span>
-								</a>
-							{/each}
-							<label
-								for="logout"
-								class="btn w-full justify-start text-left hover:variant-filled-surface"
-							>
-								<Icon icon="mdi:logout" height="auto" />
-								<span class="ml-2">Logout</span>
-							</label>
-						</div>
-					</div> -->
 				{:else}
 					<a href={URLS.LOGIN} title="Login">
 						<Icon icon="mdi:login" height="auto" />
