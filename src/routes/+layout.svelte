@@ -106,7 +106,7 @@
 			<svelte:fragment slot="lead">
 				<div class="flex items-center">
 					{#if user}
-						<button class="btn btn-sm lg:hidden" on:click={drawerOpen}>
+						<button class="btn btn-sm pl-0 lg:hidden" on:click={drawerOpen}>
 							<Icon icon="mdi:menu" height="auto" />
 						</button>
 					{/if}
