@@ -14,10 +14,12 @@ const schema = z.object({
 	confirmPassword: z.string().min(1)
 });
 
-export const load = (async () => {
+export const load = (async ({ parent, url }) => {
+	const data = await parent();
+	data.breadcrumbs.push({ label: 'Change Password', link: url.pathname });
 	const form = await superValidate(schema);
 
-	return { form };
+	return { form, breadcrumbs: data.breadcrumbs };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

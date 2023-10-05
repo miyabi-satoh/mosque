@@ -4,6 +4,10 @@ import { hasAdminRole } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
+type BreadCrumbT = {
+	label: string;
+	link: string;
+};
 export const load = (async ({ locals }) => {
 	// create built-in users(admin, staff)
 	await createBuiltinUsers();
@@ -22,8 +26,10 @@ export const load = (async ({ locals }) => {
 		userMenus.push([URLS.PASSWD, `Change Password`, 'mdi:lock']);
 	}
 
+	const breadcrumbs: BreadCrumbT[] = [{ label: 'Home', link: '/' }];
 	return {
 		user,
-		userMenus
+		userMenus,
+		breadcrumbs
 	};
 }) satisfies LayoutServerLoad;

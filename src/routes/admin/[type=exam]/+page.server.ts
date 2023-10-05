@@ -134,7 +134,7 @@ async function refreshTempResources(db: PrismaInnerTransaction, sessionId: strin
 	}
 }
 
-export const load = (async ({ locals, params }) => {
+export const load = (async ({ locals, params, parent, url }) => {
 	const session = await locals.auth.validate();
 	if (!session) {
 		console.error('Cannot read session');
@@ -147,6 +147,9 @@ export const load = (async ({ locals, params }) => {
 		console.error(`Cannot read exam(examType = '${examType}')`);
 		throw error(500, 'Internal Server Error');
 	}
+
+	const data = await parent();
+	data.breadcrumbs.push({ label: `${exam.name} ファイル管理`, link: url.pathname });
 
 	const tempData = await db.$transaction(
 		async (db) => {
@@ -186,13 +189,7 @@ export const load = (async ({ locals, params }) => {
 	const initialData = {
 		checked: [] as string[]
 	};
-	// const re = new RegExp(`^${baseDir}${path.sep}?`, 'i');
 	const columnValues = tempData.map((data) => {
-		// if (re.test(data.path)) {
-		// 	data.path = data.path.replace(re, '');
-		// } else {
-		// 	data.path = '...' + path.sep + path.basename(data.path);
-		// }
 		if (data.path.startsWith(baseDir)) {
 			data.path = data.path.slice(baseDir.length);
 			while (data.path.startsWith(path.sep)) {
@@ -218,7 +215,8 @@ export const load = (async ({ locals, params }) => {
 		form,
 		columnValues,
 		columnLabels: config.columnLabels,
-		exam
+		exam,
+		breadcrumbs: data.breadcrumbs
 	};
 }) satisfies PageServerLoad;
 

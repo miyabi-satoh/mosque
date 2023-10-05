@@ -8,7 +8,9 @@ type MenuT = {
 	label: string;
 	icon?: string;
 };
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ parent }) => {
+	const data = await parent();
+
 	const menus: MenuT[] = [];
 	const exam = await db.exam.findMany({
 		orderBy: { sortOrder: 'asc' }
@@ -36,6 +38,7 @@ export const load: PageServerLoad = async () => {
 	);
 
 	return {
-		menus
+		menus,
+		breadcrumbs: data.breadcrumbs
 	};
 };

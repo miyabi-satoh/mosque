@@ -21,10 +21,17 @@ type UserPropT = {
 	fullName: string;
 };
 
-export const load = (async () => {
+export const load = (async ({ parent, url }) => {
+	const data = await parent();
+	data.breadcrumbs.push({ label: 'Create', link: url.pathname });
+
 	const form = await superValidate(schema);
 
-	return { form, csvHeader };
+	return {
+		form,
+		csvHeader,
+		breadcrumbs: data.breadcrumbs
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

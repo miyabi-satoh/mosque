@@ -200,7 +200,7 @@
 				<AccordionItem>
 					<svelte:fragment slot="summary">
 						<div class="flex items-baseline gap-x-4">
-							<h2 class="text-lg font-bold">{post.title}</h2>
+							<h1 class="text-lg font-bold">{post.title}</h1>
 							<span class="text-surface-500-400-token text-sm">
 								{post.username}・{formatDate(post.updatedAt)}
 							</span>

@@ -14,15 +14,25 @@ const schema = z.object({
 	sortOrder: z.number().default(0)
 });
 
-export const load = (async ({ params }) => {
+export const load = (async ({ params, parent, url }) => {
 	const links = await db.link.findMany({
 		orderBy: { sortOrder: 'asc' }
 	});
 	const link = links.find((s) => s.id === params.id);
 	if (params.id && !link) throw error(404, `Not found`);
 
+	const data = await parent();
+	data.breadcrumbs.push({ label: '外部リンク管理', link: URLS.ADMIN_LINKS });
+	if (params.id) {
+		data.breadcrumbs.push({ label: '編集', link: url.pathname });
+	}
+
 	const form = await superValidate(link, schema);
-	return { form, links };
+	return {
+		form,
+		links,
+		breadcrumbs: data.breadcrumbs
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

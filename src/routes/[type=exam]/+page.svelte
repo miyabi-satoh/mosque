@@ -157,8 +157,6 @@
 </script>
 
 <div class="mx-4 space-y-8 {parentClass}">
-	<h2 class="h2">{data.exam.name}アーカイブ</h2>
-
 	<div>
 		<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
 	</div>
@@ -207,33 +205,30 @@
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 			{#each resources as res}
 				<div class="card border-surface-200-700-token w-full border p-4">
-					<div class="flex items-center">
-						<h2 class="flex-1">{res.title}</h2>
-						<div>
-							{#if res.category < 10}
-								<button
-									on:click={() => handleClickPlayPause(res)}
-									disabled={!res.url}
-									class:variant-filled-primary={audioSrc.endsWith(res.url)}
-									class:variant-filled-secondary={!audioSrc.endsWith(res.url)}
-									class="btn"
-								>
-									<Icon
-										icon={audioSrc.endsWith(res.url) && !audioPaused ? 'mdi:pause' : 'mdi:play'}
-										height="auto"
-									/>
-								</button>
-							{:else if res.url}
-								<button class="variant-filled-secondary btn">
-									<a href={res.url} target="_blank">Open in new tab</a>
-								</button>
-							{:else}
-								<button disabled class="variant-filled-secondary btn">Open in new tab</button>
-							{/if}
-						</div>
-					</div>
 					{#if !res.url}
+						<h2 class="flex-1">{res.title}</h2>
 						<HelperText>Failed to get file.</HelperText>
+					{:else if res.category < 10}
+						<div class="flex items-center">
+							<h2 class="flex-1">{res.title}</h2>
+							<button
+								on:click={() => handleClickPlayPause(res)}
+								disabled={!res.url}
+								class:variant-filled-primary={audioSrc.endsWith(res.url)}
+								class:variant-filled-secondary={!audioSrc.endsWith(res.url)}
+								class="btn"
+							>
+								<Icon
+									icon={audioSrc.endsWith(res.url) && !audioPaused ? 'mdi:pause' : 'mdi:play'}
+									height="auto"
+								/>
+							</button>
+						</div>
+					{:else}
+						<a class="anchor flex items-center" href={res.url} target="_blank">
+							<h2>{res.title}</h2>
+							<Icon icon="mdi:open-in-new" />
+						</a>
 					{/if}
 				</div>
 			{/each}

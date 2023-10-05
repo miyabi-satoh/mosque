@@ -23,9 +23,11 @@ const schema = z.object({
 	newPassword: z.string().optional()
 });
 
-export const load = (async ({ parent, params }) => {
+export const load = (async ({ parent, params, url }) => {
+	const data = await parent();
+	data.breadcrumbs.push({ label: 'Edit Profile', link: url.pathname });
+
 	const user = await (async () => {
-		const data = await parent();
 		if (params.id) {
 			if (!hasAdminRole(data.user)) {
 				throw error(404, 'Not found');
@@ -44,6 +46,7 @@ export const load = (async ({ parent, params }) => {
 
 	return {
 		form,
+		breadcrumbs: data.breadcrumbs,
 		userRoles: ['USER', 'STAFF', 'ADMIN'] as User['role'][]
 	};
 }) satisfies PageServerLoad;

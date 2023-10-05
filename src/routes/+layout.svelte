@@ -3,7 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { afterNavigate } from '$app/navigation';
 	import { base } from '$app/paths';
-	import { navigating } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	import { LoadingOverlay, Navigation } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { innerScrollStore, loadingStore, submittingStore } from '$lib/stores';
@@ -22,8 +22,10 @@
 	import '../app.css';
 	import type { LayoutData } from './$types';
 
-	// https://www.skeleton.dev/blog/how-to-implement-a-responsive-sidebar-drawer
 	initializeStores();
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+
+	// https://www.skeleton.dev/blog/how-to-implement-a-responsive-sidebar-drawer
 	const drawerStore = getDrawerStore();
 	async function drawerOpen() {
 		drawerStore.open({});
@@ -38,24 +40,17 @@
 	}
 
 	export let data: LayoutData;
-	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
-
+	$: user = data.user;
 	$: overflowHidden = $innerScrollStore ? 'overflow-hidden' : '';
+	$: breadcrumbs = $page.data.breadcrumbs;
+	$: pathname = $page.url.pathname;
 
-	let hasTouchScreen = false;
+	let isMobile = true;
 	onMount(() => {
 		if (browser) {
-			hasTouchScreen = (() => {
-				if (window.navigator.maxTouchPoints > 0) {
-					return true;
-				}
-				if (window.matchMedia('(pointer:coarse)').matches) {
-					return true;
-				}
-				if ('orientation' in window) {
-					return true; // deprecated, but good fallback
-				}
-				return false;
+			isMobile = (() => {
+				const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+				return regex.test(navigator.userAgent);
 			})();
 		}
 	});
@@ -95,13 +90,13 @@
 
 <Drawer width="w-64">
 	<div class="pt-12">
-		<Navigation loggedIn={!!data.user} userMenus={data.userMenus} />
+		<Navigation loggedIn={!!user} userMenus={data.userMenus} />
 	</div>
 </Drawer>
 
 <AppShell
 	slotFooter="text-surface-500-400-token text-right text-sm m-4"
-	slotSidebarLeft="w-0 lg:w-60"
+	slotSidebarLeft="w-0 {user ? 'md:w-64' : ''}"
 	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-3xl {overflowHidden}"
 	regionPage={overflowHidden}
 >
@@ -110,7 +105,7 @@
 		<AppBar background="bg-surface-50-900-token">
 			<svelte:fragment slot="lead">
 				<div class="flex items-center">
-					{#if data.user}
+					{#if user}
 						<button class="btn btn-sm lg:hidden" on:click={drawerOpen}>
 							<Icon icon="mdi:menu" height="auto" />
 						</button>
@@ -119,17 +114,17 @@
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				{#if data.user}
+				{#if user}
 					<div class="flex gap-x-2">
 						<Icon icon="mdi:account-circle" height="auto" />
-						{data.user.displayName}
+						{user.displayName}
 					</div>
 				{:else}
 					<a href={URLS.LOGIN} title="Login">
 						<Icon icon="mdi:login" height="auto" />
 					</a>
 				{/if}
-				{#if data.user || !hasTouchScreen}
+				{#if user || !isMobile}
 					<a href={URLS.BOARD} title="Board" class="hidden sm:block">
 						<Icon icon="mdi:bulletin-board" height="auto" />
 					</a>
@@ -141,9 +136,25 @@
 
 	<!-- Left Sidebar Slot -->
 	<svelte:fragment slot="sidebarLeft">
-		<Navigation loggedIn={!!data.user} userMenus={data.userMenus} />
+		<Navigation loggedIn={!!user} userMenus={data.userMenus} />
 	</svelte:fragment>
 
+	<!-- Breadcrumbs -->
+	{#key pathname}
+		{#if breadcrumbs?.length > 1}
+			<ol class="breadcrumb mx-4 mb-8 text-sm">
+				{#each breadcrumbs as crumb, i}
+					<!-- If crumb index is less than the breadcrumb length minus 1 -->
+					{#if i < breadcrumbs.length - 1}
+						<li class="crumb"><a class="anchor" href={crumb.link}>{crumb.label}</a></li>
+						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
+					{:else}
+						<li class="crumb">{crumb.label}</li>
+					{/if}
+				{/each}
+			</ol>
+		{/if}
+	{/key}
 	<!-- Default Page Content Slot -->
 	<slot />
 

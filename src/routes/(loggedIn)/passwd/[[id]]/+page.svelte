@@ -10,9 +10,10 @@
 	$: $submittingStore = $submitting;
 
 	let isFocused: boolean = true;
+	const title = data.breadcrumbs.slice(-1)[0].label;
 </script>
 
-<ModalContainer title="Change password">
+<ModalContainer {title}>
 	<form method="POST" class="space-y-4" use:enhance use:focusTrap={isFocused}>
 		<HelperText class="text-center" usePageStatus>{$message ?? ''}</HelperText>
 		<div>
