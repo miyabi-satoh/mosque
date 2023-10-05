@@ -44,7 +44,6 @@
 					e.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
 				} else {
 					e.style.backgroundSize = '0% 100%';
-					console.log(e.style.backgroundSize);
 				}
 			}
 		}

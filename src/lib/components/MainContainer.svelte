@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	type DisplayEnum = 'block' | 'flex' | 'grid';
 	export let display: DisplayEnum = 'flex';
 	export let innerScroll: boolean = false;
@@ -11,4 +11,5 @@
 	class:overflow-y-hidden={innerScroll}
 >
 	<slot />
-</main>
+</main> -->
+<slot />

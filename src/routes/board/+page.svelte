@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { HelperText, MainContainer } from '$lib';
+	import { HelperText, Scrollable } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { Accordion, AccordionItem, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { formatDistanceToNow } from 'date-fns';
@@ -150,87 +150,85 @@
 </script>
 
 <svelte:window on:resize={handleResize} />
-<MainContainer innerScroll>
-	{#if data.user}
-		<form method="POST" use:enhance>
-			<input type="hidden" name="id" value={$form.id} />
-			<div class="mx-4 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<textarea
-					class="textarea sm:col-span-2"
-					class:input-error={$errors.content}
-					name="content"
-					id="form-content"
-					rows={textareaRows}
-					placeholder="本文"
-					bind:value={$form.content}
-					on:focus={() => (focusOnTextarea = true)}
-					on:blur={handleBlurTextarea}
-					{...$constraints.content}
-				/>
+{#if data.user}
+	<form method="POST" use:enhance>
+		<input type="hidden" name="id" value={$form.id} />
+		<div class="mx-4 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+			<textarea
+				class="textarea sm:col-span-2"
+				class:input-error={$errors.content}
+				name="content"
+				id="form-content"
+				rows={textareaRows}
+				placeholder="本文"
+				bind:value={$form.content}
+				on:focus={() => (focusOnTextarea = true)}
+				on:blur={handleBlurTextarea}
+				{...$constraints.content}
+			/>
 
-				{#if $form.content}
-					<div class="sm:col-span-2">
-						<label class="label">
-							<span>Title</span>
-							<input
-								class="input"
-								class:input-error={$errors.title}
-								type="text"
-								name="title"
-								bind:value={$form.title}
-								{...$constraints.title}
+			{#if $form.content}
+				<div class="sm:col-span-2">
+					<label class="label">
+						<span>Title</span>
+						<input
+							class="input"
+							class:input-error={$errors.title}
+							type="text"
+							name="title"
+							bind:value={$form.title}
+							{...$constraints.title}
+						/>
+					</label>
+					<HelperText>{$errors.title ? $errors.title[0] : ''}</HelperText>
+				</div>
+				<div class="mb-1 flex justify-end gap-x-4 sm:col-span-2">
+					<button class="variant-filled btn" on:click|preventDefault={handleClickCancel}
+						>Cancel</button
+					>
+					<button class="variant-filled-primary btn">Save</button>
+				</div>
+			{/if}
+		</div>
+	</form>
+	<hr />
+{/if}
+<Scrollable class="m-4">
+	{#if data.posts.length > 0}
+		<Accordion>
+			{#each data.posts as post (post.id)}
+				<AccordionItem>
+					<svelte:fragment slot="summary">
+						<div class="flex items-baseline gap-x-4">
+							<h2 class="text-lg font-bold">{post.title}</h2>
+							<span class="text-surface-500-400-token text-sm">
+								{post.username}・{formatDate(post.updatedAt)}
+							</span>
+							<div
+								class="text-surface-500-400-token flex-1 truncate text-sm"
+								data-content={post.content}
 							/>
-						</label>
-						<HelperText>{$errors.title ? $errors.title[0] : ''}</HelperText>
-					</div>
-					<div class="mb-1 flex justify-end gap-x-4 sm:col-span-2">
-						<button class="variant-filled btn" on:click|preventDefault={handleClickCancel}
-							>Cancel</button
-						>
-						<button class="variant-filled-primary btn">Save</button>
-					</div>
-				{/if}
-			</div>
-		</form>
-		<hr />
-	{/if}
-	<div class="m-4 flex-1 overflow-y-scroll">
-		{#if data.posts.length > 0}
-			<Accordion>
-				{#each data.posts as post (post.id)}
-					<AccordionItem>
-						<svelte:fragment slot="summary">
-							<div class="flex items-baseline gap-x-4">
-								<h2 class="text-lg font-bold">{post.title}</h2>
-								<span class="text-surface-500-400-token text-sm">
-									{post.username}・{formatDate(post.updatedAt)}
-								</span>
-								<div
-									class="text-surface-500-400-token flex-1 truncate text-sm"
-									data-content={post.content}
-								/>
+						</div>
+					</svelte:fragment>
+					<svelte:fragment slot="content">
+						<p class="pl-2">
+							{post.content}
+						</p>
+						{#if post.password && !$form.id}
+							<div class="flex justify-end gap-x-4">
+								<button class="variant-filled-primary btn" on:click={() => handleClickEdit(post)}
+									>Edit</button
+								>
+								<button class="variant-filled-error btn" on:click={() => handleClickDelete(post)}
+									>Delete</button
+								>
 							</div>
-						</svelte:fragment>
-						<svelte:fragment slot="content">
-							<p class="pl-2">
-								{post.content}
-							</p>
-							{#if post.password && !$form.id}
-								<div class="flex justify-end gap-x-4">
-									<button class="variant-filled-primary btn" on:click={() => handleClickEdit(post)}
-										>Edit</button
-									>
-									<button class="variant-filled-error btn" on:click={() => handleClickDelete(post)}
-										>Delete</button
-									>
-								</div>
-							{/if}
-						</svelte:fragment>
-					</AccordionItem>
-				{/each}
-			</Accordion>
-		{:else}
-			No items.
-		{/if}
-	</div>
-</MainContainer>
+						{/if}
+					</svelte:fragment>
+				</AccordionItem>
+			{/each}
+		</Accordion>
+	{:else}
+		No items.
+	{/if}
+</Scrollable>
