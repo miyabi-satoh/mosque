@@ -12,6 +12,7 @@
 	const { form, message, errors, constraints, submitting, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 
+	let hasTitleFocus: boolean = false;
 	$: if ($form.url.match(/^https?:\/\/[^/]/) && !$form.title) fetchTitle();
 	async function fetchTitle() {
 		try {
@@ -21,7 +22,7 @@
 				const html = await res.text();
 				const parser = new DOMParser();
 				const doc = parser.parseFromString(html, 'text/html');
-				$form.title = doc.title;
+				if (!hasTitleFocus) $form.title = doc.title;
 			}
 		} catch (e) {
 			console.log(e);
@@ -61,6 +62,8 @@
 						name="title"
 						title="Title"
 						placeholder="Title"
+						on:focus={() => (hasTitleFocus = true)}
+						on:blur={() => (hasTitleFocus = false)}
 						bind:value={$form.title}
 						disabled={$submitting}
 						{...$constraints.title}
