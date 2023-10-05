@@ -6,7 +6,7 @@
 	import { navigating } from '$app/stores';
 	import { LoadingOverlay, Navigation } from '$lib';
 	import { URLS } from '$lib/consts';
-	import { loadingStore, submittingStore } from '$lib/stores';
+	import { innerScrollStore, loadingStore, submittingStore } from '$lib/stores';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import Icon from '@iconify/svelte';
 	import {
@@ -22,6 +22,7 @@
 	import '../app.css';
 	import type { LayoutData } from './$types';
 
+	// https://www.skeleton.dev/blog/how-to-implement-a-responsive-sidebar-drawer
 	initializeStores();
 	const drawerStore = getDrawerStore();
 	async function drawerOpen() {
@@ -38,6 +39,8 @@
 
 	export let data: LayoutData;
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
+
+	$: overflowHidden = $innerScrollStore ? 'overflow-hidden' : '';
 
 	let hasTouchScreen = false;
 	onMount(() => {
@@ -97,10 +100,10 @@
 </Drawer>
 
 <AppShell
-	slotFooter="text-surface-500-400-token text-right text-sm p-4"
+	slotFooter="text-surface-500-400-token text-right text-sm m-4"
 	slotSidebarLeft="w-0 lg:w-60"
-	slotPageContent="flex flex-col flex-1 overflow-y-hidden container mx-auto lg:max-w-3xl"
-	regionPage="overflow-y-hidden"
+	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-3xl {overflowHidden}"
+	regionPage={overflowHidden}
 >
 	<!-- Header Slot -->
 	<svelte:fragment slot="header">

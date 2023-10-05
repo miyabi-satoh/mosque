@@ -1,26 +1,17 @@
 <script lang="ts">
-	import { Scrollable } from '$lib';
 	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 </script>
 
-<Scrollable class="m-4 space-y-4">
-	{#each data.exam as exam}
-		<a href="/{exam.examType}" class="card flex min-h-[64px] w-full items-center p-4">
-			<h2 class="h2 flex-1">
-				{exam.name}アーカイブ
-			</h2>
-			<Icon icon="mdi:chevron-right" height="32px" />
+<div class="mx-4 space-y-4">
+	{#each data.items as { href, title, external }}
+		<a {href} class="block" target={external ? '_blank' : '_self'}>
+			<div class="card variant-ghost-tertiary card-hover flex items-center p-4">
+				<h1 class="h6 flex-1 sm:h5">{title}</h1>
+				<Icon icon={external ? 'mdi:open-in-new' : 'mdi:chevron-right'} height="32px" />
+			</div>
 		</a>
 	{/each}
-	{#each data.links as link}
-		<a href={link.url} class="card flex min-h-[64px] w-full items-center p-4" target="_blank">
-			<h2 class="h2 flex-1">
-				{link.title}
-			</h2>
-			<Icon icon="mdi:open-in-new" height="32px" />
-		</a>
-	{/each}
-</Scrollable>
+</div>

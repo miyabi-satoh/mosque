@@ -6,7 +6,7 @@
 	export let data: PageData;
 </script>
 
-<div class="p-4">
+<div class="mx-4 mb-4">
 	<a href={URLS.ADMIN_ACCOUNTS_CREATE} class="anchor">Create accounts from CSV data</a>
 </div>
 <Scrollable class="mx-4">

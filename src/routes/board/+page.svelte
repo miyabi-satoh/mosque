@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { HelperText, Scrollable } from '$lib';
 	import { submittingStore } from '$lib/stores';
-	import { Accordion, AccordionItem, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { formatDistanceToNow } from 'date-fns';
 	import ja from 'date-fns/locale/ja';
 	import { onMount, tick } from 'svelte';
@@ -193,7 +193,7 @@
 	</form>
 	<hr />
 {/if}
-<Scrollable class="m-4">
+<Scrollable class="mx-4">
 	{#if data.posts.length > 0}
 		<Accordion>
 			{#each data.posts as post (post.id)}

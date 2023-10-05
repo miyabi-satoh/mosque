@@ -4,4 +4,4 @@ export { default as HelperText } from './components/HelperText.svelte';
 export { default as LoadingOverlay } from './components/LoadingOverlay.svelte';
 export { default as ModalContainer } from './components/ModalContainer.svelte';
 export { default as Navigation } from './components/Navigation.svelte';
-export { default as Scrollable } from './components/Scrollable.svelte';
+export { default as Scrollable, parentClass } from './components/Scrollable.svelte';

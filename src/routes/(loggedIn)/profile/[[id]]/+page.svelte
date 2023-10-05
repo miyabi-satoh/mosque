@@ -10,11 +10,11 @@
 	$: $submittingStore = $submitting;
 </script>
 
-<form class="p-4" method="post" use:enhance>
-	<HelperText class="my-2" usePageStatus>
-		{$message ?? ''}
-	</HelperText>
-	<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+<form class="mx-4 space-y-4" method="post" use:enhance>
+	{#if $message}
+		<HelperText usePageStatus>{$message}</HelperText>
+	{/if}
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 		<div>
 			<label class="label">
 				<span>Login ID</span>
@@ -119,7 +119,7 @@
 			</HelperText>
 		</div>
 	</div>
-	<div class="my-6 flex justify-end">
+	<div class="text-right">
 		<button class="variant-ghost-primary btn">Save</button>
 	</div>
 </form>

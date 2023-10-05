@@ -25,12 +25,12 @@ export const load: PageServerLoad = async () => {
 	menus.push(
 		{
 			href: URLS.ADMIN_LINKS,
-			label: 'Manage external links',
+			label: '外部リンク管理',
 			icon: 'mdi:web'
 		},
 		{
 			href: URLS.ADMIN_ACCOUNTS,
-			label: 'Manage user accounts',
+			label: 'アカウント管理',
 			icon: 'mdi:account-multiple'
 		}
 	);

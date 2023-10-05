@@ -9,21 +9,20 @@
 	$: $submittingStore = $submitting;
 </script>
 
-<HelperText class="p-4" usePageStatus>
-	{$message ?? ''}
-</HelperText>
-<form class="flex flex-1 flex-col" method="POST" use:enhance>
-	<div class="flex items-center px-4">
-		<div class="flex-1">{data.csvHeader}</div>
+<form class="mx-4 flex flex-1 flex-col space-y-4" method="POST" use:enhance>
+	{#if $message}
+		<HelperText usePageStatus>{$message}</HelperText>
+	{/if}
+
+	<div class="text-right">
 		<button class="variant-ghost-primary btn" disabled={$submitting}>Create accounts</button>
 	</div>
-	<div class="flex flex-1 p-4">
-		<textarea
-			class="textarea flex-1"
-			name="csv"
-			placeholder={data.csvHeader}
-			disabled={$submitting}
-			bind:value={$form.csv}
-		/>
-	</div>
+
+	<textarea
+		class="textarea flex-1"
+		name="csv"
+		placeholder={data.csvHeader}
+		disabled={$submitting}
+		bind:value={$form.csv}
+	/>
 </form>

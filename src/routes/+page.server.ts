@@ -5,8 +5,13 @@ import { auth } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
+type ItemT = {
+	href: string;
+	title: string;
+	external: boolean;
+};
 export const load = (async () => {
-	const exam = await db.exam.findMany({
+	const exams = await db.exam.findMany({
 		orderBy: { sortOrder: 'asc' }
 	});
 
@@ -14,9 +19,23 @@ export const load = (async () => {
 		orderBy: { sortOrder: 'asc' }
 	});
 
+	const items: ItemT[] = [];
+	exams.forEach((exam) => {
+		items.push({
+			href: `/${exam.examType}`,
+			title: `${exam.name}アーカイブ`,
+			external: false
+		});
+	});
+	links.forEach((link) => {
+		items.push({
+			href: link.url,
+			title: link.title,
+			external: true
+		});
+	});
 	return {
-		exam,
-		links
+		items
 	};
 }) satisfies PageServerLoad;
 

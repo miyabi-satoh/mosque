@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { HelperText, Scrollable } from '$lib';
+	import { HelperText, Scrollable, parentClass } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -32,14 +32,14 @@
 
 {#if data.columnValues.length > 0}
 	<form
-		class="flex flex-1 flex-col overflow-y-hidden"
+		class="{parentClass} mx-4 space-y-4"
 		method="POST"
 		use:enhance
 		on:submit={() => {
 			allChecked = false;
 		}}
 	>
-		<div class="flex items-center p-4">
+		<div class="flex items-center gap-x-4">
 			<p class="flex-1">
 				<HelperText usePageStatus>{$message ?? ''}</HelperText>
 				{#if countOk === 0}
@@ -56,7 +56,7 @@
 			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 		</div>
 
-		<Scrollable class="mx-4 overflow-x-scroll">
+		<Scrollable class="overflow-x-scroll">
 			<table class="w-full table-auto">
 				<thead>
 					<tr class="bg-surface-100-800-token sticky top-0 text-sm">

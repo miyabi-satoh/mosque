@@ -3,21 +3,23 @@
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
+	import { focusTrap } from '@skeletonlabs/skeleton';
 
 	export let data: PageData;
 	const { form, message, errors, submitting, enhance } = superForm(data.form, {
 		taintedMessage: false
 	});
 	$: $submittingStore = $submitting;
+
+	let isFocused: boolean = true;
 </script>
 
 <ModalContainer title="Login">
-	<HelperText class="my-4 text-center" usePageStatus>
-		{$message ?? ''}
-	</HelperText>
-
-	<form method="POST" use:enhance>
-		<div class="my-4">
+	<form method="POST" class="space-y-4" use:enhance use:focusTrap={isFocused}>
+		<HelperText class="text-center" usePageStatus>
+			{$message ?? ''}
+		</HelperText>
+		<div>
 			<input
 				class="input"
 				class:input-error={$errors.username || $message}
@@ -34,7 +36,7 @@
 			</HelperText>
 		</div>
 
-		<div class="my-4">
+		<div>
 			<input
 				class="input"
 				class:input-error={$errors.password || $message}
@@ -51,8 +53,6 @@
 			</HelperText>
 		</div>
 
-		<div class="my-4">
-			<button class="variant-ghost-primary btn w-full" disabled={$submitting}>Submit</button>
-		</div>
+		<button class="variant-ghost-primary btn w-full" disabled={$submitting}>Submit</button>
 	</form>
 </ModalContainer>
