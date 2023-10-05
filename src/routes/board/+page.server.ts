@@ -35,7 +35,9 @@ const postSchema = z
 		}
 	);
 
-export const load = (async () => {
+export const load = (async ({ parent }) => {
+	const data = await parent();
+
 	const posts = await db.post.findMany({
 		orderBy: { updatedAt: 'desc' }
 	});
@@ -44,6 +46,7 @@ export const load = (async () => {
 
 	return {
 		form,
+		breadcrumbs: data.breadcrumbs,
 		posts: posts.map((post) => {
 			return {
 				...post,

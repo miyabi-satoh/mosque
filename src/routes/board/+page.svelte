@@ -151,9 +151,9 @@
 
 <svelte:window on:resize={handleResize} />
 {#if data.user}
-	<form method="POST" use:enhance>
+	<form method="POST" class="mx-4 mb-4" use:enhance>
 		<input type="hidden" name="id" value={$form.id} />
-		<div class="mx-4 mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 			<textarea
 				class="textarea sm:col-span-2"
 				class:input-error={$errors.content}
@@ -170,12 +170,12 @@
 			{#if $form.content}
 				<div class="sm:col-span-2">
 					<label class="label">
-						<span>Title</span>
 						<input
 							class="input"
 							class:input-error={$errors.title}
 							type="text"
 							name="title"
+							placeholder="Title"
 							bind:value={$form.title}
 							{...$constraints.title}
 						/>
@@ -191,7 +191,6 @@
 			{/if}
 		</div>
 	</form>
-	<hr />
 {/if}
 <Scrollable class="mx-4">
 	{#if data.posts.length > 0}
