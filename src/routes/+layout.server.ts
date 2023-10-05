@@ -1,6 +1,6 @@
 import { URLS } from '$lib/consts';
 import { createBuiltinUsers } from '$lib/server/lucia';
-import { hasAdminRole } from '$lib/utils';
+import { hasAdminRole, isMobile } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
@@ -8,7 +8,7 @@ type BreadCrumbT = {
 	label: string;
 	link: string;
 };
-export const load = (async ({ locals }) => {
+export const load = (async ({ locals, request }) => {
 	// create built-in users(admin, staff)
 	await createBuiltinUsers();
 
@@ -27,9 +27,11 @@ export const load = (async ({ locals }) => {
 	}
 
 	const breadcrumbs: BreadCrumbT[] = [{ label: 'Home', link: '/' }];
+
 	return {
 		user,
 		userMenus,
-		breadcrumbs
+		breadcrumbs,
+		isMobile: isMobile(request.headers.get('user-agent'))
 	};
 }) satisfies LayoutServerLoad;

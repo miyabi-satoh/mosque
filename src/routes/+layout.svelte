@@ -18,7 +18,7 @@
 		initializeStores,
 		storePopup
 	} from '@skeletonlabs/skeleton';
-	import { onMount, tick } from 'svelte';
+	import { tick } from 'svelte';
 	import '../app.css';
 	import type { LayoutData } from './$types';
 
@@ -44,16 +44,6 @@
 	$: overflowHidden = $innerScrollStore ? 'overflow-hidden' : '';
 	$: breadcrumbs = $page.data.breadcrumbs;
 	$: pathname = $page.url.pathname;
-
-	let isMobile = true;
-	onMount(() => {
-		if (browser) {
-			isMobile = (() => {
-				const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-				return regex.test(navigator.userAgent);
-			})();
-		}
-	});
 
 	// https://stackoverflow.com/questions/71564541/going-back-to-the-previous-page-with-goto-sveltekit-navigation
 	let previousPage: string = base;
@@ -124,8 +114,8 @@
 						<Icon icon="mdi:login" height="auto" />
 					</a>
 				{/if}
-				{#if user || !isMobile}
-					<a href={URLS.BOARD} title="Board" class="hidden sm:block">
+				{#if user || !data.isMobile}
+					<a href={URLS.BOARD} title="Board">
 						<Icon icon="mdi:bulletin-board" height="auto" />
 					</a>
 				{/if}

@@ -26,3 +26,11 @@ export function hasAdminRole(user: User): boolean {
 export function hasStaffRole(user: User): boolean {
 	return user.role === 'STAFF' || user.role === 'ADMIN';
 }
+
+const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+export function isMobile(ua: string | null): boolean {
+	if (ua) {
+		return regex.test(ua);
+	}
+	return true;
+}
