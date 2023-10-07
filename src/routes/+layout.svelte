@@ -109,13 +109,15 @@
 						{data.user.displayName}
 					</div>
 				{:else}
-					<a href={URLS.LOGIN} title="Login">
+					<a href={URLS.LOGIN} class="flex gap-x-2" title="Login">
 						<Icon icon="mdi:login" height="auto" />
+						<span class="hidden sm:inline">Login</span>
 					</a>
 				{/if}
 				{#if data.user || !data.isMobile}
-					<a href={URLS.BOARD} title="Board">
+					<a href={URLS.BOARD} title="Board" class="flex gap-x-2">
 						<Icon icon="mdi:bulletin-board" height="auto" />
+						<span class="hidden sm:inline">Board</span>
 					</a>
 				{/if}
 				<LightSwitch />
