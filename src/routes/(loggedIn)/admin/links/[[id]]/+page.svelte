@@ -114,7 +114,7 @@
 					<td class="flex items-center gap-x-2 p-2">
 						<a class="anchor" href={`${URLS.ADMIN_LINKS}/${link.id}`}>{link.title}</a>
 						<a class="anchor" href={link.url} target="_blank">
-							<Icon icon="mdi:open-in-new" height="auto" />
+							<Icon icon="mdi:open-in-new" />
 						</a>
 					</td>
 					<td class="p-2 text-right">{link.sortOrder}</td>
