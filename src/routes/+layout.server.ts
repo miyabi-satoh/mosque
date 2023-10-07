@@ -8,13 +8,13 @@ type BreadCrumbT = {
 	label: string;
 	link: string;
 };
-export const load = (async ({ locals, request }) => {
-	// create built-in users(admin, staff)
-	await createBuiltinUsers();
+export const load = (async ({ locals, request, depends }) => {
+	depends('auth:session');
 
 	// get session
 	const session = await locals.auth.validate();
 	const user = session?.user;
+	// console.log('user', user);
 
 	const userMenus = [];
 	if (user) {
@@ -24,6 +24,9 @@ export const load = (async ({ locals, request }) => {
 		}
 		userMenus.push([URLS.PROFILE, `Edit Profile`, 'mdi:account-edit']);
 		userMenus.push([URLS.PASSWD, `Change Password`, 'mdi:lock']);
+	} else {
+		// create built-in user
+		await createBuiltinUsers();
 	}
 
 	const breadcrumbs: BreadCrumbT[] = [{ label: 'Home', link: '/' }];

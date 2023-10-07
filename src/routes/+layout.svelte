@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import { afterNavigate } from '$app/navigation';
+	import { afterNavigate, invalidate } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { navigating, page } from '$app/stores';
 	import { LoadingOverlay, Navigation } from '$lib';
@@ -40,15 +40,14 @@
 	}
 
 	export let data: LayoutData;
-	$: user = data.user;
 	$: overflowHidden = $innerScrollStore ? 'overflow-hidden' : '';
 	$: breadcrumbs = $page.data.breadcrumbs;
-	$: pathname = $page.url.pathname;
 
 	// https://stackoverflow.com/questions/71564541/going-back-to-the-previous-page-with-goto-sveltekit-navigation
 	let previousPage: string = base;
 	afterNavigate(({ from }) => {
 		previousPage = from?.url.pathname || previousPage;
+		invalidate('auth:session');
 	});
 
 	// https://zenn.dev/gawarago/articles/f75f5113a3803d
@@ -80,13 +79,13 @@
 
 <Drawer width="w-64">
 	<div class="pt-12">
-		<Navigation loggedIn={!!user} userMenus={data.userMenus} />
+		<Navigation loggedIn={!!data.user} userMenus={data.userMenus} />
 	</div>
 </Drawer>
 
 <AppShell
 	slotFooter="text-surface-500-400-token text-right text-sm m-4"
-	slotSidebarLeft="w-0 {user ? 'md:w-64' : ''}"
+	slotSidebarLeft="w-0 {data.user ? 'md:w-64' : ''}"
 	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-3xl {overflowHidden}"
 	regionPage={overflowHidden}
 >
@@ -95,7 +94,7 @@
 		<AppBar background="bg-surface-50-900-token">
 			<svelte:fragment slot="lead">
 				<div class="flex items-center">
-					{#if user}
+					{#if data.user}
 						<button class="btn btn-sm pl-0 lg:hidden" on:click={drawerOpen}>
 							<Icon icon="mdi:menu" height="auto" />
 						</button>
@@ -104,17 +103,17 @@
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				{#if user}
+				{#if data.user}
 					<div class="flex gap-x-2">
 						<Icon icon="mdi:account-circle" height="auto" />
-						{user.displayName}
+						{data.user.displayName}
 					</div>
 				{:else}
 					<a href={URLS.LOGIN} title="Login">
 						<Icon icon="mdi:login" height="auto" />
 					</a>
 				{/if}
-				{#if user || !data.isMobile}
+				{#if data.user || !data.isMobile}
 					<a href={URLS.BOARD} title="Board">
 						<Icon icon="mdi:bulletin-board" height="auto" />
 					</a>
@@ -126,25 +125,24 @@
 
 	<!-- Left Sidebar Slot -->
 	<svelte:fragment slot="sidebarLeft">
-		<Navigation loggedIn={!!user} userMenus={data.userMenus} />
+		<Navigation loggedIn={!!data.user} userMenus={data.userMenus} />
 	</svelte:fragment>
 
 	<!-- Breadcrumbs -->
-	{#key pathname}
-		{#if breadcrumbs?.length > 1}
-			<ol class="breadcrumb mx-4 mb-8 text-sm">
-				{#each breadcrumbs as crumb, i}
-					<!-- If crumb index is less than the breadcrumb length minus 1 -->
-					{#if i < breadcrumbs.length - 1}
-						<li class="crumb"><a class="anchor" href={crumb.link}>{crumb.label}</a></li>
-						<li class="crumb-separator" aria-hidden>&rsaquo;</li>
-					{:else}
-						<li class="crumb">{crumb.label}</li>
-					{/if}
-				{/each}
-			</ol>
-		{/if}
-	{/key}
+	<!-- {#key pathname} -->
+	{#if breadcrumbs?.length > 1}
+		<ol class="breadcrumb mx-4 mb-8 text-sm">
+			{#each breadcrumbs as crumb, i}
+				<!-- If crumb index is less than the breadcrumb length minus 1 -->
+				{#if i < breadcrumbs.length - 1}
+					<li class="crumb"><a class="anchor" href={crumb.link}>{crumb.label}</a></li>
+					<li class="crumb-separator" aria-hidden>&rsaquo;</li>
+				{:else}
+					<li class="crumb">{crumb.label}</li>
+				{/if}
+			{/each}
+		</ol>
+	{/if}
 	<!-- Default Page Content Slot -->
 	<slot />
 
