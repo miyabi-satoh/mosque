@@ -57,6 +57,7 @@ export const actions: Actions = {
 				if (!found) {
 					// new user
 					// use code for username, password
+					// (initial password is same as username)
 					await auth.createUser({
 						key: {
 							providerId: PROVIDERID_USERNAME,

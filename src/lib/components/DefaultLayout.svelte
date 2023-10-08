@@ -17,8 +17,8 @@
 		initializeStores,
 		storePopup
 	} from '@skeletonlabs/skeleton';
-	import '../app.css';
-	import type { LayoutData } from './$types';
+	import '../../app.css';
+	import type { LayoutData } from '../../routes/$types';
 
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });

@@ -6,8 +6,11 @@
 	export let data: PageData;
 </script>
 
-<div class="mx-4 mb-4">
-	<a href={URLS.ADMIN_ACCOUNTS_CREATE} class="anchor">Create accounts from CSV data</a>
+<div class="mx-4 mb-4 flex items-center">
+	<a href={URLS.ADMIN_ACCOUNTS_CREATE} class="anchor flex-1">Create accounts from CSV data</a>
+	<form method="post" action="{URLS.ADMIN_ACCOUNTS}/print" target="_blank">
+		<button class="variant-ghost-primary btn">Print Selected Accounts</button>
+	</form>
 </div>
 <Scrollable class="mx-4">
 	<table class="w-full table-auto">
