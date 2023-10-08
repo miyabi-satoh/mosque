@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { enhance } from '$app/forms';
 	import { afterNavigate, invalidate } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { navigating, page } from '$app/stores';
@@ -18,7 +17,6 @@
 		initializeStores,
 		storePopup
 	} from '@skeletonlabs/skeleton';
-	import { tick } from 'svelte';
 	import '../app.css';
 	import type { LayoutData } from './$types';
 
@@ -29,14 +27,6 @@
 	const drawerStore = getDrawerStore();
 	async function drawerOpen() {
 		drawerStore.open({});
-		await tick();
-		const el = window.document.querySelector('.drawer') as HTMLDivElement;
-		if (el) {
-			el.click();
-		}
-	}
-	function drawerClose() {
-		drawerStore.close();
 	}
 
 	export let data: LayoutData;
@@ -62,20 +52,6 @@
 {#if $loadingStore}
 	<LoadingOverlay />
 {/if}
-
-<form
-	class="h-0 w-0"
-	method="POST"
-	action={URLS.LOGOUT}
-	use:enhance={() => {
-		return async ({ update }) => {
-			drawerClose();
-			update();
-		};
-	}}
->
-	<button type="submit" id="logout" />
-</form>
 
 <Drawer width="w-64">
 	<div class="pt-12">

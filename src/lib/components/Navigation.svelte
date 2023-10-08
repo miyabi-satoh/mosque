@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
+	import { URLS } from '$lib/consts';
 	import Icon from '@iconify/svelte';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 
@@ -26,10 +28,21 @@
 				</li>
 			{/each}
 			<li>
-				<label for="logout" class={itemClasses}>
-					<Icon icon="mdi:logout" height="auto" />
-					<span class="ml-2">Logout</span>
-				</label>
+				<form
+					method="POST"
+					action={URLS.LOGOUT}
+					use:enhance={() => {
+						return async ({ update }) => {
+							drawerClose();
+							update();
+						};
+					}}
+				>
+					<button class="w-full {itemClasses}">
+						<Icon icon="mdi:logout" height="auto" />
+						<span class="ml-2">Logout</span>
+					</button>
+				</form>
 			</li>
 		</ul>
 	</nav>
