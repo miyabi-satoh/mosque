@@ -114,7 +114,7 @@
 						<span class="hidden sm:inline">Login</span>
 					</a>
 				{/if}
-				{#if data.user || !data.isMobile}
+				{#if data.user || data.isWindows}
 					<a href={URLS.BOARD} title="Board" class="flex gap-x-2">
 						<Icon icon="mdi:bulletin-board" height="auto" />
 						<span class="hidden sm:inline">Board</span>

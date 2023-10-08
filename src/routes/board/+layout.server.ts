@@ -6,7 +6,7 @@ import type { LayoutServerLoad } from './$types';
 
 export const load = (async ({ parent }) => {
 	const data = await parent();
-	if (data.user || !data.isMobile) {
+	if (data.user || data.isWindows) {
 		data.breadcrumbs.push({ label: 'Board', link: URLS.BOARD });
 
 		return {

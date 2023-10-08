@@ -1,6 +1,6 @@
 import { URLS } from '$lib/consts';
 import { createBuiltinUsers } from '$lib/server/lucia';
-import { hasAdminRole, isMobile } from '$lib/utils';
+import { hasAdminRole, isWindows } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
@@ -35,6 +35,6 @@ export const load = (async ({ locals, request, depends }) => {
 		user,
 		userMenus,
 		breadcrumbs,
-		isMobile: isMobile(request.headers.get('user-agent'))
+		isWindows: isWindows(request.headers.get('user-agent'))
 	};
 }) satisfies LayoutServerLoad;
