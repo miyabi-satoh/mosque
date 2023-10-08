@@ -1,7 +1,5 @@
 import type { Exam, TempResource } from '@prisma/client';
 
-import { categories } from '$lib/consts';
-
 type ColumnKeys = keyof Pick<
 	TempResource,
 	'category' | 'grade' | 'numOf' | 'path' | 'publisher' | 'shortTitle' | 'title' | 'year'
@@ -47,13 +45,18 @@ export class CTestConfig extends ExamConfigBase {
 		);
 		if (m && m.groups) {
 			const numGrade = Number(m.groups.grade);
-			const category = m.groups.subj === '英語' ? categories.enOngen : categories.jaOngen;
 			retObj.year = Number(m.groups.year);
 			retObj.numOf = Number(m.groups.numOf);
 			retObj.grade = m.groups.g === '中' ? numGrade + 6 : numGrade;
-			retObj.category = category.value;
-			retObj.title = category.label;
-			retObj.shortTitle = category.shortLabel ?? category.label;
+			if (m.groups.subj === '英語') {
+				retObj.category = 2;
+				retObj.title = '英語 リスニング問題';
+				retObj.shortTitle = '英語音源';
+			} else {
+				retObj.category = 1;
+				retObj.title = '国語 聞き取り問題';
+				retObj.shortTitle = '国語音源';
+			}
 			return retObj;
 		}
 		return retObj;
@@ -84,13 +87,18 @@ export class EikenConfig extends ExamConfigBase {
 				/^(?<year>\d{4})-(?<numOf>\d)(?<ji>-1ji)?-(?<p>p)?(?<grade>\d)kyu.pdf$/i
 			);
 			if (m && m.groups) {
-				const category = m.groups.ji ? categories.mondai : categories.kaitou;
 				retObj.year = Number(m.groups.year);
 				retObj.numOf = Number(m.groups.numOf);
 				retObj.grade = Number(m.groups.grade) * 10 + (m.groups.p ? 5 : 0);
-				retObj.category = category.value;
-				retObj.title = category.label;
-				retObj.shortTitle = category.label;
+				if (m.groups.ji) {
+					retObj.category = 100;
+					retObj.title = '問題冊子';
+					retObj.shortTitle = '問題冊子';
+				} else {
+					retObj.category = 200;
+					retObj.title = '解答';
+					retObj.shortTitle = '解答';
+				}
 				return retObj;
 			}
 		}
@@ -98,11 +106,16 @@ export class EikenConfig extends ExamConfigBase {
 		{
 			const m = filename.match(/^(?<p>p)?(?<grade>\d)kyu(?<sun>-sunc?)?.pdf/i);
 			if (m && m.groups) {
-				const category = m.groups.sun ? categories.kaitou : categories.mondai;
 				retObj.grade = Number(m.groups.grade) * 10 + (m.groups.p ? 5 : 0);
-				retObj.category = category.value;
-				retObj.title = category.label;
-				retObj.shortTitle = category.label;
+				if (m.groups.sun) {
+					retObj.category = 200;
+					retObj.title = '解答';
+					retObj.shortTitle = '解答';
+				} else {
+					retObj.category = 100;
+					retObj.title = '問題冊子';
+					retObj.shortTitle = '問題冊子';
+				}
 				return retObj;
 			}
 		}
@@ -110,12 +123,11 @@ export class EikenConfig extends ExamConfigBase {
 		{
 			const m = filename.match(/^(?<p>p?)(?<grade>\d)q-?part(?<part>\d).mp3$/i);
 			if (m && m.groups) {
-				const category = categories.ongen;
 				const part = Number(m.groups.part);
 				retObj.grade = Number(m.groups.grade) * 10 + (m.groups.p ? 5 : 0);
-				retObj.category = category.value + part;
-				retObj.title = category.label + `(Part${part})`;
-				retObj.shortTitle = category.shortLabel + `(Part${part})`;
+				retObj.category = part;
+				retObj.title = `リスニング音源(Part${part})`;
+				retObj.shortTitle = `音源(${part})`;
 				return retObj;
 			}
 		}
@@ -137,7 +149,7 @@ class KyoteConfig extends ExamConfigBase {
 			retObj.year = Number(m.groups.year);
 			retObj.numOf = 0;
 			retObj.grade = 0;
-			retObj.category = categories.ongen.value;
+			retObj.category = 0;
 			retObj.title = filename;
 			retObj.shortTitle = filename;
 
