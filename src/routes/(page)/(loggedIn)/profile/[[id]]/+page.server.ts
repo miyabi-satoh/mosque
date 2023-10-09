@@ -13,12 +13,12 @@ import { hasAdminRole } from '$lib/utils';
 import type { Actions, PageServerLoad } from './$types';
 
 const schema = z.object({
-	username: z.string().min(4),
-	displayName: z.string().min(2),
+	username: z.string().min(4).max(16),
+	displayName: z.string().min(2).max(16),
 	password: z.string().min(1),
 	// TODO: add email
 	// email: z.string().email().nullish().or(z.literal('')),
-	fullName: z.string().nullish(),
+	fullName: z.string().max(16).nullish(),
 	role: UserRoleEnumSchema.optional(),
 	newPassword: z.string().optional()
 });
@@ -58,9 +58,39 @@ export const actions: Actions = {
 		if (!session) {
 			throw error(400, 'Not found');
 		}
+		// set user id
+		const userId = params.id ?? session.user.userId;
 
 		// validation schema
 		const updateSchema = schema.extend({
+			username: schema.shape.username.refine(async (val) => {
+				try {
+					const count = await db.user.count({
+						where: {
+							username: val,
+							id: { not: userId }
+						}
+					});
+					return count === 0;
+				} catch (e) {
+					console.log(e);
+				}
+				return false;
+			}, 'The specified ID is already in use.'),
+			displayName: schema.shape.displayName.refine(async (val) => {
+				try {
+					const count = await db.user.count({
+						where: {
+							displayName: val,
+							id: { not: userId }
+						}
+					});
+					return count === 0;
+				} catch (e) {
+					console.log(e);
+				}
+				return false;
+			}, 'The specified name is already in use.'),
 			password: schema.shape.password.refine(async (val) => {
 				if (val.length > 0) {
 					try {
@@ -82,7 +112,6 @@ export const actions: Actions = {
 		}
 
 		try {
-			const userId = params.id ?? session.user.userId;
 			// get user
 			const user = await auth.getUser(userId);
 			const id = `${PROVIDERID_USERNAME}:${user.username}`;
@@ -123,7 +152,6 @@ export const actions: Actions = {
 
 			return message(form, 'Account details have been saved.');
 		} catch (e) {
-			// todo: unique violation
 			console.log(e);
 		}
 		return message(form, 'Failed to save', {
