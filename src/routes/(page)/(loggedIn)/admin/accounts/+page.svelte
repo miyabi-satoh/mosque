@@ -34,7 +34,7 @@
 			<thead>
 				<tr class="bg-surface-100-800-token sticky top-0">
 					<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">
-						<input type="checkbox" class="checkbox" bind:checked={allChecked} />
+						<input type="checkbox" class="checkbox" name="allCheck" bind:checked={allChecked} />
 					</th>
 					<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">Login ID</th>
 					<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">Display Name</th>
