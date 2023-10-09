@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import Icon from '@iconify/svelte';
 	import { tick } from 'svelte';
+	import './style.postcss';
 
 	export let src: string;
 	export let title: string;
@@ -109,36 +110,3 @@
 		/>
 	</div>
 </div>
-
-<style lang="postcss">
-	input[type='range'] {
-		@apply bg-surface-400-500-token h-2 rounded bg-no-repeat;
-		appearance: none;
-		background-image: linear-gradient(#38bdf8, #38bdf8);
-		background-size: 0% 100%;
-		box-shadow: 0px 1px 1px rgba(255, 255, 255, 0.06);
-	}
-
-	input[type='range']::-webkit-slider-thumb,
-	input[type='range']::-moz-range-thumb,
-	input[type='range']::-ms-thumb {
-		@apply h-6 w-6 cursor-ew-resize rounded-[50%];
-		-webkit-appearance: none;
-		appearance: none;
-		-moz-appearance: none;
-		box-shadow:
-			0px 1px 3px rgba(0, 0, 0, 0.1),
-			0px 1px 2px rgba(0, 0, 0, 0.06);
-		-webkit-transition: background 0.3s ease-in-out;
-		transition: background 0.3s ease-in-out;
-	}
-
-	input[type='range']::-webkit-slider-runnable-track,
-	input[type='range']::-moz-range-track,
-	input[type='range']::-ms-track {
-		@apply border-none bg-transparent shadow-none;
-		-webkit-appearance: none;
-		appearance: none;
-		-moz-appearance: none;
-	}
-</style>
