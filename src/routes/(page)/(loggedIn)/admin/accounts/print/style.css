@@ -1,5 +1,3 @@
-@import '../../../../../../app.css';
-
 @page {
 	size: A4 portrait;
 	/* ヘッダー・フッターが出力されないように */

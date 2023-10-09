@@ -17,7 +17,7 @@
 		initializeStores,
 		storePopup
 	} from '@skeletonlabs/skeleton';
-	import '../../app.css';
+	import '../../app.postcss';
 	import type { LayoutData } from '../../routes/$types';
 
 	initializeStores();
