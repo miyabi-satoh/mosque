@@ -19,10 +19,8 @@
 	} from '@skeletonlabs/skeleton';
 	import '../../app.postcss';
 	import type { LayoutData } from '../../routes/$types';
-	import { onMount } from 'svelte';
-	import { isWindows } from '$lib/utils';
-
-	initializeStores();
+	
+initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	// https://www.skeleton.dev/blog/how-to-implement-a-responsive-sidebar-drawer
@@ -45,13 +43,6 @@
 	// https://zenn.dev/gawarago/articles/f75f5113a3803d
 	$: if (browser && !!$navigating) $submittingStore = false;
 	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
-
-	let showBoard = false;
-	onMount(() => {
-		if (browser) {
-			showBoard = isWindows(window.navigator.userAgent);
-		}
-	});
 </script>
 
 <svelte:head>
@@ -99,7 +90,7 @@
 						<span class="hidden sm:inline">Login</span>
 					</a>
 				{/if}
-				{#if data.user || showBoard}
+				{#if data.showBoard}
 					<a href={URLS.BOARD} title="Board" class="hidden gap-x-2 sm:flex">
 						<Icon icon="mdi:bulletin-board" height="auto" />
 						<span class="hidden sm:inline">Board</span>
