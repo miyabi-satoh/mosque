@@ -3,9 +3,8 @@
 	import { URLS } from '$lib/consts';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	import { browser } from '$app/environment';
-
-	export let data: PageData;
+	
+export let data: PageData;
 	let allChecked: boolean = false;
 
 	const { form } = superForm(data.form);
