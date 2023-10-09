@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { HelperText, Scrollable, parentClass } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -11,14 +10,9 @@
 	const { form, message, submitting, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 
-	$: if (browser) {
-		updateChecked(allChecked);
-	}
+	$: updateChecked(allChecked);
 	function updateChecked(checked: boolean) {
-		window.document.querySelectorAll(`.entry`).forEach((e: Element) => {
-			const el = e as HTMLInputElement;
-			el.checked = checked;
-		});
+		$form.checked = checked ? data.columnValues.map((v) => v.id) : [];
 	}
 
 	type ColumnValues = (typeof data.columnValues)[0];

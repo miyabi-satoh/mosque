@@ -10,15 +10,9 @@
 
 	const { form } = superForm(data.form);
 
-	$: if (browser) {
-		updateChecked(allChecked);
-	}
+	$: updateChecked(allChecked);
 	function updateChecked(checked: boolean) {
-		if (checked) {
-			$form.checked = data.users.map((u) => u.id);
-		} else {
-			$form.checked = [];
-		}
+		$form.checked = checked ? data.users.map((u) => u.id) : [];
 	}
 </script>
 
