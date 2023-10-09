@@ -1,45 +1,21 @@
 <script lang="ts">
+	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
+	import './style.css';
 
 	export let data: PageData;
+	const { form } = superForm(data.form);
 </script>
 
-<div>
-	{@html data.svg}
+<div id="svg-wrapper">
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html $form.svg ?? ''}
 </div>
 
-<style lang="scss">
-	@page {
-		size: A4 portrait;
-		margin: 0; // ヘッダー・フッターが出力されないように
-	}
-
-	:global(*) {
-		margin: 0;
-		padding: 0;
-		user-select: none;
-	}
-
-	:global(body) {
-		width: 210mm;
-		// color-adjust: exact;
-		> :global(svg) {
-			width: 210mm;
-			height: 295.5mm; // 297mmだと2ページ目にはみ出してしまうので微調整
-			page-break-after: always;
-		}
-	}
-
-	// プレビュー用
+<style lang="postcss">
 	@media screen {
-		:global(body) {
-			background: #ccc;
-			margin: 0 auto;
-			> :global(svg) {
-				background: #fff;
-				box-shadow: 0 0.5mm 2mm rgba(0, 0, 0, 0.3);
-				margin-top: 5mm;
-			}
+		#svg-wrapper {
+			@apply flex h-full w-full flex-col items-center overflow-scroll;
 		}
 	}
 </style>
