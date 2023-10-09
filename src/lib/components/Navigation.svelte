@@ -17,14 +17,18 @@
 </script>
 
 {#if loggedIn}
-	<nav class="p-4">
+	<nav class="px-4">
 		<ul>
 			{#each userMenus as [href, label, icon]}
 				<li>
-					<a {href} class="{itemClasses} {classesActive(href)}" on:click={drawerClose}>
-						<Icon {icon} height="auto" />
-						<span class="ml-2">{label}</span>
-					</a>
+					{#if href === ''}
+						<hr class="my-2" />
+					{:else}
+						<a {href} class="{itemClasses} {classesActive(href)}" on:click={drawerClose}>
+							<Icon {icon} height="auto" />
+							<span class="ml-2">{label}</span>
+						</a>
+					{/if}
 				</li>
 			{/each}
 			<li>

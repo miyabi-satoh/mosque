@@ -1,6 +1,6 @@
 import { URLS } from '$lib/consts';
 import { createBuiltinUsers } from '$lib/server/lucia';
-import { hasAdminRole, isWindows } from '$lib/utils';
+import { hasAdminRole } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
@@ -8,7 +8,7 @@ type BreadCrumbT = {
 	label: string;
 	link: string;
 };
-export const load = (async ({ locals, request, depends }) => {
+export const load = (async ({ locals, depends }) => {
 	depends('auth:session');
 
 	// get session
@@ -21,9 +21,13 @@ export const load = (async ({ locals, request, depends }) => {
 		// add user menu items if user is authenticated
 		if (hasAdminRole(user)) {
 			userMenus.push([URLS.ADMIN, `Dashboard`, 'mdi:view-dashboard']);
+			userMenus.push(['']);
 		}
+		userMenus.push([URLS.BOARD, `Board`, 'mdi:bulletin-board']);
+		userMenus.push(['']);
 		userMenus.push([URLS.PROFILE, `Edit Profile`, 'mdi:account-edit']);
 		userMenus.push([URLS.PASSWD, `Change Password`, 'mdi:lock']);
+		userMenus.push(['']);
 	} else {
 		// create built-in user
 		await createBuiltinUsers();
@@ -34,7 +38,6 @@ export const load = (async ({ locals, request, depends }) => {
 	return {
 		user,
 		userMenus,
-		breadcrumbs,
-		isWindows: isWindows(request.headers.get('user-agent'))
+		breadcrumbs
 	};
 }) satisfies LayoutServerLoad;

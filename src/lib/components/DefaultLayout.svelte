@@ -19,6 +19,8 @@
 	} from '@skeletonlabs/skeleton';
 	import '../../app.postcss';
 	import type { LayoutData } from '../../routes/$types';
+	import { onMount } from 'svelte';
+	import { isWindows } from '$lib/utils';
 
 	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
@@ -43,6 +45,13 @@
 	// https://zenn.dev/gawarago/articles/f75f5113a3803d
 	$: if (browser && !!$navigating) $submittingStore = false;
 	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
+
+	let showBoard = false;
+	onMount(() => {
+		if (browser) {
+			showBoard = isWindows(window.navigator.userAgent);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -54,14 +63,14 @@
 {/if}
 
 <Drawer width="w-64">
-	<div class="pt-12">
+	<div class="pt-8">
 		<Navigation loggedIn={!!data.user} userMenus={data.userMenus} />
 	</div>
 </Drawer>
 
 <AppShell
 	slotFooter="text-surface-500-400-token text-right text-sm m-4"
-	slotSidebarLeft="w-0 {data.user ? 'md:w-64' : ''}"
+	slotSidebarLeft="w-0 {data.user ? 'lg:w-64' : ''}"
 	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-3xl {overflowHidden}"
 	regionPage={overflowHidden}
 >
@@ -89,12 +98,12 @@
 						<Icon icon="mdi:login" height="auto" />
 						<span class="hidden sm:inline">Login</span>
 					</a>
-				{/if}
-				{#if data.user || data.isWindows}
-					<a href={URLS.BOARD} title="Board" class="flex gap-x-2">
-						<Icon icon="mdi:bulletin-board" height="auto" />
-						<span class="hidden sm:inline">Board</span>
-					</a>
+					{#if showBoard}
+						<a href={URLS.BOARD} title="Board" class="flex gap-x-2">
+							<Icon icon="mdi:bulletin-board" height="auto" />
+							<span class="hidden sm:inline">Board</span>
+						</a>
+					{/if}
 				{/if}
 				<LightSwitch />
 			</svelte:fragment>
