@@ -15,9 +15,9 @@
 		$form.checked = checked ? data.columnValues.map((v) => v.id) : [];
 	}
 
-	type ColumnValues = (typeof data.columnValues)[0];
-	function showValue(values: ColumnValues, key: string) {
-		return `${values[key as keyof ColumnValues]}`;
+	type ColumnValue = PageData['columnValues'][0];
+	function showValue(value: ColumnValue, key: string) {
+		return `${value[key as keyof ColumnValue]}`;
 	}
 
 	$: countOk = data.columnValues.filter((e) => e.state === 'ok').length;
