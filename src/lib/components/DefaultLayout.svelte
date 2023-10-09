@@ -98,12 +98,12 @@
 						<Icon icon="mdi:login" height="auto" />
 						<span class="hidden sm:inline">Login</span>
 					</a>
-					{#if showBoard}
-						<a href={URLS.BOARD} title="Board" class="flex gap-x-2">
-							<Icon icon="mdi:bulletin-board" height="auto" />
-							<span class="hidden sm:inline">Board</span>
-						</a>
-					{/if}
+				{/if}
+				{#if data.user || showBoard}
+					<a href={URLS.BOARD} title="Board" class="hidden gap-x-2 sm:flex">
+						<Icon icon="mdi:bulletin-board" height="auto" />
+						<span class="hidden sm:inline">Board</span>
+					</a>
 				{/if}
 				<LightSwitch />
 			</svelte:fragment>
