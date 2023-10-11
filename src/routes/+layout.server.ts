@@ -1,4 +1,6 @@
-import { EXPERIMENTAL_BOARD } from '$env/static/private';
+import { dev } from '$app/environment';
+
+import { FEATURE_BOARD } from '$env/static/private';
 
 import { URLS } from '$lib/consts';
 import { createBuiltinUsers } from '$lib/server/lucia';
@@ -11,8 +13,6 @@ type BreadCrumbT = {
 	link: string;
 };
 
-const experimentalBoard: boolean = EXPERIMENTAL_BOARD === 'true';
-
 export const load = (async ({ locals, request, depends }) => {
 	depends('auth:session');
 
@@ -21,7 +21,11 @@ export const load = (async ({ locals, request, depends }) => {
 	const user = session?.user;
 
 	// enable Board or not
-	const showBoard = experimentalBoard && (user || isWindows(request.headers.get('User-Agent')));
+	const showBoard = ((): boolean => {
+		if (dev) return true;
+		if (FEATURE_BOARD === 'true') return !!user || isWindows(request.headers.get('User-Agent'));
+		return false;
+	})();
 
 	// add user menu items if user is authenticated
 	const userMenus = [];
