@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { PROVIDERID_USERNAME } from '$lib/consts';
 import { db } from '$lib/server/db';
-import { auth } from '$lib/server/lucia';
+import { auth, defaultUserAttributes } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -65,11 +65,9 @@ export const actions: Actions = {
 							password: user.code
 						},
 						attributes: {
+							...defaultUserAttributes,
 							username: user.code,
 							fullName: user.fullName,
-							role: 'USER',
-							displayName: null,
-							email: null,
 							code: user.code
 						}
 					});
