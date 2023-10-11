@@ -26,7 +26,7 @@
 
 	// https://www.skeleton.dev/blog/how-to-implement-a-responsive-sidebar-drawer
 	const drawerStore = getDrawerStore();
-	async function drawerOpen() {
+	function drawerOpen(): void {
 		drawerStore.open({});
 	}
 

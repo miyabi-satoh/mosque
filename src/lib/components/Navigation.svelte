@@ -13,7 +13,8 @@
 	export let userMenus: string[][];
 	const itemClasses = 'flex cursor-pointer rounded-full px-4 py-2 hover:bg-primary-500/10';
 
-	$: classesActive = (href: string) => (href === $page.url.pathname ? '!bg-primary-500' : '');
+	$: classesActive = (href: string): string =>
+		href === $page.url.pathname ? '!bg-primary-500' : '';
 </script>
 
 {#if loggedIn}

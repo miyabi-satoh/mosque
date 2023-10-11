@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import Icon from '@iconify/svelte';
 	import { tick } from 'svelte';
 	import './style.postcss';
@@ -8,10 +7,11 @@
 	export let title: string;
 	export let paused: boolean = true;
 
+	let rangeEl: HTMLInputElement;
 	let time = 0;
 	let duration = 0;
 
-	function format(t: number) {
+	function format(t: number): string {
 		if (isNaN(t)) return '...';
 
 		const minutes = Math.floor(t / 60);
@@ -20,53 +20,30 @@
 		return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
 	}
 
-	function handleInputRange(event: Event) {
-		const target = event.target as HTMLInputElement;
-		time = Number(target.value);
-	}
-
-	function handleChangeRange(event: Event) {
-		const target = event.target as HTMLInputElement;
-		time = Number(target.value);
-	}
-
-	$: if (time >= 0) {
-		updateRangeBackground();
-	}
-	async function updateRangeBackground() {
-		if (browser) {
-			await tick();
-			const e = window.document.getElementById('range-audio') as HTMLInputElement;
-			if (e) {
-				const min = Number(e.min);
-				const max = Number(e.max);
-				const val = Number(e.value);
-				if (max - min > 0) {
-					e.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
-				} else {
-					e.style.backgroundSize = '0% 100%';
-				}
-			}
-		}
-	}
-
 	$: disabled = !src;
 	$: if (disabled) {
 		time = duration = 0;
+	}
+	$: if (time >= 0) {
 		updateRangeBackground();
+	}
+	async function updateRangeBackground(): Promise<void> {
+		if (rangeEl) {
+			await tick();
+			const min = Number(rangeEl.min);
+			const max = Number(rangeEl.max);
+			const val = Number(rangeEl.value);
+			if (max - min > 0) {
+				rangeEl.style.backgroundSize = ((val - min) * 100) / (max - min) + '% 100%';
+			} else {
+				rangeEl.style.backgroundSize = '0% 100%';
+			}
+		}
 	}
 </script>
 
 <div class="flex flex-col items-center gap-x-4 sm:flex-row">
-	<audio
-		{src}
-		bind:currentTime={time}
-		bind:duration
-		bind:paused
-		on:ended={() => {
-			time = 0;
-		}}
-	/>
+	<audio {src} bind:currentTime={time} bind:duration bind:paused on:ended={() => (time = 0)} />
 
 	<div class="flex justify-center gap-x-4">
 		<button {disabled} class="btn hidden px-2 sm:inline-flex" on:click={() => (time = 0)}>
@@ -101,9 +78,8 @@
 			{disabled}
 			id="range-audio"
 			type="range"
-			value={time}
-			on:input={handleInputRange}
-			on:change={handleChangeRange}
+			bind:this={rangeEl}
+			bind:value={time}
 			min="0"
 			max={duration}
 			class="w-full"

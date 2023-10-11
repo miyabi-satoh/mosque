@@ -6,7 +6,7 @@ export const convertFullWidthNumbersToHalf = (() => {
 	const diff = '０'.charCodeAt(0) - '0'.charCodeAt(0);
 
 	// return the function
-	return (text: string) =>
+	return (text: string): string =>
 		text.replace(/[０-９]/g, (m) => String.fromCharCode(m.charCodeAt(0) - diff));
 })();
 
