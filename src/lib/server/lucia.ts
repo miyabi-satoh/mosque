@@ -59,7 +59,7 @@ export const defaultUserAttributes: Omit<User, 'id'> = {
 } as const;
 
 // create built-in users
-export async function createBuiltinUsers() {
+export async function createBuiltinUsers(): Promise<void> {
 	const count = await db.user.count();
 	if (count === 0) {
 		const users = [

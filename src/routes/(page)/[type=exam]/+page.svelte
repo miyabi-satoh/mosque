@@ -88,7 +88,7 @@
 		return set.entries();
 	}
 
-	async function handleClickPlayPause(res: ResourceT) {
+	async function onPlayPauseClick(res: ResourceT) {
 		if (audioSrc === res.url) {
 			audioPaused = !audioPaused;
 		} else {
@@ -148,7 +148,7 @@
 		$submittingStore = false;
 	}
 
-	function handleClearClick() {
+	function onClearClick() {
 		selectedGrade = selectedYear = selectedNumOf = '';
 		resources = [];
 		audioPaused = true;
@@ -199,7 +199,7 @@
 				</select>
 			{/if}
 
-			<button class="variant-filled btn" on:click={handleClearClick}>Clear</button>
+			<button class="variant-filled btn" on:click={onClearClick}>Clear</button>
 		</div>
 
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -212,7 +212,7 @@
 						<div class="flex items-center">
 							<h2 class="flex-1">{res.title}</h2>
 							<button
-								on:click={() => handleClickPlayPause(res)}
+								on:click={() => onPlayPauseClick(res)}
 								disabled={!res.url}
 								class:variant-filled-primary={audioSrc.endsWith(res.url)}
 								class:variant-filled-secondary={!audioSrc.endsWith(res.url)}

@@ -3,14 +3,14 @@
 	import { URLS } from '$lib/consts';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	
-export let data: PageData;
+
+	export let data: PageData;
 	let allChecked: boolean = false;
 
 	const { form } = superForm(data.form);
 
 	$: updateChecked(allChecked);
-	function updateChecked(checked: boolean) {
+	function updateChecked(checked: boolean): void {
 		$form.checked = checked ? data.users.map((u) => u.id) : [];
 	}
 </script>

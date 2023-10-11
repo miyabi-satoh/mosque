@@ -20,7 +20,7 @@
 	const { form, message, errors, submitting, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 
-	function handleChangeAvatar(event: Event) {
+	function onFileChange(event: Event): void {
 		const inp = event.target as HTMLInputElement;
 		if (inp.files) {
 			console.log(`reader.onload`);
@@ -59,7 +59,7 @@
 				name="select-image"
 				accept="image/*"
 				multiple={false}
-				on:change={handleChangeAvatar}
+				on:change={onFileChange}
 			>
 				{#if $form.avatar}
 					<img src={$form.avatar} class="w-full rounded-xl" alt="avatar" />

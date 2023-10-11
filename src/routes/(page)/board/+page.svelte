@@ -52,8 +52,7 @@
 		return 1;
 	}
 
-	function handleBlurTextarea() {
-		console.log(`handleBlurTextarea`);
+	function onTextareaBlur() {
 		focusOnTextarea = false;
 		const content = $form.name.replace(/\n{2,}/g, '\n').trim();
 		textareaRows = calcRows(focusOnTextarea, content);
@@ -69,7 +68,7 @@
 		textareaRows = 1;
 	}
 
-	function handleClickCancel() {
+	function onCancelClick() {
 		$form = {
 			id: undefined,
 			name: '',
@@ -80,7 +79,7 @@
 		// currentPost = undefined;
 	}
 
-	async function handleClickEdit(post: Channel) {
+	async function onEditClick(post: Channel) {
 		// currentPost = post;
 		$form = {
 			...post,
@@ -96,7 +95,7 @@
 		textareaRows = calcRows(true, post.name);
 	}
 
-	function handleClickDelete(post: Channel) {
+	function onDeleteClick(post: Channel) {
 		// currentPost = post;
 		$form = {
 			...post,
@@ -108,7 +107,7 @@
 		return formatDistanceToNow(date, { locale: ja, addSuffix: true });
 	}
 
-	async function handleResize() {
+	async function onWindowResize() {
 		const elements = window.document.querySelectorAll('.truncate');
 		elements.forEach((el) => {
 			const e = el as HTMLElement;
@@ -142,12 +141,12 @@
 
 	onMount(() => {
 		if (browser) {
-			handleResize();
+			onWindowResize();
 		}
 	});
 </script>
 
-<svelte:window on:resize={handleResize} />
+<svelte:window on:resize={onWindowResize} />
 {#if data.user}
 	<form method="POST" class="mx-4 mb-4" use:enhance>
 		<input type="hidden" name="id" value={$form.id} />
@@ -161,7 +160,7 @@
 				placeholder="Message"
 				bind:value={$form.name}
 				on:focus={() => (focusOnTextarea = true)}
-				on:blur={handleBlurTextarea}
+				on:blur={onTextareaBlur}
 				{...$constraints.name}
 			/>
 
@@ -181,9 +180,7 @@
 					<HelperText>{$errors.description ? $errors.description[0] : ''}</HelperText>
 				</div>
 				<div class="mb-1 flex justify-end gap-x-4 sm:col-span-2">
-					<button class="variant-filled btn" on:click|preventDefault={handleClickCancel}
-						>Cancel</button
-					>
+					<button class="variant-filled btn" on:click|preventDefault={onCancelClick}>Cancel</button>
 					<button class="variant-filled-primary btn">Save</button>
 				</div>
 			{/if}
@@ -212,10 +209,10 @@
 							{channel.description}
 						</p>
 						<div class="flex justify-end gap-x-4">
-							<button class="variant-filled-primary btn" on:click={() => handleClickEdit(channel)}
+							<button class="variant-filled-primary btn" on:click={() => onEditClick(channel)}
 								>Edit</button
 							>
-							<button class="variant-filled-error btn" on:click={() => handleClickDelete(channel)}
+							<button class="variant-filled-error btn" on:click={() => onDeleteClick(channel)}
 								>Delete</button
 							>
 						</div>

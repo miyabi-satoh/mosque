@@ -98,11 +98,11 @@
 	}
 
 	let pixelCrop: CropArea;
-	function handleCropComplete(e: CustomEvent) {
+	function onCropComplete(e: CustomEvent) {
 		pixelCrop = e.detail.pixels;
 	}
 
-	async function handleClickOK() {
+	async function onOkClick() {
 		const croppedImage = await getCroppedImg($modalStore[0].meta.image, pixelCrop);
 		if ($modalStore[0].response) {
 			$modalStore[0].response(croppedImage);
@@ -122,14 +122,14 @@
 				minZoom={0.1}
 				maxZoom={10}
 				cropSize={{ width: 128, height: 128 }}
-				on:cropcomplete={handleCropComplete}
+				on:cropcomplete={onCropComplete}
 			/>
 		</div>
 		<footer class="modal-footer {parent.regionFooter}">
 			<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}
 				>{parent.buttonTextCancel}</button
 			>
-			<button class="btn {parent.buttonPositive}" on:click={handleClickOK}>OK</button>
+			<button class="btn {parent.buttonPositive}" on:click={onOkClick}>OK</button>
 		</footer>
 	</div>
 {/if}

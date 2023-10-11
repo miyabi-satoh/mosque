@@ -4,7 +4,7 @@ import { createTransport } from 'nodemailer';
 
 import { MAIL_ACCOUNT, MAIL_PASSWORD } from '$env/static/private';
 
-export function searchFiles(dirPath: string, ext: RegExp) {
+export function searchFiles(dirPath: string, ext: RegExp): string[] {
 	const allDirents = fs.readdirSync(dirPath, { withFileTypes: true });
 
 	const files: string[] = [];
@@ -22,7 +22,7 @@ export function searchFiles(dirPath: string, ext: RegExp) {
 	return files;
 }
 
-export async function sendmail(to: string, subject: string, text: string) {
+export async function sendmail(to: string, subject: string, text: string): Promise<void> {
 	const transporter = createTransport({
 		port: 465,
 		host: 'smtp.gmail.com',

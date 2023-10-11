@@ -14,7 +14,7 @@
 
 	let hasTitleFocus: boolean = false;
 	$: if ($form.url.match(/^https?:\/\/[^/]/) && !$form.title) fetchTitle();
-	async function fetchTitle() {
+	async function fetchTitle(): Promise<void> {
 		try {
 			const url = encodeURIComponent($form.url);
 			const res = await fetch(`${URLS.API_FETCH}${url}`);

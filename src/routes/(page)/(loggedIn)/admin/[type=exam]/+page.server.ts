@@ -41,7 +41,7 @@ const parseSchema = ResourceSchema.pick({
 	path: true
 });
 
-function getBaseDir(exam: Exam) {
+function getBaseDir(exam: Exam): string {
 	return (() => {
 		switch (exam.examType) {
 			case 'ctest':
@@ -56,7 +56,11 @@ function getBaseDir(exam: Exam) {
 		.join(path.sep);
 }
 
-async function refreshTempResources(db: PrismaInnerTransaction, sessionId: string, exam: Exam) {
+async function refreshTempResources(
+	db: PrismaInnerTransaction,
+	sessionId: string,
+	exam: Exam
+): Promise<void> {
 	// clear resouce-temp
 	await db.tempResource.deleteMany({
 		where: {

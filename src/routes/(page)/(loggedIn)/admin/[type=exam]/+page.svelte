@@ -11,12 +11,12 @@
 	$: $submittingStore = $submitting;
 
 	$: updateChecked(allChecked);
-	function updateChecked(checked: boolean) {
+	function updateChecked(checked: boolean): void {
 		$form.checked = checked ? data.columnValues.map((v) => v.id) : [];
 	}
 
 	type ColumnValue = PageData['columnValues'][0];
-	function showValue(value: ColumnValue, key: string) {
+	function showValue(value: ColumnValue, key: string): string {
 		return `${value[key as keyof ColumnValue]}`;
 	}
 
