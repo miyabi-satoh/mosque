@@ -55,7 +55,7 @@
 {/if}
 
 <Drawer width="w-64">
-	<div class="pt-8">
+	<div class="pt-16">
 		<Navigation loggedIn={!!data.user} userMenus={data.userMenus} />
 	</div>
 </Drawer>
@@ -73,15 +73,23 @@
 		<AppBar background="bg-surface-50-900-token">
 			<svelte:fragment slot="lead">
 				<div class="flex items-center">
-					{#if data.user}
-						<button class="btn btn-sm pl-0 lg:hidden" on:click={drawerOpen}>
-							<Icon icon="mdi:menu" height="auto" />
-						</button>
-					{/if}
+					<button
+						class="btn btn-sm pl-0 lg:invisible"
+						class:invisible={!data.user}
+						on:click={drawerOpen}
+					>
+						<span><Icon icon="mdi:menu" height="auto" /></span>
+					</button>
 					<a href="/" class="text-xl uppercase">mosque</a>
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
+				{#if data.showBoard}
+					<a href={URLS.BOARD} title="Board" class="hidden gap-x-2 sm:flex">
+						<Icon icon="mdi:bulletin-board" height="auto" />
+						<span class="hidden sm:inline">Board</span>
+					</a>
+				{/if}
 				{#if data.user}
 					<div class="flex gap-x-2">
 						<Icon icon="mdi:account-circle" height="auto" />
@@ -90,13 +98,7 @@
 				{:else}
 					<a href={URLS.LOGIN} class="flex gap-x-2" title="Login">
 						<Icon icon="mdi:login" height="auto" />
-						<span class="hidden sm:inline">Login</span>
-					</a>
-				{/if}
-				{#if data.showBoard}
-					<a href={URLS.BOARD} title="Board" class="hidden gap-x-2 sm:flex">
-						<Icon icon="mdi:bulletin-board" height="auto" />
-						<span class="hidden sm:inline">Board</span>
+						<span>Login</span>
 					</a>
 				{/if}
 				<LightSwitch />
