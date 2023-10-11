@@ -13,14 +13,15 @@
 		AppShell,
 		Drawer,
 		LightSwitch,
+		Modal,
 		getDrawerStore,
 		initializeStores,
 		storePopup
 	} from '@skeletonlabs/skeleton';
 	import '../../app.postcss';
 	import type { LayoutData } from '../../routes/$types';
-	
-initializeStores();
+
+	initializeStores();
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	// https://www.skeleton.dev/blog/how-to-implement-a-responsive-sidebar-drawer
@@ -58,6 +59,8 @@ initializeStores();
 		<Navigation loggedIn={!!data.user} userMenus={data.userMenus} />
 	</div>
 </Drawer>
+
+<Modal />
 
 <AppShell
 	slotFooter="text-surface-500-400-token text-right text-sm m-4"
