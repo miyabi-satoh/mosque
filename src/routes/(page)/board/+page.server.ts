@@ -1,6 +1,5 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 
-import bcrypt from 'bcryptjs';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
@@ -10,74 +9,58 @@ import { exclude } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
 
-const postSchema = z
-	.object({
-		id: z.string().optional(),
-		delete: z.boolean().optional(),
-		title: z.string().min(1),
-		content: z.string().min(1),
-		username: z.string().min(1),
-		password: z.string()
-	})
-	.refine(
-		async (data) => {
-			if (data.id) {
-				const post = await db.post.findUnique({ where: { id: data.id } });
-				if (post && post.password) {
-					return bcrypt.compareSync(data.password, post.password);
-				}
-			}
-			return true;
-		},
-		{
-			message: '編集キーが違います',
-			path: ['password']
-		}
-	);
+const channelSchema = z.object({
+	id: z.string().optional(),
+	name: z.string().min(1),
+	description: z.string().nullish(),
+	private: z.boolean(),
+	delete: z.boolean().default(false)
+});
 
 export const load = (async ({ parent }) => {
 	const data = await parent();
 
-	const posts = await db.post.findMany({
+	const channels = await db.channel.findMany({
 		orderBy: { updatedAt: 'desc' }
 	});
 
-	const form = await superValidate(postSchema);
+	const form = await superValidate(channelSchema);
 
 	return {
 		form,
 		breadcrumbs: data.breadcrumbs,
-		posts: posts.map((post) => {
-			return {
-				...post,
-				password: !!post.password
-			};
-		})
+		channels
 	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	default: async ({ request }) => {
-		const form = await superValidate(request, postSchema);
+	default: async ({ request, locals }) => {
+		// get session
+		const session = await locals.auth.validate();
+		if (!session) {
+			throw error(400, 'Not found');
+		}
+
+		const form = await superValidate(request, channelSchema);
 		if (!form.valid) return fail(400, { form });
 
 		try {
 			if (!form.data.id) {
 				// CREATE post
-				const password = form.data.password ? bcrypt.hashSync(form.data.password) : undefined;
-				await db.post.create({
+				await db.channel.create({
 					data: {
 						...form.data,
-						password
+						createdBy: session.user.userId,
+						updatedBy: session.user.userId
 					}
 				});
 			} else {
 				// UPDATE post
-				await db.post.update({
+				await db.channel.update({
 					where: { id: form.data.id },
 					data: {
-						...exclude(form.data, ['id', 'delete']),
-						password: undefined
+						...exclude(form.data, ['id']),
+						updatedBy: session.user.userId
 					}
 				});
 			}

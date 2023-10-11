@@ -10,7 +10,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	type Post = PageData['posts'][0];
+	type Channel = PageData['channels'][0];
 
 	const { form, errors, constraints, submitting, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
@@ -23,7 +23,7 @@
 	// };
 
 	let focusOnTextarea = false;
-	let currentPost: Post | undefined = undefined;
+	// let currentPost: Channel | undefined = undefined;
 	let textareaRows = 1;
 
 	function calcRows(focus: boolean, content: string) {
@@ -55,37 +55,36 @@
 	function handleBlurTextarea() {
 		console.log(`handleBlurTextarea`);
 		focusOnTextarea = false;
-		const content = $form.content.replace(/\n{2,}/g, '\n').trim();
+		const content = $form.name.replace(/\n{2,}/g, '\n').trim();
 		textareaRows = calcRows(focusOnTextarea, content);
-		$form.content = content;
+		$form.name = content;
 	}
 
 	// テキストエリアでの入力時に行数を調整する
 	$: if (focusOnTextarea) {
-		textareaRows = calcRows(focusOnTextarea, $form.content);
+		textareaRows = calcRows(focusOnTextarea, $form.name);
 	}
 	// テキストエリアをクリアしたら、行数を1にする
-	$: if ($form.content.length === 0) {
+	$: if ($form.name.length === 0) {
 		textareaRows = 1;
 	}
 
 	function handleClickCancel() {
 		$form = {
 			id: undefined,
-			content: '',
-			title: '',
-			password: '',
-			username: '',
-			delete: undefined
+			name: '',
+			description: '',
+			private: false,
+			delete: false
 		} satisfies FormDataT;
-		currentPost = undefined;
+		// currentPost = undefined;
 	}
 
-	async function handleClickEdit(post: Post) {
-		currentPost = post;
+	async function handleClickEdit(post: Channel) {
+		// currentPost = post;
 		$form = {
 			...post,
-			password: ''
+			delete: false
 		};
 		await tick();
 		const el = window.document.getElementById('form-content');
@@ -94,14 +93,13 @@
 			e.selectionStart = 0;
 			e.focus();
 		}
-		textareaRows = calcRows(true, post.content);
+		textareaRows = calcRows(true, post.name);
 	}
 
-	function handleClickDelete(post: Post) {
-		currentPost = post;
+	function handleClickDelete(post: Channel) {
+		// currentPost = post;
 		$form = {
 			...post,
-			password: '',
 			delete: true
 		};
 	}
@@ -156,31 +154,31 @@
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 			<textarea
 				class="textarea sm:col-span-2"
-				class:input-error={$errors.content}
+				class:input-error={$errors.name}
 				name="content"
 				id="form-content"
 				rows={textareaRows}
 				placeholder="Message"
-				bind:value={$form.content}
+				bind:value={$form.name}
 				on:focus={() => (focusOnTextarea = true)}
 				on:blur={handleBlurTextarea}
-				{...$constraints.content}
+				{...$constraints.name}
 			/>
 
-			{#if $form.content}
+			{#if $form.name}
 				<div class="sm:col-span-2">
 					<label class="label">
 						<input
 							class="input"
-							class:input-error={$errors.title}
+							class:input-error={$errors.description}
 							type="text"
 							name="title"
 							placeholder="Title"
-							bind:value={$form.title}
-							{...$constraints.title}
+							bind:value={$form.description}
+							{...$constraints.description}
 						/>
 					</label>
-					<HelperText>{$errors.title ? $errors.title[0] : ''}</HelperText>
+					<HelperText>{$errors.description ? $errors.description[0] : ''}</HelperText>
 				</div>
 				<div class="mb-1 flex justify-end gap-x-4 sm:col-span-2">
 					<button class="variant-filled btn" on:click|preventDefault={handleClickCancel}
@@ -193,36 +191,34 @@
 	</form>
 {/if}
 <Scrollable class="mx-4">
-	{#if data.posts.length > 0}
+	{#if data.channels.length > 0}
 		<Accordion>
-			{#each data.posts as post (post.id)}
+			{#each data.channels as channel (channel.id)}
 				<AccordionItem>
 					<svelte:fragment slot="summary">
 						<div class="flex items-baseline gap-x-4">
-							<h1 class="text-lg font-bold">{post.title}</h1>
+							<h1 class="text-lg font-bold">{channel.name}</h1>
 							<span class="text-surface-500-400-token text-sm">
-								{post.username}・{formatDate(post.updatedAt)}
+								{channel.updatedBy}・{formatDate(channel.updatedAt)}
 							</span>
 							<div
 								class="text-surface-500-400-token flex-1 truncate text-sm"
-								data-content={post.content}
+								data-content={channel.description}
 							/>
 						</div>
 					</svelte:fragment>
 					<svelte:fragment slot="content">
 						<p class="pl-2">
-							{post.content}
+							{channel.description}
 						</p>
-						{#if post.password && !$form.id}
-							<div class="flex justify-end gap-x-4">
-								<button class="variant-filled-primary btn" on:click={() => handleClickEdit(post)}
-									>Edit</button
-								>
-								<button class="variant-filled-error btn" on:click={() => handleClickDelete(post)}
-									>Delete</button
-								>
-							</div>
-						{/if}
+						<div class="flex justify-end gap-x-4">
+							<button class="variant-filled-primary btn" on:click={() => handleClickEdit(channel)}
+								>Edit</button
+							>
+							<button class="variant-filled-error btn" on:click={() => handleClickDelete(channel)}
+								>Delete</button
+							>
+						</div>
 					</svelte:fragment>
 				</AccordionItem>
 			{/each}
