@@ -125,6 +125,9 @@ devDependencies:
   svelte-check:
     specifier: ^3.5.2
     version: 3.5.2(postcss@8.4.31)(svelte@4.2.1)
+  svelte-easy-crop:
+    specifier: ^2.0.1
+    version: 2.0.1
   sveltekit-superforms:
     specifier: ^1.7.4
     version: 1.7.4(@sveltejs/kit@1.25.1)(svelte@4.2.1)(zod@3.22.2)
@@ -3041,6 +3044,10 @@ packages:
       - sass
       - stylus
       - sugarss
+    dev: true
+
+  /svelte-easy-crop@2.0.1:
+    resolution: {integrity: sha512-5cB5wif3DuP92u0etdxk3u0fbGwyNq5G4Dd454g3LeMdVn15oim2rlWPNcbgH5Jr1AJZI5k4Bsp70zbQ0lpNtg==}
     dev: true
 
   /svelte-eslint-parser@0.33.0(svelte@4.2.1):

@@ -16,6 +16,10 @@ const config = {
 		csrf: {
 			checkOrigin: true
 		}
+	},
+	// https://www.reddit.com/r/sveltejs/comments/v0mx4i/typeerror_unknown_file_extension_svelte/
+	optimizeDeps: {
+		exclude: ['svelte-easy-crop']
 	}
 };
 

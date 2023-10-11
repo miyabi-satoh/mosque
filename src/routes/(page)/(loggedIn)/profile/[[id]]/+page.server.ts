@@ -16,6 +16,7 @@ const schema = z.object({
 	username: z.string().min(4).max(16),
 	displayName: z.string().min(2).max(16),
 	password: z.string().min(1),
+	avatar: z.string().nullish(),
 	// TODO: add email
 	// email: z.string().email().nullish().or(z.literal('')),
 	fullName: z.string().max(16).nullish(),
@@ -124,6 +125,7 @@ export const actions: Actions = {
 			await auth.updateUserAttributes(userId, {
 				username: form.data.username,
 				displayName: form.data.displayName,
+				avatar: form.data.avatar,
 				fullName: form.data.fullName ?? undefined,
 				role: form.data.role ?? undefined
 				// TODO: update email
