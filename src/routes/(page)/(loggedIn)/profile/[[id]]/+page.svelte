@@ -12,7 +12,6 @@
 	} from '@skeletonlabs/skeleton';
 	import Icon from '@iconify/svelte';
 	import CropModal from './CropModal.svelte';
-	// import Cropper from 'svelte-easy-crop'
 
 	const modalStore = getModalStore();
 
