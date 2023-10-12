@@ -47,7 +47,7 @@
 					{countNew > 1 ? `files are` : `file is`} not registered in the database.
 				{/if}
 			</p>
-			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+			<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 		</div>
 
 		<Scrollable class="overflow-x-scroll">

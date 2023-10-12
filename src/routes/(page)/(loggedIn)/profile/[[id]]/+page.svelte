@@ -68,6 +68,7 @@
 			</FileButton>
 
 			<button
+				type="button"
 				class="variant-ghost-surface btn btn-sm w-full"
 				disabled={!$form.avatar}
 				on:click={() => ($form.avatar = null)}
@@ -183,6 +184,6 @@
 		</div>
 	</div>
 	<div class="text-right">
-		<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+		<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 	</div>
 </form>

@@ -18,7 +18,7 @@
 <form class={parentClass} method="POST" action={URLS.ADMIN_ACCOUNTS_PRINT} target="_blank">
 	<div class="mx-4 mb-4 flex items-center">
 		<a href={URLS.ADMIN_ACCOUNTS_CREATE} class="anchor flex-1">Create accounts from CSV data</a>
-		<button class="variant-ghost-primary btn" disabled={$form.checked.length === 0}
+		<button type="submit" class="variant-ghost-primary btn" disabled={$form.checked.length === 0}
 			>Print Selected Accounts</button
 		>
 	</div>

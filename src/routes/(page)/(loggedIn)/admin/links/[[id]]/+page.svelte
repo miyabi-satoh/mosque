@@ -86,6 +86,7 @@
 			{#if $page.params.id}
 				<a class="variant-filled btn" href={URLS.ADMIN_LINKS}>Cancel</a>
 				<button
+					type="submit"
 					name="delete"
 					on:click={(e) =>
 						!confirm('Are you sure you want to delete this link?') && e.preventDefault()}
@@ -95,7 +96,7 @@
 					Delete
 				</button>
 			{/if}
-			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+			<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 		</div>
 	{/if}
 </form>
