@@ -1,10 +1,7 @@
-import { dev } from '$app/environment';
-
-import { FEATURE_BOARD } from '$env/static/private';
-
 import { URLS } from '$lib/consts';
 import { createBuiltinUsers } from '$lib/server/lucia';
-import { hasAdminRole, isWindows } from '$lib/utils';
+import { isBoardEnabled } from '$lib/server/utils';
+import { hasAdminRole } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
@@ -21,11 +18,7 @@ export const load = (async ({ locals, request, depends }) => {
 	const user = session?.user;
 
 	// enable Board or not
-	const showBoard = ((): boolean => {
-		if (dev) return true;
-		if (FEATURE_BOARD === 'true') return !!user || isWindows(request.headers.get('User-Agent'));
-		return false;
-	})();
+	const showBoard = isBoardEnabled(user, request.headers.get('User-Agent'));
 
 	// add user menu items if user is authenticated
 	const userMenus = [];

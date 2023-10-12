@@ -1,4 +1,4 @@
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 
 import type { User } from '@prisma/client';
 import { message, superValidate } from 'sveltekit-superforms/server';
@@ -56,7 +56,7 @@ export const actions: Actions = {
 		// get session
 		const session = await locals.auth.validate();
 		if (!session) {
-			throw error(400, 'Not found');
+			throw redirect(302, '/');
 		}
 		// set user id
 		const userId = params.id ?? session.user.userId;
@@ -106,7 +106,8 @@ export const actions: Actions = {
 		});
 
 		// validation
-		const form = await superValidate(request, updateSchema);
+		const formData = await request.formData();
+		const form = await superValidate(formData, updateSchema);
 		if (!form.valid) {
 			return fail(400, { form });
 		}

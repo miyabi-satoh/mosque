@@ -1,4 +1,4 @@
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 
 import type { Exam, ExamTypeEnum, TempResource } from '@prisma/client';
 import { createHash } from 'node:crypto';
@@ -141,8 +141,7 @@ async function refreshTempResources(
 export const load = (async ({ locals, params, parent, url }) => {
 	const session = await locals.auth.validate();
 	if (!session) {
-		console.error('Cannot read session');
-		throw error(500, 'Internal Server Error');
+		throw redirect(302, '/');
 	}
 
 	const examType = params.type.toLowerCase() as ExamTypeEnum;
@@ -225,16 +224,17 @@ export const load = (async ({ locals, params, parent, url }) => {
 
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
-		// フォームデータのバリデーション
-		const form = await superValidate(request, schema);
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
+		// get session
 		const session = await locals.auth.validate();
 		if (!session) {
-			console.error('Cannot read session');
-			return fail(500, { form, message: 'Internal Server Error' });
+			throw redirect(302, '/');
+		}
+
+		// validate form data
+		const formData = await request.formData();
+		const form = await superValidate(formData, schema);
+		if (!form.valid) {
+			return fail(400, { form });
 		}
 
 		const examType = params.type.toLowerCase() as ExamTypeEnum;
