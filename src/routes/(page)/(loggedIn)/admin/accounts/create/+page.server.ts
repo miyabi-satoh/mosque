@@ -35,10 +35,13 @@ export const load = (async ({ parent, url }) => {
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const form = await superValidate(request, schema);
+		// validate form data
+		const formData = await request.formData();
+		const form = await superValidate(formData, schema);
 		if (!form.valid) {
 			return fail(400, { form });
 		}
+
 		// sanitize
 		const data = form.data.csv.replaceAll('\r', '').replaceAll('　', '');
 

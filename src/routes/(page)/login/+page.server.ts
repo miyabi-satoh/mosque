@@ -27,9 +27,10 @@ export const load = (async ({ parent }) => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	default: async (event) => {
+	default: async ({ request, locals }) => {
 		// validate
-		const form = await superValidate(event, schema);
+		const formData = await request.formData();
+		const form = await superValidate(formData, schema);
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -44,7 +45,7 @@ export const actions: Actions = {
 				userId: key.userId,
 				attributes: {}
 			});
-			event.locals.auth.setSession(session);
+			locals.auth.setSession(session);
 			return { form };
 		} catch (e) {
 			if (e instanceof LuciaError) {

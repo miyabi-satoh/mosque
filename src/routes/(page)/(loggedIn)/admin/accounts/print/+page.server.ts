@@ -28,10 +28,10 @@ export const load = (async () => {
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const imgData = await QRCode.toDataURL(ORIGIN);
-		// TODO:アクセス制限？
 
 		// validate form data
-		const form = await superValidate(request, schema);
+		const formData = await request.formData();
+		const form = await superValidate(formData, schema);
 		if (!form.valid) {
 			return fail(400, { form });
 		}
