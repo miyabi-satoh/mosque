@@ -16,7 +16,7 @@
 	const modalStore = getModalStore();
 
 	export let data: PageData;
-	const { form, message, errors, submitting, enhance } = superForm(data.form);
+	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 
 	function onFileChange(event: Event): void {
@@ -90,6 +90,7 @@
 						bind:value={$form.username}
 						disabled={$submitting}
 						autocomplete="username"
+						{...$constraints.username}
 					/>
 				</label>
 				<HelperText>
@@ -107,6 +108,7 @@
 						name="displayName"
 						bind:value={$form.displayName}
 						disabled={$submitting}
+						{...$constraints.displayName}
 					/>
 				</label>
 				<HelperText>
@@ -126,6 +128,7 @@
 							name="fullName"
 							bind:value={$form.fullName}
 							disabled={$submitting}
+							{...$constraints.fullName}
 						/>
 					</label>
 					<HelperText>
@@ -156,6 +159,7 @@
 							name="newPassword"
 							bind:value={$form.newPassword}
 							disabled={$submitting}
+							{...$constraints.newPassword}
 						/>
 					</label>
 					<HelperText>
@@ -175,6 +179,7 @@
 						name="password"
 						bind:value={$form.password}
 						disabled={$submitting}
+						{...$constraints.password}
 					/>
 				</label>
 				<HelperText>
