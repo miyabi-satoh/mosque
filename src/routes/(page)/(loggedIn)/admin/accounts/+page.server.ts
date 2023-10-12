@@ -9,9 +9,7 @@ const schema = z.object({
 	checked: z.string().array()
 });
 
-export const load = (async ({ parent }) => {
-	const data = await parent();
-
+export const load = (async () => {
 	const users = await db.user.findMany({
 		orderBy: { username: 'asc' }
 	});
@@ -20,7 +18,6 @@ export const load = (async ({ parent }) => {
 
 	return {
 		form,
-		users,
-		breadcrumbs: data.breadcrumbs
+		users
 	};
 }) satisfies PageServerLoad;

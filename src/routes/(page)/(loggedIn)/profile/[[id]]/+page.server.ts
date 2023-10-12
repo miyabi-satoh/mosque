@@ -47,7 +47,6 @@ export const load = (async ({ parent, params, url }) => {
 
 	return {
 		form,
-		breadcrumbs: data.breadcrumbs,
 		userRoles: ['USER', 'STAFF', 'ADMIN'] as User['role'][]
 	};
 }) satisfies PageServerLoad;

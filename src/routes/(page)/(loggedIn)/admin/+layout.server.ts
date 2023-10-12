@@ -13,7 +13,5 @@ export const load = (async ({ parent }) => {
 
 	data.breadcrumbs.push({ label: 'Dashboard', link: URLS.ADMIN });
 
-	return {
-		breadcrumbs: data.breadcrumbs
-	};
+	return {};
 }) satisfies LayoutServerLoad;

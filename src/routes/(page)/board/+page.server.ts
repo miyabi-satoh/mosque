@@ -17,9 +17,7 @@ const channelSchema = z.object({
 	delete: z.boolean().default(false)
 });
 
-export const load = (async ({ parent }) => {
-	const data = await parent();
-
+export const load = (async () => {
 	const channels = await db.channel.findMany({
 		orderBy: { updatedAt: 'desc' }
 	});
@@ -28,7 +26,6 @@ export const load = (async ({ parent }) => {
 
 	return {
 		form,
-		breadcrumbs: data.breadcrumbs,
 		channels
 	};
 }) satisfies PageServerLoad;

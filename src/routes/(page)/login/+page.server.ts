@@ -22,8 +22,7 @@ export const load = (async ({ parent }) => {
 
 	const form = await superValidate(schema);
 	return {
-		form,
-		breadcrumbs: data.breadcrumbs
+		form
 	};
 }) satisfies PageServerLoad;
 

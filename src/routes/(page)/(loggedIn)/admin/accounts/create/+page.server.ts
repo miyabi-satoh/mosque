@@ -29,8 +29,7 @@ export const load = (async ({ parent, url }) => {
 
 	return {
 		form,
-		csvHeader,
-		breadcrumbs: data.breadcrumbs
+		csvHeader
 	};
 }) satisfies PageServerLoad;
 

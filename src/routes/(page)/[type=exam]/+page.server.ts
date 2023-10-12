@@ -25,7 +25,6 @@ export const load = (async ({ params, parent, url }) => {
 
 	return {
 		csvData: resources.map((r) => exclude(r, ['examType', 'path', 'shortTitle'])),
-		exam,
-		breadcrumbs: data.breadcrumbs
+		exam
 	};
 }) satisfies PageServerLoad;

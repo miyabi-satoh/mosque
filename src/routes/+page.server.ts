@@ -10,9 +10,7 @@ type ItemT = {
 	title: string;
 	external: boolean;
 };
-export const load = (async ({ parent }) => {
-	const data = await parent();
-
+export const load = (async () => {
 	const exams = await db.exam.findMany({
 		orderBy: { sortOrder: 'asc' }
 	});
@@ -38,8 +36,7 @@ export const load = (async ({ parent }) => {
 	});
 
 	return {
-		items,
-		breadcrumbs: data.breadcrumbs
+		items
 	};
 }) satisfies PageServerLoad;
 

@@ -19,7 +19,7 @@ export const load = (async ({ parent, url }) => {
 	data.breadcrumbs.push({ label: 'Change Password', link: url.pathname });
 	const form = await superValidate(schema);
 
-	return { form, breadcrumbs: data.breadcrumbs };
+	return { form };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

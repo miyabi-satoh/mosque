@@ -219,8 +219,7 @@ export const load = (async ({ locals, params, parent, url }) => {
 		form,
 		columnValues,
 		columnLabels: config.columnLabels,
-		exam,
-		breadcrumbs: data.breadcrumbs
+		exam
 	};
 }) satisfies PageServerLoad;
 

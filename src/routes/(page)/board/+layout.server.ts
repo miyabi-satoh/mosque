@@ -9,9 +9,7 @@ export const load = (async ({ parent }) => {
 	if (data.showBoard) {
 		data.breadcrumbs.push({ label: 'Board', link: URLS.BOARD });
 
-		return {
-			breadcrumbs: data.breadcrumbs
-		};
+		return {};
 	}
 
 	throw error(404, 'Not found');
