@@ -20,11 +20,11 @@ export function exclude<T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
 	return objCopy;
 }
 
-export function hasAdminRole(user: User): boolean {
-	return user.role === 'ADMIN';
+export function hasAdminRole(user: User | undefined): boolean {
+	return user?.role === 'ADMIN';
 }
-export function hasStaffRole(user: User): boolean {
-	return user.role === 'STAFF' || user.role === 'ADMIN';
+export function hasStaffRole(user: User | undefined): boolean {
+	return user?.role === 'STAFF' || user?.role === 'ADMIN';
 }
 
 export function isWindows(ua: string | null): boolean {
