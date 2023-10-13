@@ -1,5 +1,6 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 
+import { Prisma, type Channel } from '@prisma/client';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
@@ -17,10 +18,34 @@ const channelSchema = z.object({
 	delete: z.boolean().default(false)
 });
 
+const messageWithUser = Prisma.validator<Prisma.MessageDefaultArgs>()({
+	include: {
+		user: {
+			select: {
+				avatar: true,
+				displayName: true,
+				fullName: true
+			}
+		}
+	}
+});
+type MessageWithUser = Prisma.MessageGetPayload<typeof messageWithUser>;
+type ChannelWithLastMessage = Channel & {
+	lastMessage?: MessageWithUser | null;
+};
+
 export const load = (async () => {
-	const channels = await db.channel.findMany({
+	const channels: ChannelWithLastMessage[] = await db.channel.findMany({
 		orderBy: { updatedAt: 'desc' }
 	});
+	for (const channel of channels) {
+		const message = await db.message.findFirst({
+			where: { channelId: channel.id },
+			orderBy: { updatedAt: 'desc' },
+			...messageWithUser
+		});
+		channel.lastMessage = message;
+	}
 
 	const form = await superValidate(channelSchema);
 
@@ -35,10 +60,11 @@ export const actions: Actions = {
 		// get session
 		const session = await locals.auth.validate();
 		if (!session) {
-			throw error(400, 'Not found');
+			throw redirect(302, '/');
 		}
 
-		const form = await superValidate(request, channelSchema);
+		const formData = await request.formData();
+		const form = await superValidate(formData, channelSchema);
 		if (!form.valid) return fail(400, { form });
 
 		try {

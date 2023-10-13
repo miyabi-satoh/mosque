@@ -83,8 +83,6 @@ export const ChannelMemberScalarFieldEnumSchema = z.enum(['channelId', 'userId']
 export const MessageScalarFieldEnumSchema = z.enum([
 	'id',
 	'message',
-	'username',
-	'password',
 	'createdAt',
 	'updatedAt',
 	'userId',
@@ -255,8 +253,6 @@ export type ChannelMember = z.infer<typeof ChannelMemberSchema>;
 export const MessageSchema = z.object({
 	id: z.string().cuid(),
 	message: z.string(),
-	username: z.string(),
-	password: z.string().nullable(),
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),
 	userId: z.string(),

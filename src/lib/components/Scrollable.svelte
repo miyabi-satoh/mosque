@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 
 	let classes: string = '';
+	export let id: string | undefined = undefined;
 	export { classes as class };
 
 	onMount(() => {
@@ -18,6 +19,6 @@
 	});
 </script>
 
-<div class="flex-1 overflow-y-scroll {classes}">
+<div {id} class="flex-1 overflow-y-scroll {classes}">
 	<slot />
 </div>

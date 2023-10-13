@@ -11,6 +11,7 @@ export const URLS = {
 	ADMIN_ACCOUNTS_CREATE: '/admin/accounts/create',
 	ADMIN_ACCOUNTS_PRINT: '/admin/accounts/print',
 	BOARD: '/board',
+	BOARD_CHANNEL: '/board/channel',
 	API_DATA: '/api/data',
 	API_FETCH: '/api/fetch?url='
 } as const;

@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { HelperText, Scrollable } from '$lib';
 	import { submittingStore } from '$lib/stores';
-	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-	import { formatDistanceToNow } from 'date-fns';
+	import { formatDistanceToNow, formatRelative } from 'date-fns';
 	import ja from 'date-fns/locale/ja';
 	import { onMount, tick } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
+	import Icon from '@iconify/svelte';
+	import { URLS } from '$lib/consts';
+	import { Avatar } from '@skeletonlabs/skeleton';
+	import { UserAvatar } from '$lib';
 
 	export let data: PageData;
 	type Channel = PageData['channels'][0];
@@ -147,7 +149,51 @@
 </script>
 
 <svelte:window on:resize={onWindowResize} />
-{#if data.user}
+<div class="contents space-y-4">
+	<div class="mx-4 flex gap-x-2">
+		<input type="text" class="input" id="search" placeholder="Find a channel..." />
+		<a href="/board/channel" class="variant-ghost-primary btn">
+			<span><Icon icon="mdi:rss" height="auto" /></span>
+			<span>New</span>
+		</a>
+	</div>
+	{#if data.channels.length > 0}
+		<div class="mx-4 space-y-4">
+			{#each data.channels as channel}
+				<a href="{URLS.BOARD}/{channel.id}" class="block">
+					<div class="card card-hover space-y-2 px-4 py-2">
+						<div class="flex gap-x-4">
+							<h1 class="h5 flex-1 font-semibold sm:h3"># {channel.name}</h1>
+							{#if channel.lastMessage}
+								<div class="text-sm opacity-50">
+									{formatRelative(channel.lastMessage.updatedAt, new Date(), { locale: ja })}
+								</div>
+							{/if}
+						</div>
+						<div class="flex gap-x-4 opacity-75">
+							{#if channel.lastMessage}
+								<div>
+									<UserAvatar src={channel.lastMessage.user.avatar} />
+								</div>
+								<div>
+									<span class="text-sm font-semibold sm:text-base">
+										{channel.lastMessage.user.displayName ?? channel.lastMessage.user.fullName}
+									</span>
+									<p class="line-clamp-2 text-xs sm:text-sm">{channel.lastMessage.message}</p>
+								</div>
+							{:else}
+								<p class="text-xs sm:text-sm">No messages found on this channel.</p>
+							{/if}
+						</div>
+					</div>
+				</a>
+			{/each}
+		</div>
+	{:else}
+		<div class="mx-4">No channels.</div>
+	{/if}
+</div>
+<!-- {#if data.user}
 	<form method="POST" class="mx-4 mb-4" use:enhance>
 		<input type="hidden" name="id" value={$form.id} />
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -221,6 +267,6 @@
 			{/each}
 		</Accordion>
 	{:else}
-		No items.
+		No channels.
 	{/if}
-</Scrollable>
+</Scrollable> -->
