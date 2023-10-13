@@ -95,6 +95,9 @@ devDependencies:
   lucia:
     specifier: ^2.7.1
     version: 2.7.1
+  marked:
+    specifier: ^9.1.1
+    version: 9.1.1
   mime:
     specifier: ^3.0.0
     version: 3.0.0
@@ -2261,6 +2264,12 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
+    dev: true
+
+  /marked@9.1.1:
+    resolution: {integrity: sha512-ZmXkUGH54U4rEy3GL9vYj8+S1PHJx/zz5pc4Frn7UdGiNREKT12fWBJ5a5ffjFtghx9C9912vEg9Zra1Nf7CnA==}
+    engines: {node: '>= 16'}
+    hasBin: true
     dev: true
 
   /mdn-data@2.0.30:
