@@ -65,7 +65,7 @@
 <AppShell
 	slotFooter="text-surface-500-400-token text-right text-sm m-4"
 	slotSidebarLeft="w-0 {data.user ? 'lg:w-64' : ''}"
-	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-3xl {overflowHidden}"
+	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-4xl {overflowHidden}"
 	regionPage={overflowHidden}
 >
 	<!-- Header Slot -->
