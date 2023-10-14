@@ -55,7 +55,8 @@ export const defaultUserAttributes: Omit<User, 'id'> = {
 	displayName: null,
 	email: null,
 	code: null,
-	avatar: null
+	avatar: null,
+	lastLoginAt: null
 } as const;
 
 // create built-in users

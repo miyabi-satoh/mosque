@@ -48,6 +48,7 @@ model User {
   email       String?
   code        String?      @unique
   avatar      String?
+  lastLoginAt DateTime?    @map("last_login_at")
 
   auth_session   Session[]
   key            Key[]

@@ -3,6 +3,8 @@
 	import { URLS } from '$lib/consts';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
+	import { formatRelative } from 'date-fns';
+	import { ja } from 'date-fns/locale';
 
 	export let data: PageData;
 	let allChecked: boolean = false;
@@ -13,6 +15,8 @@
 	function updateChecked(checked: boolean): void {
 		$form.checked = checked ? data.users.map((u) => u.id) : [];
 	}
+
+	const thClasses = 'bg-surface-100-800-token sticky top-0 z-10 p-2';
 </script>
 
 <form class={parentClass} method="POST" action={URLS.ADMIN_ACCOUNTS_PRINT} target="_blank">
@@ -26,13 +30,14 @@
 		<table class="w-full table-auto">
 			<thead>
 				<tr class="bg-surface-100-800-token sticky top-0">
-					<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">
+					<th class={thClasses}>
 						<input type="checkbox" class="checkbox" name="allCheck" bind:checked={allChecked} />
 					</th>
-					<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">Login ID</th>
-					<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">Display Name</th>
-					<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">Full Name</th>
-					<th class="bg-surface-100-800-token sticky top-0 z-10 p-2">Role</th>
+					<th class={thClasses}>ID</th>
+					<th class={thClasses}>Display</th>
+					<th class={thClasses}>Full</th>
+					<th class={thClasses}>Role</th>
+					<th class="{thClasses} hidden md:table-cell">Last</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -53,6 +58,9 @@
 						<td class="p-2">{user.displayName ?? ''}</td>
 						<td class="p-2">{user.fullName ?? ''} </td>
 						<td class="p-2">{user.role} </td>
+						<td class="hidden p-2 md:table-cell">
+							{user.lastLoginAt ? formatRelative(user.lastLoginAt, new Date(), { locale: ja }) : ''}
+						</td>
 					</tr>
 				{/each}
 			</tbody>

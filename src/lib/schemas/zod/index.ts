@@ -23,7 +23,8 @@ export const UserScalarFieldEnumSchema = z.enum([
 	'displayName',
 	'email',
 	'code',
-	'avatar'
+	'avatar',
+	'lastLoginAt'
 ]);
 
 export const SessionScalarFieldEnumSchema = z.enum([
@@ -123,7 +124,8 @@ export const UserSchema = z.object({
 	displayName: z.string().nullable(),
 	email: z.string().nullable(),
 	code: z.string().nullable(),
-	avatar: z.string().nullable()
+	avatar: z.string().nullable(),
+	lastLoginAt: z.coerce.date().nullable()
 });
 
 export type User = z.infer<typeof UserSchema>;

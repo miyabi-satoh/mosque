@@ -41,6 +41,9 @@ export const actions: Actions = {
 				form.data.password
 			);
 			await auth.deleteDeadUserSessions(key.userId);
+			await auth.updateUserAttributes(key.userId, {
+				lastLoginAt: new Date()
+			});
 			const session = await auth.createSession({
 				userId: key.userId,
 				attributes: {}

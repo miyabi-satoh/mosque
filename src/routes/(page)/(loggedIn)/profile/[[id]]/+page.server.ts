@@ -12,6 +12,8 @@ import { hasAdminRole } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
 
+// TODO: verify email
+
 const schema = z.object({
 	username: z.string().min(4).max(16),
 	displayName: z.string().min(2).max(16),
