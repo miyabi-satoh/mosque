@@ -18,6 +18,8 @@
 	import EditModal from './EditModal.svelte';
 	import { autoResize, autoResizeTextarea } from '$lib/actions/autoResizeTextarea';
 	import type { ScrollBehavior } from '$lib/types';
+	import { marked } from 'marked';
+	import './style.postcss';
 
 	export let data: PageData;
 	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form, {
@@ -118,7 +120,8 @@
 							</div>
 						{/if}
 					</header>
-					<p>{m.message}</p>
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+					<article class="marked">{@html marked.parse(m.message)}</article>
 				</div>
 			</div>
 		{/each}
