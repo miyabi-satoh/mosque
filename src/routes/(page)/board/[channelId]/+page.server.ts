@@ -75,7 +75,7 @@ export const actions: Actions = {
 			if (!formData.has('delete')) {
 				// upsert
 				await db.message.upsert({
-					where: { id: form.id ?? '' },
+					where: { id: form.data.id ?? '' },
 					create: {
 						...form.data,
 						channelId,
@@ -85,10 +85,10 @@ export const actions: Actions = {
 						...form.data
 					}
 				});
-			} else if (form.id) {
+			} else if (form.data.id) {
 				// delete
 				await db.message.delete({
-					where: { id: form.id }
+					where: { id: form.data.id }
 				});
 			}
 		} catch (e) {
@@ -97,5 +97,8 @@ export const actions: Actions = {
 				status: 400
 			});
 		}
+
+		form.data.message = '';
+		return { form };
 	}
 };

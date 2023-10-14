@@ -2,11 +2,10 @@
 	import { URLS } from '$lib/consts';
 	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
-	import { AutoResizeTextarea, Scrollable } from '$lib';
+	import { Scrollable } from '$lib';
 	import {
 		popup,
 		type ModalComponent,
-		type PopupSettings,
 		type ModalSettings,
 		getModalStore
 	} from '@skeletonlabs/skeleton';
@@ -14,80 +13,66 @@
 	import { submittingStore } from '$lib/stores';
 	import { formatRelative } from 'date-fns';
 	import ja from 'date-fns/locale/ja';
-	import { onMount, tick } from 'svelte';
-	import { browser } from '$app/environment';
+	import { tick } from 'svelte';
 	import UserAvatar from '$lib/components/UserAvatar.svelte';
 	import EditModal from './EditModal.svelte';
+	import { autoResize, autoResizeTextarea } from '$lib/actions/autoResizeTextarea';
+	import type { ScrollBehavior } from '$lib/types';
 
 	export let data: PageData;
-	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form);
+	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form, {
+		onUpdated: ({ form }) => {
+			console.log('onUpdated', form);
+			if (form.valid) {
+				if (!form.data.id) scrollBehavior = 'smooth';
+				autoResizeTextarea(elemTextarea);
+			}
+		}
+	});
 	$: $submittingStore = $submitting;
 
 	const popupMenuClasses = 'flex w-full gap-x-2 rounded px-4 py-2 hover:bg-primary-500/10';
-	function popupClick(i: number): PopupSettings {
-		return {
-			event: 'click',
-			target: `popupClick-${i}`,
-			placement: 'bottom',
-			closeQuery: 'li'
-		} satisfies PopupSettings;
-	}
-
-	const chatElemId = 'chat';
-	async function scrollChatBottom(behavior?: ScrollBehavior): Promise<void> {
-		const el = window.document.getElementById(chatElemId);
-		if (el) {
-			await tick();
-			if (Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop) >= 1) {
-				el.scrollTo({ top: el.scrollHeight, behavior });
-			}
-		}
-	}
 
 	function showRelativeDate(date: Date): string {
 		return formatRelative(date, new Date(), { locale: ja });
 	}
 
-	// function onMessageInput(e: Event): void {
-	// 	autoResizeTextarea(e.target as HTMLElement);
-	// }
-
-	// function autoResizeTextarea(el: HTMLElement | null): void {
-	// 	if (el) {
-	// 		el.style.height = 'auto';
-	// 		el.style.height = `${el.scrollHeight}px`;
-	// 	}
-	// }
-
 	const modalStore = getModalStore();
 	type Message = PageData['messages'][0];
-	function onEditClick(m: Message): void {
-		// console.log(m.message);
+
+	let formEdit: Message | undefined;
+	let elemForm: HTMLFormElement;
+	const formEditId = 'form-edit';
+	function onEditClick(objMessage: Message): void {
 		const component: ModalComponent = { ref: EditModal };
 		const modal: ModalSettings = {
 			type: 'component',
 			component,
 			meta: {
-				message: m.message
+				message: objMessage.message
 			},
-			response: (r: string) => {
+			response: async (r: string) => {
 				if (r) {
-					console.log(r);
-					m.message = r;
+					formEdit = {
+						...objMessage,
+						message: r
+					};
+					await tick();
+					elemForm.submit();
 				}
 			}
 		};
 		modalStore.trigger(modal);
-		// data.messages = data.messages;
 	}
 
-	onMount(() => {
-		if (browser) {
-			// autoResizeTextarea(window.document.getElementById('message'));
-			scrollChatBottom();
-		}
-	});
+	let scrollBehavior: ScrollBehavior = 'auto';
+	let elemTextarea: HTMLTextAreaElement;
 </script>
+
+<form method="post" id={formEditId} bind:this={elemForm} use:enhance>
+	<input type="hidden" name="id" value={formEdit?.id} />
+	<input type="hidden" name="message" value={formEdit?.message} />
+</form>
 
 <div class="contents space-y-4">
 	<div class="mx-4 flex gap-4">
@@ -102,8 +87,8 @@
 		</div>
 	</div>
 	<hr />
-	<Scrollable class="space-y-4 px-4" id={chatElemId}>
-		{#each data.messages as m, i}
+	<Scrollable class="space-y-4 px-4" bind:behavior={scrollBehavior}>
+		{#each data.messages as m, i (m.id)}
 			<div class="flex gap-2">
 				<div class:order-last={m.userId === data.user?.userId}>
 					<UserAvatar src={m.user.avatar} />
@@ -120,26 +105,16 @@
 						</p>
 						{#if m.userId === data.user?.userId}
 							<div>
-								<button use:popup={popupClick(i)}>
+								<button
+									use:popup={{
+										event: 'click',
+										target: `popupClick-${i}`,
+										placement: 'bottom',
+										closeQuery: 'li'
+									}}
+								>
 									<Icon icon="mdi:dots-horizontal" height="auto" />
 								</button>
-							</div>
-							<div class="card w-48 p-2 shadow-xl" data-popup="popupClick-{i}">
-								<ul>
-									<li>
-										<button class={popupMenuClasses} on:click={() => onEditClick(m)}>
-											<Icon icon="mdi:pencil" height="auto" />
-											<span>Edit</span>
-										</button>
-									</li>
-									<li>
-										<button class="text-error-400-500-token {popupMenuClasses}">
-											<Icon icon="mdi:delete" height="auto" />
-											<span>Delete</span>
-										</button>
-									</li>
-								</ul>
-								<div class="bg-surface-100-800-token arrow" />
 							</div>
 						{/if}
 					</header>
@@ -147,6 +122,7 @@
 				</div>
 			</div>
 		{/each}
+
 		{#if $message}
 			<div class="bg-surface-100-800-token text-error-400-500-token rounded-3xl px-4 py-2">
 				{$message}
@@ -154,17 +130,17 @@
 		{/if}
 	</Scrollable>
 	{#if data.user}
-		<form class="mx-4" method="post">
+		<form class="mx-4" method="post" use:enhance>
 			<div class="flex items-end gap-2">
-				<AutoResizeTextarea target="message" />
 				<textarea
 					class="textarea max-h-96 resize-none overflow-y-auto text-sm"
 					name="message"
-					id="message"
 					rows="1"
 					placeholder="Message #{data.channel.name}"
 					class:input-error={$errors.message}
 					bind:value={$form.message}
+					bind:this={elemTextarea}
+					use:autoResize
 					disabled={$submitting}
 					{...$constraints.message}
 				/>
@@ -176,3 +152,22 @@
 		</form>
 	{/if}
 </div>
+{#each data.messages as m, i}
+	<div class="card w-48 p-2 shadow-xl" data-popup="popupClick-{i}">
+		<ul>
+			<li>
+				<button class={popupMenuClasses} on:click={() => onEditClick(m)}>
+					<Icon icon="mdi:pencil" height="auto" />
+					<span>Edit</span>
+				</button>
+			</li>
+			<li>
+				<button class="text-error-400-500-token {popupMenuClasses}">
+					<Icon icon="mdi:delete" height="auto" />
+					<span>Delete</span>
+				</button>
+			</li>
+		</ul>
+		<div class="bg-surface-100-800-token arrow" />
+	</div>
+{/each}
