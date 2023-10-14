@@ -8,22 +8,25 @@ import { PROVIDERID_USERNAME } from '$lib/consts';
 import { UserRoleEnumSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
 import { auth } from '$lib/server/lucia';
-import { hasAdminRole } from '$lib/utils';
+import { exclude, hasAdminRole } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
 
 // TODO: verify email
 
 const schema = z.object({
+	// required
 	username: z.string().min(4).max(16),
 	displayName: z.string().min(2).max(16),
 	password: z.string().min(1),
-	avatar: z.string().nullish(),
-	// TODO: add email
-	// email: z.string().email().nullish().or(z.literal('')),
-	fullName: z.string().max(16).nullish(),
+	// nullable
+	avatar: z.string().nullable(),
+	email: z.string().email().nullable(),
+	// optional
 	role: UserRoleEnumSchema.optional(),
-	newPassword: z.string().optional()
+	newPassword: z.string().optional(),
+	// nullish
+	fullName: z.string().max(16).nullish()
 });
 
 export const load = (async ({ parent, params, url }) => {
@@ -125,12 +128,8 @@ export const actions: Actions = {
 			});
 			// update user attributes
 			await auth.updateUserAttributes(userId, {
-				username: form.data.username,
-				displayName: form.data.displayName,
-				avatar: form.data.avatar,
-				fullName: form.data.fullName ?? undefined,
-				role: form.data.role ?? undefined
-				// TODO: update email
+				...exclude(form.data, ['password', 'newPassword']),
+				fullName: form.data.fullName ?? undefined
 			});
 			// update password
 			if (form.data.newPassword) {

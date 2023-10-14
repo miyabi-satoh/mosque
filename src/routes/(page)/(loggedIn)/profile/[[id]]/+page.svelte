@@ -77,7 +77,7 @@
 			</button>
 			<input type="hidden" name="avatar" bind:value={$form.avatar} />
 		</div>
-		<div class="space-y-4 sm:flex-1">
+		<div class="grid grid-cols-1 gap-x-2 gap-y-4 sm:flex-1 md:grid-cols-2">
 			<div>
 				<label class="label">
 					<span>Login ID</span>
@@ -85,7 +85,6 @@
 						class="input"
 						class:input-error={$errors.username}
 						type="text"
-						id="username"
 						name="username"
 						bind:value={$form.username}
 						disabled={$submitting}
@@ -104,7 +103,6 @@
 						class="input"
 						class:input-error={$errors.displayName}
 						type="text"
-						id="displayName"
 						name="displayName"
 						bind:value={$form.displayName}
 						disabled={$submitting}
@@ -113,6 +111,23 @@
 				</label>
 				<HelperText>
 					{$errors.displayName ? $errors.displayName[0] : ''}
+				</HelperText>
+			</div>
+			<div>
+				<label class="label">
+					<span>Email</span>
+					<input
+						class="input"
+						class:input-error={$errors.email}
+						type="text"
+						name="email"
+						bind:value={$form.email}
+						disabled={$submitting}
+						{...$constraints.email}
+					/>
+				</label>
+				<HelperText>
+					{$errors.email ? $errors.email[0] : ''}
 				</HelperText>
 			</div>
 
@@ -124,7 +139,6 @@
 							class="input"
 							class:input-error={$errors.fullName}
 							type="text"
-							id="fullName"
 							name="fullName"
 							bind:value={$form.fullName}
 							disabled={$submitting}
@@ -155,7 +169,6 @@
 							class="input"
 							class:input-error={$errors.newPassword}
 							type="password"
-							id="newPassword"
 							name="newPassword"
 							bind:value={$form.newPassword}
 							disabled={$submitting}
@@ -175,7 +188,6 @@
 						class="input"
 						class:input-error={$errors.password}
 						type="password"
-						id="password"
 						name="password"
 						bind:value={$form.password}
 						disabled={$submitting}
