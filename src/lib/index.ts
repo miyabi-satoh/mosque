@@ -1,5 +1,4 @@
 // place files you want to import through the `$lib` alias in this folder.
-export { default as AutoResizeTextarea } from './components/AutoResizeTextarea.svelte';
 export { default as AudioPlayer } from './components/AudioPlayer/AudioPlayer.svelte';
 export { default as HelperText } from './components/HelperText.svelte';
 export { default as LoadingOverlay } from './components/LoadingOverlay.svelte';
