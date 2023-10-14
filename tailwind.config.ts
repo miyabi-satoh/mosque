@@ -4,7 +4,6 @@ import { join } from 'node:path';
 import type { Config } from 'tailwindcss';
 
 const config = {
-	// darkMode: 'class',
 	content: [
 		'./src/**/*.{html,js,svelte,ts}',
 		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
@@ -19,14 +18,10 @@ const config = {
 	},
 	plugins: [
 		forms,
-		// require('daisyui')
 		skeleton({
 			themes: { preset: ['skeleton'] }
 		})
 	]
-	// daisyui: {
-	// 	logs: false
-	// }
 } satisfies Config;
 
 export default config;
