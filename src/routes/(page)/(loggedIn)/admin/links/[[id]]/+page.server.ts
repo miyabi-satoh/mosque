@@ -16,7 +16,7 @@ const schema = z.object({
 
 export const load = (async ({ params, parent, url }) => {
 	const links = await db.link.findMany({
-		orderBy: { sortOrder: 'asc' }
+		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
 	});
 	const link = links.find((s) => s.id === params.id);
 	if (params.id && !link) throw error(404, `Not found`);
@@ -41,6 +41,7 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
+		console.log(formData);
 
 		let redirectTo = '';
 		try {
@@ -52,10 +53,12 @@ export const actions: Actions = {
 					update: form.data
 				});
 
-				// clear form
-				form.data.sortOrder = 0;
-				form.data.title = '';
-				form.data.url = '';
+				if (!params.id) {
+					// clear form
+					form.data.sortOrder = 0;
+					form.data.title = '';
+					form.data.url = '';
+				}
 				return message(form, `The link has been saved.`);
 			} else if (params.id) {
 				// delete

@@ -16,7 +16,7 @@ export const load = (async () => {
 	});
 
 	const links = await db.link.findMany({
-		orderBy: { sortOrder: 'asc' }
+		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
 	});
 
 	const items: ItemT[] = [];
