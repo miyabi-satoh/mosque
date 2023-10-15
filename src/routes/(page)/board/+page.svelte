@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { UserAvatar } from '$lib';
+	import { Scrollable, UserAvatar } from '$lib';
 	import { URLS } from '$lib/consts';
 	import Icon from '@iconify/svelte';
 	import { formatRelative } from 'date-fns';
@@ -52,14 +52,16 @@
 <svelte:window on:resize={onWindowResize} />
 <div class="contents space-y-4">
 	<div class="mx-4 flex gap-x-2">
-		<input type="text" class="input" id="search" placeholder="Find a channel..." />
-		<a href="/board/channel" class="variant-ghost-primary btn">
-			<span><Icon icon="mdi:rss" height="auto" /></span>
-			<span>New</span>
-		</a>
+		<input type="text" class="input" id="search" placeholder="Find channels or messages..." />
+		{#if data.user}
+			<a href="/board/channel" class="variant-ghost-primary btn">
+				<span><Icon icon="mdi:rss" height="auto" /></span>
+				<span>New</span>
+			</a>
+		{/if}
 	</div>
 	{#if data.channels.length > 0}
-		<div class="mx-4 space-y-4">
+		<Scrollable class="ml-4 mr-2 space-y-4">
 			{#each data.channels as channel}
 				<a href="{URLS.BOARD}/{channel.id}" class="block">
 					<div class="card card-hover space-y-2 px-4 py-2">
@@ -89,7 +91,7 @@
 					</div>
 				</a>
 			{/each}
-		</div>
+		</Scrollable>
 	{:else}
 		<div class="mx-4">No channels.</div>
 	{/if}
