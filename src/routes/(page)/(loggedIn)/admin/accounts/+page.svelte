@@ -22,11 +22,11 @@
 <form class={parentClass} method="POST" action={URLS.ADMIN_ACCOUNTS_PRINT} target="_blank">
 	<div class="mx-4 mb-4 flex items-center">
 		<a href={URLS.ADMIN_ACCOUNTS_CREATE} class="anchor flex-1">Create accounts from CSV data</a>
-		<button type="submit" class="variant-ghost-primary btn" disabled={$form.checked.length === 0}
+		<button class="variant-ghost-primary btn" disabled={$form.checked.length === 0}
 			>Print Selected Accounts</button
 		>
 	</div>
-	<Scrollable class="mx-4">
+	<Scrollable class="ml-4 mr-2">
 		<table class="w-full table-auto">
 			<thead>
 				<tr class="bg-surface-100-800-token sticky top-0">

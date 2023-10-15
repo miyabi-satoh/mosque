@@ -53,8 +53,6 @@
 			</HelperText>
 		</div>
 
-		<button type="submit" class="variant-ghost-primary btn w-full" disabled={$submitting}
-			>Submit</button
-		>
+		<button class="variant-ghost-primary btn w-full" disabled={$submitting}>Submit</button>
 	</form>
 </ModalContainer>

@@ -15,9 +15,7 @@
 	{/if}
 
 	<div class="text-right">
-		<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}
-			>Create accounts</button
-		>
+		<button class="variant-ghost-primary btn" disabled={$submitting}>Create accounts</button>
 	</div>
 
 	<textarea

@@ -43,7 +43,7 @@
 						};
 					}}
 				>
-					<button type="submit" class="w-full {itemClasses}">
+					<button class="w-full {itemClasses}">
 						<Icon icon="mdi:logout" height="auto" />
 						<span class="ml-2">Logout</span>
 					</button>

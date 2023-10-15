@@ -54,7 +54,7 @@
 				Delete channel
 			</button>
 		{/if}
-		<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>
+		<button class="variant-ghost-primary btn" disabled={$submitting}>
 			{$form.id ? 'Save' : 'Create'} channel
 		</button>
 	</div>

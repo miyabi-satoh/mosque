@@ -201,6 +201,6 @@
 		</div>
 	</div>
 	<div class="text-right">
-		<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+		<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 	</div>
 </form>
