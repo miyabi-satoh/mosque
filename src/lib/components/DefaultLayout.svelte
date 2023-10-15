@@ -80,7 +80,7 @@
 					>
 						<span><Icon icon="mdi:menu" height="auto" /></span>
 					</button>
-					<a href="/" class="text-xl uppercase">mosque</a>
+					<a href="/" class="hidden text-xl uppercase sm:block">mosque</a>
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
@@ -91,9 +91,9 @@
 					</a>
 				{/if}
 				{#if data.user}
-					<div class="flex gap-x-2">
+					<div class="flex items-center gap-x-2">
 						<Icon icon="mdi:account-circle" height="auto" />
-						{data.user.displayName}
+						<span class="text-sm sm:text-base">{data.user.displayName}</span>
 					</div>
 				{:else}
 					<a href={URLS.LOGIN} class="flex gap-x-2" title="Login">
