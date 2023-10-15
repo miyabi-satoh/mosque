@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { DeleteButton, Scrollable } from '$lib';
-	import UserAvatar from '$lib/components/UserAvatar.svelte';
+	import { DeleteButton, MarkdownEditor, Scrollable, UserAvatar } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import type { ScrollBehavior } from '$lib/types';
@@ -27,11 +26,13 @@
 		breaks: true
 	});
 
+	let markdownEditor: MarkdownEditor;
 	export let data: PageData;
 	const { form, message, submitting, enhance } = superForm(data.form, {
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				if (!form.data.id) scrollBehavior = 'smooth';
+				markdownEditor.clear();
 			}
 		}
 	});
@@ -88,7 +89,7 @@
 <form class="contents" method="post" bind:this={elemForm} use:enhance>
 	<input type="hidden" name="id" value={formEdit?.id} />
 	<input type="hidden" name="message" value={formEdit?.message} />
-	<DeleteButton id="delete" class="" />
+	<DeleteButton id="delete" class="hidden" />
 </form>
 
 <div class="contents space-y-4">
@@ -154,17 +155,17 @@
 	{#if data.user}
 		<hr />
 		<form class="mx-4" method="post" use:enhance>
-			<input type="hidden" name="message" value={$form.message} />
 			<div class="flex items-end gap-2">
 				{#await import('$lib/components/MarkdownEditor.svelte') then Module}
 					<Module.default
+						name="message"
 						class="flex-1"
 						placeholder="Message #{data.channel.name}"
 						bind:value={$form.message}
+						bind:this={markdownEditor}
 					/>
 				{/await}
-				<!-- <MarkdownEditor class="flex-1" placeholder="Message #{data.channel.name}" /> -->
-				<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>
+				<button class="variant-ghost-primary btn" disabled={$submitting}>
 					<span><Icon icon="mdi:send" height="auto" /></span>
 					<span class="hidden sm:block">Send</span>
 				</button>

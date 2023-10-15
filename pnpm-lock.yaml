@@ -41,6 +41,9 @@ devDependencies:
   '@milkdown/transformer':
     specifier: ^7.3.0
     version: 7.3.0(@milkdown/prose@7.3.0)
+  '@milkdown/utils':
+    specifier: ^7.3.0
+    version: 7.3.0(@milkdown/core@7.3.0)(@milkdown/ctx@7.3.0)(@milkdown/prose@7.3.0)(@milkdown/transformer@7.3.0)
   '@playwright/test':
     specifier: ^1.38.1
     version: 1.38.1

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Scrollable } from '$lib';
-	import HelperText from '$lib/components/HelperText.svelte';
+	import { DeleteButton, HelperText, Scrollable } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
@@ -82,26 +81,17 @@
 			</div>
 		</div>
 
-		<div class="flex justify-end gap-x-4">
+		<div class="flex justify-end gap-x-2">
 			{#if $page.params.id}
 				<a class="variant-filled btn" href={URLS.ADMIN_LINKS}>Cancel</a>
-				<button
-					type="submit"
-					name="delete"
-					on:click={(e) =>
-						!confirm('Are you sure you want to delete this link?') && e.preventDefault()}
-					class="variant-ghost-warning btn"
-					disabled={$submitting}
-				>
-					Delete
-				</button>
+				<DeleteButton disabled={$submitting} />
 			{/if}
-			<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 		</div>
 	{/if}
 </form>
 
-<Scrollable class="mx-4 mt-4">
+<Scrollable class="ml-4 mr-2 mt-4">
 	<table class="w-full table-auto">
 		<thead>
 			<tr class="bg-surface-100-800-token sticky top-0">
