@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DefaultLayout from '$lib/components/DefaultLayout.svelte';
+	import { DefaultLayout } from '$lib';
 	import type { LayoutData } from './$types';
 
 	export let data: LayoutData;

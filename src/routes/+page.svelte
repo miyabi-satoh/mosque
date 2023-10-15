@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
-	import DefaultLayout from '$lib/components/DefaultLayout.svelte';
+	import { DefaultLayout } from '$lib';
 
 	export let data: PageData;
 </script>
