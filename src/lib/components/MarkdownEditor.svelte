@@ -14,11 +14,8 @@
 
 	let makeEditor: Editor;
 	function editor(dom: Element) {
-		console.log('editor', value);
-		// to obtain the editor instance we need to store a reference of the editor.
 		Editor.make()
 			.config((ctx) => {
-				console.log('config', value);
 				ctx.set(rootCtx, dom);
 				ctx.get(listenerCtx).markdownUpdated((_ctx, markdown, _prevMarkdown) => {
 					value = markdown;

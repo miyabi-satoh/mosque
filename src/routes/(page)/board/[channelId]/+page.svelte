@@ -32,7 +32,7 @@
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				if (!form.data.id) scrollBehavior = 'smooth';
-				markdownEditor.clear();
+				if (markdownEditor) markdownEditor.clear();
 			}
 		}
 	});

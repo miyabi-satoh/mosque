@@ -41,8 +41,6 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
-		console.log(formData);
-
 		let redirectTo = '';
 		try {
 			if (!formData.has('delete')) {

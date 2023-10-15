@@ -22,7 +22,6 @@
 	function onFileChange(event: Event): void {
 		const inp = event.target as HTMLInputElement;
 		if (inp.files) {
-			console.log(`reader.onload`);
 			const reader = new FileReader();
 			reader.readAsDataURL(inp.files[0]);
 			reader.onload = (e) => {
