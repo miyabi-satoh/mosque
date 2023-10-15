@@ -1,33 +1,37 @@
 <script lang="ts">
+	import { DeleteButton, Scrollable } from '$lib';
+	import UserAvatar from '$lib/components/UserAvatar.svelte';
 	import { URLS } from '$lib/consts';
+	import { submittingStore } from '$lib/stores';
+	import type { ScrollBehavior } from '$lib/types';
 	import Icon from '@iconify/svelte';
-	import type { PageData } from './$types';
-	import { Scrollable } from '$lib';
 	import {
+		getModalStore,
 		popup,
 		type ModalComponent,
-		type ModalSettings,
-		getModalStore
+		type ModalSettings
 	} from '@skeletonlabs/skeleton';
-	import { superForm } from 'sveltekit-superforms/client';
-	import { submittingStore } from '$lib/stores';
 	import { formatRelative } from 'date-fns';
 	import ja from 'date-fns/locale/ja';
-	import { tick } from 'svelte';
-	import UserAvatar from '$lib/components/UserAvatar.svelte';
-	import EditModal from './EditModal.svelte';
-	import { autoResize, autoResizeTextarea } from '$lib/actions/autoResizeTextarea';
-	import type { ScrollBehavior } from '$lib/types';
 	import { marked } from 'marked';
+	import { tick } from 'svelte';
+	import { superForm } from 'sveltekit-superforms/client';
+	import type { PageData } from './$types';
 	import './style.postcss';
+	import { hasAdminRole } from '$lib/utils';
+	import EditModal from './EditModal.svelte';
+	import DOMPurify from 'dompurify';
+	import { browser } from '$app/environment';
+
+	marked.use({
+		breaks: true
+	});
 
 	export let data: PageData;
-	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form, {
+	const { form, message, submitting, enhance } = superForm(data.form, {
 		onUpdated: ({ form }) => {
-			console.log('onUpdated', form);
 			if (form.valid) {
 				if (!form.data.id) scrollBehavior = 'smooth';
-				autoResizeTextarea(elemTextarea);
 			}
 		}
 	});
@@ -44,7 +48,6 @@
 
 	let formEdit: Message | undefined;
 	let elemForm: HTMLFormElement;
-	const formEditId = 'form-edit';
 	function onEditClick(objMessage: Message): void {
 		const component: ModalComponent = { ref: EditModal };
 		const modal: ModalSettings = {
@@ -53,27 +56,39 @@
 			meta: {
 				message: objMessage.message
 			},
-			response: async (r: string) => {
-				if (r) {
+			response: (r: string) => {
+				if (r.length > 0) {
 					formEdit = {
 						...objMessage,
 						message: r
 					};
-					await tick();
-					elemForm.submit();
+					tick().then(() => elemForm.submit());
 				}
 			}
 		};
 		modalStore.trigger(modal);
 	}
 
+	function onDeleteClick(objMessage: Message): void {
+		// setTimeoutでPopupが消えるのを待つ
+		setTimeout(() => {
+			formEdit = {
+				...objMessage
+			};
+			// tick()でフォーム要素のvalueが更新されるのを待つ
+			tick().then(() => {
+				window.document.getElementById('delete')?.click();
+			});
+		}, 250);
+	}
+
 	let scrollBehavior: ScrollBehavior = 'auto';
-	let elemTextarea: HTMLTextAreaElement;
 </script>
 
-<form method="post" id={formEditId} bind:this={elemForm} use:enhance>
+<form class="contents" method="post" bind:this={elemForm} use:enhance>
 	<input type="hidden" name="id" value={formEdit?.id} />
 	<input type="hidden" name="message" value={formEdit?.message} />
+	<DeleteButton id="delete" class="" />
 </form>
 
 <div class="contents space-y-4">
@@ -105,7 +120,7 @@
 							<span class="font-bold">{m.user.displayName ?? m.user.fullName}</span>
 							<span class="text-sm opacity-50">{showRelativeDate(m.updatedAt)}</span>
 						</p>
-						{#if m.userId === data.user?.userId}
+						{#if m.userId === data.user?.userId || hasAdminRole(data.user)}
 							<div>
 								<button
 									use:popup={{
@@ -120,8 +135,12 @@
 							</div>
 						{/if}
 					</header>
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					<article class="marked">{@html marked.parse(m.message)}</article>
+					<article class="marked">
+						{#if browser}
+							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+							{@html DOMPurify.sanitize(marked.parse(m.message))}
+						{/if}
+					</article>
 				</div>
 			</div>
 		{/each}
@@ -133,20 +152,18 @@
 		{/if}
 	</Scrollable>
 	{#if data.user}
+		<hr />
 		<form class="mx-4" method="post" use:enhance>
+			<input type="hidden" name="message" value={$form.message} />
 			<div class="flex items-end gap-2">
-				<textarea
-					class="textarea max-h-96 resize-none overflow-y-auto text-sm"
-					name="message"
-					rows="1"
-					placeholder="Message #{data.channel.name}"
-					class:input-error={$errors.message}
-					bind:value={$form.message}
-					bind:this={elemTextarea}
-					use:autoResize
-					disabled={$submitting}
-					{...$constraints.message}
-				/>
+				{#await import('$lib/components/MarkdownEditor.svelte') then Module}
+					<Module.default
+						class="flex-1"
+						placeholder="Message #{data.channel.name}"
+						bind:value={$form.message}
+					/>
+				{/await}
+				<!-- <MarkdownEditor class="flex-1" placeholder="Message #{data.channel.name}" /> -->
 				<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>
 					<span><Icon icon="mdi:send" height="auto" /></span>
 					<span class="hidden sm:block">Send</span>
@@ -165,7 +182,10 @@
 				</button>
 			</li>
 			<li>
-				<button class="text-error-400-500-token {popupMenuClasses}">
+				<button
+					class="text-error-400-500-token {popupMenuClasses}"
+					on:click={() => onDeleteClick(m)}
+				>
 					<Icon icon="mdi:delete" height="auto" />
 					<span>Delete</span>
 				</button>

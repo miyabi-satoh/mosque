@@ -48,7 +48,12 @@
 		</HelperText>
 	</div>
 	<SlideToggle name="private" bind:checked={$form.private}>Private</SlideToggle>
-	<div class="flex justify-end">
+	<div class="flex justify-end gap-x-2">
+		{#if $form.id}
+			<button type="button" name="delete" class="variant-ghost-warning btn" disabled={$submitting}>
+				Delete channel
+			</button>
+		{/if}
 		<button type="submit" class="variant-ghost-primary btn" disabled={$submitting}>
 			{$form.id ? 'Save' : 'Create'} channel
 		</button>
