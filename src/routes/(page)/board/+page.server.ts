@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-import { Prisma, type Channel } from '@prisma/client';
+import type { Channel } from '@prisma/client';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
@@ -18,18 +18,25 @@ const channelSchema = z.object({
 	delete: z.boolean().default(false)
 });
 
-const messageWithUser = Prisma.validator<Prisma.MessageDefaultArgs>()({
-	include: {
-		user: {
-			select: {
-				avatar: true,
-				displayName: true,
-				fullName: true
+// https://www.prisma.io/docs/concepts/components/prisma-client/advanced-type-safety/operating-against-partial-structures-of-model-types
+async function getMessageWithUser(channelId: string) {
+	const message = await db.message.findFirst({
+		where: { channelId },
+		orderBy: { updatedAt: 'desc' },
+		include: {
+			user: {
+				select: {
+					avatar: true,
+					displayName: true,
+					fullName: true
+				}
 			}
 		}
-	}
-});
-type MessageWithUser = Prisma.MessageGetPayload<typeof messageWithUser>;
+	});
+	return message;
+}
+type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
+type MessageWithUser = ThenArg<ReturnType<typeof getMessageWithUser>>;
 type ChannelWithLastMessage = Channel & {
 	lastMessage?: MessageWithUser | null;
 };
@@ -39,11 +46,7 @@ export const load = (async () => {
 		orderBy: { updatedAt: 'desc' }
 	});
 	for (const channel of channels) {
-		const message = await db.message.findFirst({
-			where: { channelId: channel.id },
-			orderBy: { updatedAt: 'desc' },
-			...messageWithUser
-		});
+		const message = await getMessageWithUser(channel.id);
 		channel.lastMessage = message;
 	}
 
