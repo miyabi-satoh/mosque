@@ -6,7 +6,7 @@ export const convertFullWidthNumbersToHalf = (() => {
 	const diff = '０'.charCodeAt(0) - '0'.charCodeAt(0);
 
 	// return the function
-	return (text: string) =>
+	return (text: string): string =>
 		text.replace(/[０-９]/g, (m) => String.fromCharCode(m.charCodeAt(0) - diff));
 })();
 
@@ -20,17 +20,16 @@ export function exclude<T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
 	return objCopy;
 }
 
-export function hasAdminRole(user: User): boolean {
-	return user.role === 'ADMIN';
+export function hasAdminRole(user: User | undefined): boolean {
+	return user?.role === 'ADMIN';
 }
-export function hasStaffRole(user: User): boolean {
-	return user.role === 'STAFF' || user.role === 'ADMIN';
+export function hasStaffRole(user: User | undefined): boolean {
+	return user?.role === 'STAFF' || user?.role === 'ADMIN';
 }
 
-const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-export function isMobile(ua: string | null): boolean {
+export function isWindows(ua: string | null): boolean {
 	if (ua) {
-		return regex.test(ua);
+		return ua.includes('Windows NT');
 	}
 	return true;
 }

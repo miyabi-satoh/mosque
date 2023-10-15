@@ -1,10 +1,21 @@
+import type { User } from 'lucia';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createTransport } from 'nodemailer';
 
-import { MAIL_ACCOUNT, MAIL_PASSWORD } from '$env/static/private';
+import { dev } from '$app/environment';
 
-export function searchFiles(dirPath: string, ext: RegExp) {
+import { FEATURE_BOARD, MAIL_ACCOUNT, MAIL_PASSWORD } from '$env/static/private';
+
+import { isWindows } from '$lib/utils';
+
+export function isBoardEnabled(user: User | undefined, ua: string | null): boolean {
+	if (dev) return true;
+	if (FEATURE_BOARD === 'true') return !!user || isWindows(ua);
+	return false;
+}
+
+export function searchFiles(dirPath: string, ext: RegExp): string[] {
 	const allDirents = fs.readdirSync(dirPath, { withFileTypes: true });
 
 	const files: string[] = [];
@@ -22,7 +33,7 @@ export function searchFiles(dirPath: string, ext: RegExp) {
 	return files;
 }
 
-export async function sendmail(to: string, subject: string, text: string) {
+export async function sendmail(to: string, subject: string, text: string): Promise<void> {
 	const transporter = createTransport({
 		port: 465,
 		host: 'smtp.gmail.com',

@@ -47,9 +47,15 @@ model User {
   displayName String?      @map("display_name")
   email       String?
   code        String?      @unique
+  avatar      String?
+  lastLoginAt DateTime?    @map("last_login_at")
 
-  auth_session Session[]
-  key          Key[]
+  auth_session   Session[]
+  key            Key[]
+  Message        Message[]
+  channelCreated Channel[]       @relation("channelCreated")
+  channelUpdated Channel[]       @relation("channelUpdated")
+  ChannelMember  ChannelMember[]
 
   @@map("auth_users")
 }
@@ -146,30 +152,49 @@ model Link {
   @@map("links")
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  username  String
-  password  String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+model Channel {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  // true: channelの表示そのものをmemberに限定する
+  private     Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  comments Comment[]
+  createdBy String @map("created_by")
+  creator   User   @relation(name: "channelCreated", references: [id], fields: [createdBy], onDelete: Cascade)
 
-  @@map("posts")
+  updatedBy String @map("updated_by")
+  updator   User   @relation(name: "channelUpdated", references: [id], fields: [updatedBy], onDelete: Cascade)
+
+  messages      Message[]
+  ChannelMember ChannelMember[]
+
+  @@map("channels")
 }
 
-model Comment {
+model ChannelMember {
+  channelId String
+  userId    String
+
+  channel Channel @relation(references: [id], fields: [channelId], onDelete: Cascade)
+  user    User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@id([channelId, userId])
+  @@map("channel_members")
+}
+
+model Message {
   id        String   @id @default(cuid())
   message   String
-  username  String
-  password  String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  postId String @map("post_id")
-  post   Post   @relation(references: [id], fields: [postId], onDelete: Cascade)
+  userId String @map("user_id")
+  user   User   @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-  @@map("comments")
+  channelId String  @map("channel_id")
+  channel   Channel @relation(references: [id], fields: [channelId], onDelete: Cascade)
+
+  @@map("messages")
 }

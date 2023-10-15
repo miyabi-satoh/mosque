@@ -22,7 +22,9 @@ export const UserScalarFieldEnumSchema = z.enum([
 	'fullName',
 	'displayName',
 	'email',
-	'code'
+	'code',
+	'avatar',
+	'lastLoginAt'
 ]);
 
 export const SessionScalarFieldEnumSchema = z.enum([
@@ -66,24 +68,26 @@ export const TempResourceScalarFieldEnumSchema = z.enum([
 
 export const LinkScalarFieldEnumSchema = z.enum(['id', 'url', 'title', 'sortOrder']);
 
-export const PostScalarFieldEnumSchema = z.enum([
+export const ChannelScalarFieldEnumSchema = z.enum([
 	'id',
-	'title',
-	'content',
-	'username',
-	'password',
-	'createdAt',
-	'updatedAt'
-]);
-
-export const CommentScalarFieldEnumSchema = z.enum([
-	'id',
-	'message',
-	'username',
-	'password',
+	'name',
+	'description',
+	'private',
 	'createdAt',
 	'updatedAt',
-	'postId'
+	'createdBy',
+	'updatedBy'
+]);
+
+export const ChannelMemberScalarFieldEnumSchema = z.enum(['channelId', 'userId']);
+
+export const MessageScalarFieldEnumSchema = z.enum([
+	'id',
+	'message',
+	'createdAt',
+	'updatedAt',
+	'userId',
+	'channelId'
 ]);
 
 export const SortOrderSchema = z.enum(['asc', 'desc']);
@@ -119,7 +123,9 @@ export const UserSchema = z.object({
 	fullName: z.string().nullable(),
 	displayName: z.string().nullable(),
 	email: z.string().nullable(),
-	code: z.string().nullable()
+	code: z.string().nullable(),
+	avatar: z.string().nullable(),
+	lastLoginAt: z.coerce.date().nullable()
 });
 
 export type User = z.infer<typeof UserSchema>;
@@ -215,33 +221,44 @@ export const LinkSchema = z.object({
 export type Link = z.infer<typeof LinkSchema>;
 
 /////////////////////////////////////////
-// POST SCHEMA
+// CHANNEL SCHEMA
 /////////////////////////////////////////
 
-export const PostSchema = z.object({
+export const ChannelSchema = z.object({
 	id: z.string().cuid(),
-	title: z.string(),
-	content: z.string(),
-	username: z.string(),
-	password: z.string().nullable(),
-	createdAt: z.coerce.date(),
-	updatedAt: z.coerce.date()
-});
-
-export type Post = z.infer<typeof PostSchema>;
-
-/////////////////////////////////////////
-// COMMENT SCHEMA
-/////////////////////////////////////////
-
-export const CommentSchema = z.object({
-	id: z.string().cuid(),
-	message: z.string(),
-	username: z.string(),
-	password: z.string().nullable(),
+	name: z.string(),
+	description: z.string().nullable(),
+	private: z.boolean(),
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),
-	postId: z.string()
+	createdBy: z.string(),
+	updatedBy: z.string()
 });
 
-export type Comment = z.infer<typeof CommentSchema>;
+export type Channel = z.infer<typeof ChannelSchema>;
+
+/////////////////////////////////////////
+// CHANNEL MEMBER SCHEMA
+/////////////////////////////////////////
+
+export const ChannelMemberSchema = z.object({
+	channelId: z.string(),
+	userId: z.string()
+});
+
+export type ChannelMember = z.infer<typeof ChannelMemberSchema>;
+
+/////////////////////////////////////////
+// MESSAGE SCHEMA
+/////////////////////////////////////////
+
+export const MessageSchema = z.object({
+	id: z.string().cuid(),
+	message: z.string(),
+	createdAt: z.coerce.date(),
+	updatedAt: z.coerce.date(),
+	userId: z.string(),
+	channelId: z.string()
+});
+
+export type Message = z.infer<typeof MessageSchema>;

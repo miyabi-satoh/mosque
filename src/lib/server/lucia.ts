@@ -1,5 +1,5 @@
 import { prisma } from '@lucia-auth/adapter-prisma';
-import type { UserRoleEnum } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { lucia } from 'lucia';
 import { sveltekit } from 'lucia/middleware';
 import 'lucia/polyfill/node';
@@ -48,15 +48,26 @@ export const auth = lucia({
 
 export type Auth = typeof auth;
 
+export const defaultUserAttributes: Omit<User, 'id'> = {
+	username: '',
+	role: 'USER',
+	fullName: null,
+	displayName: null,
+	email: null,
+	code: null,
+	avatar: null,
+	lastLoginAt: null
+} as const;
+
 // create built-in users
-export async function createBuiltinUsers() {
+export async function createBuiltinUsers(): Promise<void> {
 	const count = await db.user.count();
 	if (count === 0) {
-		const users = [
+		const users: (Pick<User, 'username' | 'role'> & { password: string })[] = [
 			{
 				username: ADMIN_NAME,
 				password: ADMIN_PASS,
-				role: 'ADMIN' as UserRoleEnum
+				role: 'ADMIN'
 			}
 		];
 		for (const user of users) {
@@ -67,12 +78,10 @@ export async function createBuiltinUsers() {
 					password: user.password
 				},
 				attributes: {
+					...defaultUserAttributes,
 					username: user.username,
-					role: user.role,
-					fullName: null,
-					displayName: null,
-					email: null,
-					code: null
+					fullName: user.username,
+					role: user.role
 				}
 			});
 		}

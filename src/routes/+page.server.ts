@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 
 import { db } from '$lib/server/db';
 import { auth } from '$lib/server/lucia';
@@ -10,15 +10,13 @@ type ItemT = {
 	title: string;
 	external: boolean;
 };
-export const load = (async ({ parent }) => {
-	const data = await parent();
-
+export const load = (async () => {
 	const exams = await db.exam.findMany({
 		orderBy: { sortOrder: 'asc' }
 	});
 
 	const links = await db.link.findMany({
-		orderBy: { sortOrder: 'asc' }
+		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
 	});
 
 	const items: ItemT[] = [];
@@ -38,17 +36,17 @@ export const load = (async ({ parent }) => {
 	});
 
 	return {
-		items,
-		breadcrumbs: data.breadcrumbs
+		items
 	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	logout: async ({ locals }) => {
 		const session = await locals.auth.validate();
-		if (!session) return fail(401);
-		await auth.invalidateSession(session.sessionId); // invalidate session
-		await auth.deleteDeadUserSessions(session.user.userId);
+		if (session) {
+			await auth.invalidateSession(session.sessionId); // invalidate session
+			await auth.deleteDeadUserSessions(session.user.userId);
+		}
 		locals.auth.setSession(null); // remove cookie
 		throw redirect(302, '/'); // redirect to root page
 	}

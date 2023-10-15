@@ -1,0 +1,60 @@
+.milkdown {
+	@apply border-surface-400-500-token rounded border p-1;
+
+	& .editor {
+		@apply whitespace-pre-wrap px-3 py-1;
+	}
+}
+
+.marked {
+	& .placeholder {
+		@apply absolute left-2 top-1/2 -translate-y-1/2 !bg-transparent pl-2 opacity-50;
+	}
+
+	& h1 {
+		@apply h1 my-4;
+	}
+	& h2 {
+		@apply h2 my-4;
+	}
+	& h3 {
+		@apply h3 my-4;
+	}
+	& h4 {
+		@apply h4 my-4;
+	}
+	& h5 {
+		@apply h5 my-4;
+	}
+	& h6 {
+		@apply h6 my-4;
+	}
+	& blockquote {
+		@apply blockquote my-4;
+	}
+	& pre {
+		@apply pre my-4;
+	}
+	& code {
+		@apply code;
+	}
+	& kbd {
+		@apply kbd;
+	}
+	& del {
+		@apply del;
+	}
+	& ins {
+		@apply ins;
+	}
+	& strong {
+		@apply text-error-400-500-token;
+	}
+
+	& ul {
+		@apply m-4 list-disc;
+	}
+	& ol {
+		@apply m-4 list-decimal;
+	}
+}

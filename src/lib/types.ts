@@ -1,5 +1,1 @@
-export type LabelValueT<ValueT = number> = {
-	label: string;
-	shortLabel?: string;
-	value: ValueT;
-};
+export type ScrollBehavior = 'auto' | 'smooth';

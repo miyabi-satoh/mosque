@@ -1,0 +1,40 @@
+@page {
+	size: A4 portrait;
+	/* ヘッダー・フッターが出力されないように */
+	margin: 0;
+}
+* {
+	margin: 0;
+	padding: 0;
+	user-select: none;
+}
+/* 印刷用 */
+@media print {
+	body {
+		width: 210mm;
+		/* color-adjust: exact; */
+	}
+	svg {
+		width: 210mm;
+		/* 297mmだと2ページ目にはみ出してしまうので微調整 */
+		height: 295.5mm;
+	}
+	/* 改ページ指定 */
+	svg:not(:last-child) {
+		break-after: page;
+	}
+}
+/* プレビュー用 */
+@media screen {
+	body {
+		@apply mx-auto my-0 bg-gray-300;
+	}
+	svg {
+		@apply flex-none bg-white;
+		box-shadow: 0 0.5mm 2mm rgba(0, 0, 0, 0.3);
+		margin-top: 5mm;
+	}
+	svg:last-child {
+		margin-bottom: 5mm;
+	}
+}
