@@ -61,7 +61,7 @@
 		{/if}
 	</div>
 	{#if data.channels.length > 0}
-		<Scrollable class="ml-4 mr-2 space-y-4">
+		<Scrollable class="space-y-4 pl-4 pr-2">
 			{#each data.channels as channel}
 				<a href="{URLS.BOARD}/{channel.id}" class="block">
 					<div class="card card-hover space-y-2 px-4 py-2">
