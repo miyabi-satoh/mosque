@@ -5,12 +5,18 @@
 	import { gfm } from '@milkdown/preset-gfm';
 	import { history } from '@milkdown/plugin-history';
 	import { replaceAll } from '@milkdown/utils';
+	import { createEventDispatcher } from 'svelte';
 
 	let className = '';
 	export { className as class };
 	export let placeholder: string | undefined = undefined;
 	export let value: string = '';
 	export let name: string | undefined = undefined;
+
+	const dispatch = createEventDispatcher();
+	function onKeydown(e: Event) {
+		dispatch('keydown', e as KeyboardEvent);
+	}
 
 	let makeEditor: Editor;
 	let innerValue: string;
@@ -32,6 +38,10 @@
 			.then((editor) => {
 				editor.action(replaceAll(value));
 				makeEditor = editor;
+				const el = dom.getElementsByClassName('editor');
+				if (el && el.length > 0) {
+					el[0].addEventListener('keydown', onKeydown);
+				}
 			});
 	}
 
