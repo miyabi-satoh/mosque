@@ -26,13 +26,11 @@
 		breaks: true
 	});
 
-	let markdownEditor: MarkdownEditor;
 	export let data: PageData;
 	const { form, message, submitting, enhance } = superForm(data.form, {
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				if (!form.data.id) scrollBehavior = 'smooth';
-				if (markdownEditor) markdownEditor.clear();
 			}
 		}
 	});
@@ -162,7 +160,6 @@
 						class="flex-1"
 						placeholder="Message #{data.channel.name}"
 						bind:value={$form.message}
-						bind:this={markdownEditor}
 					/>
 				{/await}
 				<button class="variant-ghost-primary btn" disabled={$submitting}>

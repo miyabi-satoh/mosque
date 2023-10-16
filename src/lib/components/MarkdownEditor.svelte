@@ -13,12 +13,15 @@
 	export let name: string | undefined = undefined;
 
 	let makeEditor: Editor;
+	let innerValue: string;
 	function editor(dom: Element) {
 		Editor.make()
 			.config((ctx) => {
 				ctx.set(rootCtx, dom);
-				ctx.get(listenerCtx).markdownUpdated((_ctx, markdown, _prevMarkdown) => {
-					value = markdown;
+				ctx.get(listenerCtx).markdownUpdated((_ctx, markdown, prevMarkdown) => {
+					if (markdown !== prevMarkdown) {
+						innerValue = value = markdown;
+					}
 				});
 			})
 			.use(commonmark)
@@ -32,8 +35,8 @@
 			});
 	}
 
-	export function clear() {
-		makeEditor.action(replaceAll(''));
+	$: if (makeEditor && innerValue !== value) {
+		makeEditor.action(replaceAll(value));
 	}
 </script>
 
