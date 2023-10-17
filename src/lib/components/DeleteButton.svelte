@@ -10,15 +10,15 @@
 	export let item = 'item';
 	export let type: HTMLButtonElement['type'] = 'button';
 
-	let elemButton: HTMLButtonElement;
 	async function onClick(e: Event) {
 		if (!confirm(`${message}${item ? ' ' + item : ''}?`)) {
 			e.preventDefault();
-		} else {
+		} else if (type === 'button') {
 			const elemForm = (e.target as Element).closest('form');
 			if (elemForm) {
+				// formDataに含めるため、新たにsubmit buttonを生成
 				const elemButton = window.document.createElement('button');
-				elemButton.name = 'delete';
+				elemButton.name = name;
 				elemForm.appendChild(elemButton);
 				elemButton.click();
 				elemForm.removeChild(elemButton);
@@ -27,7 +27,7 @@
 	}
 </script>
 
-<button {type} {id} {name} bind:this={elemButton} on:click={onClick} class={className} {disabled}>
+<button {type} {id} {name} on:click={onClick} class={className} {disabled}>
 	{#if $$slots.default}
 		<slot />
 	{:else}
