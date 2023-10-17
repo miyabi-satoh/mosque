@@ -11,8 +11,8 @@ import type { Actions, PageServerLoad } from './$types';
 const channelSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().min(1).max(50),
-	description: z.string().max(100).nullish(),
-	private: z.boolean()
+	description: z.string().max(100).nullish()
+	// private: z.boolean()
 });
 
 export const load = (async ({ params, parent }) => {
@@ -57,6 +57,7 @@ export const actions: Actions = {
 					where: { id: params.id ?? '' },
 					create: {
 						...form.data,
+						private: false,
 						createdBy: session.user.userId,
 						updatedBy: session.user.userId
 					},

@@ -34,9 +34,8 @@
 	<div>
 		<label class="label">
 			<span>Description</span>
-			<input
-				class="input"
-				type="text"
+			<textarea
+				class="textarea"
 				name="description"
 				class:input-error={$errors.description}
 				bind:value={$form.description}
@@ -47,7 +46,7 @@
 			{$errors.description ? $errors.description[0] : ''}
 		</HelperText>
 	</div>
-	<SlideToggle name="private" bind:checked={$form.private}>Private</SlideToggle>
+	<!-- <SlideToggle name="private" bind:checked={$form.private}>Private</SlideToggle> -->
 	<div class="flex justify-end gap-x-2">
 		{#if $form.id}
 			<button type="button" name="delete" class="variant-ghost-warning btn" disabled={$submitting}>
@@ -58,4 +57,5 @@
 			{$form.id ? 'Save' : 'Create'} channel
 		</button>
 	</div>
+	<input type="hidden" name="id" value={$form.id} />
 </form>

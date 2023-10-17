@@ -110,10 +110,12 @@
 			{data.channel.description}
 		</span>
 		<div class="flex flex-col gap-2">
-			<Icon icon="mdi:information" height="auto" />
-			<a href="{URLS.BOARD_CHANNEL}/{data.channel.id}">
-				<Icon icon="mdi:cog" height="auto" />
-			</a>
+			<!-- <Icon icon="mdi:information" height="auto" /> -->
+			{#if data.channel.createdBy === data.user?.userId || hasAdminRole(data.user)}
+				<a href="{URLS.BOARD_CHANNEL}/{data.channel.id}">
+					<Icon icon="mdi:cog" height="auto" />
+				</a>
+			{/if}
 		</div>
 	</div>
 	<hr />
@@ -124,12 +126,12 @@
 					<UserAvatar src={m.user.avatar} />
 				</div>
 				<div
-					class="card flex-1 space-y-2 rounded-tr-none p-4"
+					class="card flex-1 space-y-1 rounded-tr-none px-4 py-2"
 					class:variant-glass-tertiary={m.userId === data.user?.userId}
 					class:variant-soft={m.userId !== data.user?.userId}
 				>
-					<header class="flex items-center gap-2">
-						<p class="flex flex-1 items-end gap-x-4">
+					<header class="flex items-center">
+						<p class="flex flex-1 items-baseline gap-x-4">
 							<span class="text-sm font-bold sm:text-base"
 								>{m.user.displayName ?? m.user.fullName}</span
 							>

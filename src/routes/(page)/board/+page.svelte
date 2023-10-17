@@ -67,21 +67,21 @@
 					<div class="card card-hover space-y-2 px-4 py-2">
 						<div class="flex gap-x-4">
 							<h1 class="h5 flex-1 font-semibold sm:h3"># {channel.name}</h1>
-							{#if channel.lastMessage}
-								<div class="text-sm opacity-50">
-									{formatRelative(channel.lastMessage.updatedAt, new Date(), { locale: ja })}
-								</div>
-							{/if}
 						</div>
 						<div class="flex gap-x-4 opacity-75">
 							{#if channel.lastMessage}
 								<div>
 									<UserAvatar src={channel.lastMessage.user.avatar} />
 								</div>
-								<div>
-									<span class="text-sm font-semibold sm:text-base">
-										{channel.lastMessage.user.displayName ?? channel.lastMessage.user.fullName}
-									</span>
+								<div class="space-y-1">
+									<header class="flex items-baseline gap-x-4">
+										<span class="text-sm font-semibold sm:text-base">
+											{channel.lastMessage.user.displayName ?? channel.lastMessage.user.fullName}
+										</span>
+										<span class="text-xs opacity-50 sm:text-sm">
+											{formatRelative(channel.lastMessage.updatedAt, new Date(), { locale: ja })}
+										</span>
+									</header>
 									<p class="line-clamp-2 text-xs sm:text-sm">{channel.lastMessage.message}</p>
 								</div>
 							{:else}
