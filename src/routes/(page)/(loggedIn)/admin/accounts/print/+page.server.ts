@@ -12,7 +12,7 @@ import { db } from '$lib/server/db';
 import type { Actions, PageServerLoad } from './$types';
 
 const schema = z.object({
-	checked: z.string().array(),
+	checked: z.string(),
 	svg: z.string().nullish()
 });
 
@@ -38,7 +38,7 @@ export const actions: Actions = {
 
 		// get selected users
 		const users = await db.user.findMany({
-			where: { id: { in: form.data.checked } },
+			where: { id: { in: form.data.checked.split(',') } },
 			orderBy: { username: 'asc' }
 		});
 
