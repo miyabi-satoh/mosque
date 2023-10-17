@@ -55,7 +55,7 @@
 		<button
 			{disabled}
 			class:variant-ghost={disabled}
-			class:variant-ghost-primary={!disabled}
+			class:variant-ghost-tertiary={!disabled}
 			class="btn rounded-full p-3"
 			on:click={() => (paused = !paused)}
 		>

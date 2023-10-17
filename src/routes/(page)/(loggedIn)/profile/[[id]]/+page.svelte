@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { HelperText } from '$lib';
+	import { HelperText, SubmitButton } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -201,6 +201,6 @@
 		</div>
 	</div>
 	<div class="text-right">
-		<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+		<SubmitButton disabled={$submitting} />
 	</div>
 </form>

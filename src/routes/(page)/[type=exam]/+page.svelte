@@ -198,7 +198,7 @@
 			</select>
 		{/if}
 
-		<button class="variant-filled btn" on:click={onClearClick}>Clear</button>
+		<button class="variant-ghost btn" on:click={onClearClick}>Clear</button>
 	</div>
 
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -213,8 +213,8 @@
 						<button
 							on:click={() => onPlayPauseClick(res)}
 							disabled={!res.url}
-							class:variant-filled-primary={audioSrc.endsWith(res.url)}
-							class:variant-filled-secondary={!audioSrc.endsWith(res.url)}
+							class:variant-ghost-tertiary={audioSrc.endsWith(res.url)}
+							class:variant-filled-primary={!audioSrc.endsWith(res.url)}
 							class="btn"
 						>
 							<Icon

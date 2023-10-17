@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { HelperText, Scrollable, parentClass } from '$lib';
+	import { HelperText, Scrollable, SubmitButton, parentClass } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -47,7 +47,7 @@
 					{countNew > 1 ? `files are` : `file is`} not registered in the database.
 				{/if}
 			</p>
-			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+			<SubmitButton disabled={$submitting} />
 		</div>
 
 		<Scrollable class="overflow-x-scroll">

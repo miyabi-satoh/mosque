@@ -54,7 +54,7 @@
 	<div class="mx-4 flex gap-x-2">
 		<input type="text" class="input" id="search" placeholder="Find channels or messages..." />
 		{#if data.user}
-			<a href="/board/channel" class="variant-ghost-primary btn">
+			<a href={URLS.BOARD_CHANNEL} class="variant-filled-primary btn">
 				<span><Icon icon="mdi:rss" height="auto" /></span>
 				<span>New</span>
 			</a>

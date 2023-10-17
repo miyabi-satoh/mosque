@@ -2,7 +2,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 	import { submittingStore } from '$lib/stores';
-	import { DeleteButton, HelperText } from '$lib';
+	import { DeleteButton, HelperText, SubmitButton } from '$lib';
 
 	export let data: PageData;
 	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form);
@@ -49,10 +49,8 @@
 	<div class="flex justify-end gap-x-2">
 		{#if $form.id}
 			<input type="hidden" name="id" value={$form.id} />
-			<DeleteButton item="link" disabled={$submitting} />
+			<DeleteButton item="channel" disabled={$submitting} />
 		{/if}
-		<button class="variant-ghost-primary btn" disabled={$submitting}>
-			{$form.id ? 'Save' : 'Create'} channel
-		</button>
+		<SubmitButton disabled={$submitting} />
 	</div>
 </form>

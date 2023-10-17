@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { DeleteButton, HelperText, Scrollable } from '$lib';
+	import { DeleteButton, HelperText, Scrollable, SubmitButton } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
@@ -86,7 +86,7 @@
 				<a class="variant-filled btn" href={URLS.ADMIN_LINKS}>Cancel</a>
 				<DeleteButton item="link" disabled={$submitting} />
 			{/if}
-			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+			<SubmitButton disabled={$submitting} />
 		</div>
 	{/if}
 </form>

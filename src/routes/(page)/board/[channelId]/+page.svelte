@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DeleteButton, Scrollable, UserAvatar } from '$lib';
+	import { DeleteButton, Scrollable, SubmitButton, UserAvatar } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import type { ScrollBehavior } from '$lib/types';
@@ -181,10 +181,10 @@
 						on:keydown={onKeydown}
 					/>
 				{/await}
-				<button id={postCreateButtonId} class="variant-ghost-primary btn" disabled={$submitting}>
+				<SubmitButton id={postCreateButtonId} disabled={$submitting}>
 					<span><Icon icon="mdi:send" height="auto" /></span>
 					<span class="hidden sm:block">Send</span>
-				</button>
+				</SubmitButton>
 			</div>
 		</form>
 	{/if}

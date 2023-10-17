@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { HelperText, ModalContainer } from '$lib';
+	import { HelperText, ModalContainer, SubmitButton } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 	import { focusTrap } from '@skeletonlabs/skeleton';
+	import Icon from '@iconify/svelte';
 
 	export let data: PageData;
 	const { form, message, constraints, errors, submitting, enhance } = superForm(data.form);
@@ -22,7 +23,6 @@
 				class:input-error={$errors.password}
 				type="password"
 				name="password"
-				id="password"
 				placeholder="Enter your current password"
 				bind:value={$form.password}
 				disabled={$submitting}
@@ -40,7 +40,6 @@
 				class:input-error={$errors.newPassword}
 				type="password"
 				name="newPassword"
-				id="newPassword"
 				placeholder="Enter your new password"
 				bind:value={$form.newPassword}
 				disabled={$submitting}
@@ -57,7 +56,6 @@
 				class:input-error={$errors.confirmPassword}
 				type="password"
 				name="confirmPassword"
-				id="confirmPassword"
 				placeholder="Confirm your new password"
 				bind:value={$form.confirmPassword}
 				disabled={$submitting}
@@ -68,6 +66,8 @@
 			</HelperText>
 		</div>
 
-		<button class="variant-ghost-primary btn w-full" disabled={$submitting}>Submit</button>
+		<SubmitButton class="w-full" disabled={$submitting}>
+			<span>Change Password</span>
+		</SubmitButton>
 	</form>
 </ModalContainer>
