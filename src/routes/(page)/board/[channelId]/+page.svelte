@@ -106,7 +106,7 @@
 
 <div class="contents space-y-4">
 	<div class="mx-4 flex gap-4">
-		<span class="text-sm opacity-50">
+		<span class="text-xs opacity-50 sm:text-sm">
 			{data.channel.description}
 		</span>
 		<div class="flex flex-col gap-2">
@@ -130,8 +130,10 @@
 				>
 					<header class="flex items-center gap-2">
 						<p class="flex flex-1 items-end gap-x-4">
-							<span class="font-bold">{m.user.displayName ?? m.user.fullName}</span>
-							<span class="text-sm opacity-50">{showRelativeDate(m.updatedAt)}</span>
+							<span class="text-sm font-bold sm:text-base"
+								>{m.user.displayName ?? m.user.fullName}</span
+							>
+							<span class="text-xs opacity-50 sm:text-sm">{showRelativeDate(m.updatedAt)}</span>
 						</p>
 						{#if m.userId === data.user?.userId || hasAdminRole(data.user)}
 							<div>
