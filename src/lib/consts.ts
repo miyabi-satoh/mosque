@@ -1,3 +1,5 @@
+import type { UserRoleEnum } from '@prisma/client';
+
 export const PROVIDERID_USERNAME = `username`;
 
 export const URLS = {
@@ -8,6 +10,7 @@ export const URLS = {
 	ADMIN: '/admin',
 	ADMIN_LINKS: '/admin/links',
 	ADMIN_ACCOUNTS: '/admin/accounts',
+	ADMIN_ACCOUNTS_BULK: '/admin/accounts/bulk',
 	ADMIN_ACCOUNTS_CREATE: '/admin/accounts/create',
 	ADMIN_ACCOUNTS_PRINT: '/admin/accounts/print',
 	BOARD: '/board',
@@ -15,3 +18,7 @@ export const URLS = {
 	API_DATA: '/api/data',
 	API_FETCH: '/api/fetch?url='
 } as const;
+
+export const userRoles = ['USER', 'STAFF', 'ADMIN', 'RETIRED'] as const satisfies Readonly<
+	UserRoleEnum[]
+>;

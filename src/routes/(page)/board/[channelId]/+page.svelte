@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DeleteButton, MarkdownEditor, Scrollable, UserAvatar } from '$lib';
+	import { DeleteButton, Scrollable, UserAvatar } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import type { ScrollBehavior } from '$lib/types';
@@ -26,19 +26,20 @@
 		breaks: true
 	});
 
-	let markdownEditor: MarkdownEditor;
+	const postCreateButtonId = 'button-post-create';
+	const postUpdateButtonId = 'button-post-update';
+	const postDeleteButtonId = 'button-post-delete';
+	const popupMenuClasses = 'flex w-full gap-x-2 rounded px-4 py-2 hover:bg-primary-500/10';
+
 	export let data: PageData;
 	const { form, message, submitting, enhance } = superForm(data.form, {
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				if (!form.data.id) scrollBehavior = 'smooth';
-				if (markdownEditor) markdownEditor.clear();
 			}
 		}
 	});
 	$: $submittingStore = $submitting;
-
-	const popupMenuClasses = 'flex w-full gap-x-2 rounded px-4 py-2 hover:bg-primary-500/10';
 
 	function showRelativeDate(date: Date): string {
 		return formatRelative(date, new Date(), { locale: ja });
@@ -47,8 +48,7 @@
 	const modalStore = getModalStore();
 	type Message = PageData['messages'][0];
 
-	let formEdit: Message | undefined;
-	let elemForm: HTMLFormElement;
+	let formData: Message | undefined;
 	function onEditClick(objMessage: Message): void {
 		const component: ModalComponent = { ref: EditModal };
 		const modal: ModalSettings = {
@@ -59,11 +59,13 @@
 			},
 			response: (r: string) => {
 				if (r.length > 0) {
-					formEdit = {
+					formData = {
 						...objMessage,
 						message: r
 					};
-					tick().then(() => elemForm.submit());
+					tick().then(() => {
+						window.document.getElementById(postUpdateButtonId)?.click();
+					});
 				}
 			}
 		};
@@ -73,35 +75,47 @@
 	function onDeleteClick(objMessage: Message): void {
 		// setTimeoutでPopupが消えるのを待つ
 		setTimeout(() => {
-			formEdit = {
+			formData = {
 				...objMessage
 			};
 			// tick()でフォーム要素のvalueが更新されるのを待つ
 			tick().then(() => {
-				window.document.getElementById('delete')?.click();
+				window.document.getElementById(postDeleteButtonId)?.click();
 			});
 		}, 250);
 	}
 
+	function onKeydown(event: CustomEvent<KeyboardEvent>): void {
+		const e = event.detail;
+		if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+			const el = window.document.getElementById(postCreateButtonId);
+			if (el) {
+				el.click();
+			}
+		}
+	}
 	let scrollBehavior: ScrollBehavior = 'auto';
 </script>
 
-<form class="contents" method="post" bind:this={elemForm} use:enhance>
-	<input type="hidden" name="id" value={formEdit?.id} />
-	<input type="hidden" name="message" value={formEdit?.message} />
-	<DeleteButton id="delete" class="hidden" />
+<form class="contents" method="post" use:enhance>
+	<input type="hidden" name="id" value={formData?.id} />
+	<input type="hidden" name="message" value={formData?.message} />
+	<button id={postUpdateButtonId} class="hidden" />
+	<DeleteButton id={postDeleteButtonId} class="hidden" />
 </form>
 
 <div class="contents space-y-4">
 	<div class="mx-4 flex gap-4">
-		<span class="text-sm opacity-50">
+		<span class="text-xs opacity-50 sm:text-sm">
 			{data.channel.description}
 		</span>
 		<div class="flex flex-col gap-2">
-			<Icon icon="mdi:information" height="auto" />
-			<a href="{URLS.BOARD_CHANNEL}/{data.channel.id}">
-				<Icon icon="mdi:cog" height="auto" />
-			</a>
+			<!-- <Icon icon="mdi:information" height="auto" /> -->
+			{#if data.channel.createdBy === data.user?.userId || hasAdminRole(data.user)}
+				<a href="{URLS.BOARD_CHANNEL}/{data.channel.id}">
+					<Icon icon="mdi:cog" height="auto" />
+				</a>
+			{/if}
 		</div>
 	</div>
 	<hr />
@@ -112,14 +126,16 @@
 					<UserAvatar src={m.user.avatar} />
 				</div>
 				<div
-					class="card flex-1 space-y-2 rounded-tr-none p-4"
+					class="card flex-1 space-y-1 rounded-tr-none px-4 py-2"
 					class:variant-glass-tertiary={m.userId === data.user?.userId}
 					class:variant-soft={m.userId !== data.user?.userId}
 				>
-					<header class="flex items-center gap-2">
-						<p class="flex flex-1 items-end gap-x-4">
-							<span class="font-bold">{m.user.displayName ?? m.user.fullName}</span>
-							<span class="text-sm opacity-50">{showRelativeDate(m.updatedAt)}</span>
+					<header class="flex items-center">
+						<p class="flex flex-1 items-baseline gap-x-4">
+							<span class="text-sm font-bold sm:text-base"
+								>{m.user.displayName ?? m.user.fullName}</span
+							>
+							<span class="text-xs opacity-50 sm:text-sm">{showRelativeDate(m.updatedAt)}</span>
 						</p>
 						{#if m.userId === data.user?.userId || hasAdminRole(data.user)}
 							<div>
@@ -162,10 +178,10 @@
 						class="flex-1"
 						placeholder="Message #{data.channel.name}"
 						bind:value={$form.message}
-						bind:this={markdownEditor}
+						on:keydown={onKeydown}
 					/>
 				{/await}
-				<button class="variant-ghost-primary btn" disabled={$submitting}>
+				<button id={postCreateButtonId} class="variant-ghost-primary btn" disabled={$submitting}>
 					<span><Icon icon="mdi:send" height="auto" /></span>
 					<span class="hidden sm:block">Send</span>
 				</button>

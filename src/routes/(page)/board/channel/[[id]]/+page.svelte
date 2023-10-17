@@ -3,9 +3,8 @@
 	import type { PageData } from './$types';
 	import { submittingStore } from '$lib/stores';
 	import { HelperText } from '$lib';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
-
-	export let data: PageData;
+	
+export let data: PageData;
 	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 </script>
@@ -34,9 +33,8 @@
 	<div>
 		<label class="label">
 			<span>Description</span>
-			<input
-				class="input"
-				type="text"
+			<textarea
+				class="textarea"
 				name="description"
 				class:input-error={$errors.description}
 				bind:value={$form.description}
@@ -47,7 +45,7 @@
 			{$errors.description ? $errors.description[0] : ''}
 		</HelperText>
 	</div>
-	<SlideToggle name="private" bind:checked={$form.private}>Private</SlideToggle>
+	<!-- <SlideToggle name="private" bind:checked={$form.private}>Private</SlideToggle> -->
 	<div class="flex justify-end gap-x-2">
 		{#if $form.id}
 			<button type="button" name="delete" class="variant-ghost-warning btn" disabled={$submitting}>
@@ -58,4 +56,5 @@
 			{$form.id ? 'Save' : 'Create'} channel
 		</button>
 	</div>
+	<input type="hidden" name="id" value={$form.id} />
 </form>
