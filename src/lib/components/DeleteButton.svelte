@@ -1,6 +1,7 @@
 <script lang="ts">
-	
-let className = 'variant-ghost-warning btn';
+	import Icon from '@iconify/svelte';
+
+	let className = 'variant-ghost-warning btn';
 	export { className as class };
 	export let id: string | undefined = undefined;
 	export let name = 'delete';
@@ -30,6 +31,7 @@ let className = 'variant-ghost-warning btn';
 	{#if $$slots.default}
 		<slot />
 	{:else}
-		Delete
+		<span><Icon icon="mdi:delete" height="auto" /></span>
+		<span>Delete</span>
 	{/if}
 </button>
