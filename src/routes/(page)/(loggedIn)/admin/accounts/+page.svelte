@@ -29,32 +29,37 @@
 		<HelperText usePageStatus>{$message}</HelperText>
 	</div>
 {/if}
+<input type="hidden" name="checked" value={$form.checked} />
 <div class="mx-4 mb-2 flex flex-wrap items-center gap-2">
 	<a href={URLS.ADMIN_ACCOUNTS_CREATE} class="variant-filled btn flex-none">
 		<span><Icon icon="mdi:account-multiple-plus" height="auto" /></span>
 		<span class="hidden sm:inline">Bulk create</span>
 	</a>
 
-	<form method="POST" action={URLS.ADMIN_ACCOUNTS_PRINT} target="_blank">
+	<form method="post" action={URLS.ADMIN_ACCOUNTS_PRINT} target="_blank">
 		<input type="hidden" name="checked" value={$form.checked} />
-		<button class="variant-filled btn" disabled={$form.checked.length === 0}>
-			<span><Icon icon="mdi:printer" height="auto" /></span>
-			<span class="hidden sm:inline">Print Selected Accounts</span>
+		<button
+			class="variant-filled btn"
+			disabled={$form.checked.length === 0}
+			on:click={(e) => !confirm('Are you sure you want to reset passwords?') && e.preventDefault()}
+		>
+			<span><Icon icon="mdi:lock-reset" height="auto" /></span>
+			<span class="hidden sm:inline">Reset passwords</span>
 		</button>
 	</form>
 
-	<div class="flex items-center gap-x-2">
-		<span class="flex-none">Change role to </span>
-		<form method="post" action={URLS.ADMIN_ACCOUNTS} use:enhance>
-			<input type="hidden" name="checked" value={$form.checked} />
+	<form method="post" use:enhance>
+		<input type="hidden" name="checked" value={$form.checked} />
+		<div class="flex items-center gap-x-2">
+			<span class="flex-none">Change role to </span>
 			<select class="select w-auto" name="role">
 				{#each userRoles as role}
 					<option>{role}</option>
 				{/each}
 			</select>
 			<button class="variant-filled btn" disabled={$form.checked.length === 0}>Change</button>
-		</form>
-	</div>
+		</div>
+	</form>
 </div>
 <Scrollable class="ml-4 mr-2 overflow-x-scroll">
 	<table class="w-full table-auto">
