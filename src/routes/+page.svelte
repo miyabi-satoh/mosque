@@ -7,7 +7,7 @@
 </script>
 
 <DefaultLayout {data}>
-	<div class="ml-4 mr-2 space-y-4">
+	<div class="space-y-4 pl-4 pr-2">
 		{#each data.items as { href, title, external }}
 			<a {href} class="block" target={external ? '_blank' : '_self'}>
 				<div class="card variant-ghost-tertiary card-hover flex items-center p-4">

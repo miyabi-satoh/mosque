@@ -84,14 +84,14 @@
 		<div class="flex justify-end gap-x-2">
 			{#if $page.params.id}
 				<a class="variant-filled btn" href={URLS.ADMIN_LINKS}>Cancel</a>
-				<DeleteButton disabled={$submitting} />
+				<DeleteButton item="link" disabled={$submitting} />
 			{/if}
 			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
 		</div>
 	{/if}
 </form>
 
-<Scrollable class="ml-4 mr-2 mt-4">
+<Scrollable class="mt-4 pl-4 pr-2">
 	<table class="w-full table-auto">
 		<thead>
 			<tr class="bg-surface-100-800-token sticky top-0">

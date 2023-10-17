@@ -29,7 +29,6 @@
 		<HelperText usePageStatus>{$message}</HelperText>
 	</div>
 {/if}
-<input type="hidden" name="checked" value={$form.checked} />
 <div class="mx-4 mb-2 flex flex-wrap items-center gap-2">
 	<a href={URLS.ADMIN_ACCOUNTS_CREATE} class="variant-filled btn flex-none">
 		<span><Icon icon="mdi:account-multiple-plus" height="auto" /></span>
@@ -61,7 +60,7 @@
 		</div>
 	</form>
 </div>
-<Scrollable class="ml-4 mr-2 overflow-x-scroll">
+<Scrollable class="overflow-x-scroll pl-4 pr-2">
 	<table class="w-full table-auto">
 		<thead>
 			<tr class="bg-surface-100-800-token sticky top-0">

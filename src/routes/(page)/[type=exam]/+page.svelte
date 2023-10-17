@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AudioPlayer, HelperText, Scrollable, parentClass } from '$lib';
+	import { AudioPlayer, HelperText, Scrollable } from '$lib';
 	import { URLS } from '$lib/consts';
 	import { getExamConfig } from '$lib/exam';
 	import { submittingStore } from '$lib/stores';
@@ -156,82 +156,80 @@
 	}
 </script>
 
-<div class="mx-4 space-y-8 {parentClass}">
-	<div>
-		<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
+<div class="px-4 pb-8">
+	<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
+</div>
+
+<Scrollable class="space-y-4 pl-4 pr-2">
+	<div class="flex flex-col gap-4 sm:flex-row sm:justify-between">
+		{#if config.columnLabels.grade}
+			<select id="select-grade" bind:value={selectedGrade} class="select">
+				<option value="" disabled selected>{config.columnLabels.grade}</option>
+				{#each getGradeList(selectedYear, selectedNumOf) as [value, label]}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		{/if}
+
+		{#if config.columnLabels.year}
+			<select id="select-year" bind:value={selectedYear} class="select">
+				<option value="" disabled selected>{config.columnLabels.year}</option>
+				{#each getYearList(selectedGrade, selectedNumOf) as [value, label]}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		{/if}
+
+		{#if config.columnLabels.numOf}
+			<select id="select-numof" bind:value={selectedNumOf} class="select">
+				<option value="" disabled selected>{config.columnLabels.numOf}</option>
+				{#each getNumOfList(selectedGrade, selectedYear) as [value, label]}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		{/if}
+
+		{#if config.columnLabels.publisher}
+			<select id="select-publisher" bind:value={selectedPublisher} class="select">
+				<option value="" disabled selected>{config.columnLabels.publisher}</option>
+				{#each getPublisherList(selectedYear) as [value, label]}
+					<option {value}>{label}</option>
+				{/each}
+			</select>
+		{/if}
+
+		<button class="variant-filled btn" on:click={onClearClick}>Clear</button>
 	</div>
 
-	<Scrollable class="space-y-4">
-		<div class="flex flex-col gap-4 sm:flex-row sm:justify-between">
-			{#if config.columnLabels.grade}
-				<select id="select-grade" bind:value={selectedGrade} class="select">
-					<option value="" disabled selected>{config.columnLabels.grade}</option>
-					{#each getGradeList(selectedYear, selectedNumOf) as [value, label]}
-						<option {value}>{label}</option>
-					{/each}
-				</select>
-			{/if}
-
-			{#if config.columnLabels.year}
-				<select id="select-year" bind:value={selectedYear} class="select">
-					<option value="" disabled selected>{config.columnLabels.year}</option>
-					{#each getYearList(selectedGrade, selectedNumOf) as [value, label]}
-						<option {value}>{label}</option>
-					{/each}
-				</select>
-			{/if}
-
-			{#if config.columnLabels.numOf}
-				<select id="select-numof" bind:value={selectedNumOf} class="select">
-					<option value="" disabled selected>{config.columnLabels.numOf}</option>
-					{#each getNumOfList(selectedGrade, selectedYear) as [value, label]}
-						<option {value}>{label}</option>
-					{/each}
-				</select>
-			{/if}
-
-			{#if config.columnLabels.publisher}
-				<select id="select-publisher" bind:value={selectedPublisher} class="select">
-					<option value="" disabled selected>{config.columnLabels.publisher}</option>
-					{#each getPublisherList(selectedYear) as [value, label]}
-						<option {value}>{label}</option>
-					{/each}
-				</select>
-			{/if}
-
-			<button class="variant-filled btn" on:click={onClearClick}>Clear</button>
-		</div>
-
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-			{#each resources as res}
-				<div class="card border-surface-200-700-token w-full border p-4">
-					{#if !res.url}
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+		{#each resources as res}
+			<div class="card border-surface-200-700-token w-full border p-4">
+				{#if !res.url}
+					<h2 class="flex-1">{res.title}</h2>
+					<HelperText>Failed to get file.</HelperText>
+				{:else if res.category < 10}
+					<div class="flex items-center">
 						<h2 class="flex-1">{res.title}</h2>
-						<HelperText>Failed to get file.</HelperText>
-					{:else if res.category < 10}
-						<div class="flex items-center">
-							<h2 class="flex-1">{res.title}</h2>
-							<button
-								on:click={() => onPlayPauseClick(res)}
-								disabled={!res.url}
-								class:variant-filled-primary={audioSrc.endsWith(res.url)}
-								class:variant-filled-secondary={!audioSrc.endsWith(res.url)}
-								class="btn"
-							>
-								<Icon
-									icon={audioSrc.endsWith(res.url) && !audioPaused ? 'mdi:pause' : 'mdi:play'}
-									height="auto"
-								/>
-							</button>
-						</div>
-					{:else}
-						<a class="anchor flex items-center" href={res.url} target="_blank">
-							<h2>{res.title}</h2>
-							<Icon icon="mdi:open-in-new" />
-						</a>
-					{/if}
-				</div>
-			{/each}
-		</div>
-	</Scrollable>
-</div>
+						<button
+							on:click={() => onPlayPauseClick(res)}
+							disabled={!res.url}
+							class:variant-filled-primary={audioSrc.endsWith(res.url)}
+							class:variant-filled-secondary={!audioSrc.endsWith(res.url)}
+							class="btn"
+						>
+							<Icon
+								icon={audioSrc.endsWith(res.url) && !audioPaused ? 'mdi:pause' : 'mdi:play'}
+								height="auto"
+							/>
+						</button>
+					</div>
+				{:else}
+					<a class="anchor flex h-full flex-1 items-center" href={res.url} target="_blank">
+						<h2>{res.title}</h2>
+						<Icon icon="mdi:open-in-new" />
+					</a>
+				{/if}
+			</div>
+		{/each}
+	</div>
+</Scrollable>

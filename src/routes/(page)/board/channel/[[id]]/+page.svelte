@@ -2,9 +2,9 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 	import { submittingStore } from '$lib/stores';
-	import { HelperText } from '$lib';
-	
-export let data: PageData;
+	import { DeleteButton, HelperText } from '$lib';
+
+	export let data: PageData;
 	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 </script>
@@ -48,13 +48,11 @@ export let data: PageData;
 	<!-- <SlideToggle name="private" bind:checked={$form.private}>Private</SlideToggle> -->
 	<div class="flex justify-end gap-x-2">
 		{#if $form.id}
-			<button type="button" name="delete" class="variant-ghost-warning btn" disabled={$submitting}>
-				Delete channel
-			</button>
+			<input type="hidden" name="id" value={$form.id} />
+			<DeleteButton item="link" disabled={$submitting} />
 		{/if}
 		<button class="variant-ghost-primary btn" disabled={$submitting}>
 			{$form.id ? 'Save' : 'Create'} channel
 		</button>
 	</div>
-	<input type="hidden" name="id" value={$form.id} />
 </form>

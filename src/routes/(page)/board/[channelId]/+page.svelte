@@ -101,12 +101,12 @@
 	<input type="hidden" name="id" value={formData?.id} />
 	<input type="hidden" name="message" value={formData?.message} />
 	<button id={postUpdateButtonId} class="hidden" />
-	<DeleteButton id={postDeleteButtonId} class="hidden" />
+	<DeleteButton id={postDeleteButtonId} item="message" class="hidden" />
 </form>
 
 <div class="contents space-y-4">
 	<div class="mx-4 flex gap-4">
-		<span class="text-xs opacity-50 sm:text-sm">
+		<span class="flex-1 text-xs opacity-50 sm:text-sm">
 			{data.channel.description}
 		</span>
 		<div class="flex flex-col gap-2">
