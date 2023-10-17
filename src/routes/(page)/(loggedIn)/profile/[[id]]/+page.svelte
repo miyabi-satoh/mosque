@@ -12,6 +12,7 @@
 	} from '@skeletonlabs/skeleton';
 	import Icon from '@iconify/svelte';
 	import CropModal from './CropModal.svelte';
+	import { userRoles } from '$lib/consts';
 
 	const modalStore = getModalStore();
 
@@ -152,7 +153,7 @@
 					<label class="label">
 						<span>Role</span>
 						<select class="select" name="role" bind:value={$form.role}>
-							{#each data.userRoles as role}
+							{#each userRoles as role}
 								<option>{role}</option>
 							{/each}
 						</select>

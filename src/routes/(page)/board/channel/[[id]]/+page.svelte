@@ -3,9 +3,8 @@
 	import type { PageData } from './$types';
 	import { submittingStore } from '$lib/stores';
 	import { HelperText } from '$lib';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
-
-	export let data: PageData;
+	
+export let data: PageData;
 	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 </script>

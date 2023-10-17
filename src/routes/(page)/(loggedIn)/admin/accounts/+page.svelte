@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Scrollable, parentClass } from '$lib';
-	import { URLS } from '$lib/consts';
+	import { Scrollable } from '$lib';
+	import { URLS, userRoles } from '$lib/consts';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 	import { formatRelative } from 'date-fns';
@@ -48,8 +48,8 @@
 		<form method="post" action={URLS.ADMIN_ACCOUNTS} use:enhance>
 			<input type="hidden" name="checked" value={$form.checked} />
 			<select class="select w-auto" name="role">
-				{#each data.roles as role}
-					<option value={role}>{role}</option>
+				{#each userRoles as role}
+					<option>{role}</option>
 				{/each}
 			</select>
 			<button class="variant-filled btn" disabled={$form.checked.length === 0}>Change</button>

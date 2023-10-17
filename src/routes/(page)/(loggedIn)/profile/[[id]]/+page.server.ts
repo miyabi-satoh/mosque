@@ -1,6 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 
-import type { User } from '@prisma/client';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
@@ -51,8 +50,7 @@ export const load = (async ({ parent, params, url }) => {
 	};
 
 	return {
-		form,
-		userRoles: ['USER', 'STAFF', 'ADMIN'] as User['role'][]
+		form
 	};
 }) satisfies PageServerLoad;
 
