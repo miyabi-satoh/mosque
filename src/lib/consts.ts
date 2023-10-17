@@ -19,4 +19,6 @@ export const URLS = {
 	API_FETCH: '/api/fetch?url='
 } as const;
 
-export const userRoles = ['USER', 'STAFF', 'ADMIN'] as const satisfies Readonly<UserRoleEnum[]>;
+export const userRoles = ['USER', 'STAFF', 'ADMIN', 'RETIRED'] as const satisfies Readonly<
+	UserRoleEnum[]
+>;
