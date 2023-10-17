@@ -8,6 +8,7 @@ export const URLS = {
 	ADMIN: '/admin',
 	ADMIN_LINKS: '/admin/links',
 	ADMIN_ACCOUNTS: '/admin/accounts',
+	ADMIN_ACCOUNTS_BULK: '/admin/accounts/bulk',
 	ADMIN_ACCOUNTS_CREATE: '/admin/accounts/create',
 	ADMIN_ACCOUNTS_PRINT: '/admin/accounts/print',
 	BOARD: '/board',
