@@ -4,7 +4,6 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 	import { focusTrap } from '@skeletonlabs/skeleton';
-	import Icon from '@iconify/svelte';
 
 	export let data: PageData;
 	const { form, message, constraints, errors, submitting, enhance } = superForm(data.form);
