@@ -2,6 +2,7 @@
 export { default as AudioPlayer } from './components/AudioPlayer/AudioPlayer.svelte';
 export { default as DefaultLayout } from './components/DefaultLayout.svelte';
 export { default as DeleteButton } from './components/DeleteButton.svelte';
+export { default as FormLabel } from './components/FormLabel.svelte';
 export { default as HelperText } from './components/HelperText.svelte';
 export { default as LoadingOverlay } from './components/LoadingOverlay.svelte';
 export { default as MarkdownEditor } from './components/MarkdownEditor.svelte';
