@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { HelperText, SubmitButton } from '$lib';
+	import { FormLabel, HelperText, SubmitButton } from '$lib';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -79,8 +79,7 @@
 		</div>
 		<div class="grid grid-cols-1 gap-x-2 gap-y-4 sm:flex-1 md:grid-cols-2">
 			<div>
-				<label class="label">
-					<span>Login ID</span>
+				<FormLabel text="Login ID" constraint={$constraints.username}>
 					<input
 						class="input"
 						class:input-error={$errors.username}
@@ -91,14 +90,13 @@
 						autocomplete="username"
 						{...$constraints.username}
 					/>
-				</label>
+				</FormLabel>
 				<HelperText>
 					{$errors.username ? $errors.username[0] : ''}
 				</HelperText>
 			</div>
 			<div>
-				<label class="label">
-					<span>Display Name</span>
+				<FormLabel text="Display Name" constraint={$constraints.displayName}>
 					<input
 						class="input"
 						class:input-error={$errors.displayName}
@@ -108,14 +106,13 @@
 						disabled={$submitting}
 						{...$constraints.displayName}
 					/>
-				</label>
+				</FormLabel>
 				<HelperText>
 					{$errors.displayName ? $errors.displayName[0] : ''}
 				</HelperText>
 			</div>
 			<div>
-				<label class="label">
-					<span>Email</span>
+				<FormLabel text="Email" constraint={$constraints.email}>
 					<input
 						class="input"
 						class:input-error={$errors.email}
@@ -125,7 +122,7 @@
 						disabled={$submitting}
 						{...$constraints.email}
 					/>
-				</label>
+				</FormLabel>
 				<HelperText>
 					{$errors.email ? $errors.email[0] : ''}
 				</HelperText>
@@ -133,8 +130,7 @@
 
 			{#if $page.params.id}
 				<div>
-					<label class="label">
-						<span>Full Name</span>
+					<FormLabel text="Full Name" constraint={$constraints.fullName}>
 						<input
 							class="input"
 							class:input-error={$errors.fullName}
@@ -144,27 +140,25 @@
 							disabled={$submitting}
 							{...$constraints.fullName}
 						/>
-					</label>
+					</FormLabel>
 					<HelperText>
 						{$errors.fullName ? $errors.fullName[0] : ''}
 					</HelperText>
 				</div>
 				<div>
-					<label class="label">
-						<span>Role</span>
+					<FormLabel text="Role" constraint={$constraints.role}>
 						<select class="select" name="role" bind:value={$form.role}>
 							{#each userRoles as role}
 								<option>{role}</option>
 							{/each}
 						</select>
-					</label>
+					</FormLabel>
 					<HelperText>
 						{$errors.role ? $errors.role[0] : ''}
 					</HelperText>
 				</div>
 				<div>
-					<label class="label">
-						<span>New Password</span>
+					<FormLabel text="New Password" constraint={$constraints.newPassword}>
 						<input
 							class="input"
 							class:input-error={$errors.newPassword}
@@ -174,7 +168,7 @@
 							disabled={$submitting}
 							{...$constraints.newPassword}
 						/>
-					</label>
+					</FormLabel>
 					<HelperText>
 						{$errors.newPassword ? $errors.newPassword[0] : ''}
 					</HelperText>
@@ -182,8 +176,7 @@
 			{/if}
 
 			<div>
-				<label class="label">
-					<span>Enter your password to save</span>
+				<FormLabel text="Enter your password to save" constraint={$constraints.password}>
 					<input
 						class="input"
 						class:input-error={$errors.password}
@@ -193,7 +186,7 @@
 						disabled={$submitting}
 						{...$constraints.password}
 					/>
-				</label>
+				</FormLabel>
 				<HelperText>
 					{$errors.password ? $errors.password[0] : ''}
 				</HelperText>
