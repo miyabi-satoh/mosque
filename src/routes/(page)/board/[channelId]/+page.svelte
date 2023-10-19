@@ -151,7 +151,7 @@
 	</div>
 	<hr />
 	<Scrollable class="space-y-4 px-4" bind:behavior={scrollBehavior}>
-		{#each data.messages as m, i (m.id)}
+		{#each data.messages as m (m.id)}
 			<div class="flex gap-2">
 				<div class:order-last={m.userId === data.user?.userId}>
 					<UserAvatar src={m.user.avatar} />
@@ -173,7 +173,7 @@
 								<button
 									use:popup={{
 										event: 'click',
-										target: `popupClick-${i}`,
+										target: `popupClick-${m.id}`,
 										placement: 'bottom',
 										closeQuery: 'li'
 									}}
@@ -200,28 +200,30 @@
 		{/if}
 	</Scrollable>
 	{#if data.user}
-		<hr />
-		<form class="mx-4" method="post" use:enhance>
-			<div class="flex items-end gap-2">
-				{#await import('$lib/components/MarkdownEditor.svelte') then Module}
-					<Module.default
-						name="message"
-						class="flex-1"
-						placeholder="Message #{data.channel.name}"
-						bind:value={$form.message}
-						on:keydown={onKeydown}
-					/>
-				{/await}
-				<SubmitButton id={postCreateButtonId} disabled={$submitting}>
-					<span><Icon icon="mdi:send" height="auto" /></span>
-					<span class="hidden sm:block">Send</span>
-				</SubmitButton>
-			</div>
-		</form>
+		<div>
+			<hr />
+			<form class="mx-4 mt-2" method="post" use:enhance>
+				<div class="flex items-end gap-2">
+					{#await import('$lib/components/MarkdownEditor.svelte') then Module}
+						<Module.default
+							name="message"
+							class="flex-1"
+							placeholder="Message #{data.channel.name}"
+							bind:value={$form.message}
+							on:keydown={onKeydown}
+						/>
+					{/await}
+					<SubmitButton id={postCreateButtonId} disabled={$submitting}>
+						<span><Icon icon="mdi:send" height="auto" /></span>
+						<span class="hidden sm:block">Send</span>
+					</SubmitButton>
+				</div>
+			</form>
+		</div>
 	{/if}
 </div>
-{#each data.messages as m, i}
-	<div class="card w-48 p-2 shadow-xl" data-popup="popupClick-{i}">
+{#each data.messages as m (m.id)}
+	<div class="card w-48 p-2 shadow-xl" data-popup="popupClick-{m.id}">
 		<ul>
 			<li>
 				<button class={popupMenuClasses} on:click={() => onEditClick(m)}>
