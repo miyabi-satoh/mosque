@@ -7,6 +7,7 @@
 	import { URLS } from '$lib/consts';
 	import { innerScrollStore, loadingStore, submittingStore } from '$lib/stores';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+	import { install, uninstall } from '@github/hotkey';
 	import Icon from '@iconify/svelte';
 	import {
 		AppBar,
@@ -18,6 +19,7 @@
 		initializeStores,
 		storePopup
 	} from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
 	import '../../app.postcss';
 	import type { LayoutData } from '../../routes/$types';
 
@@ -44,6 +46,20 @@
 	// https://zenn.dev/gawarago/articles/f75f5113a3803d
 	$: if (browser && !!$navigating) $submittingStore = false;
 	$: $loadingStore = (browser && !!$navigating) || $submittingStore;
+
+	onMount(() => {
+		if (browser) {
+			for (const el of document.querySelectorAll('[data-hotkey]')) {
+				install(el as HTMLElement);
+			}
+
+			return () => {
+				for (const el of document.querySelectorAll('[data-hotkey]')) {
+					uninstall(el as HTMLElement);
+				}
+			};
+		}
+	});
 </script>
 
 <svelte:head>
