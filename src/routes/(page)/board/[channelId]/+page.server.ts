@@ -24,7 +24,7 @@ export const load = (async ({ params, parent }) => {
 	}
 
 	// get messages
-	const messages = await getMessagesWithUser(channelId);
+	const messages = await getMessagesWithUser({ where: { channelId } });
 
 	const data = await parent();
 	data.breadcrumbs.push({ label: channel.name, link: URLS.BOARD(channel.id) });
