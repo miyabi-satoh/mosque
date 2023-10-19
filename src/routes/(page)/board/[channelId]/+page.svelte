@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { DeleteButton, Scrollable, SubmitButton, UserAvatar } from '$lib';
-	import { URLS } from '$lib/consts';
+	import { URLS, WS_EVENT_MESSAGEUPDATED } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import type { ScrollBehavior } from '$lib/types';
+	import { hasAdminRole } from '$lib/utils';
 	import Icon from '@iconify/svelte';
 	import {
 		getModalStore,
@@ -12,19 +14,20 @@
 	} from '@skeletonlabs/skeleton';
 	import { formatRelative } from 'date-fns';
 	import ja from 'date-fns/locale/ja';
+	import DOMPurify from 'dompurify';
 	import { marked } from 'marked';
-	import { tick } from 'svelte';
+	import { io } from 'socket.io-client';
+	import { onMount, tick } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	import './style.postcss';
-	import { hasAdminRole } from '$lib/utils';
 	import EditModal from './EditModal.svelte';
-	import DOMPurify from 'dompurify';
-	import { browser } from '$app/environment';
+	import './style.postcss';
 
 	marked.use({
 		breaks: true
 	});
+
+	const socket = io();
 
 	const postCreateButtonId = 'button-post-create';
 	const postUpdateButtonId = 'button-post-update';
@@ -36,6 +39,8 @@
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				if (!form.data.id) scrollBehavior = 'smooth';
+				socket.emit(WS_EVENT_MESSAGEUPDATED, data.channel.id);
+				console.log(`Client emit ${WS_EVENT_MESSAGEUPDATED}`);
 			}
 		}
 	});
@@ -95,6 +100,32 @@
 		}
 	}
 	let scrollBehavior: ScrollBehavior = 'auto';
+
+	onMount(() => {
+		socket.on(WS_EVENT_MESSAGEUPDATED, async (channelId) => {
+			if (channelId !== data.channel.id) return;
+
+			try {
+				const res = await fetch(URLS.API_CHANNEL(data.channel.id));
+				if (!res.ok) {
+					throw new Error(
+						`response.status = ${res.status}, response.statusText = ${res.statusText}`
+					);
+				}
+				const messages = await res.json();
+				// 日時が文字列になっているのでDate型に変換する
+				data.messages = messages.map((m: Message): Message => {
+					return {
+						...m,
+						createdAt: new Date(m.createdAt),
+						updatedAt: new Date(m.updatedAt)
+					};
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		});
+	});
 </script>
 
 <form class="contents" method="post" use:enhance>

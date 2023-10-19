@@ -1,8 +1,8 @@
 import type { UserRoleEnum } from '@prisma/client';
 
 export const PROVIDERID_USERNAME = `username`;
-const subRoute = (s: string | undefined) => (s !== undefined ? `/${s}` : '');
 
+const subRoute = (s: string | undefined) => (s !== undefined ? `/${s}` : '');
 export const URLS = {
 	LOGIN: '/login',
 	LOGOUT: '/?/logout',
@@ -25,3 +25,5 @@ export const URLS = {
 export const userRoles = ['USER', 'STAFF', 'ADMIN', 'RETIRED'] as const satisfies Readonly<
 	UserRoleEnum[]
 >;
+
+export const WS_EVENT_MESSAGEUPDATED = 'eventMessageUpdated';

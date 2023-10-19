@@ -4,7 +4,7 @@ import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
 import { URLS } from '$lib/consts';
-import { db } from '$lib/server/db';
+import { db, getMessagesWithUser } from '$lib/server/db';
 
 import type { PageServerLoad } from './$types';
 
@@ -24,22 +24,10 @@ export const load = (async ({ params, parent }) => {
 	}
 
 	// get messages
-	const messages = await db.message.findMany({
-		where: { channelId },
-		orderBy: { createdAt: 'asc' },
-		include: {
-			user: {
-				select: {
-					displayName: true,
-					fullName: true,
-					avatar: true
-				}
-			}
-		}
-	});
+	const messages = await getMessagesWithUser(channelId);
 
 	const data = await parent();
-	data.breadcrumbs.push({ label: channel.name, link: `${URLS.BOARD}/${channel.id}` });
+	data.breadcrumbs.push({ label: channel.name, link: URLS.BOARD(channel.id) });
 
 	const form = await superValidate(schema);
 
