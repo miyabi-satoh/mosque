@@ -3,12 +3,24 @@
 	import { Scrollable, UserAvatar } from '$lib';
 	import { URLS } from '$lib/consts';
 	import Icon from '@iconify/svelte';
+	import { getModalStore, type ModalComponent, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { formatRelative } from 'date-fns';
 	import ja from 'date-fns/locale/ja';
 	import { onMount, tick } from 'svelte';
 	import type { PageData } from './$types';
+	import SearchModal from './SearchModal.svelte';
 
 	export let data: PageData;
+
+	const modalStore = getModalStore();
+	function onSearchClick() {
+		const component: ModalComponent = { ref: SearchModal };
+		const modal: ModalSettings = {
+			type: 'component',
+			component
+		};
+		modalStore.trigger(modal);
+	}
 
 	async function onWindowResize() {
 		const elements = window.document.querySelectorAll('.truncate');
@@ -52,7 +64,19 @@
 <svelte:window on:resize={onWindowResize} />
 <div class="contents space-y-4">
 	<div class="mx-4 flex gap-x-2">
-		<input type="text" class="input" id="search" placeholder="Find channels or messages..." />
+		<button
+			type="button"
+			class="ring-surface-300-600-token flex w-full items-center gap-2 rounded-3xl px-4 py-2 shadow-sm ring-1"
+			data-hotkey="/"
+			on:click={onSearchClick}
+		>
+			<span class="opacity-50"><Icon icon="mdi:magnify" height="auto" /></span>
+			<span class="opacity-50">Find messages...</span>
+			<span
+				class="ring-surface-900-50-token ml-auto flex-none rounded px-3 py-1 text-xs font-semibold opacity-50 ring-1"
+				>/</span
+			>
+		</button>
 		{#if data.user}
 			<a href={URLS.BOARD_CHANNEL} class="variant-filled-primary btn">
 				<span><Icon icon="mdi:rss" height="auto" /></span>
