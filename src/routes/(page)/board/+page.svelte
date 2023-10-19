@@ -63,7 +63,7 @@
 	{#if data.channels.length > 0}
 		<Scrollable class="space-y-4 pl-4 pr-2">
 			{#each data.channels as channel}
-				<a href="{URLS.BOARD}/{channel.id}" class="block">
+				<a href={URLS.BOARD(channel.id)} class="block">
 					<div class="card card-hover space-y-2 px-4 py-2">
 						<div class="flex gap-x-4">
 							<h1 class="h5 flex-1 font-semibold sm:h3"># {channel.name}</h1>

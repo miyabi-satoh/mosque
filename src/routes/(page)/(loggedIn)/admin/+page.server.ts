@@ -16,7 +16,7 @@ export const load: PageServerLoad = async () => {
 	menus.push(
 		...exam.map((e) => {
 			return {
-				href: `${URLS.ADMIN}/${e.examType}`,
+				href: URLS.ADMIN_ARCHIVE(e.examType),
 				label: `${e.name} ファイル管理`,
 				icon: 'mdi:file-multiple'
 			} satisfies MenuT;
@@ -24,7 +24,7 @@ export const load: PageServerLoad = async () => {
 	);
 	menus.push(
 		{
-			href: URLS.ADMIN_LINKS,
+			href: URLS.ADMIN_LINKS(),
 			label: '外部リンク管理',
 			icon: 'mdi:web'
 		},

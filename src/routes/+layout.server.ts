@@ -28,10 +28,10 @@ export const load = (async ({ locals, request, depends }) => {
 			userMenus.push(['']);
 		}
 		if (showBoard) {
-			userMenus.push([URLS.BOARD, `Board`, 'mdi:bulletin-board']);
+			userMenus.push([URLS.BOARD(), `Board`, 'mdi:bulletin-board']);
 			userMenus.push(['']);
 		}
-		userMenus.push([URLS.PROFILE, `Edit Profile`, 'mdi:account-edit']);
+		userMenus.push([URLS.PROFILE(), `Edit Profile`, 'mdi:account-edit']);
 		userMenus.push([URLS.PASSWD, `Change Password`, 'mdi:lock']);
 		userMenus.push(['']);
 	} else {

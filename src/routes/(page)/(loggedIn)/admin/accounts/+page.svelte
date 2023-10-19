@@ -87,7 +87,7 @@
 						/>
 					</td>
 					<td class="whitespace-nowrap p-2">
-						<a class="anchor" href={`${URLS.PROFILE}/${user.id}`}>{user.username}</a>
+						<a class="anchor" href={URLS.PROFILE(user.id)}>{user.username}</a>
 					</td>
 					<td class="whitespace-nowrap p-2">{user.displayName ?? ''}</td>
 					<td class="whitespace-nowrap p-2">{user.fullName ?? ''} </td>

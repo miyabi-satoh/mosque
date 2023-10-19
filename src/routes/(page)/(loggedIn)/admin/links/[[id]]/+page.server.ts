@@ -22,7 +22,7 @@ export const load = (async ({ params, parent, url }) => {
 	if (params.id && !link) throw error(404, `Not found`);
 
 	const data = await parent();
-	data.breadcrumbs.push({ label: '外部リンク管理', link: URLS.ADMIN_LINKS });
+	data.breadcrumbs.push({ label: '外部リンク管理', link: URLS.ADMIN_LINKS() });
 	if (params.id) {
 		data.breadcrumbs.push({ label: '編集', link: url.pathname });
 	}
@@ -63,7 +63,7 @@ export const actions: Actions = {
 				await db.link.delete({
 					where: { id: params.id }
 				});
-				redirectTo = URLS.ADMIN_LINKS;
+				redirectTo = URLS.ADMIN_LINKS();
 			}
 		} catch (e) {
 			console.log(e);

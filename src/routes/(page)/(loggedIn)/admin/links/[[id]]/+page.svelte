@@ -16,7 +16,7 @@
 	async function fetchTitle(): Promise<void> {
 		try {
 			const url = encodeURIComponent($form.url);
-			const res = await fetch(`${URLS.API_FETCH}${url}`);
+			const res = await fetch(URLS.API_FETCH(url));
 			if (res.ok) {
 				const html = await res.text();
 				const parser = new DOMParser();
@@ -83,7 +83,7 @@
 
 		<div class="flex justify-end gap-x-2">
 			{#if $page.params.id}
-				<a class="variant-filled btn" href={URLS.ADMIN_LINKS}>Cancel</a>
+				<a class="variant-filled btn" href={URLS.ADMIN_LINKS()}>Cancel</a>
 				<DeleteButton item="link" disabled={$submitting} />
 			{/if}
 			<SubmitButton disabled={$submitting} />
@@ -103,7 +103,7 @@
 			{#each data.links as link}
 				<tr class="odd:bg-surface-50-900-token even:bg-surface-200-700-token">
 					<td class="flex items-center gap-x-2 p-2">
-						<a class="anchor" href={`${URLS.ADMIN_LINKS}/${link.id}`}>{link.title}</a>
+						<a class="anchor" href={URLS.ADMIN_LINKS(link.id)}>{link.title}</a>
 						<a class="anchor" href={link.url} target="_blank">
 							<Icon icon="mdi:open-in-new" />
 						</a>

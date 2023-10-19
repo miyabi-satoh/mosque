@@ -85,7 +85,7 @@
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				{#if data.showBoard}
-					<a href={URLS.BOARD} title="Board" class="hidden gap-x-2 sm:flex">
+					<a href={URLS.BOARD()} title="Board" class="hidden gap-x-2 sm:flex">
 						<Icon icon="mdi:bulletin-board" height="auto" />
 						<span class="hidden sm:inline">Board</span>
 					</a>
