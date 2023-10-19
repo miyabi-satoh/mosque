@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { FormLabel, HelperText, SubmitButton } from '$lib';
+	import { userRoles } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
-	import { superForm } from 'sveltekit-superforms/client';
-	import type { PageData } from './$types';
+	import Icon from '@iconify/svelte';
 	import {
 		FileButton,
 		getModalStore,
 		type ModalComponent,
 		type ModalSettings
 	} from '@skeletonlabs/skeleton';
-	import Icon from '@iconify/svelte';
+	import { superForm } from 'sveltekit-superforms/client';
+	import type { PageData } from './$types';
 	import CropModal from './CropModal.svelte';
-	import { userRoles } from '$lib/consts';
 
 	const modalStore = getModalStore();
 
@@ -45,6 +45,17 @@
 			};
 		}
 	}
+
+	function onAvatarClick() {
+		if ($form.avatar) {
+			$form.avatar = '';
+		} else {
+			const el = window.document.querySelector('input[name="select-image"]');
+			if (el) {
+				(el as HTMLInputElement).click();
+			}
+		}
+	}
 </script>
 
 <form class="mx-4 space-y-4" method="post" enctype="multipart/form-data" use:enhance>
@@ -54,26 +65,21 @@
 	<div class="flex flex-col sm:flex-row sm:gap-x-8">
 		<div class="mx-auto w-32 space-y-2">
 			<FileButton
-				button="bg-surface-200-700-token border-surface-500-400-token w-full rounded-xl border-2 border-dotted"
+				button="bg-surface-200-700-token border-surface-900/25 w-full rounded-xl border-2"
 				name="select-image"
 				accept="image/*"
 				multiple={false}
 				on:change={onFileChange}
 			>
 				{#if $form.avatar}
-					<img src={$form.avatar} class="w-full rounded-xl" alt="avatar" />
+					<img src={$form.avatar} class="border-surf w-full rounded-xl" alt="avatar" />
 				{:else}
 					<Icon icon="mdi:account" class="mx-auto" height="96" />
 				{/if}
 			</FileButton>
 
-			<button
-				type="button"
-				class="variant-ghost-surface btn btn-sm w-full"
-				disabled={!$form.avatar}
-				on:click={() => ($form.avatar = null)}
-			>
-				Clear avatar
+			<button type="button" class="variant-filled btn btn-sm w-full" on:click={onAvatarClick}>
+				<span>{$form.avatar ? 'Clear' : 'Select'} avatar</span>
 			</button>
 			<input type="hidden" name="avatar" bind:value={$form.avatar} />
 		</div>
