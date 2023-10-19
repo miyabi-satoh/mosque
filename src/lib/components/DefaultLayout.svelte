@@ -63,7 +63,7 @@
 <Modal />
 
 <AppShell
-	slotFooter="text-surface-500-400-token text-right text-sm m-4"
+	slotFooter="text-surface-500-400-token text-right text-sm m-4 hidden sm:block"
 	slotSidebarLeft="w-0 {data.user ? 'lg:w-64' : ''}"
 	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-4xl {overflowHidden}"
 	regionPage={overflowHidden}
