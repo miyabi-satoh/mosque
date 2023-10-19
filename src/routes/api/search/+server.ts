@@ -7,8 +7,6 @@ import type { RequestHandler } from './$types';
 export const POST: RequestHandler = async ({ request }) => {
 	const formData = await request.formData();
 	const search = formData.get('search')?.toString();
-	console.log(search);
-
 	if (search) {
 		const messages = await getMessagesWithUser({
 			where: {

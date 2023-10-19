@@ -1,8 +1,6 @@
 <script lang="ts">
 	export let text: string;
 	export let constraint: Partial<{ required: boolean }> | undefined = undefined;
-
-	console.log(text, constraint);
 </script>
 
 <label class="label">
