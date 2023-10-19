@@ -45,10 +45,24 @@ export const load = (async () => {
 	const channels: ChannelWithLastMessage[] = await db.channel.findMany({
 		orderBy: { updatedAt: 'desc' }
 	});
+	// get last message with user
 	for (const channel of channels) {
 		const message = await getMessageWithUser(channel.id);
 		channel.lastMessage = message;
 	}
+	// sort
+	channels.sort((a, b) => {
+		if (a.lastMessage && b.lastMessage) {
+			if (a.lastMessage.updatedAt > b.lastMessage.updatedAt) return -1;
+			if (b.lastMessage.updatedAt > a.lastMessage.updatedAt) return 1;
+			return 0;
+		}
+		if (a.lastMessage) return -1;
+		if (b.lastMessage) return 1;
+		if (a.updatedAt > b.updatedAt) return -1;
+		if (b.updatedAt > a.updatedAt) return 1;
+		return 0;
+	});
 
 	const form = await superValidate(channelSchema);
 
@@ -97,6 +111,6 @@ export const actions: Actions = {
 			});
 		}
 
-		throw redirect(302, URLS.BOARD);
+		throw redirect(302, URLS.BOARD());
 	}
 };
