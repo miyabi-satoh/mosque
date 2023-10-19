@@ -52,7 +52,7 @@
 </script>
 
 {#if $modalStore[0]}
-	<div class="card w-modal overflow-hidden shadow-xl">
+	<div class="card w-modal mb-auto mt-24 overflow-hidden shadow-xl">
 		<header class="bg-surface-300-600-token flex items-center">
 			<span class="ml-4">
 				<Icon icon="mdi:magnify" height="auto" />
@@ -68,7 +68,7 @@
 				<Icon icon="mdi:close" height="20" />
 			</button>
 		</header>
-		<nav class="list-nav max-h-[480px] overflow-auto" tabindex="-1">
+		<nav class="list-nav max-h-[480px] overflow-y-auto" tabindex="-1">
 			{#if messages.length > 0}
 				<ul>
 					{#each messages as m (m.id)}
@@ -91,7 +91,7 @@
 												{formatRelative(m.updatedAt, new Date(), { locale: ja })}
 											</span>
 										</header>
-										<p class="line-clamp-2 text-xs sm:text-sm">{m.message}</p>
+										<p class="line-clamp-2 whitespace-normal text-xs sm:text-sm">{m.message}</p>
 									</div>
 								</div>
 							</a>
