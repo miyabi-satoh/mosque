@@ -4,8 +4,9 @@ import { LuciaError } from 'lucia';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
-import { PROVIDERID_USERNAME } from '$lib/consts';
+import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
 import { auth } from '$lib/server/lucia';
+import { hasAdminRole } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -17,7 +18,7 @@ const schema = z.object({
 export const load = (async ({ parent }) => {
 	const data = await parent();
 	if (data.user) {
-		throw redirect(302, '/');
+		throw redirect(302, hasAdminRole(data.user) ? URLS.ADMIN : URLS.BOARD());
 	}
 
 	const form = await superValidate(schema);
