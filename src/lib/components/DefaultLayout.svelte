@@ -5,7 +5,7 @@
 	import { navigating, page } from '$app/stores';
 	import { LoadingOverlay, Navigation } from '$lib';
 	import { URLS } from '$lib/consts';
-	import { innerScrollStore, loadingStore, submittingStore } from '$lib/stores';
+	import { loadingStore, submittingStore } from '$lib/stores';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import { install, uninstall } from '@github/hotkey';
 	import Icon from '@iconify/svelte';
@@ -33,7 +33,6 @@
 	}
 
 	export let data: LayoutData;
-	$: overflowHidden = $innerScrollStore ? 'overflow-hidden' : '';
 	$: breadcrumbs = $page.data.breadcrumbs;
 
 	// https://stackoverflow.com/questions/71564541/going-back-to-the-previous-page-with-goto-sveltekit-navigation
@@ -81,8 +80,7 @@
 <AppShell
 	slotFooter="text-surface-500-400-token text-right text-sm m-4 hidden sm:block"
 	slotSidebarLeft="w-0 {data.user ? 'lg:w-64' : ''}"
-	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-4xl {overflowHidden}"
-	regionPage={overflowHidden}
+	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-4xl"
 >
 	<!-- Header Slot -->
 	<svelte:fragment slot="header">

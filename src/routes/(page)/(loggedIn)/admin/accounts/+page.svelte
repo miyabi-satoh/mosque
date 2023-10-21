@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { Scrollable } from '$lib';
+	import { scrollable } from '$lib/actions/scrollable';
+	import HelperText from '$lib/components/HelperText.svelte';
 	import { URLS, userRoles } from '$lib/consts';
-	import { superForm } from 'sveltekit-superforms/client';
-	import type { PageData } from './$types';
+	import Icon from '@iconify/svelte';
 	import { formatRelative } from 'date-fns';
 	import { ja } from 'date-fns/locale';
-	import HelperText from '$lib/components/HelperText.svelte';
-	import Icon from '@iconify/svelte';
+	import { superForm } from 'sveltekit-superforms/client';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 	let allChecked: boolean = false;
@@ -60,7 +60,7 @@
 		</div>
 	</form>
 </div>
-<Scrollable class="overflow-x-scroll pl-4 pr-2">
+<div class="flex-1 pl-4 pr-2" use:scrollable>
 	<table class="w-full table-auto">
 		<thead>
 			<tr class="bg-surface-100-800-token sticky top-0">
@@ -99,4 +99,4 @@
 			{/each}
 		</tbody>
 	</table>
-</Scrollable>
+</div>

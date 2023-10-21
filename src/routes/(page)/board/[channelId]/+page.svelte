@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { DeleteButton, Scrollable, SubmitButton, UserAvatar } from '$lib';
+	import { DeleteButton, SubmitButton, UserAvatar } from '$lib';
+	import { scrollToBottom } from '$lib/actions/scrollToBottom';
+	import { scrollable } from '$lib/actions/scrollable';
 	import { URLS, WS_EVENT_MESSAGEUPDATED } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import type { ScrollBehavior } from '$lib/types';
@@ -150,7 +152,7 @@
 		</div>
 	</div>
 	<hr />
-	<Scrollable class="space-y-4 px-4" bind:behavior={scrollBehavior}>
+	<div class="flex-1 space-y-4 pl-4 pr-2" use:scrollable use:scrollToBottom={scrollBehavior}>
 		{#each data.messages as m (m.id)}
 			<div class="flex gap-2">
 				<div class:order-last={m.userId === data.user?.userId}>
@@ -198,7 +200,7 @@
 				{$message}
 			</div>
 		{/if}
-	</Scrollable>
+	</div>
 	{#if data.user}
 		<div>
 			<hr />

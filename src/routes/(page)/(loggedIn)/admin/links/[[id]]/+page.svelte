@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { DeleteButton, HelperText, Scrollable, SubmitButton } from '$lib';
+	import { DeleteButton, HelperText, SubmitButton } from '$lib';
+	import { scrollable } from '$lib/actions/scrollable';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
@@ -91,7 +92,7 @@
 	{/if}
 </form>
 
-<Scrollable class="mt-4 pl-4 pr-2">
+<div class="mt-4 flex-1 pl-4 pr-2" use:scrollable>
 	<table class="w-full table-auto">
 		<thead>
 			<tr class="bg-surface-100-800-token sticky top-0">
@@ -113,4 +114,4 @@
 			{/each}
 		</tbody>
 	</table>
-</Scrollable>
+</div>

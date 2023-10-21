@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { Scrollable, UserAvatar } from '$lib';
+	import { UserAvatar } from '$lib';
+	import { scrollable } from '$lib/actions/scrollable';
 	import { URLS } from '$lib/consts';
 	import Icon from '@iconify/svelte';
 	import { getModalStore, type ModalComponent, type ModalSettings } from '@skeletonlabs/skeleton';
@@ -85,7 +86,7 @@
 		{/if}
 	</div>
 	{#if data.channels.length > 0}
-		<Scrollable class="space-y-4 pl-4 pr-2">
+		<div class="flex-1 space-y-4 pl-4 pr-2" use:scrollable>
 			{#each data.channels as channel}
 				<a href={URLS.BOARD(channel.id)} class="block">
 					<div class="card card-hover space-y-2 px-4 py-2">
@@ -115,7 +116,7 @@
 					</div>
 				</a>
 			{/each}
-		</Scrollable>
+		</div>
 	{:else}
 		<div class="mx-4">No channels.</div>
 	{/if}

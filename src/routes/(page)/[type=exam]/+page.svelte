@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { AudioPlayer, HelperText, Scrollable } from '$lib';
+	import { AudioPlayer, HelperText } from '$lib';
+	import { scrollable } from '$lib/actions/scrollable';
 	import { URLS } from '$lib/consts';
 	import { getExamConfig } from '$lib/exam';
 	import { submittingStore } from '$lib/stores';
@@ -160,7 +161,7 @@
 	<AudioPlayer src={audioSrc} title={audioTitle} bind:paused={audioPaused} />
 </div>
 
-<Scrollable class="space-y-4 pl-4 pr-2">
+<div class="flex-1 space-y-4 pl-4 pr-2" use:scrollable>
 	<div class="flex flex-col gap-4 sm:flex-row sm:justify-between">
 		{#if config.columnLabels.grade}
 			<select id="select-grade" bind:value={selectedGrade} class="select">
@@ -232,4 +233,4 @@
 			</div>
 		{/each}
 	</div>
-</Scrollable>
+</div>
