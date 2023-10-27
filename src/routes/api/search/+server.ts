@@ -10,10 +10,14 @@ export const POST: RequestHandler = async ({ request }) => {
 	if (search) {
 		const messages = await getMessagesWithUser({
 			where: {
-				message: {
-					contains: search,
-					mode: 'insensitive'
-				}
+				AND: search.split(/[\s\u3000]+/).map((s) => {
+					return {
+						message: {
+							contains: s,
+							mode: 'insensitive'
+						}
+					};
+				})
 			},
 			orderBy: { updatedAt: 'desc' }
 		});
