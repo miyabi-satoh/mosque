@@ -3,10 +3,9 @@
 	import { UserAvatar } from '$lib';
 	import { scrollable } from '$lib/actions/scrollable';
 	import { URLS } from '$lib/consts';
+	import { formatDate } from '$lib/utils';
 	import Icon from '@iconify/svelte';
 	import { getModalStore, type ModalComponent, type ModalSettings } from '@skeletonlabs/skeleton';
-	import { formatRelative } from 'date-fns';
-	import ja from 'date-fns/locale/ja';
 	import { onMount, tick } from 'svelte';
 	import type { PageData } from './$types';
 	import SearchModal from './SearchModal.svelte';
@@ -104,7 +103,7 @@
 											{channel.lastMessage.user.displayName ?? channel.lastMessage.user.fullName}
 										</span>
 										<span class="text-xs opacity-50 sm:text-sm">
-											{formatRelative(channel.lastMessage.updatedAt, new Date(), { locale: ja })}
+											{formatDate(channel.lastMessage.updatedAt)}
 										</span>
 									</header>
 									<p class="line-clamp-2 text-xs sm:text-sm">{channel.lastMessage.message}</p>

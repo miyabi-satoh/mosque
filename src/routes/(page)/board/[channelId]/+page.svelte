@@ -6,7 +6,7 @@
 	import { URLS, WS_EVENT_MESSAGEUPDATED } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import type { ScrollBehavior } from '$lib/types';
-	import { hasAdminRole } from '$lib/utils';
+	import { formatDate, hasAdminRole } from '$lib/utils';
 	import Icon from '@iconify/svelte';
 	import {
 		getModalStore,
@@ -14,8 +14,6 @@
 		type ModalComponent,
 		type ModalSettings
 	} from '@skeletonlabs/skeleton';
-	import { formatRelative } from 'date-fns';
-	import ja from 'date-fns/locale/ja';
 	import DOMPurify from 'dompurify';
 	import { marked } from 'marked';
 	import { io } from 'socket.io-client';
@@ -47,10 +45,6 @@
 		}
 	});
 	$: $submittingStore = $submitting;
-
-	function showRelativeDate(date: Date): string {
-		return formatRelative(date, new Date(), { locale: ja });
-	}
 
 	const modalStore = getModalStore();
 	type Message = PageData['messages'][0];
@@ -168,7 +162,7 @@
 							<span class="text-sm font-bold sm:text-base"
 								>{m.user.displayName ?? m.user.fullName}</span
 							>
-							<span class="text-xs opacity-50 sm:text-sm">{showRelativeDate(m.updatedAt)}</span>
+							<span class="text-xs opacity-50 sm:text-sm">{formatDate(m.updatedAt)}</span>
 						</p>
 						{#if m.userId === data.user?.userId || hasAdminRole(data.user)}
 							<div>

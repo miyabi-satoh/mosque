@@ -1,3 +1,5 @@
+import { format, formatRelative } from 'date-fns';
+import { ja } from 'date-fns/locale';
 import type { User } from 'lucia';
 
 // https://note.affi-sapo-sv.com/js-convert-full-width-numbers.php
@@ -32,4 +34,15 @@ export function isWindows(ua: string | null): boolean {
 		return ua.includes('Windows NT');
 	}
 	return true;
+}
+
+export function formatDate(date: Date): string {
+	const now = new Date();
+	const s = formatRelative(date, now, { locale: ja });
+	if (!s.includes('/')) return s;
+
+	if (date.getFullYear() === now.getFullYear())
+		return format(date, 'MM/dd(E) H:mm', { locale: ja });
+
+	return format(date, 'yyyy/MM/dd(E) H:mm', { locale: ja });
 }

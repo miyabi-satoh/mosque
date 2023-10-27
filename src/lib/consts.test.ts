@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest';
-
 import { URLS } from './consts';
 
 describe('URLSのテスト', () => {

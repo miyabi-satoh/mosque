@@ -2,9 +2,8 @@
 	import { scrollable } from '$lib/actions/scrollable';
 	import HelperText from '$lib/components/HelperText.svelte';
 	import { URLS, userRoles } from '$lib/consts';
+	import { formatDate } from '$lib/utils';
 	import Icon from '@iconify/svelte';
-	import { formatRelative } from 'date-fns';
-	import { ja } from 'date-fns/locale';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
 
@@ -93,7 +92,7 @@
 					<td class="whitespace-nowrap p-2">{user.fullName ?? ''} </td>
 					<td class="whitespace-nowrap p-2">{user.role} </td>
 					<td class="hidden whitespace-nowrap p-2 md:table-cell">
-						{user.lastLoginAt ? formatRelative(user.lastLoginAt, new Date(), { locale: ja }) : ''}
+						{user.lastLoginAt ? formatDate(user.lastLoginAt) : ''}
 					</td>
 				</tr>
 			{/each}

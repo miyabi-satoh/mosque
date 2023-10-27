@@ -2,12 +2,11 @@
 	import { UserAvatar } from '$lib';
 	import { URLS } from '$lib/consts';
 	import type { MessageWithUser } from '$lib/server/db';
+	import { formatDate } from '$lib/utils';
 	import Icon from '@iconify/svelte';
 	import { getModalStore } from '@skeletonlabs/skeleton';
-	import { formatRelative } from 'date-fns';
-	import { ja } from 'date-fns/locale';
-
-	// eslint-disable-next-line
+	
+// eslint-disable-next-line
 	export let parent: any;
 
 	const modalStore = getModalStore();
@@ -88,7 +87,7 @@
 												{m.user.displayName ?? m.user.fullName}
 											</span>
 											<span class="text-xs opacity-50 sm:text-sm">
-												{formatRelative(m.updatedAt, new Date(), { locale: ja })}
+												{formatDate(m.updatedAt)}
 											</span>
 										</header>
 										<p class="line-clamp-2 whitespace-normal text-xs sm:text-sm">{m.message}</p>
