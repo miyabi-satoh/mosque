@@ -21,7 +21,7 @@ const authHandler: Handle = async ({ event, resolve }) => {
 		throw redirect(302, '/');
 	}
 	if (
-		event.url.pathname.startsWith(URLS.BOARD) &&
+		event.url.pathname.startsWith(URLS.BOARD()) &&
 		!isBoardEnabled(session?.user, event.request.headers.get('useer-agent'))
 	) {
 		console.log('reject board by hooks.server.ts');

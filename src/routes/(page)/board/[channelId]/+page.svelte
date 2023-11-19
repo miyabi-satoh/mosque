@@ -1,8 +1,12 @@
 <script lang="ts">
-	import { DeleteButton, Scrollable, UserAvatar } from '$lib';
-	import { URLS } from '$lib/consts';
+	import { browser } from '$app/environment';
+	import { DeleteButton, SubmitButton, UserAvatar } from '$lib';
+	import { scrollToBottom } from '$lib/actions/scrollToBottom';
+	import { scrollable } from '$lib/actions/scrollable';
+	import { URLS, WS_EVENT_MESSAGEUPDATED } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import type { ScrollBehavior } from '$lib/types';
+	import { formatDate, hasAdminRole } from '$lib/utils';
 	import Icon from '@iconify/svelte';
 	import {
 		getModalStore,
@@ -10,21 +14,20 @@
 		type ModalComponent,
 		type ModalSettings
 	} from '@skeletonlabs/skeleton';
-	import { formatRelative } from 'date-fns';
-	import ja from 'date-fns/locale/ja';
+	import DOMPurify from 'dompurify';
 	import { marked } from 'marked';
-	import { tick } from 'svelte';
+	import { io } from 'socket.io-client';
+	import { onMount, tick } from 'svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	import './style.postcss';
-	import { hasAdminRole } from '$lib/utils';
 	import EditModal from './EditModal.svelte';
-	import DOMPurify from 'dompurify';
-	import { browser } from '$app/environment';
+	import './style.postcss';
 
 	marked.use({
 		breaks: true
 	});
+
+	const socket = io();
 
 	const postCreateButtonId = 'button-post-create';
 	const postUpdateButtonId = 'button-post-update';
@@ -36,14 +39,12 @@
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				if (!form.data.id) scrollBehavior = 'smooth';
+				socket.emit(WS_EVENT_MESSAGEUPDATED, data.channel.id);
+				console.log(`Client emit ${WS_EVENT_MESSAGEUPDATED}`);
 			}
 		}
 	});
 	$: $submittingStore = $submitting;
-
-	function showRelativeDate(date: Date): string {
-		return formatRelative(date, new Date(), { locale: ja });
-	}
 
 	const modalStore = getModalStore();
 	type Message = PageData['messages'][0];
@@ -95,18 +96,44 @@
 		}
 	}
 	let scrollBehavior: ScrollBehavior = 'auto';
+
+	onMount(() => {
+		socket.on(WS_EVENT_MESSAGEUPDATED, async (channelId) => {
+			if (channelId !== data.channel.id) return;
+
+			try {
+				const res = await fetch(URLS.API_CHANNEL(data.channel.id));
+				if (!res.ok) {
+					throw new Error(
+						`response.status = ${res.status}, response.statusText = ${res.statusText}`
+					);
+				}
+				const messages = await res.json();
+				// 日時が文字列になっているのでDate型に変換する
+				data.messages = messages.map((m: Message): Message => {
+					return {
+						...m,
+						createdAt: new Date(m.createdAt),
+						updatedAt: new Date(m.updatedAt)
+					};
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		});
+	});
 </script>
 
 <form class="contents" method="post" use:enhance>
 	<input type="hidden" name="id" value={formData?.id} />
 	<input type="hidden" name="message" value={formData?.message} />
 	<button id={postUpdateButtonId} class="hidden" />
-	<DeleteButton id={postDeleteButtonId} class="hidden" />
+	<DeleteButton id={postDeleteButtonId} item="message" class="hidden" />
 </form>
 
 <div class="contents space-y-4">
 	<div class="mx-4 flex gap-4">
-		<span class="text-xs opacity-50 sm:text-sm">
+		<span class="flex-1 text-xs opacity-50 sm:text-sm">
 			{data.channel.description}
 		</span>
 		<div class="flex flex-col gap-2">
@@ -119,8 +146,8 @@
 		</div>
 	</div>
 	<hr />
-	<Scrollable class="space-y-4 px-4" bind:behavior={scrollBehavior}>
-		{#each data.messages as m, i (m.id)}
+	<div class="flex-1 space-y-4 pl-4 pr-2" use:scrollable use:scrollToBottom={scrollBehavior}>
+		{#each data.messages as m (m.id)}
 			<div class="flex gap-2">
 				<div class:order-last={m.userId === data.user?.userId}>
 					<UserAvatar src={m.user.avatar} />
@@ -135,14 +162,14 @@
 							<span class="text-sm font-bold sm:text-base"
 								>{m.user.displayName ?? m.user.fullName}</span
 							>
-							<span class="text-xs opacity-50 sm:text-sm">{showRelativeDate(m.updatedAt)}</span>
+							<span class="text-xs opacity-50 sm:text-sm">{formatDate(m.updatedAt)}</span>
 						</p>
 						{#if m.userId === data.user?.userId || hasAdminRole(data.user)}
 							<div>
 								<button
 									use:popup={{
 										event: 'click',
-										target: `popupClick-${i}`,
+										target: `popupClick-${m.id}`,
 										placement: 'bottom',
 										closeQuery: 'li'
 									}}
@@ -167,30 +194,32 @@
 				{$message}
 			</div>
 		{/if}
-	</Scrollable>
+	</div>
 	{#if data.user}
-		<hr />
-		<form class="mx-4" method="post" use:enhance>
-			<div class="flex items-end gap-2">
-				{#await import('$lib/components/MarkdownEditor.svelte') then Module}
-					<Module.default
-						name="message"
-						class="flex-1"
-						placeholder="Message #{data.channel.name}"
-						bind:value={$form.message}
-						on:keydown={onKeydown}
-					/>
-				{/await}
-				<button id={postCreateButtonId} class="variant-ghost-primary btn" disabled={$submitting}>
-					<span><Icon icon="mdi:send" height="auto" /></span>
-					<span class="hidden sm:block">Send</span>
-				</button>
-			</div>
-		</form>
+		<div>
+			<hr />
+			<form class="mx-4 mt-2" method="post" use:enhance>
+				<div class="flex items-end gap-2">
+					{#await import('$lib/components/MarkdownEditor.svelte') then Module}
+						<Module.default
+							name="message"
+							class="flex-1"
+							placeholder="Message #{data.channel.name}"
+							bind:value={$form.message}
+							on:keydown={onKeydown}
+						/>
+					{/await}
+					<SubmitButton id={postCreateButtonId} disabled={$submitting}>
+						<span><Icon icon="mdi:send" height="auto" /></span>
+						<span class="hidden sm:block">Send</span>
+					</SubmitButton>
+				</div>
+			</form>
+		</div>
 	{/if}
 </div>
-{#each data.messages as m, i}
-	<div class="card w-48 p-2 shadow-xl" data-popup="popupClick-{i}">
+{#each data.messages as m (m.id)}
+	<div class="card w-48 p-2 shadow-xl" data-popup="popupClick-{m.id}">
 		<ul>
 			<li>
 				<button class={popupMenuClasses} on:click={() => onEditClick(m)}>

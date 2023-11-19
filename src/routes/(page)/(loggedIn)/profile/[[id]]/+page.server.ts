@@ -13,19 +13,23 @@ import type { Actions, PageServerLoad } from './$types';
 
 // TODO: verify email
 
-const schema = z.object({
+const adminSchema = z.object({
 	// required
 	username: z.string().min(4).max(16),
-	displayName: z.string().min(2).max(16),
 	password: z.string().min(1),
+	role: UserRoleEnumSchema,
+	fullName: z.string().max(16),
 	// nullable
 	avatar: z.string().nullable(),
 	email: z.string().email().nullable(),
-	// optional
-	role: UserRoleEnumSchema.optional(),
-	newPassword: z.string().optional(),
-	// nullish
-	fullName: z.string().max(16).nullish()
+	displayName: z.string().min(2).max(16).nullable(),
+	newPassword: z.string().nullable()
+});
+const userSchema = adminSchema.extend({
+	// optional(hidden)
+	fullName: adminSchema.shape.fullName.optional(),
+	role: adminSchema.shape.role.optional(),
+	newPassword: adminSchema.shape.newPassword.optional()
 });
 
 export const load = (async ({ parent, params, url }) => {
@@ -43,10 +47,12 @@ export const load = (async ({ parent, params, url }) => {
 		}
 	})();
 
+	const schema = params.id ? adminSchema : userSchema;
 	const form = await superValidate(schema);
 	form.data = {
 		...form.data,
-		...user
+		...user,
+		fullName: user?.fullName ?? undefined
 	};
 
 	return {
@@ -65,6 +71,7 @@ export const actions: Actions = {
 		const userId = params.id ?? session.user.userId;
 
 		// validation schema
+		const schema = params.id ? adminSchema : userSchema;
 		const updateSchema = schema.extend({
 			username: schema.shape.username.refine(async (val) => {
 				try {

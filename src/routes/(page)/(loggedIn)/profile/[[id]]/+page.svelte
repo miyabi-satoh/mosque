@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { HelperText } from '$lib';
+	import { FormLabel, HelperText, SubmitButton } from '$lib';
+	import { userRoles } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
-	import { superForm } from 'sveltekit-superforms/client';
-	import type { PageData } from './$types';
+	import Icon from '@iconify/svelte';
 	import {
 		FileButton,
 		getModalStore,
 		type ModalComponent,
 		type ModalSettings
 	} from '@skeletonlabs/skeleton';
-	import Icon from '@iconify/svelte';
+	import { superForm } from 'sveltekit-superforms/client';
+	import type { PageData } from './$types';
 	import CropModal from './CropModal.svelte';
-	import { userRoles } from '$lib/consts';
 
 	const modalStore = getModalStore();
 
@@ -45,6 +45,17 @@
 			};
 		}
 	}
+
+	function onAvatarClick() {
+		if ($form.avatar) {
+			$form.avatar = '';
+		} else {
+			const el = window.document.querySelector('input[name="select-image"]');
+			if (el) {
+				(el as HTMLInputElement).click();
+			}
+		}
+	}
 </script>
 
 <form class="mx-4 space-y-4" method="post" enctype="multipart/form-data" use:enhance>
@@ -54,33 +65,27 @@
 	<div class="flex flex-col sm:flex-row sm:gap-x-8">
 		<div class="mx-auto w-32 space-y-2">
 			<FileButton
-				button="bg-surface-200-700-token border-surface-500-400-token w-full rounded-xl border-2 border-dotted"
+				button="bg-surface-200-700-token border-surface-900/25 w-full rounded-xl border-2"
 				name="select-image"
 				accept="image/*"
 				multiple={false}
 				on:change={onFileChange}
 			>
 				{#if $form.avatar}
-					<img src={$form.avatar} class="w-full rounded-xl" alt="avatar" />
+					<img src={$form.avatar} class="border-surf w-full rounded-xl" alt="avatar" />
 				{:else}
 					<Icon icon="mdi:account" class="mx-auto" height="96" />
 				{/if}
 			</FileButton>
 
-			<button
-				type="button"
-				class="variant-ghost-surface btn btn-sm w-full"
-				disabled={!$form.avatar}
-				on:click={() => ($form.avatar = null)}
-			>
-				Clear avatar
+			<button type="button" class="variant-filled btn btn-sm w-full" on:click={onAvatarClick}>
+				<span>{$form.avatar ? 'Clear' : 'Select'} avatar</span>
 			</button>
 			<input type="hidden" name="avatar" bind:value={$form.avatar} />
 		</div>
 		<div class="grid grid-cols-1 gap-x-2 gap-y-4 sm:flex-1 md:grid-cols-2">
 			<div>
-				<label class="label">
-					<span>Login ID</span>
+				<FormLabel text="Login ID" constraint={$constraints.username}>
 					<input
 						class="input"
 						class:input-error={$errors.username}
@@ -91,14 +96,13 @@
 						autocomplete="username"
 						{...$constraints.username}
 					/>
-				</label>
+				</FormLabel>
 				<HelperText>
 					{$errors.username ? $errors.username[0] : ''}
 				</HelperText>
 			</div>
 			<div>
-				<label class="label">
-					<span>Display Name</span>
+				<FormLabel text="Display Name" constraint={$constraints.displayName}>
 					<input
 						class="input"
 						class:input-error={$errors.displayName}
@@ -108,14 +112,13 @@
 						disabled={$submitting}
 						{...$constraints.displayName}
 					/>
-				</label>
+				</FormLabel>
 				<HelperText>
 					{$errors.displayName ? $errors.displayName[0] : ''}
 				</HelperText>
 			</div>
 			<div>
-				<label class="label">
-					<span>Email</span>
+				<FormLabel text="Email" constraint={$constraints.email}>
 					<input
 						class="input"
 						class:input-error={$errors.email}
@@ -125,7 +128,7 @@
 						disabled={$submitting}
 						{...$constraints.email}
 					/>
-				</label>
+				</FormLabel>
 				<HelperText>
 					{$errors.email ? $errors.email[0] : ''}
 				</HelperText>
@@ -133,8 +136,7 @@
 
 			{#if $page.params.id}
 				<div>
-					<label class="label">
-						<span>Full Name</span>
+					<FormLabel text="Full Name" constraint={$constraints.fullName}>
 						<input
 							class="input"
 							class:input-error={$errors.fullName}
@@ -144,27 +146,25 @@
 							disabled={$submitting}
 							{...$constraints.fullName}
 						/>
-					</label>
+					</FormLabel>
 					<HelperText>
 						{$errors.fullName ? $errors.fullName[0] : ''}
 					</HelperText>
 				</div>
 				<div>
-					<label class="label">
-						<span>Role</span>
+					<FormLabel text="Role" constraint={$constraints.role}>
 						<select class="select" name="role" bind:value={$form.role}>
 							{#each userRoles as role}
 								<option>{role}</option>
 							{/each}
 						</select>
-					</label>
+					</FormLabel>
 					<HelperText>
 						{$errors.role ? $errors.role[0] : ''}
 					</HelperText>
 				</div>
 				<div>
-					<label class="label">
-						<span>New Password</span>
+					<FormLabel text="New Password" constraint={$constraints.newPassword}>
 						<input
 							class="input"
 							class:input-error={$errors.newPassword}
@@ -174,7 +174,7 @@
 							disabled={$submitting}
 							{...$constraints.newPassword}
 						/>
-					</label>
+					</FormLabel>
 					<HelperText>
 						{$errors.newPassword ? $errors.newPassword[0] : ''}
 					</HelperText>
@@ -182,8 +182,7 @@
 			{/if}
 
 			<div>
-				<label class="label">
-					<span>Enter your password to save</span>
+				<FormLabel text="Enter your password to save" constraint={$constraints.password}>
 					<input
 						class="input"
 						class:input-error={$errors.password}
@@ -193,7 +192,7 @@
 						disabled={$submitting}
 						{...$constraints.password}
 					/>
-				</label>
+				</FormLabel>
 				<HelperText>
 					{$errors.password ? $errors.password[0] : ''}
 				</HelperText>
@@ -201,6 +200,6 @@
 		</div>
 	</div>
 	<div class="text-right">
-		<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+		<SubmitButton disabled={$submitting} />
 	</div>
 </form>

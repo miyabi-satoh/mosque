@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { HelperText, Scrollable, parentClass } from '$lib';
+	import { HelperText, SubmitButton } from '$lib';
+	import { scrollable } from '$lib/actions/scrollable';
 	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
@@ -26,14 +27,14 @@
 
 {#if data.columnValues.length > 0}
 	<form
-		class="{parentClass} mx-4 space-y-4"
+		class="flex flex-1 flex-col space-y-4"
 		method="POST"
 		use:enhance
 		on:submit={() => {
 			allChecked = false;
 		}}
 	>
-		<div class="flex items-center gap-x-4">
+		<div class="mx-4 flex items-center gap-x-4">
 			<p class="flex-1">
 				<HelperText usePageStatus>{$message ?? ''}</HelperText>
 				{#if countOk === 0}
@@ -47,10 +48,10 @@
 					{countNew > 1 ? `files are` : `file is`} not registered in the database.
 				{/if}
 			</p>
-			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+			<SubmitButton disabled={$submitting} />
 		</div>
 
-		<Scrollable class="overflow-x-scroll">
+		<div class="flex-1 pl-4 pr-2" use:scrollable>
 			<table class="w-full table-auto">
 				<thead>
 					<tr class="bg-surface-100-800-token sticky top-0 text-sm">
@@ -83,7 +84,7 @@
 					{/each}
 				</tbody>
 			</table>
-		</Scrollable>
+		</div>
 	</form>
 {:else}
 	<div class="p-4">No files found.</div>

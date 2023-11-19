@@ -70,13 +70,13 @@ export const actions: Actions = {
 				if (params.id) {
 					return message(form, `The channel has been saved.`);
 				}
-				redirectTo = URLS.BOARD;
+				redirectTo = URLS.BOARD();
 			} else if (params.id) {
 				// delete
 				await db.channel.delete({
 					where: { id: params.id }
 				});
-				redirectTo = URLS.BOARD;
+				redirectTo = URLS.BOARD();
 			}
 		} catch (e) {
 			console.log(e);

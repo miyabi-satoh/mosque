@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { DeleteButton, FormLabel, HelperText, SubmitButton } from '$lib';
+	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	import { submittingStore } from '$lib/stores';
-	import { HelperText } from '$lib';
-	
-export let data: PageData;
+
+	export let data: PageData;
 	const { form, message, errors, submitting, constraints, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 </script>
@@ -14,33 +14,32 @@ export let data: PageData;
 		<HelperText usePageStatus>{$message}</HelperText>
 	{/if}
 	<div>
-		<label class="label">
-			<span>Channel name</span>
+		<FormLabel text="Channel name" constraint={$constraints.name}>
 			<input
 				class="input"
+				class:input-error={$errors.name}
 				type="text"
 				name="name"
-				class:input-error={$errors.name}
 				bind:value={$form.name}
 				disabled={$submitting}
 				{...$constraints.name}
 			/>
-		</label>
+		</FormLabel>
 		<HelperText>
 			{$errors.name ? $errors.name[0] : ''}
 		</HelperText>
 	</div>
 	<div>
-		<label class="label">
-			<span>Description</span>
+		<FormLabel text="Description" constraint={$constraints.description}>
 			<textarea
 				class="textarea"
-				name="description"
 				class:input-error={$errors.description}
+				name="description"
 				bind:value={$form.description}
 				disabled={$submitting}
+				{...$constraints.description}
 			/>
-		</label>
+		</FormLabel>
 		<HelperText>
 			{$errors.description ? $errors.description[0] : ''}
 		</HelperText>
@@ -48,13 +47,9 @@ export let data: PageData;
 	<!-- <SlideToggle name="private" bind:checked={$form.private}>Private</SlideToggle> -->
 	<div class="flex justify-end gap-x-2">
 		{#if $form.id}
-			<button type="button" name="delete" class="variant-ghost-warning btn" disabled={$submitting}>
-				Delete channel
-			</button>
+			<input type="hidden" name="id" value={$form.id} />
+			<DeleteButton item="channel" disabled={$submitting} />
 		{/if}
-		<button class="variant-ghost-primary btn" disabled={$submitting}>
-			{$form.id ? 'Save' : 'Create'} channel
-		</button>
+		<SubmitButton disabled={$submitting} />
 	</div>
-	<input type="hidden" name="id" value={$form.id} />
 </form>

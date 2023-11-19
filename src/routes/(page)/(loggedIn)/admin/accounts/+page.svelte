@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { Scrollable } from '$lib';
+	import { scrollable } from '$lib/actions/scrollable';
+	import HelperText from '$lib/components/HelperText.svelte';
 	import { URLS, userRoles } from '$lib/consts';
+	import { formatDate } from '$lib/utils';
+	import Icon from '@iconify/svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	import { formatRelative } from 'date-fns';
-	import { ja } from 'date-fns/locale';
-	import HelperText from '$lib/components/HelperText.svelte';
-	import Icon from '@iconify/svelte';
 
 	export let data: PageData;
 	let allChecked: boolean = false;
@@ -29,7 +28,6 @@
 		<HelperText usePageStatus>{$message}</HelperText>
 	</div>
 {/if}
-<input type="hidden" name="checked" value={$form.checked} />
 <div class="mx-4 mb-2 flex flex-wrap items-center gap-2">
 	<a href={URLS.ADMIN_ACCOUNTS_CREATE} class="variant-filled btn flex-none">
 		<span><Icon icon="mdi:account-multiple-plus" height="auto" /></span>
@@ -61,7 +59,7 @@
 		</div>
 	</form>
 </div>
-<Scrollable class="ml-4 mr-2 overflow-x-scroll">
+<div class="flex-1 pl-4 pr-2" use:scrollable>
 	<table class="w-full table-auto">
 		<thead>
 			<tr class="bg-surface-100-800-token sticky top-0">
@@ -88,16 +86,16 @@
 						/>
 					</td>
 					<td class="whitespace-nowrap p-2">
-						<a class="anchor" href={`${URLS.PROFILE}/${user.id}`}>{user.username}</a>
+						<a class="anchor" href={URLS.PROFILE(user.id)}>{user.username}</a>
 					</td>
 					<td class="whitespace-nowrap p-2">{user.displayName ?? ''}</td>
 					<td class="whitespace-nowrap p-2">{user.fullName ?? ''} </td>
 					<td class="whitespace-nowrap p-2">{user.role} </td>
 					<td class="hidden whitespace-nowrap p-2 md:table-cell">
-						{user.lastLoginAt ? formatRelative(user.lastLoginAt, new Date(), { locale: ja }) : ''}
+						{user.lastLoginAt ? formatDate(user.lastLoginAt) : ''}
 					</td>
 				</tr>
 			{/each}
 		</tbody>
 	</table>
-</Scrollable>
+</div>

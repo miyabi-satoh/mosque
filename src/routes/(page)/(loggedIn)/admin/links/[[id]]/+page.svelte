@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { DeleteButton, HelperText, Scrollable } from '$lib';
+	import { DeleteButton, HelperText, SubmitButton } from '$lib';
+	import { scrollable } from '$lib/actions/scrollable';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
 	import Icon from '@iconify/svelte';
@@ -16,7 +17,7 @@
 	async function fetchTitle(): Promise<void> {
 		try {
 			const url = encodeURIComponent($form.url);
-			const res = await fetch(`${URLS.API_FETCH}${url}`);
+			const res = await fetch(URLS.API_FETCH(url));
 			if (res.ok) {
 				const html = await res.text();
 				const parser = new DOMParser();
@@ -83,15 +84,15 @@
 
 		<div class="flex justify-end gap-x-2">
 			{#if $page.params.id}
-				<a class="variant-filled btn" href={URLS.ADMIN_LINKS}>Cancel</a>
-				<DeleteButton disabled={$submitting} />
+				<a class="variant-filled btn" href={URLS.ADMIN_LINKS()}>Cancel</a>
+				<DeleteButton item="link" disabled={$submitting} />
 			{/if}
-			<button class="variant-ghost-primary btn" disabled={$submitting}>Save</button>
+			<SubmitButton disabled={$submitting} />
 		</div>
 	{/if}
 </form>
 
-<Scrollable class="ml-4 mr-2 mt-4">
+<div class="mt-4 flex-1 pl-4 pr-2" use:scrollable>
 	<table class="w-full table-auto">
 		<thead>
 			<tr class="bg-surface-100-800-token sticky top-0">
@@ -103,7 +104,7 @@
 			{#each data.links as link}
 				<tr class="odd:bg-surface-50-900-token even:bg-surface-200-700-token">
 					<td class="flex items-center gap-x-2 p-2">
-						<a class="anchor" href={`${URLS.ADMIN_LINKS}/${link.id}`}>{link.title}</a>
+						<a class="anchor" href={URLS.ADMIN_LINKS(link.id)}>{link.title}</a>
 						<a class="anchor" href={link.url} target="_blank">
 							<Icon icon="mdi:open-in-new" />
 						</a>
@@ -113,4 +114,4 @@
 			{/each}
 		</tbody>
 	</table>
-</Scrollable>
+</div>
