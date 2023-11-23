@@ -1,0 +1,21 @@
+{
+	"name": "mosque",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "node",
+	"workspaceFolder": "/workspace",
+	"shutdownAction": "stopCompose",
+	// "updateContentCommand": "pnpm install && pnpm build",
+	// "postAttachCommand": {
+	// 	"server": "pnpm dev"
+	// },
+	"portsAttributes": {
+		"5173": {
+			"label": "Application",
+			"onAutoForward": "openPreview"
+		},
+		"5432": {
+			"label": "Database"
+		}
+	},
+	"forwardPorts": [5173, 5432]
+}
