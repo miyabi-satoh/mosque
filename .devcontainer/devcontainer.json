@@ -4,14 +4,13 @@
 	"service": "node",
 	"workspaceFolder": "/workspace",
 	"shutdownAction": "stopCompose",
-	// "updateContentCommand": "pnpm install && pnpm build",
+	// "updateContentCommand": "pnpm install && npx prisma generate",
 	// "postAttachCommand": {
 	// 	"server": "pnpm dev"
 	// },
 	"portsAttributes": {
 		"5173": {
-			"label": "Application",
-			"onAutoForward": "openPreview"
+			"label": "Application"
 		},
 		"5432": {
 			"label": "Database"
