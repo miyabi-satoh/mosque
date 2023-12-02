@@ -122,6 +122,9 @@
 			}
 		});
 	});
+
+	const MarkdownToHtml = async (message: string) =>
+		DOMPurify.sanitize(await marked.parse(message, { async: true }));
 </script>
 
 <form class="contents" method="post" use:enhance>
@@ -182,7 +185,7 @@
 					<article class="marked">
 						{#if browser}
 							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-							{@html DOMPurify.sanitize(marked.parse(m.message))}
+							{@html MarkdownToHtml(m.message)}
 						{/if}
 					</article>
 				</div>
