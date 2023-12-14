@@ -16,5 +16,19 @@
 			"label": "Database"
 		}
 	},
-	"forwardPorts": [5173, 5432]
+	"forwardPorts": [5173, 5432],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"MS-CEINTL.vscode-language-pack-ja",
+				"mrmlnc.vscode-duplicate",
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode",
+				"Prisma.prisma",
+				"svelte.svelte-vscode",
+				"TabNine.tabnine-vscode",
+				"bradlc.vscode-tailwindcss"
+			]
+		}
+	}
 }
