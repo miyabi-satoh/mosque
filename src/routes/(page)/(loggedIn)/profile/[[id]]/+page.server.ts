@@ -3,7 +3,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
-import { PROVIDERID_USERNAME } from '$lib/consts';
+import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
 import { UserRoleEnumSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
 import { auth } from '$lib/server/lucia';
@@ -32,9 +32,9 @@ const userSchema = adminSchema.extend({
 	newPassword: adminSchema.shape.newPassword.optional()
 });
 
-export const load = (async ({ parent, params, url }) => {
+export const load = (async ({ parent, params }) => {
 	const data = await parent();
-	data.breadcrumbs.push({ label: 'Edit Profile', link: url.pathname });
+	data.breadcrumbs.push({ label: 'Edit Profile', link: URLS.PROFILE(params.id) });
 
 	const user = await (async () => {
 		if (params.id) {

@@ -4,7 +4,7 @@ import { parse } from 'csv-parse/sync';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
-import { PROVIDERID_USERNAME } from '$lib/consts';
+import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
 import { auth, defaultUserAttributes } from '$lib/server/lucia';
 
@@ -21,9 +21,9 @@ type UserPropT = {
 	fullName: string;
 };
 
-export const load = (async ({ parent, url }) => {
+export const load = (async ({ parent }) => {
 	const data = await parent();
-	data.breadcrumbs.push({ label: 'Create', link: url.pathname });
+	data.breadcrumbs.push({ label: 'Create', link: URLS.ADMIN_ACCOUNTS_CREATE });
 
 	const form = await superValidate(schema);
 

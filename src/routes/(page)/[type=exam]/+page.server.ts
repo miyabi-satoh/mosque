@@ -7,7 +7,7 @@ import { exclude } from '$lib/utils';
 
 import type { PageServerLoad } from './$types';
 
-export const load = (async ({ params, parent, url }) => {
+export const load = (async ({ params, parent }) => {
 	const examType = params.type.toLowerCase() as ExamTypeEnum;
 	const exam = await db.exam.findUnique({ where: { examType: examType } });
 	if (!exam) {
@@ -16,7 +16,7 @@ export const load = (async ({ params, parent, url }) => {
 	}
 
 	const data = await parent();
-	data.breadcrumbs.push({ label: `${exam.name}アーカイブ`, link: url.pathname });
+	data.breadcrumbs.push({ label: `${exam.name}アーカイブ`, link: `/${examType}` });
 
 	const resources = await db.resource.findMany({
 		where: { examType },

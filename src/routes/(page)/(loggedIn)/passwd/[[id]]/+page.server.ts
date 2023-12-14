@@ -3,7 +3,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
-import { PROVIDERID_USERNAME } from '$lib/consts';
+import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
 import { auth } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
@@ -14,9 +14,9 @@ const schema = z.object({
 	confirmPassword: z.string().min(1)
 });
 
-export const load = (async ({ parent, url }) => {
+export const load = (async ({ parent, params }) => {
 	const data = await parent();
-	data.breadcrumbs.push({ label: 'Change Password', link: url.pathname });
+	data.breadcrumbs.push({ label: 'Change Password', link: URLS.PASSWD(params.id) });
 	const form = await superValidate(schema);
 
 	return { form };

@@ -14,7 +14,7 @@ const schema = z.object({
 	sortOrder: z.number().default(0)
 });
 
-export const load = (async ({ params, parent, url }) => {
+export const load = (async ({ params, parent }) => {
 	const links = await db.link.findMany({
 		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
 	});
@@ -24,7 +24,7 @@ export const load = (async ({ params, parent, url }) => {
 	const data = await parent();
 	data.breadcrumbs.push({ label: '外部リンク管理', link: URLS.ADMIN_LINKS() });
 	if (params.id) {
-		data.breadcrumbs.push({ label: '編集', link: url.pathname });
+		data.breadcrumbs.push({ label: '編集', link: URLS.ADMIN_LINKS(params.id) });
 	}
 
 	const form = await superValidate(link, schema);

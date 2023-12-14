@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR, KYOTE_RESOURCE_DIR } from '$env/static/private';
 
+import { URLS } from '$lib/consts';
 import { getExamConfig } from '$lib/exam';
 import { ResourceSchema } from '$lib/schemas/zod';
 import { db, type PrismaInnerTransaction } from '$lib/server/db';
@@ -138,7 +139,7 @@ async function refreshTempResources(
 	}
 }
 
-export const load = (async ({ locals, params, parent, url }) => {
+export const load = (async ({ locals, params, parent }) => {
 	const session = await locals.auth.validate();
 	if (!session) {
 		throw redirect(302, '/');
@@ -152,7 +153,7 @@ export const load = (async ({ locals, params, parent, url }) => {
 	}
 
 	const data = await parent();
-	data.breadcrumbs.push({ label: `${exam.name} ファイル管理`, link: url.pathname });
+	data.breadcrumbs.push({ label: `${exam.name} ファイル管理`, link: URLS.ADMIN_ARCHIVE(examType) });
 
 	const tempData = await db.$transaction(
 		async (db) => {
