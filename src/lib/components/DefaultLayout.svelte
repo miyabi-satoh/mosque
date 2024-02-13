@@ -115,7 +115,7 @@
 						<span>Login</span>
 					</a>
 				{/if}
-				<LightSwitch />
+				<LightSwitch rounded="rounded-full" />
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
@@ -128,7 +128,7 @@
 	<!-- Breadcrumbs -->
 	<!-- {#key pathname} -->
 	{#if breadcrumbs?.length > 1}
-		<ol class="breadcrumb mx-4 mb-8 text-sm">
+		<ol class="breadcrumb mx-4 mb-4 text-sm">
 			{#each breadcrumbs as crumb, i}
 				<!-- If crumb index is less than the breadcrumb length minus 1 -->
 				{#if i < breadcrumbs.length - 1}
