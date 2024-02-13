@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
-	
-export let data: PageData;
+
+	export let data: PageData;
 </script>
 
 <div class="mx-4 grid grid-cols-1 gap-4 sm:grid-cols-2">

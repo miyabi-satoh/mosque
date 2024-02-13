@@ -21,7 +21,8 @@ export const URLS = {
 	BOARD_CHANNEL: '/board/channel',
 	API_CHANNEL: (channelId: string) => `/api/channel${subRoute(channelId)}`,
 	API_DATA: (examType: string, objId: string) => `/api/data/${examType}/${objId}`,
-	API_FETCH: (url: string) => `/api/fetch?url=${url}`
+	API_FETCH: (url: string) => `/api/fetch?url=${url}`,
+	API_READDIR: `/api/readdir`
 } as const;
 
 export const userRoles = ['USER', 'STAFF', 'ADMIN', 'RETIRED'] as const satisfies Readonly<

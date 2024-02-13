@@ -24,6 +24,11 @@ export const load: PageServerLoad = async () => {
 	);
 	menus.push(
 		{
+			href: URLS.ADMIN_ARCHIVES(),
+			label: 'アーカイブ管理',
+			icon: 'mdi:archive'
+		},
+		{
 			href: URLS.ADMIN_LINKS(),
 			label: '外部リンク管理',
 			icon: 'mdi:web'

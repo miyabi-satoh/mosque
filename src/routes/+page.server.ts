@@ -27,6 +27,11 @@ export const load = (async () => {
 			external: false
 		});
 	});
+	items.push({
+		href: '/archives',
+		title: 'その他のアーカイブ',
+		external: false
+	});
 	links.forEach((link) => {
 		items.push({
 			href: link.url,

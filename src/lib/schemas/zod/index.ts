@@ -38,6 +38,17 @@ export const KeyScalarFieldEnumSchema = z.enum(['id', 'hashed_password', 'user_i
 
 export const ExamScalarFieldEnumSchema = z.enum(['examType', 'name', 'sortOrder']);
 
+export const ArchiveScalarFieldEnumSchema = z.enum([
+	'id',
+	'title',
+	'slug',
+	'module',
+	'sortOrder',
+	'lastDir'
+]);
+
+export const ArchiveItemScalarFieldEnumSchema = z.enum(['id', 'archiveId', 'path']);
+
 export const ResourceScalarFieldEnumSchema = z.enum([
 	'id',
 	'examType',
@@ -104,6 +115,10 @@ export const ExamTypeEnumSchema = z.enum(['ctest', 'eiken', 'kyote']);
 
 export type ExamTypeEnumType = `${z.infer<typeof ExamTypeEnumSchema>}`;
 
+export const ArchiveModuleSchema = z.enum(['common', 'ctest', 'eiken', 'kyote']);
+
+export type ArchiveModuleType = `${z.infer<typeof ArchiveModuleSchema>}`;
+
 export const ResourceStateEnumSchema = z.enum(['ok', 'new']);
 
 export type ResourceStateEnumType = `${z.infer<typeof ResourceStateEnumSchema>}`;
@@ -166,6 +181,33 @@ export const ExamSchema = z.object({
 });
 
 export type Exam = z.infer<typeof ExamSchema>;
+
+/////////////////////////////////////////
+// ARCHIVE SCHEMA
+/////////////////////////////////////////
+
+export const ArchiveSchema = z.object({
+	module: ArchiveModuleSchema,
+	id: z.string().cuid(),
+	title: z.string().min(1),
+	slug: z.string().min(1).toLowerCase(),
+	sortOrder: z.number().int(),
+	lastDir: z.string().nullable()
+});
+
+export type Archive = z.infer<typeof ArchiveSchema>;
+
+/////////////////////////////////////////
+// ARCHIVE ITEM SCHEMA
+/////////////////////////////////////////
+
+export const ArchiveItemSchema = z.object({
+	id: z.string().cuid(),
+	archiveId: z.string(),
+	path: z.string()
+});
+
+export type ArchiveItem = z.infer<typeof ArchiveItemSchema>;
 
 /////////////////////////////////////////
 // RESOURCE SCHEMA
