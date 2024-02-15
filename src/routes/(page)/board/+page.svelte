@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { UserAvatar } from '$lib';
+	import { LinkButton, UserAvatar } from '$lib';
 	import { scrollable } from '$lib/actions/scrollable';
 	import { URLS } from '$lib/consts';
 	import { formatDate } from '$lib/utils';
@@ -78,10 +78,10 @@
 			>
 		</button>
 		{#if data.user}
-			<a href={URLS.BOARD_CHANNEL} class="variant-filled-primary btn">
+			<LinkButton href={URLS.BOARD_CHANNEL}>
 				<span><Icon icon="mdi:rss" height="auto" /></span>
 				<span>New</span>
-			</a>
+			</LinkButton>
 		{/if}
 	</div>
 	{#if data.channels.length > 0}

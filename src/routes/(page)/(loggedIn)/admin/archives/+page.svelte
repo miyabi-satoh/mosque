@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { URLS } from '$lib/consts';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	import { SubmitButton } from '$lib';
+	import { HelperText, LinkButton, SubmitButton } from '$lib';
 	import Icon from '@iconify/svelte';
 	// import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 
@@ -37,12 +36,11 @@
 <!-- <SuperDebug data={$form} /> -->
 
 <div class="mx-4 space-y-4">
-	<div>
-		<span class:text-error-500={$page.status >= 400}>
-			{#if $message}
-				{$message}
-			{/if}
-		</span>
+	<div class="flex items-center justify-end">
+		{#if $message}
+			<HelperText usePageStatus class="flex-1">{$message}</HelperText>
+		{/if}
+		<LinkButton href="/">New archive</LinkButton>
 	</div>
 	<form class="table-container space-y-4" method="post" use:enhance>
 		<table class="table">

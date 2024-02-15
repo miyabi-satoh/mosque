@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { DeleteButton, HelperText, SubmitButton } from '$lib';
+	import { DeleteButton, HelperText, LinkButton, SubmitButton } from '$lib';
 	import { scrollable } from '$lib/actions/scrollable';
 	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
@@ -84,7 +84,7 @@
 
 		<div class="flex justify-end gap-x-2">
 			{#if $page.params.id}
-				<a class="variant-filled btn" href={URLS.ADMIN_LINKS()}>Cancel</a>
+				<LinkButton href={URLS.ADMIN_LINKS()} variant="variant-filled">Cancel</LinkButton>
 				<DeleteButton item="link" disabled={$submitting} />
 			{/if}
 			<SubmitButton disabled={$submitting} />
