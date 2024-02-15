@@ -80,7 +80,7 @@
 <AppShell
 	slotFooter="text-surface-500-400-token text-right text-sm m-4 hidden sm:block"
 	slotSidebarLeft="w-0 {data.user ? 'lg:w-64' : ''}"
-	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-4xl"
+	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-4xl mb-8"
 >
 	<!-- Header Slot -->
 	<svelte:fragment slot="header">
@@ -144,5 +144,5 @@
 	<slot />
 
 	<!-- Footer Slot -->
-	<svelte:fragment slot="footer">Copyright &copy; 2023 miyabi-satoh.</svelte:fragment>
+	<!-- <svelte:fragment slot="footer">&copy; 2023 miyabi-satoh</svelte:fragment> -->
 </AppShell>

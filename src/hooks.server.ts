@@ -4,7 +4,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { ORIGIN, PORT } from '$env/static/private';
 
 import { URLS } from '$lib/consts';
-import { lucia } from '$lib/server/lucia';
+import { createSessionCookie, deleteSessionCookie, lucia } from '$lib/server/lucia';
 import { isBoardEnabled } from '$lib/server/utils';
 import { hasAdminRole } from '$lib/utils';
 
@@ -18,18 +18,20 @@ const handleSession: Handle = async ({ event, resolve }) => {
 
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session && session.fresh) {
-		const sessionCookie = lucia.createSessionCookie(session.id);
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
-		});
+		createSessionCookie(session, event.cookies);
+		// const sessionCookie = lucia.createSessionCookie(session.id);
+		// event.cookies.set(sessionCookie.name, sessionCookie.value, {
+		// 	path: '.',
+		// 	...sessionCookie.attributes
+		// });
 	}
 	if (!session) {
-		const sessionCookie = lucia.createBlankSessionCookie();
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
-		});
+		deleteSessionCookie(event.cookies);
+		// const sessionCookie = lucia.createBlankSessionCookie();
+		// event.cookies.set(sessionCookie.name, sessionCookie.value, {
+		// 	path: '.',
+		// 	...sessionCookie.attributes
+		// });
 	}
 	event.locals.user = user;
 	event.locals.session = session;

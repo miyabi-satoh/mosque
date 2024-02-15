@@ -38,7 +38,7 @@ export const actions: Actions = {
 				password: schema.shape.password.refine(async (val) => {
 					try {
 						const user = await db.user.findUnique({
-							where: { id: locals.user?.userId }
+							where: { id: locals.user?.id }
 						});
 						if (user) {
 							return await verifyPassword(val, user.hashedPassword);
@@ -61,7 +61,7 @@ export const actions: Actions = {
 		// update database
 		try {
 			// get user
-			const userId = params.id ?? locals.user.userId;
+			const userId = params.id ?? locals.user.id;
 			const hashedPassword = await hashPassword(form.data.newPassword);
 			await db.user.update({
 				where: { id: userId },

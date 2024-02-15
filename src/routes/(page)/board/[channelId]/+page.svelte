@@ -141,7 +141,7 @@
 		</span>
 		<div class="flex flex-col gap-2">
 			<!-- <Icon icon="mdi:information" height="auto" /> -->
-			{#if data.channel.createdBy === data.user?.userId || hasAdminRole(data.user)}
+			{#if data.channel.createdBy === data.user?.id || hasAdminRole(data.user)}
 				<a href="{URLS.BOARD_CHANNEL}/{data.channel.id}">
 					<Icon icon="mdi:cog" height="auto" />
 				</a>
@@ -152,13 +152,13 @@
 	<div class="flex-1 space-y-4 pl-4 pr-2" use:scrollable use:scrollToBottom={scrollBehavior}>
 		{#each data.messages as m (m.id)}
 			<div class="flex gap-2">
-				<div class:order-last={m.userId === data.user?.userId}>
+				<div class:order-last={m.userId === data.user?.id}>
 					<UserAvatar src={m.user.avatar} />
 				</div>
 				<div
 					class="card flex-1 space-y-1 rounded-tr-none px-4 py-2"
-					class:variant-glass-tertiary={m.userId === data.user?.userId}
-					class:variant-soft={m.userId !== data.user?.userId}
+					class:variant-glass-tertiary={m.userId === data.user?.id}
+					class:variant-soft={m.userId !== data.user?.id}
 				>
 					<header class="flex items-center">
 						<p class="flex flex-1 items-baseline gap-x-4">
@@ -167,7 +167,7 @@
 							>
 							<span class="text-xs opacity-50 sm:text-sm">{formatDate(m.updatedAt)}</span>
 						</p>
-						{#if m.userId === data.user?.userId || hasAdminRole(data.user)}
+						{#if m.userId === data.user?.id || hasAdminRole(data.user)}
 							<div>
 								<button
 									use:popup={{

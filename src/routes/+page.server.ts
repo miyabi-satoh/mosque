@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 
 import { db } from '$lib/server/db';
-import { lucia } from '$lib/server/lucia';
+import { deleteSessionCookie, invalidateSession } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -19,26 +19,27 @@ export const load = (async () => {
 		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
 	});
 
-	const items: ItemT[] = [];
-	exams.forEach((exam) => {
-		items.push({
-			href: `/${exam.examType}`,
-			title: `${exam.name}アーカイブ`,
+	const items: ItemT[] = [
+		...exams.map((exam) => {
+			return {
+				href: `/${exam.examType}`,
+				title: `${exam.name}アーカイブ`,
+				external: false
+			};
+		}),
+		{
+			href: '/archives',
+			title: 'その他のアーカイブ',
 			external: false
-		});
-	});
-	items.push({
-		href: '/archives',
-		title: 'その他のアーカイブ',
-		external: false
-	});
-	links.forEach((link) => {
-		items.push({
-			href: link.url,
-			title: link.title,
-			external: true
-		});
-	});
+		},
+		...links.map((link) => {
+			return {
+				href: link.url,
+				title: link.title,
+				external: true
+			};
+		})
+	];
 
 	return {
 		items
@@ -47,14 +48,13 @@ export const load = (async () => {
 
 export const actions: Actions = {
 	logout: async ({ locals, cookies }) => {
-		if (locals.session) {
-			await lucia.invalidateSession(locals.session.id);
-		}
-		const sessionCookie = lucia.createBlankSessionCookie();
-		cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
-		});
+		await invalidateSession(locals.session);
+		deleteSessionCookie(cookies);
+		// const sessionCookie = lucia.createBlankSessionCookie();
+		// cookies.set(sessionCookie.name, sessionCookie.value, {
+		// 	path: '.',
+		// 	...sessionCookie.attributes
+		// });
 		redirect(302, '/'); // redirect to root page
 	}
 };

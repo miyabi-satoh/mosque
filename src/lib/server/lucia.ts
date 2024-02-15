@@ -1,16 +1,14 @@
+import type { Cookies } from '@sveltejs/kit';
+
 import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
 import type { User, UserRoleEnum } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { Lucia, TimeSpan, generateId } from 'lucia';
+import { Lucia, TimeSpan, generateId, type Session, type Cookie } from 'lucia';
 
-// import { sveltekit } from 'lucia/middleware';
-// import 'lucia/polyfill/node';
 import { ACTIVE_PERIOD_MINUTES, ADMIN_NAME, ADMIN_PASS } from '$env/static/private';
 
 import { db } from '$lib/server/db';
 import { exclude } from '$lib/utils';
-
-// import { dev } from '$app/environment';
 
 const adapter = new PrismaAdapter(db.session, db.user);
 
@@ -21,8 +19,8 @@ export const lucia = new Lucia(adapter, {
 		const attributes = exclude(data, ['id']);
 		return {
 			...attributes,
-			displayName,
-			userId: data.id
+			displayName
+			// userId: data.id
 		};
 	},
 	sessionExpiresIn: new TimeSpan(Number(ACTIVE_PERIOD_MINUTES), 'm'),
@@ -95,6 +93,31 @@ export function hashPassword(password: string) {
 
 export function verifyPassword(password: string, hash: string) {
 	return bcrypt.compare(password, hash);
+}
+
+export async function invalidateSession(session: Session | null): Promise<void> {
+	if (session) {
+		return lucia.invalidateSession(session.id);
+	}
+}
+
+export async function invalidateUserSessions(userId: string): Promise<void> {
+	return lucia.invalidateUserSessions(userId);
+}
+
+export function createSessionCookie(session: Session, cookies: Cookies) {
+	setCookie(cookies, lucia.createSessionCookie(session.id));
+}
+
+export function deleteSessionCookie(cookies: Cookies) {
+	setCookie(cookies, lucia.createBlankSessionCookie());
+}
+
+function setCookie(cookies: Cookies, sessionCookie: Cookie) {
+	cookies.set(sessionCookie.name, sessionCookie.value, {
+		path: '.',
+		...sessionCookie.attributes
+	});
 }
 
 // create built-in users

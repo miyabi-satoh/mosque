@@ -68,7 +68,7 @@ export const actions: Actions = {
 					create: {
 						...form.data,
 						channelId,
-						userId: locals.user.userId
+						userId: locals.user.id
 					},
 					update: {
 						...form.data

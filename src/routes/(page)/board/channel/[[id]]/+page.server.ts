@@ -59,12 +59,12 @@ export const actions: Actions = {
 					create: {
 						...form.data,
 						private: false,
-						createdBy: locals.user.userId,
-						updatedBy: locals.user.userId
+						createdBy: locals.user.id,
+						updatedBy: locals.user.id
 					},
 					update: {
 						...form.data,
-						updatedBy: locals.user.userId
+						updatedBy: locals.user.id
 					}
 				});
 

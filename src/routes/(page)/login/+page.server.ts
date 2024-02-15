@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
-import { lucia, verifyPassword } from '$lib/server/lucia';
+import { createSessionCookie, lucia, verifyPassword } from '$lib/server/lucia';
 import { hasAdminRole } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
@@ -50,11 +50,12 @@ export const actions: Actions = {
 					});
 
 					const session = await lucia.createSession(user.id, {});
-					const sessionCookie = lucia.createSessionCookie(session.id);
-					cookies.set(sessionCookie.name, sessionCookie.value, {
-						path: '.',
-						...sessionCookie.attributes
-					});
+					createSessionCookie(session, cookies);
+					// const sessionCookie = lucia.createSessionCookie(session.id);
+					// cookies.set(sessionCookie.name, sessionCookie.value, {
+					// 	path: '.',
+					// 	...sessionCookie.attributes
+					// });
 					return { form };
 				}
 			}
