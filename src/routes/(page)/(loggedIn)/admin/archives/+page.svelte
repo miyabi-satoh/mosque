@@ -12,6 +12,7 @@
 		dataType: 'json',
 		onUpdated: ({ form }) => {
 			if (form.valid) {
+				// eslint-disable-next-line svelte/valid-compile
 				$form.archives = $form.archives.sort((a, b) => b.sortOrder - a.sortOrder);
 			}
 		}

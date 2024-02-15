@@ -115,7 +115,7 @@ export const ExamTypeEnumSchema = z.enum(['ctest', 'eiken', 'kyote']);
 
 export type ExamTypeEnumType = `${z.infer<typeof ExamTypeEnumSchema>}`;
 
-export const ArchiveModuleSchema = z.enum(['common', 'ctest', 'eiken', 'kyote']);
+export const ArchiveModuleSchema = z.enum(['common', 'exam', 'kentei']);
 
 export type ArchiveModuleType = `${z.infer<typeof ArchiveModuleSchema>}`;
 

@@ -25,7 +25,7 @@ export const load = (async ({ params, parent }) => {
 	const channel = params.id
 		? await db.channel.findUnique({
 				where: { id: params.id }
-		  })
+			})
 		: null;
 	const form = await superValidate(channel, channelSchema);
 

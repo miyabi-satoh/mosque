@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import Cropper from 'svelte-easy-crop';
-	import type { CropArea } from 'svelte-easy-crop/types';
+	// import type { CropArea } from 'svelte-easy-crop/types';
+	interface CropArea {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	}
 
 	// eslint-disable-next-line
 	export let parent: any;
