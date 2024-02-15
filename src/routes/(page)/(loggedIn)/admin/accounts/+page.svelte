@@ -10,10 +10,7 @@
 	export let data: PageData;
 	let allChecked: boolean = false;
 
-	const { form, message, enhance } = superForm(data.form, {
-		taintedMessage: null,
-		resetForm: true
-	});
+	const { form, message, enhance } = superForm(data.form);
 
 	$: updateChecked(allChecked);
 	function updateChecked(checked: boolean): void {

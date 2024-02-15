@@ -41,18 +41,19 @@ enum UserRoleEnum {
 }
 
 model User {
-  id          String       @id @unique
-  username    String       @unique
-  role        UserRoleEnum @default(USER)
-  fullName    String?      @map("full_name")
-  displayName String?      @map("display_name")
-  email       String?
-  code        String?      @unique
-  avatar      String?
-  lastLoginAt DateTime?    @map("last_login_at")
+  id             String       @id @unique
+  username       String       @unique
+  hashedPassword String       @map("hashed_password")
+  role           UserRoleEnum @default(USER)
+  fullName       String?      @map("full_name")
+  displayName    String?      @map("display_name")
+  email          String?
+  code           String?      @unique
+  avatar         String?
+  lastLoginAt    DateTime?    @map("last_login_at")
 
-  auth_session   Session[]
-  key            Key[]
+  sessions       Session[]
+  // key            Key[]
   Message        Message[]
   channelCreated Channel[]       @relation("channelCreated")
   channelUpdated Channel[]       @relation("channelUpdated")
@@ -62,27 +63,26 @@ model User {
 }
 
 model Session {
-  id             String @id @unique
-  user_id        String
-  active_expires BigInt
-  idle_expires   BigInt
-  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id        String   @id
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 
   temp_resources TempResource[]
 
-  @@index([user_id])
+  @@index([userId])
   @@map("auth_sessions")
 }
 
-model Key {
-  id              String  @id @unique
-  hashed_password String?
-  user_id         String
-  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+// model Key {
+//   id              String  @id @unique
+//   hashed_password String?
+//   user_id         String
+//   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-  @@index([user_id])
-  @@map("auth_keys")
-}
+//   @@index([user_id])
+//   @@map("auth_keys")
+// }
 
 enum ExamTypeEnum {
   ctest

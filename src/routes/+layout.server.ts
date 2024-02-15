@@ -14,8 +14,8 @@ export const load = (async ({ locals, request, depends }) => {
 	depends('auth:session');
 
 	// get session
-	const session = await locals.auth.validate();
-	const user = session?.user;
+	// const session = await locals.auth.validate();
+	const user = locals.user;
 
 	// enable Board or not
 	const showBoard = isBoardEnabled(user, request.headers.get('User-Agent'));

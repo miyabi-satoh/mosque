@@ -1,6 +1,6 @@
 // import adapter from '@sveltejs/adapter-auto';
 import adapter from '@sveltejs/adapter-node';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -16,11 +16,11 @@ const config = {
 		csrf: {
 			checkOrigin: true
 		}
-	},
-	// https://www.reddit.com/r/sveltejs/comments/v0mx4i/typeerror_unknown_file_extension_svelte/
-	optimizeDeps: {
-		exclude: ['svelte-easy-crop']
 	}
+	// https://www.reddit.com/r/sveltejs/comments/v0mx4i/typeerror_unknown_file_extension_svelte/
+	// optimizeDeps: {
+	// 	exclude: ['svelte-easy-crop', 'bcrypt']
+	// }
 };
 
 export default config;

@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 
-import { message, superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
 import { ArchiveSchema } from '$lib/schemas/zod';
@@ -22,7 +23,7 @@ export const load = (async () => {
 	const archives = await db.archive.findMany({
 		orderBy: [{ sortOrder: 'desc' }, { slug: 'asc' }]
 	});
-	const form = await superValidate({ archives }, schema);
+	const form = await superValidate({ archives }, zod(schema));
 
 	return { form };
 }) satisfies PageServerLoad;
@@ -30,7 +31,7 @@ export const load = (async () => {
 export const actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
-		const form = await superValidate(formData, schema);
+		const form = await superValidate(formData, zod(schema));
 		if (!form.valid) {
 			console.error(form.errors);
 			return fail(400, { form });

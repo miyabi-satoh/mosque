@@ -4,34 +4,59 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { ORIGIN, PORT } from '$env/static/private';
 
 import { URLS } from '$lib/consts';
-import { auth } from '$lib/server/lucia';
+import { lucia } from '$lib/server/lucia';
 import { isBoardEnabled } from '$lib/server/utils';
 import { hasAdminRole } from '$lib/utils';
 
-const authHandler: Handle = async ({ event, resolve }) => {
-	event.locals.auth = auth.handleRequest(event);
-	const session = await event.locals.auth.validate();
-
-	if (event.route.id?.startsWith('/(page)/(loggedIn)') && !session) {
-		console.log('session error by hooks.server.ts');
-		throw redirect(302, '/');
+const handleSession: Handle = async ({ event, resolve }) => {
+	const sessionId = event.cookies.get(lucia.sessionCookieName);
+	if (!sessionId) {
+		event.locals.user = null;
+		event.locals.session = null;
+		return resolve(event);
 	}
-	if (event.url.pathname.startsWith(URLS.ADMIN) && !hasAdminRole(session?.user)) {
+
+	const { session, user } = await lucia.validateSession(sessionId);
+	if (session && session.fresh) {
+		const sessionCookie = lucia.createSessionCookie(session.id);
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: '.',
+			...sessionCookie.attributes
+		});
+	}
+	if (!session) {
+		const sessionCookie = lucia.createBlankSessionCookie();
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: '.',
+			...sessionCookie.attributes
+		});
+	}
+	event.locals.user = user;
+	event.locals.session = session;
+	return resolve(event);
+};
+
+const handleAuth: Handle = async ({ event, resolve }) => {
+	if (event.route.id?.startsWith('/(page)/(loggedIn)') && !event.locals.session) {
+		console.log('session error by hooks.server.ts');
+		redirect(302, '/');
+	}
+	if (event.url.pathname.startsWith(URLS.ADMIN) && !hasAdminRole(event.locals.user)) {
 		console.log('role error by hooks.server.ts');
-		throw redirect(302, '/');
+		redirect(302, '/');
 	}
 	if (
 		event.url.pathname.startsWith(URLS.BOARD()) &&
-		!isBoardEnabled(session?.user, event.request.headers.get('useer-agent'))
+		!isBoardEnabled(event.locals.user, event.request.headers.get('useer-agent'))
 	) {
 		console.log('reject board by hooks.server.ts');
-		throw redirect(302, '/');
+		redirect(302, '/');
 	}
 
 	return await resolve(event);
 };
 
-export const handle = sequence(authHandler);
+export const handle = sequence(handleSession, handleAuth);
 
 export const handleFetch: HandleFetch = async ({ request, fetch }) => {
 	if (request.url.startsWith(ORIGIN)) {

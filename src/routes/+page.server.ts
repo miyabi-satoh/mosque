@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 
 import { db } from '$lib/server/db';
-import { auth } from '$lib/server/lucia';
+import { lucia } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -46,13 +46,15 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	logout: async ({ locals }) => {
-		const session = await locals.auth.validate();
-		if (session) {
-			await auth.invalidateSession(session.sessionId); // invalidate session
-			await auth.deleteDeadUserSessions(session.user.userId);
+	logout: async ({ locals, cookies }) => {
+		if (locals.session) {
+			await lucia.invalidateSession(locals.session.id);
 		}
-		locals.auth.setSession(null); // remove cookie
-		throw redirect(302, '/'); // redirect to root page
+		const sessionCookie = lucia.createBlankSessionCookie();
+		cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: '.',
+			...sessionCookie.attributes
+		});
+		redirect(302, '/'); // redirect to root page
 	}
 };

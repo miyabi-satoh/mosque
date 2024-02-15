@@ -1,12 +1,13 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 
-import { message, superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
-import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
+import { URLS } from '$lib/consts';
 import { UserRoleEnumSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
-import { auth } from '$lib/server/lucia';
+import { hashPassword, lucia, verifyPassword } from '$lib/server/lucia';
 import { exclude, hasAdminRole } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
@@ -39,16 +40,18 @@ export const load = (async ({ parent, params }) => {
 	const user = await (async () => {
 		if (params.id) {
 			if (!hasAdminRole(data.user)) {
-				throw error(404, 'Not found');
+				error(404, 'Not found');
 			}
-			return await auth.getUser(params.id);
+			return await db.user.findUnique({
+				where: { id: params.id }
+			});
 		} else {
 			return data.user;
 		}
 	})();
 
 	const schema = params.id ? adminSchema : userSchema;
-	const form = await superValidate(schema);
+	const form = await superValidate(zod(schema));
 	form.data = {
 		...form.data,
 		...user,
@@ -61,14 +64,14 @@ export const load = (async ({ parent, params }) => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	default: async ({ locals, request, params }) => {
+	default: async ({ locals, request, params, cookies }) => {
 		// get session
-		const session = await locals.auth.validate();
-		if (!session) {
-			throw redirect(302, '/');
+		// const session = await locals.auth.validate();
+		if (!locals.user) {
+			redirect(302, '/');
 		}
 		// set user id
-		const userId = params.id ?? session.user.userId;
+		const userId = params.id ?? locals.user.userId;
 
 		// validation schema
 		const schema = params.id ? adminSchema : userSchema;
@@ -104,8 +107,12 @@ export const actions: Actions = {
 			password: schema.shape.password.refine(async (val) => {
 				if (val.length > 0) {
 					try {
-						await auth.useKey(PROVIDERID_USERNAME, session.user.username.toLowerCase(), val);
-						return true;
+						const user = await db.user.findUnique({
+							where: { id: userId }
+						});
+						if (user) {
+							return await verifyPassword(val, user.hashedPassword);
+						}
 					} catch (e) {
 						console.log(e);
 					}
@@ -117,42 +124,33 @@ export const actions: Actions = {
 
 		// validation
 		const formData = await request.formData();
-		const form = await superValidate(formData, updateSchema);
+		const form = await superValidate(formData, zod(updateSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
 		try {
-			// get user
-			const user = await auth.getUser(userId);
-			const id = `${PROVIDERID_USERNAME}:${user.username}`;
-			// update key
-			await db.key.update({
-				where: { id },
-				data: { id: `${PROVIDERID_USERNAME}:${form.data.username}` }
+			const hashedPassword = form.data.newPassword
+				? await hashPassword(form.data.newPassword)
+				: undefined;
+			await db.user.update({
+				where: { id: userId },
+				data: {
+					...exclude(form.data, ['password', 'newPassword']),
+					fullName: form.data.fullName ?? undefined,
+					hashedPassword
+				}
 			});
-			// update user attributes
-			await auth.updateUserAttributes(userId, {
-				...exclude(form.data, ['password', 'newPassword']),
-				fullName: form.data.fullName ?? undefined
-			});
-			// update password
-			if (form.data.newPassword) {
-				await auth.updateKeyPassword(
-					PROVIDERID_USERNAME,
-					form.data.username,
-					form.data.newPassword
-				);
-			}
 			// clear(recreate) session
-			await auth.invalidateAllUserSessions(userId);
-			if (!params.id) {
-				const newSession = await auth.createSession({
-					userId,
-					attributes: {}
-				});
-				locals.auth.setSession(newSession);
+			if (locals.session) {
+				await lucia.invalidateSession(locals.session.id);
 			}
+			const session = await lucia.createSession(userId, {});
+			const sessionCookie = lucia.createSessionCookie(session.id);
+			cookies.set(sessionCookie.name, sessionCookie.value, {
+				path: '.',
+				...sessionCookie.attributes
+			});
 
 			// clear form
 			form.data.newPassword = '';

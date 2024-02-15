@@ -3,7 +3,8 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import type { Exam, ExamTypeEnum, TempResource } from '@prisma/client';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
-import { message, superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
 import { CTEST_RESOURCE_DIR, EIKEN_RESOURCE_DIR, KYOTE_RESOURCE_DIR } from '$env/static/private';
@@ -140,16 +141,16 @@ async function refreshTempResources(
 }
 
 export const load = (async ({ locals, params, parent }) => {
-	const session = await locals.auth.validate();
-	if (!session) {
-		throw redirect(302, '/');
+	// const session = await locals.auth.validate();
+	if (!locals.session) {
+		redirect(302, '/');
 	}
 
 	const examType = params.type.toLowerCase() as ExamTypeEnum;
 	const exam = await db.exam.findUnique({ where: { examType: examType } });
 	if (!exam) {
 		console.error(`Cannot read exam(examType = '${examType}')`);
-		throw error(500, 'Internal Server Error');
+		error(500, 'Internal Server Error');
 	}
 
 	const data = await parent();
@@ -158,11 +159,11 @@ export const load = (async ({ locals, params, parent }) => {
 	const tempData = await db.$transaction(
 		async (db) => {
 			// refresh resouce-temp
-			await refreshTempResources(db, session.sessionId, exam);
+			await refreshTempResources(db, locals.session!.id, exam);
 
 			const tempData = await db.tempResource.findMany({
 				where: {
-					sessionId: session.sessionId,
+					sessionId: locals.session!.id,
 					examType
 				},
 				orderBy: [
@@ -176,7 +177,7 @@ export const load = (async ({ locals, params, parent }) => {
 			});
 			await db.tempResource.deleteMany({
 				where: {
-					sessionId: session.sessionId,
+					sessionId: locals.session!.id,
 					examType
 				}
 			});
@@ -212,8 +213,7 @@ export const load = (async ({ locals, params, parent }) => {
 			grade: config.labelGrade(data.grade)
 		} satisfies ColumnValues;
 	});
-
-	const form = await superValidate(initialData, schema);
+	const form = await superValidate(initialData, zod(schema));
 
 	return {
 		form,
@@ -226,14 +226,14 @@ export const load = (async ({ locals, params, parent }) => {
 export const actions: Actions = {
 	default: async ({ request, locals, params }) => {
 		// get session
-		const session = await locals.auth.validate();
-		if (!session) {
-			throw redirect(302, '/');
+		// const session = await locals.auth.validate();
+		if (!locals.session) {
+			redirect(302, '/');
 		}
 
 		// validate form data
 		const formData = await request.formData();
-		const form = await superValidate(formData, schema);
+		const form = await superValidate(formData, zod(schema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -242,7 +242,7 @@ export const actions: Actions = {
 		const exam = await db.exam.findUnique({ where: { examType: examType } });
 		if (!exam) {
 			console.error(`Cannot read exam(examType = '${examType}')`);
-			throw error(500, 'Internal Server Error');
+			error(500, 'Internal Server Error');
 		}
 
 		// 更新処理
@@ -250,7 +250,7 @@ export const actions: Actions = {
 			await db.$transaction(
 				async (db) => {
 					// 一時テーブルの該当レコードを取得
-					await refreshTempResources(db, session.sessionId, exam);
+					await refreshTempResources(db, locals.session!.id, exam);
 					const res = await db.tempResource.findMany({
 						where: {
 							id: {
@@ -261,7 +261,7 @@ export const actions: Actions = {
 					// 一時テーブルのレコードを削除
 					await db.tempResource.deleteMany({
 						where: {
-							sessionId: session.sessionId,
+							sessionId: locals.session!.id,
 							examType
 						}
 					});

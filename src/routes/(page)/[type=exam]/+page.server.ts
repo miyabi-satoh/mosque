@@ -12,7 +12,7 @@ export const load = (async ({ params, parent }) => {
 	const exam = await db.exam.findUnique({ where: { examType: examType } });
 	if (!exam) {
 		console.error(`Cannot read exam(examType = '${examType}')`);
-		throw error(500, 'Internal Server Error');
+		error(500, 'Internal Server Error');
 	}
 
 	const data = await parent();

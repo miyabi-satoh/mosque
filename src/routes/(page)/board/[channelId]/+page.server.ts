@@ -1,6 +1,7 @@
 import { error, fail, type Actions, redirect } from '@sveltejs/kit';
 
-import { message, superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
 import { URLS } from '$lib/consts';
@@ -20,7 +21,7 @@ export const load = (async ({ params, parent }) => {
 		where: { id: channelId }
 	});
 	if (!channel) {
-		throw error(404, `Not found`);
+		error(404, `Not found`);
 	}
 
 	// get messages
@@ -29,7 +30,7 @@ export const load = (async ({ params, parent }) => {
 	const data = await parent();
 	data.breadcrumbs.push({ label: channel.name, link: URLS.BOARD(channel.id) });
 
-	const form = await superValidate(schema);
+	const form = await superValidate(zod(schema));
 
 	return {
 		channel,
@@ -41,20 +42,20 @@ export const load = (async ({ params, parent }) => {
 export const actions: Actions = {
 	default: async ({ locals, request, params }) => {
 		// get session
-		const session = await locals.auth.validate();
-		if (!session) {
-			throw redirect(302, '/');
+		// const session = await locals.auth.validate();
+		if (!locals.user) {
+			redirect(302, '/');
 		}
 
 		// get channel id
 		const { channelId } = params;
 		if (!channelId) {
-			throw error(400, 'Not found');
+			error(400, 'Not found');
 		}
 
 		// validation
 		const formData = await request.formData();
-		const form = await superValidate(formData, schema);
+		const form = await superValidate(formData, zod(schema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -67,7 +68,7 @@ export const actions: Actions = {
 					create: {
 						...form.data,
 						channelId,
-						userId: session.user.userId
+						userId: locals.user.userId
 					},
 					update: {
 						...form.data

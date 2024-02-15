@@ -3,14 +3,14 @@ import { fail } from '@sveltejs/kit';
 import { randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import QRCode from 'qrcode';
-import { superValidate } from 'sveltekit-superforms/server';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
 import { ORIGIN } from '$env/static/private';
 
-import { PROVIDERID_USERNAME } from '$lib/consts';
 import { db } from '$lib/server/db';
-import { auth } from '$lib/server/lucia';
+import { hashPassword } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -20,7 +20,7 @@ const schema = z.object({
 });
 
 export const load = (async () => {
-	const form = await superValidate(schema);
+	const form = await superValidate(zod(schema));
 	form.data.svg = 'No data available.';
 
 	return {
@@ -34,7 +34,7 @@ export const actions: Actions = {
 
 		// validate form data
 		const formData = await request.formData();
-		const form = await superValidate(formData, schema);
+		const form = await superValidate(formData, zod(schema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -52,7 +52,11 @@ export const actions: Actions = {
 		for (const user of users) {
 			// update password
 			const password = randomBytes(8).toString('base64').substring(0, 6);
-			await auth.updateKeyPassword(PROVIDERID_USERNAME, user.username.toLowerCase(), password);
+			const hashedPassword = await hashPassword(password);
+			await db.user.update({
+				where: { id: user.id },
+				data: { hashedPassword }
+			});
 
 			const idx = i % PER_PAGE;
 			if (idx === 0) {

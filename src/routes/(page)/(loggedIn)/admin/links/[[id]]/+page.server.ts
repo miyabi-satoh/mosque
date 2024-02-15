@@ -1,5 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 
+import { zod } from 'sveltekit-superforms/adapters';
 import { message, superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 
@@ -19,7 +20,7 @@ export const load = (async ({ params, parent }) => {
 		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
 	});
 	const link = links.find((s) => s.id === params.id);
-	if (params.id && !link) throw error(404, `Not found`);
+	if (params.id && !link) error(404, `Not found`);
 
 	const data = await parent();
 	data.breadcrumbs.push({ label: '外部リンク管理', link: URLS.ADMIN_LINKS() });
@@ -27,7 +28,7 @@ export const load = (async ({ params, parent }) => {
 		data.breadcrumbs.push({ label: '編集', link: URLS.ADMIN_LINKS(params.id) });
 	}
 
-	const form = await superValidate(link, schema);
+	const form = await superValidate(link, zod(schema));
 	return {
 		form,
 		links
@@ -37,7 +38,7 @@ export const load = (async ({ params, parent }) => {
 export const actions: Actions = {
 	default: async ({ request, params }) => {
 		const formData = await request.formData();
-		const form = await superValidate(formData, schema);
+		const form = await superValidate(formData, zod(schema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -70,7 +71,7 @@ export const actions: Actions = {
 		}
 
 		if (redirectTo) {
-			throw redirect(303, redirectTo);
+			redirect(303, redirectTo);
 		}
 
 		return message(form, 'An error occurred.', {

@@ -2,7 +2,8 @@ import { error, fail, redirect } from '@sveltejs/kit';
 
 import { readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { message, superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
 import { URLS } from '$lib/consts';
@@ -21,10 +22,10 @@ const itemSchema = z.object({
 	mtime: z.coerce.date().optional()
 });
 type ItemT = z.infer<typeof itemSchema>;
-const schema = z.object({
-	currentDir: z.string(),
-	items: itemSchema.array()
-});
+// const schema = z.object({
+// 	currentDir: z.string(),
+// 	items: itemSchema.array()
+// });
 
 function readdir(currentDir: string): ItemT[] {
 	const items: ItemT[] = readdirSync(currentDir)
@@ -72,7 +73,7 @@ export const load = (async ({ parent, params }) => {
 	const archive = await db.archive.findUnique({
 		where: { id }
 	});
-	if (!archive) throw error(404, 'Archive not found.');
+	if (!archive) error(404, 'Archive not found.');
 
 	const currentDir = archive.lastDir ?? process.cwd();
 	const items = readdir(currentDir);
@@ -111,7 +112,7 @@ export const actions = {
 	},
 	add: async ({ request }) => {
 		const formData = await request.formData();
-		const form = await superValidate(formData, crudSchema);
+		const form = await superValidate(formData, zod(crudSchema));
 		if (!form.valid) return fail(400, { form });
 
 		const id = form.data.id;
@@ -137,7 +138,7 @@ export const actions = {
 					console.error(e);
 					return fail(400, { form: { ...form, message: 'Failed to delete archive.' } });
 				}
-				throw redirect(303, URLS.ADMIN_ARCHIVES());
+				redirect(303, URLS.ADMIN_ARCHIVES());
 			} else {
 				// UPDATE archive
 				try {

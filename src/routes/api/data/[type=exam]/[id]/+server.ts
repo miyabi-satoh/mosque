@@ -17,13 +17,13 @@ export const GET: RequestHandler = async ({ params }) => {
 	});
 	if (res) {
 		if (!fs.existsSync(res.path)) {
-			throw error(404, `Not found, ${res.path}`);
+			error(404, `Not found, ${res.path}`);
 		}
 		const stats = fs.statSync(res.path);
 		const filename = path.basename(res.path);
 		const contentType = mime.getType(res.path);
 		if (!contentType) {
-			throw error(415, `Unsupported Media Type, ${res.path}`);
+			error(415, `Unsupported Media Type, ${res.path}`);
 		}
 		return new Response(fs.readFileSync(res.path), {
 			status: 200,
@@ -37,5 +37,5 @@ export const GET: RequestHandler = async ({ params }) => {
 		});
 	}
 
-	throw error(404, 'Not Found');
+	error(404, 'Not Found');
 };

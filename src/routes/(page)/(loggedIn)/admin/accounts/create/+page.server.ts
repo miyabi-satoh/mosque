@@ -1,12 +1,13 @@
 import { fail } from '@sveltejs/kit';
 
 import { parse } from 'csv-parse/sync';
-import { message, superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
-import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
+import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
-import { auth, defaultUserAttributes } from '$lib/server/lucia';
+import { createUser } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -25,7 +26,7 @@ export const load = (async ({ parent }) => {
 	const data = await parent();
 	data.breadcrumbs.push({ label: 'Create', link: URLS.ADMIN_ACCOUNTS_CREATE });
 
-	const form = await superValidate(schema);
+	const form = await superValidate(zod(schema));
 
 	return {
 		form,
@@ -37,7 +38,7 @@ export const actions: Actions = {
 	default: async ({ request }) => {
 		// validate form data
 		const formData = await request.formData();
-		const form = await superValidate(formData, schema);
+		const form = await superValidate(formData, zod(schema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -60,18 +61,9 @@ export const actions: Actions = {
 					// new user
 					// use code for username, password
 					// (initial password is same as username)
-					await auth.createUser({
-						key: {
-							providerId: PROVIDERID_USERNAME,
-							providerUserId: user.code.toLowerCase(),
-							password: user.code
-						},
-						attributes: {
-							...defaultUserAttributes,
-							username: user.code,
-							fullName: user.fullName,
-							code: user.code
-						}
+					await createUser(user.code, user.code, {
+						fullName: user.fullName,
+						code: user.code
 					});
 					count++;
 				}

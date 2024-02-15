@@ -1,54 +1,65 @@
-import { prisma } from '@lucia-auth/adapter-prisma';
-import type { User } from '@prisma/client';
-import { lucia } from 'lucia';
-import { sveltekit } from 'lucia/middleware';
-import 'lucia/polyfill/node';
+import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
+import type { User, UserRoleEnum } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { Lucia, TimeSpan, generateId } from 'lucia';
 
-import {
-	ACTIVE_PERIOD_MINUTES,
-	ADMIN_NAME,
-	ADMIN_PASS,
-	IDLE_PERIOD_MINUTES
-} from '$env/static/private';
+// import { sveltekit } from 'lucia/middleware';
+// import 'lucia/polyfill/node';
+import { ACTIVE_PERIOD_MINUTES, ADMIN_NAME, ADMIN_PASS } from '$env/static/private';
 
-import { PROVIDERID_USERNAME } from '$lib/consts';
 import { db } from '$lib/server/db';
 import { exclude } from '$lib/utils';
 
 // import { dev } from '$app/environment';
 
-export const auth = lucia({
-	// env: dev ? 'DEV' : 'PROD',
-	env: 'DEV',
-	middleware: sveltekit(),
-	adapter: prisma(db),
-	sessionExpiresIn: {
-		activePeriod: 1000 * 60 * Number(ACTIVE_PERIOD_MINUTES),
-		idlePeriod: 1000 * 60 * Number(IDLE_PERIOD_MINUTES)
-	},
+const adapter = new PrismaAdapter(db.session, db.user);
 
+export const lucia = new Lucia(adapter, {
 	getUserAttributes: (data) => {
-		const displayName = ((data) => {
-			if (data.displayName) {
-				return data.displayName;
-			}
-			if (data.fullName) {
-				return data.fullName;
-			}
-			return data.username;
-		})(data);
+		const displayName = data.displayName || data.fullName || data.username;
 
 		const attributes = exclude(data, ['id']);
 		return {
 			...attributes,
-			displayName
+			displayName,
+			userId: data.id
 		};
+	},
+	sessionExpiresIn: new TimeSpan(Number(ACTIVE_PERIOD_MINUTES), 'm'),
+	sessionCookie: {
+		attributes: {
+			secure: false
+		}
 	}
 });
 
-export type Auth = typeof auth;
+declare module 'lucia' {
+	interface Register {
+		Lucia: typeof lucia;
+		// DatabaseSessionAttributes: DatabaseSessionAttributes;
+		DatabaseUserAttributes: DatabaseUserAttributes;
+	}
+}
 
-export const defaultUserAttributes: Omit<User, 'id'> = {
+// interface DatabaseSessionAttributes {
+// 	country: string;
+// }
+interface DatabaseUserAttributes {
+	id: string;
+	username: string;
+	hashedPassword: string;
+	role: UserRoleEnum;
+	fullName: string | null;
+	displayName: string | null;
+	email: string | null;
+	code: string | null;
+	avatar: string | null;
+	lastLoginAt: string | null;
+}
+
+// export type Auth = typeof lucia;
+
+export const defaultUserAttributes: Omit<User, 'id' | 'hashedPassword'> = {
 	username: '',
 	role: 'USER',
 	fullName: null,
@@ -58,6 +69,33 @@ export const defaultUserAttributes: Omit<User, 'id'> = {
 	avatar: null,
 	lastLoginAt: null
 } as const;
+
+export async function createUser(username: string, password: string, userData: Partial<User>) {
+	try {
+		const hashedPassword = await hashPassword(password);
+		await db.user.create({
+			data: {
+				...defaultUserAttributes,
+				...userData,
+				hashedPassword,
+				id: generateId(15),
+				username: username.toLowerCase()
+			}
+		});
+		return { success: true };
+	} catch (error) {
+		console.error('ユーザー作成中にエラーが発生しました:', error);
+		return { success: false, error };
+	}
+}
+
+export function hashPassword(password: string) {
+	return bcrypt.hash(password, 10);
+}
+
+export function verifyPassword(password: string, hash: string) {
+	return bcrypt.compare(password, hash);
+}
 
 // create built-in users
 export async function createBuiltinUsers(): Promise<void> {
@@ -71,18 +109,9 @@ export async function createBuiltinUsers(): Promise<void> {
 			}
 		];
 		for (const user of users) {
-			await auth.createUser({
-				key: {
-					providerId: PROVIDERID_USERNAME,
-					providerUserId: user.username.toLowerCase(),
-					password: user.password
-				},
-				attributes: {
-					...defaultUserAttributes,
-					username: user.username,
-					fullName: user.username,
-					role: user.role
-				}
+			await createUser(user.username, user.password, {
+				fullName: user.username,
+				role: user.role
 			});
 		}
 	}

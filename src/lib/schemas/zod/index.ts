@@ -18,6 +18,7 @@ export const TransactionIsolationLevelSchema = z.enum([
 export const UserScalarFieldEnumSchema = z.enum([
 	'id',
 	'username',
+	'hashedPassword',
 	'role',
 	'fullName',
 	'displayName',
@@ -27,14 +28,7 @@ export const UserScalarFieldEnumSchema = z.enum([
 	'lastLoginAt'
 ]);
 
-export const SessionScalarFieldEnumSchema = z.enum([
-	'id',
-	'user_id',
-	'active_expires',
-	'idle_expires'
-]);
-
-export const KeyScalarFieldEnumSchema = z.enum(['id', 'hashed_password', 'user_id']);
+export const SessionScalarFieldEnumSchema = z.enum(['id', 'userId', 'expiresAt']);
 
 export const ExamScalarFieldEnumSchema = z.enum(['examType', 'name', 'sortOrder']);
 
@@ -135,6 +129,7 @@ export const UserSchema = z.object({
 	role: UserRoleEnumSchema,
 	id: z.string(),
 	username: z.string(),
+	hashedPassword: z.string(),
 	fullName: z.string().nullable(),
 	displayName: z.string().nullable(),
 	email: z.string().nullable(),
@@ -151,24 +146,11 @@ export type User = z.infer<typeof UserSchema>;
 
 export const SessionSchema = z.object({
 	id: z.string(),
-	user_id: z.string(),
-	active_expires: z.bigint(),
-	idle_expires: z.bigint()
+	userId: z.string(),
+	expiresAt: z.coerce.date()
 });
 
 export type Session = z.infer<typeof SessionSchema>;
-
-/////////////////////////////////////////
-// KEY SCHEMA
-/////////////////////////////////////////
-
-export const KeySchema = z.object({
-	id: z.string(),
-	hashed_password: z.string().nullable(),
-	user_id: z.string()
-});
-
-export type Key = z.infer<typeof KeySchema>;
 
 /////////////////////////////////////////
 // EXAM SCHEMA

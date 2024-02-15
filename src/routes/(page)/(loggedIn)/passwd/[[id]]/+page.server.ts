@@ -1,10 +1,12 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-import { message, superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
-import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
-import { auth } from '$lib/server/lucia';
+import { URLS } from '$lib/consts';
+import { db } from '$lib/server/db';
+import { hashPassword, verifyPassword } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -17,7 +19,7 @@ const schema = z.object({
 export const load = (async ({ parent, params }) => {
 	const data = await parent();
 	data.breadcrumbs.push({ label: 'Change Password', link: URLS.PASSWD(params.id) });
-	const form = await superValidate(schema);
+	const form = await superValidate(zod(schema));
 
 	return { form };
 }) satisfies PageServerLoad;
@@ -25,9 +27,9 @@ export const load = (async ({ parent, params }) => {
 export const actions: Actions = {
 	default: async ({ request, params, locals }) => {
 		// get session
-		const session = await locals.auth.validate();
-		if (!session) {
-			throw redirect(302, '/');
+		// const session = await locals.auth.validate();
+		if (!locals.user) {
+			redirect(302, '/');
 		}
 
 		// validate form
@@ -35,11 +37,16 @@ export const actions: Actions = {
 			.extend({
 				password: schema.shape.password.refine(async (val) => {
 					try {
-						await auth.useKey(PROVIDERID_USERNAME, session.user.username.toLowerCase(), val);
+						const user = await db.user.findUnique({
+							where: { id: locals.user?.userId }
+						});
+						if (user) {
+							return await verifyPassword(val, user.hashedPassword);
+						}
 					} catch (e) {
-						return false;
+						console.log(e);
 					}
-					return true;
+					return false;
 				}, 'Current password does not match')
 			})
 			.refine((data) => data.newPassword === data.confirmPassword, {
@@ -48,21 +55,18 @@ export const actions: Actions = {
 			});
 
 		const formData = await request.formData();
-		const form = await superValidate(formData, updateSchema);
+		const form = await superValidate(formData, zod(updateSchema));
 		if (!form.valid) return fail(400, { form });
 
 		// update database
 		try {
 			// get user
-			const userId = params.id ?? session.user.userId;
-			const user = await auth.getUser(userId);
-
-			// update password
-			await auth.updateKeyPassword(
-				PROVIDERID_USERNAME,
-				user.username.toLowerCase(),
-				form.data.newPassword
-			);
+			const userId = params.id ?? locals.user.userId;
+			const hashedPassword = await hashPassword(form.data.newPassword);
+			await db.user.update({
+				where: { id: userId },
+				data: { hashedPassword }
+			});
 
 			// clear form
 			form.data.newPassword = '';
