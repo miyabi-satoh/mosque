@@ -1,5 +1,5 @@
 import { format, formatRelative } from 'date-fns';
-import ja from 'date-fns/locale/ja/index.js';
+import { ja } from 'date-fns/locale';
 import type { User } from 'lucia';
 
 // https://note.affi-sapo-sv.com/js-convert-full-width-numbers.php
