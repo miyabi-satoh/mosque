@@ -9,6 +9,9 @@
 	// 	"server": "pnpm dev"
 	// },
 	"portsAttributes": {
+		"3000": {
+			"label": "Node Server"
+		},
 		"5173": {
 			"label": "Application"
 		},
@@ -16,7 +19,7 @@
 			"label": "Database"
 		}
 	},
-	"forwardPorts": [5173, 5432],
+	"forwardPorts": [3000, 5173, 5432],
 	"customizations": {
 		"vscode": {
 			"extensions": [
