@@ -5,7 +5,7 @@ import type { User, UserRoleEnum } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { Lucia, TimeSpan, generateId, type Session, type Cookie } from 'lucia';
 
-import { ACTIVE_PERIOD_MINUTES, ADMIN_NAME, ADMIN_PASS } from '$env/static/private';
+import { SESSION_EXPIRES_IN_MINUTES, ADMIN_NAME, ADMIN_PASS } from '$env/static/private';
 
 import { db } from '$lib/server/db';
 import { exclude } from '$lib/utils';
@@ -23,7 +23,7 @@ export const lucia = new Lucia(adapter, {
 			// userId: data.id
 		};
 	},
-	sessionExpiresIn: new TimeSpan(Number(ACTIVE_PERIOD_MINUTES), 'm'),
+	sessionExpiresIn: new TimeSpan(Number(SESSION_EXPIRES_IN_MINUTES), 'm'),
 	sessionCookie: {
 		attributes: {
 			secure: false
