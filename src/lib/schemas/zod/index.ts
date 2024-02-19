@@ -32,14 +32,7 @@ export const SessionScalarFieldEnumSchema = z.enum(['id', 'userId', 'expiresAt']
 
 export const ExamScalarFieldEnumSchema = z.enum(['examType', 'name', 'sortOrder']);
 
-export const ArchiveScalarFieldEnumSchema = z.enum([
-	'id',
-	'title',
-	'slug',
-	'module',
-	'sortOrder',
-	'lastDir'
-]);
+export const ArchiveScalarFieldEnumSchema = z.enum(['id', 'title', 'path', 'root', 'sortOrder']);
 
 export const ArchiveItemScalarFieldEnumSchema = z.enum(['id', 'archiveId', 'path']);
 
@@ -169,12 +162,11 @@ export type Exam = z.infer<typeof ExamSchema>;
 /////////////////////////////////////////
 
 export const ArchiveSchema = z.object({
-	module: ArchiveModuleSchema,
 	id: z.string().cuid(),
 	title: z.string().min(1),
-	slug: z.string().min(1).toLowerCase(),
-	sortOrder: z.number().int(),
-	lastDir: z.string().nullable()
+	path: z.string().min(1).toLowerCase(),
+	root: z.string().min(1),
+	sortOrder: z.number().int()
 });
 
 export type Archive = z.infer<typeof ArchiveSchema>;

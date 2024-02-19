@@ -107,14 +107,14 @@ enum ArchiveModule {
 }
 
 model Archive {
-  id        String        @id @default(cuid())
+  id        String @id @default(cuid())
   /// @zod.string.min(1)
   title     String
   /// @zod.string.min(1).toLowerCase()
-  slug      String        @unique
-  module    ArchiveModule @default(common)
-  sortOrder Int           @default(0) @map("sort_order")
-  lastDir   String?       @map("last_dir")
+  path      String @unique
+  /// @zod.string.min(1)
+  root      String
+  sortOrder Int    @default(0) @map("sort_order")
 
   items ArchiveItem[]
 

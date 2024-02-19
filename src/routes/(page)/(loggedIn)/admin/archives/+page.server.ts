@@ -10,18 +10,14 @@ import { db } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
 const schema = z.object({
-	archives: ArchiveSchema.omit({
-		lastDir: true
-	})
-		.extend({
-			id: ArchiveSchema.shape.id.optional()
-		})
-		.array()
+	archives: ArchiveSchema.extend({
+		id: ArchiveSchema.shape.id.optional()
+	}).array()
 });
 
 export const load = (async () => {
 	const archives = await db.archive.findMany({
-		orderBy: [{ sortOrder: 'desc' }, { slug: 'asc' }]
+		orderBy: [{ sortOrder: 'desc' }, { path: 'asc' }]
 	});
 	const form = await superValidate({ archives }, zod(schema));
 

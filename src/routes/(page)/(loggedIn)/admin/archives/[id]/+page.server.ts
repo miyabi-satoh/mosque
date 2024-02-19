@@ -75,7 +75,7 @@ export const load = (async ({ parent, params }) => {
 	});
 	if (!archive) error(404, 'Archive not found.');
 
-	const currentDir = archive.lastDir ?? process.cwd();
+	const currentDir = process.cwd();
 	const items = readdir(currentDir);
 
 	// const form = await superValidate({ currentDir, items }, schema);
@@ -85,23 +85,23 @@ export const load = (async ({ parent, params }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	cd: async ({ request, params }) => {
+	cd: async () => {
 		console.log('cd');
-		const id = params.id;
-		const formData = await request.formData();
-		const baseDir = formData.get('currentDir')?.toString() ?? process.cwd();
-		const targetDir = formData.get('targetDir')?.toString() ?? '';
-		const currentDir = path.join(baseDir, targetDir);
-		try {
-			await db.archive.update({
-				where: { id },
-				data: {
-					lastDir: currentDir
-				}
-			});
-		} catch (e) {
-			console.error(e);
-		}
+		// const id = params.id;
+		// const formData = await request.formData();
+		// const baseDir = formData.get('currentDir')?.toString() ?? process.cwd();
+		// const targetDir = formData.get('targetDir')?.toString() ?? '';
+		// const currentDir = path.join(baseDir, targetDir);
+		// try {
+		// 	await db.archive.update({
+		// 		where: { id },
+		// 		data: {
+		// 			lastDir: currentDir
+		// 		}
+		// 	});
+		// } catch (e) {
+		// 	console.error(e);
+		// }
 		return {};
 
 		// const items = readdir(currentDir);

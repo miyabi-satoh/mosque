@@ -20,8 +20,8 @@
 	function onAddClick() {
 		$form.archives.push({
 			title: '',
-			slug: '',
-			module: 'common',
+			path: '',
+			root: '',
 			sortOrder: 0
 		});
 		$form.archives = $form.archives;
@@ -40,14 +40,14 @@
 		{#if $message}
 			<HelperText usePageStatus class="flex-1">{$message}</HelperText>
 		{/if}
-		<LinkButton href="/">New archive</LinkButton>
+		<LinkButton href={URLS.ADMIN_ARCHIVES('new')}>New archive</LinkButton>
 	</div>
 	<form class="table-container space-y-4" method="post" use:enhance>
 		<table class="table">
 			<thead>
 				<tr>
 					<th>Title</th>
-					<th>Slug</th>
+					<th>Path</th>
 					<th class="table-cell-fit">Order</th>
 					<th class="table-cell-fit">Files</th>
 					<th class="table-cell-fit"></th>
@@ -73,10 +73,10 @@
 						<td>
 							<input
 								class="input"
-								name="slug"
-								aria-invalid={$errors.archives?.[i]?.slug ? 'true' : undefined}
-								bind:value={$form.archives[i].slug}
-								{...$constraints.archives?.slug}
+								name="path"
+								aria-invalid={$errors.archives?.[i]?.path ? 'true' : undefined}
+								bind:value={$form.archives[i].path}
+								{...$constraints.archives?.path}
 							/>
 						</td>
 						<td class="table-cell-fit text-right">
