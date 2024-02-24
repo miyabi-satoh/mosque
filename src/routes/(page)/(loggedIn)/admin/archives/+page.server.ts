@@ -1,52 +1,48 @@
 import { fail } from '@sveltejs/kit';
 
-import { message, superValidate } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
-import { ArchiveSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
 
 import type { PageServerLoad } from './$types';
 
 const schema = z.object({
-	archives: ArchiveSchema.extend({
-		id: ArchiveSchema.shape.id.optional()
-	}).array()
+	orders: z
+		.object({
+			id: z.string(),
+			sortOrder: z.number()
+		})
+		.array()
 });
 
 export const load = (async () => {
 	const archives = await db.archive.findMany({
-		orderBy: [{ sortOrder: 'desc' }, { path: 'asc' }]
+		orderBy: [{ sortOrder: 'asc' }, { path: 'asc' }]
 	});
-	const form = await superValidate({ archives }, zod(schema));
+	const orders = archives.map((a) => ({ id: a.id, sortOrder: a.sortOrder }));
+	const form = await superValidate({ orders }, zod(schema));
 
-	return { form };
+	return { archives, form };
 }) satisfies PageServerLoad;
 
 export const actions = {
 	default: async ({ request }) => {
-		const formData = await request.formData();
-		const form = await superValidate(formData, zod(schema));
-		if (!form.valid) {
-			console.error(form.errors);
-			return fail(400, { form });
-		}
+		const form = await superValidate(request, zod(schema));
+		if (!form.valid) return fail(400, { form });
 
 		try {
-			await db.$transaction(async (prisma): Promise<void> => {
-				for (const data of form.data.archives) {
-					await prisma.archive.upsert({
-						where: { id: data.id ?? '' },
-						create: data,
-						update: data
-					});
-				}
-			});
-			return message(form, 'Archives updated!');
+			for (const order of form.data.orders) {
+				await db.archive.update({
+					where: { id: order.id },
+					data: { sortOrder: order.sortOrder }
+				});
+			}
 		} catch (e) {
 			console.error(e);
 		}
-		return fail(400, { form: { ...form, message: 'Failed to update archives.' } });
+
+		return { form };
 	}
 };

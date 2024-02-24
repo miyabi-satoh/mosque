@@ -34,7 +34,19 @@ export const ExamScalarFieldEnumSchema = z.enum(['examType', 'name', 'sortOrder'
 
 export const ArchiveScalarFieldEnumSchema = z.enum(['id', 'title', 'path', 'root', 'sortOrder']);
 
-export const ArchiveItemScalarFieldEnumSchema = z.enum(['id', 'archiveId', 'path']);
+export const ArchiveItemScalarFieldEnumSchema = z.enum([
+	'id',
+	'archiveId',
+	'path',
+	'year',
+	'strYear',
+	'grade',
+	'strGrade',
+	'sequence',
+	'strSequence',
+	'title',
+	'state'
+]);
 
 export const ResourceScalarFieldEnumSchema = z.enum([
 	'id',
@@ -106,6 +118,10 @@ export const ArchiveModuleSchema = z.enum(['common', 'exam', 'kentei']);
 
 export type ArchiveModuleType = `${z.infer<typeof ArchiveModuleSchema>}`;
 
+export const ArchiveItemStateSchema = z.enum(['allow', 'deny', 'missing']);
+
+export type ArchiveItemStateType = `${z.infer<typeof ArchiveItemStateSchema>}`;
+
 export const ResourceStateEnumSchema = z.enum(['ok', 'new']);
 
 export type ResourceStateEnumType = `${z.infer<typeof ResourceStateEnumSchema>}`;
@@ -176,9 +192,17 @@ export type Archive = z.infer<typeof ArchiveSchema>;
 /////////////////////////////////////////
 
 export const ArchiveItemSchema = z.object({
+	state: ArchiveItemStateSchema,
 	id: z.string().cuid(),
 	archiveId: z.string(),
-	path: z.string()
+	path: z.string(),
+	year: z.number().int().nullable(),
+	strYear: z.string().nullable(),
+	grade: z.number().int().nullable(),
+	strGrade: z.string().nullable(),
+	sequence: z.number().int().nullable(),
+	strSequence: z.string().nullable(),
+	title: z.string()
 });
 
 export type ArchiveItem = z.infer<typeof ArchiveItemSchema>;

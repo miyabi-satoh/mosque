@@ -121,12 +121,27 @@ model Archive {
   @@map("archives")
 }
 
-model ArchiveItem {
-  id        String  @id @default(cuid())
-  archiveId String
-  archive   Archive @relation(references: [id], fields: [archiveId], onDelete: Cascade)
-  path      String
+enum ArchiveItemState {
+  allow
+  deny
+  missing
+}
 
+model ArchiveItem {
+  id          String           @id @default(cuid())
+  archiveId   String
+  archive     Archive          @relation(references: [id], fields: [archiveId], onDelete: Cascade)
+  path        String
+  year        Int?
+  strYear     String?          @map("str_year")
+  grade       Int?
+  strGrade    String?          @map("str_grade")
+  sequence    Int?
+  strSequence String?          @map("str_sequence")
+  title       String
+  state       ArchiveItemState
+
+  @@unique([archiveId, path])
   @@map("archive_items")
 }
 

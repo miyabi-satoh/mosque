@@ -11,6 +11,8 @@ export const URLS = {
 	ADMIN: '/admin',
 	ADMIN_ARCHIVE: (examType: string) => `/admin/${examType}`,
 	ADMIN_ARCHIVES: (id: string | undefined = undefined) => `/admin/archives${subRoute(id)}`,
+	ADMIN_ARCHIVE_ITEMS: (id: string | undefined = undefined) =>
+		`/admin/archives${subRoute(id)}/items`,
 	ADMIN_LINKS: (linkId: string | undefined = undefined) => `/admin/links${subRoute(linkId)}`,
 	ADMIN_ACCOUNTS: '/admin/accounts',
 	ADMIN_ACCOUNTS_BULK: '/admin/accounts/bulk',

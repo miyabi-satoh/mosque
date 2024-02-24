@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 
-	let className = 'variant-ghost-warning btn';
+	let className = 'variant-filled-error btn';
 	export { className as class };
 	export let id: string | undefined = undefined;
 	export let name = 'delete';

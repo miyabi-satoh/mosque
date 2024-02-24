@@ -1,122 +1,124 @@
 <script lang="ts">
 	import { URLS } from '$lib/consts';
-	import { superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
-	import { HelperText, LinkButton, SubmitButton } from '$lib';
+	import { LinkButton } from '$lib';
 	import Icon from '@iconify/svelte';
-	// import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+	import { SOURCES, TRIGGERS, dndzone } from 'svelte-dnd-action';
+	import { superForm } from 'sveltekit-superforms';
+	import { tick } from 'svelte';
+	import { submittingStore } from '$lib/stores';
 
 	export let data: PageData;
-	const { form, errors, enhance, constraints, message } = superForm(data.form, {
-		dataType: 'json',
-		onUpdated: ({ form }) => {
-			if (form.valid) {
-				// eslint-disable-next-line svelte/valid-compile
-				$form.archives = $form.archives.sort((a, b) => b.sortOrder - a.sortOrder);
-			}
-		}
-	});
+	let elemSubmit: HTMLButtonElement;
+	let dragDisabled = true;
+	type ListItem = PageData['archives'][0];
 
-	function onAddClick() {
-		$form.archives.push({
-			title: '',
-			path: '',
-			root: '',
-			sortOrder: 0
-		});
-		$form.archives = $form.archives;
+	const { form, enhance, submitting } = superForm(data.form, {
+		dataType: 'json',
+		resetForm: false
+	});
+	$: $submittingStore = $submitting;
+
+	// eslint-disable-next-line no-undef
+	function onConsider(event: CustomEvent<DndEvent<ListItem>>) {
+		const {
+			items,
+			info: { source, trigger }
+		} = event.detail;
+		data.archives = items;
+		if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) {
+			dragDisabled = true;
+		}
 	}
 
-	function onRemoveClick(i: number) {
-		$form.archives.splice(i, 1);
-		$form.archives = $form.archives;
+	// eslint-disable-next-line no-undef
+	async function onFinalize(event: CustomEvent<DndEvent<ListItem>>) {
+		const {
+			items,
+			info: { source }
+		} = event.detail;
+
+		data.archives = items;
+		if (source === SOURCES.POINTER) {
+			dragDisabled = true;
+		}
+
+		const before = JSON.stringify($form.orders.map((a) => a.id));
+		const after = JSON.stringify(items.map((a) => a.id));
+		if (before !== after) {
+			for (let i = 0; i < data.archives.length; i++) {
+				data.archives[i].sortOrder = i;
+				$form.orders[i].id = data.archives[i].id;
+				$form.orders[i].sortOrder = data.archives[i].sortOrder;
+			}
+			if (elemSubmit) {
+				await tick();
+				elemSubmit.click();
+			}
+		}
+	}
+	function startDrag(event: Event) {
+		event.preventDefault();
+		dragDisabled = false;
+	}
+	function onKeyDown(event: KeyboardEvent) {
+		if ((event.key === 'Enter' || event.key === ' ') && dragDisabled) dragDisabled = false;
 	}
 </script>
 
-<!-- <SuperDebug data={$form} /> -->
-
 <div class="mx-4 space-y-4">
-	<div class="flex items-center justify-end">
-		{#if $message}
-			<HelperText usePageStatus class="flex-1">{$message}</HelperText>
-		{/if}
-		<LinkButton href={URLS.ADMIN_ARCHIVES('new')}>New archive</LinkButton>
-	</div>
-	<form class="table-container space-y-4" method="post" use:enhance>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Title</th>
-					<th>Path</th>
-					<th class="table-cell-fit">Order</th>
-					<th class="table-cell-fit">Files</th>
-					<th class="table-cell-fit"></th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each $form.archives as _, i}
-					<tr>
-						<td>
-							<input type="hidden" name="id" bind:value={$form.archives[i].id} />
-							<input
-								class="input"
-								name="title"
-								aria-invalid={$errors.archives?.[i]?.title ? 'true' : undefined}
-								bind:value={$form.archives[i].title}
-								{...$constraints.archives?.title}
-							/>
-							{#if $errors.archives?.[i]?.title}
-								<br />
-								<span class="invalid">{$errors.archives[i].title}</span>
-							{/if}
-						</td>
-						<td>
-							<input
-								class="input"
-								name="path"
-								aria-invalid={$errors.archives?.[i]?.path ? 'true' : undefined}
-								bind:value={$form.archives[i].path}
-								{...$constraints.archives?.path}
-							/>
-						</td>
-						<td class="table-cell-fit text-right">
-							<input
-								type="number"
-								class="input w-20"
-								name="sortOrder"
-								aria-invalid={$errors.archives?.[i]?.sortOrder ? 'true' : undefined}
-								bind:value={$form.archives[i].sortOrder}
-								{...$constraints.archives?.sortOrder}
-							/>
-						</td>
-						<td class="table-cell-fit text-right !align-middle">0</td>
-						<td class="table-cell-fit !align-middle">
-							{#if $form.archives[i].id}
-								<a href={URLS.ADMIN_ARCHIVES($form.archives[i].id)}>
-									<Icon icon="mdi:cog" height="auto" />
-								</a>
-							{:else}
-								<button on:click={() => onRemoveClick(i)}>
-									<Icon icon="mdi:close" height="auto" />
-								</button>
-							{/if}
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-			<tfoot>
-				<tr>
-					<td colspan="5">
-						<div class="flex items-center justify-between">
-							<button type="button" class="variant-filled-secondary btn" on:click={onAddClick}>
-								<span><Icon icon="mdi:plus" height="auto" /></span>
-								<span>Add</span>
-							</button>
-							<SubmitButton />
-						</div>
-					</td>
-				</tr>
-			</tfoot>
-		</table>
+	<LinkButton href={URLS.ADMIN_ARCHIVES('new')}>New archive</LinkButton>
+	<p class="opacity-75">Items can be reordered by dragging and dropping.</p>
+	<form method="post" use:enhance>
+		<button class="hidden" bind:this={elemSubmit} />
+		{#each $form.orders as _, i}
+			<input type="hidden" name="id" bind:value={$form.orders[i].id} />
+			<input type="hidden" name="sortOrder" bind:value={$form.orders[i].sortOrder} />
+		{/each}
 	</form>
+	<div
+		use:dndzone={{ items: data.archives, dragDisabled, dropTargetStyle: {} }}
+		on:consider={onConsider}
+		on:finalize={onFinalize}
+	>
+		{#each data.archives as archive (archive.id)}
+			<div class="card my-4">
+				<section class="flex items-center gap-x-4 p-4">
+					<div>
+						<button
+							aria-label="drag-handle"
+							class={dragDisabled ? 'cursor-grab' : 'cursor-grabbing'}
+							on:mousedown={startDrag}
+							on:touchstart={startDrag}
+							on:keydown={onKeyDown}
+						>
+							<Icon icon="mdi:menu" height="32" />
+						</button>
+					</div>
+					<div class="flex-1">
+						<h4 class="h4">
+							{archive.title}
+						</h4>
+						<p class="flex items-center opacity-50">
+							<Icon icon="mdi:folder" />
+							<span class="ml-2">{archive.root}</span>
+						</p>
+						<p class="flex items-center opacity-50">
+							<Icon icon="mdi:files" />
+							<span class="ml-2">0 File(s) registered.</span>
+						</p>
+					</div>
+					<div>
+						<a
+							href={URLS.ADMIN_ARCHIVES(archive.id)}
+							title="Edit"
+							class="variant-filled-secondary btn-icon btn-icon-sm"
+						>
+							<Icon icon="mdi:edit" />
+						</a>
+					</div>
+				</section>
+			</div>
+		{/each}
+	</div>
 </div>
