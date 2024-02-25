@@ -1,4 +1,4 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -10,6 +10,7 @@ import { db } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 
 const schema = ArchiveSchema.pick({
+	depth: true,
 	path: true,
 	root: true,
 	title: true
@@ -20,65 +21,50 @@ const schema = ArchiveSchema.pick({
 export const load = (async ({ parent, params }) => {
 	const data = await parent();
 	data.breadcrumbs.push({
-		label: params.id === 'new' ? '作成' : '編集',
+		label: params.id === 'new' ? 'New' : 'Edit',
 		link: URLS.ADMIN_ARCHIVES('new')
 	});
 
 	const archive = await db.archive.findUnique({
-		where: {
-			id: params.id
-		}
+		where: { id: params.id }
 	});
 	if (params.id !== 'new' && !archive) error(404, 'Archive not found.');
 
 	const form = await superValidate(archive, zod(schema));
+	if (form.data.depth < 1) form.data.depth = 4;
+
 	return { form };
 }) satisfies PageServerLoad;
 
 export const actions = {
-	default: async ({ request }) => {
-		const formData = await request.formData();
-		const form = await superValidate(formData, zod(schema));
+	default: async ({ request, params }) => {
+		const form = await superValidate(request, zod(schema));
 		if (!form.valid) return fail(400, { form });
 
-		let doRedirect = false;
 		try {
-			if (!form.data.id) {
-				// CREATE archive
-				await db.archive.create({
-					data: form.data
-				});
+			await db.$transaction(async (prisma) => {
+				const data = {
+					depth: form.data.depth,
+					path: form.data.path,
+					root: form.data.root,
+					title: form.data.title
+				};
 
-				return message(form, 'Archive created!');
-			} else {
-				const archive = await db.archive.findUnique({
-					where: {
-						id: form.data.id
-					}
-				});
-				if (!archive) error(404, 'Archive not found.');
-
-				if (formData.has('delete')) {
-					// DELETE user
-					await db.archive.delete({
-						where: { id: form.data.id }
-					});
-					doRedirect = true;
+				if (params.id === 'new') {
+					await prisma.archive.create({ data });
 				} else {
-					// UPDATE archive
-					await db.archive.update({
-						where: { id: form.data.id },
-						data: form.data
+					await prisma.archive.update({
+						where: { id: params.id },
+						data
 					});
-					return message(form, 'Archive updated!');
 				}
-			}
+			});
+			return message(form, 'The archive has been saved successfully.');
 		} catch (e) {
 			console.error(e);
+			return message(form, 'Failed to update the database.', {
+				status: 403
+			});
 		}
-
-		if (doRedirect) redirect(303, URLS.ADMIN_ARCHIVES());
-
-		return fail(400, { form });
 	}
 };

@@ -114,6 +114,7 @@ model Archive {
   path      String @unique
   /// @zod.string.min(1)
   root      String
+  depth     Int    @default(4)
   sortOrder Int    @default(0) @map("sort_order")
 
   items ArchiveItem[]

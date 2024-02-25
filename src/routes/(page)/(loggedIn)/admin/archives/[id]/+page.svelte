@@ -1,13 +1,16 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import { DeleteButton, FormLabel, HelperText, SubmitButton } from '$lib';
 	import { page } from '$app/stores';
+	import { DeleteButton, FormLabel, HelperText, SubmitButton } from '$lib';
+	import { submittingStore } from '$lib/stores';
 	import { superForm } from 'sveltekit-superforms';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
-	let selectedPath: string = '';
 
-	const { form, errors, constraints, enhance, message, submitting } = superForm(data.form);
+	const { form, errors, constraints, enhance, message, submitting } = superForm(data.form, {
+		resetForm: $page.params.id === 'new'
+	});
+	$: $submittingStore = $submitting;
 </script>
 
 <form class="mx-4 space-y-4" method="post" use:enhance>
@@ -66,8 +69,26 @@
 			{$errors.root ? $errors.root[0] : ''}
 		</HelperText>
 	</div>
+	<div>
+		<FormLabel text="Depth" constraint={$constraints.depth}>
+			<input
+				class="input"
+				class:input-error={$errors.depth}
+				type="number"
+				name="depth"
+				min={1}
+				max={9}
+				bind:value={$form.depth}
+				disabled={$submitting}
+				{...$constraints.depth}
+			/>
+		</FormLabel>
+		<HelperText>
+			{$errors.depth ? $errors.depth[0] : ''}
+		</HelperText>
+	</div>
 	<div class="flex items-center justify-end pt-4">
-		<div class:hidden={!$form.id} class="flex-1">
+		<div class:hidden={$page.params.id === 'new'} class="flex-1">
 			<DeleteButton />
 		</div>
 		<SubmitButton />

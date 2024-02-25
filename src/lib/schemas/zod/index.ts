@@ -32,7 +32,14 @@ export const SessionScalarFieldEnumSchema = z.enum(['id', 'userId', 'expiresAt']
 
 export const ExamScalarFieldEnumSchema = z.enum(['examType', 'name', 'sortOrder']);
 
-export const ArchiveScalarFieldEnumSchema = z.enum(['id', 'title', 'path', 'root', 'sortOrder']);
+export const ArchiveScalarFieldEnumSchema = z.enum([
+	'id',
+	'title',
+	'path',
+	'root',
+	'depth',
+	'sortOrder'
+]);
 
 export const ArchiveItemScalarFieldEnumSchema = z.enum([
 	'id',
@@ -182,6 +189,7 @@ export const ArchiveSchema = z.object({
 	title: z.string().min(1),
 	path: z.string().min(1).toLowerCase(),
 	root: z.string().min(1),
+	depth: z.number().int(),
 	sortOrder: z.number().int()
 });
 
