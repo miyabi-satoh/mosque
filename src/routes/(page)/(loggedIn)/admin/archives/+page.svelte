@@ -86,8 +86,10 @@
 </script>
 
 <div class="mx-4 space-y-4">
-	<LinkButton href={URLS.ADMIN_ARCHIVES('new')}>New archive</LinkButton>
-	<p class="opacity-75">Items can be reordered by dragging and dropping.</p>
+	<div class="flex items-center gap-x-2">
+		<p class="flex-1 opacity-75">Items can be reordered by dragging and dropping.</p>
+		<LinkButton href={URLS.ADMIN_ARCHIVES('new')}>New archive</LinkButton>
+	</div>
 	<form method="post" use:enhance>
 		<button class="hidden" bind:this={elemSubmit} />
 		{#each $form.orders as _, i}
