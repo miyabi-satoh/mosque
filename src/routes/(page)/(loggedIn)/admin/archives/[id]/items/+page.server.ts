@@ -57,12 +57,11 @@ function getItemProps(itemPath: string) {
 		section: null,
 		strSection: null
 	};
-	const lowerCaseTitle = props.title.toLowerCase();
-	const lowerCasePaths = itemPath.toLowerCase().split(path.sep);
+	const paths = itemPath.split(path.sep).slice(0, -1);
 
-	// 年(度)を取得します
-	lowerCasePaths.find((path) => {
-		const yearMatch = path.match(/^(\d{4})(年度?)$/);
+	// year: 年(度)を取得します
+	paths.find((path) => {
+		const yearMatch = path.match(/^(\d{4})(年度?)$/i);
 		if (yearMatch) {
 			props.year = parseInt(yearMatch[1]);
 			props.strYear = yearMatch[0];
@@ -71,9 +70,9 @@ function getItemProps(itemPath: string) {
 		return false;
 	});
 
-	// 学年または級を取得します
-	lowerCasePaths.find((path) => {
-		const gradeMatch = path.match(/^((?<p1>小|中|高)(?<g1>\d))|((?<p2>準)?(?<g2>\d)級)$/);
+	// grade: 学年または級を取得します
+	paths.find((path) => {
+		const gradeMatch = path.match(/^((?<p1>小|中|高)(?<g1>\d))|((?<p2>準)?(?<g2>\d)級)$/i);
 		if (gradeMatch && gradeMatch.groups) {
 			props.strGrade = gradeMatch[0];
 			if (gradeMatch.groups.g1) {
@@ -94,36 +93,40 @@ function getItemProps(itemPath: string) {
 		return false;
 	});
 
-	// 実施月または実施回を取得します
-	lowerCasePaths.find((path) => {
-		const sectionMatch = path.match(/^第?(\d{1,2})(回|月|月号)$/);
+	// section: 実施月・実施回・sで始まる文字列を取得します
+	paths.find((path) => {
+		const sectionMatch = path.match(/^第?(\d{1,2})(回|月|月号)$/i);
 		if (sectionMatch) {
 			props.section = parseInt(sectionMatch[1]);
-			if (props.strYear?.endsWith('年度') && props.section < 4) {
+			if (props.strYear?.match(/年度$/i) && props.section < 4) {
 				props.section += 12;
 			}
 			props.strSection = sectionMatch[0];
+			return true;
+		} else if (path.match(/^s/i)) {
+			props.section = 0;
+			props.strSection = path.slice(1);
 			return true;
 		}
 		return false;
 	});
 
 	// タイトルを取得します
-	if (lowerCaseTitle.endsWith('.mp3')) {
+	if (props.title.match(/\.mp3$/)) {
 		if (props.strSection?.includes('月')) {
-			if (lowerCaseTitle.includes('国語')) {
+			if (props.title.includes('国語')) {
 				props.title = '国語 聞き取り問題';
-			} else if (lowerCaseTitle.includes('英語')) {
+			} else if (props.title.includes('英語')) {
 				props.title = '英語 リスニング問題';
 			}
 		} else if (props.strGrade?.match(/準|級/)) {
-			const partMatch = lowerCaseTitle.match(/^p?\dq-?part(\d).mp3$/);
+			const partMatch = props.title.match(/^p?\dq-?part(\d).mp3$/i);
 			if (partMatch) {
 				const part = parseInt(partMatch[1]);
 				props.title = `リスニング音源(Part${part})`;
 			}
 		}
-	} else if (lowerCaseTitle.endsWith('.pdf')) {
+	} else if (props.title.match(/\.pdf$/)) {
 		// <問題>
 		// 2020-2-1ji-1kyu.pdf
 		// 2020-2-1ji-p2kyu.pdf
@@ -132,7 +135,7 @@ function getItemProps(itemPath: string) {
 		// p2kyu-sun.pdf
 		// 2kyu-sunc.pdf
 		// 2023-2-p2kyu.pdf
-		const titleMatch = lowerCaseTitle.match(/^(\d{4}-\d-(?<ans>1ji-)?)?p?\dkyu(-sunc?)?.pdf$/);
+		const titleMatch = props.title.match(/^(\d{4}-\d-(?<ans>1ji-)?)?p?\dkyu(-sunc?)?.pdf$/i);
 		if (titleMatch && titleMatch.groups) {
 			props.title = titleMatch.groups.ans ? '解答' : '問題冊子';
 		}
