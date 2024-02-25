@@ -27,7 +27,7 @@
 		$form.checked = allChecked ? data.items.map((item) => item.id) : [];
 	}
 
-	$: allowed = data.items.filter((item) => item.state === 'allow').length;
+	$: allowed = data.items.filter((item) => item.published).length;
 </script>
 
 <form method="post" class="flex flex-1 flex-col" use:enhance>
@@ -66,7 +66,7 @@
 							/>
 						</td>
 						<td class="{cellStyle} table-cell-fit">{item.strYear}</td>
-						<td class="{cellStyle} table-cell-fit">{item.strSequence}</td>
+						<td class="{cellStyle} table-cell-fit">{item.strSection}</td>
 						<td class="{cellStyle} table-cell-fit">{item.strGrade}</td>
 						<td class="{cellStyle} table-cell-fit">{item.title}</td>
 						<td class="whitespace-nowrap p-2">{item.path}</td>

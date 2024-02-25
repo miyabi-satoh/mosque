@@ -23,7 +23,7 @@ export const load = (async () => {
 		include: {
 			_count: {
 				select: {
-					items: { where: { state: 'allow' } }
+					items: { where: { published: true } }
 				}
 			}
 		}

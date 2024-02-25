@@ -49,10 +49,10 @@ export const ArchiveItemScalarFieldEnumSchema = z.enum([
 	'strYear',
 	'grade',
 	'strGrade',
-	'sequence',
-	'strSequence',
+	'section',
+	'strSection',
 	'title',
-	'state'
+	'published'
 ]);
 
 export const ResourceScalarFieldEnumSchema = z.enum([
@@ -125,10 +125,6 @@ export const ArchiveModuleSchema = z.enum(['common', 'exam', 'kentei']);
 
 export type ArchiveModuleType = `${z.infer<typeof ArchiveModuleSchema>}`;
 
-export const ArchiveItemStateSchema = z.enum(['allow', 'deny', 'missing']);
-
-export type ArchiveItemStateType = `${z.infer<typeof ArchiveItemStateSchema>}`;
-
 export const ResourceStateEnumSchema = z.enum(['ok', 'new']);
 
 export type ResourceStateEnumType = `${z.infer<typeof ResourceStateEnumSchema>}`;
@@ -200,7 +196,6 @@ export type Archive = z.infer<typeof ArchiveSchema>;
 /////////////////////////////////////////
 
 export const ArchiveItemSchema = z.object({
-	state: ArchiveItemStateSchema,
 	id: z.string().cuid(),
 	archiveId: z.string(),
 	path: z.string(),
@@ -208,9 +203,10 @@ export const ArchiveItemSchema = z.object({
 	strYear: z.string().nullable(),
 	grade: z.number().int().nullable(),
 	strGrade: z.string().nullable(),
-	sequence: z.number().int().nullable(),
-	strSequence: z.string().nullable(),
-	title: z.string()
+	section: z.number().int().nullable(),
+	strSection: z.string().nullable(),
+	title: z.string(),
+	published: z.boolean()
 });
 
 export type ArchiveItem = z.infer<typeof ArchiveItemSchema>;

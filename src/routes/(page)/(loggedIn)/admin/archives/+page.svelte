@@ -125,7 +125,7 @@
 						<p class="flex items-center opacity-50">
 							<Icon icon="mdi:files" />
 							<a href={URLS.ADMIN_ARCHIVE_ITEMS(archive.id)} class="anchor ml-2"
-								>{archive._count.items} file(s) are allowed.</a
+								>{archive._count.items} file(s) are published.</a
 							>
 						</p>
 					</div>
