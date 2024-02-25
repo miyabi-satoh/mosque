@@ -1,19 +1,36 @@
-import { URLS } from '$lib/consts';
-import { db } from '$lib/server/db';
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { error, fail } from '@sveltejs/kit';
+
+import type { ArchiveItem } from '@prisma/client';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { ArchiveItem } from '@prisma/client';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { z } from 'zod';
 
-function searchFiles(dirPath: string, re: RegExp): string[] {
+import { URLS } from '$lib/consts';
+import { db } from '$lib/server/db';
+
+import type { PageServerLoad } from './$types';
+
+/**
+ * 指定されたディレクトリ内のファイルを再帰的に検索します
+ * @param dirPath 検索するディレクトリのパス
+ * @param re 検索するファイル名の正規表現
+ * @param depth 検索する深さの制限値（デフォルトは無制限）
+ * @returns マッチしたファイルのパスの配列
+ */
+function searchFiles(dirPath: string, re: RegExp, depth: number = Infinity): string[] {
+  if (depth === 0) {
+    return [];
+  }
+
   const allDirents = fs.readdirSync(dirPath, { withFileTypes: true });
 
   const files: string[] = [];
   for (const dirent of allDirents) {
     if (dirent.isDirectory()) {
       const subDirPath = path.join(dirPath, dirent.name);
-      files.push(...searchFiles(subDirPath, re));
+      files.push(...searchFiles(subDirPath, re, depth - 1));
     } else if (dirent.isFile()) {
       if (dirent.name.toLowerCase().match(re)) {
         files.push(path.join(dirPath, dirent.name));
@@ -24,70 +41,108 @@ function searchFiles(dirPath: string, re: RegExp): string[] {
   return files;
 }
 
+/**
+ * アイテムのプロパティを取得します
+ * @param itemPath アイテムのパス
+ * @returns アイテムのプロパティ
+ */
 function getItemProps(itemPath: string) {
-  // todo: パスから各種プロパティを取得
-  const props: Omit<ArchiveItem, 'id' | 'archiveId'> = {
+  const props: Omit<ArchiveItem, 'id' | 'archiveId' | 'state'> = {
     title: path.basename(itemPath),
-    state: 'deny',
     path: itemPath,
     year: null,
     strYear: null,
     grade: null,
     strGrade: null,
     sequence: null,
-    strSequence: null,
-  }
-  const yearMatch = itemPath.match(/(\d{4})(年|年度)/);
-  if (yearMatch) {
-    props.year = parseInt(yearMatch[1]);
-    props.strYear = yearMatch[0]
-  }
-  const gradeMatch = itemPath.match(/(小|中|高|準)(\d)級?/);
-  if (gradeMatch) {
-    props.grade = parseInt(gradeMatch[2]);
-    props.strGrade = gradeMatch[0];
-    if (gradeMatch[1] === '中') {
-      props.grade += 6;
-    }
-    else if (gradeMatch[1] === '高') {
-      props.grade += 9;
-    }
-    else if (gradeMatch[1] === '準') {
-      props.grade = props.grade * 10 + 5
-    }
-    else if (gradeMatch[0].endsWith('級')) {
-      props.grade *= 10
-    }
-  }
-  const sequenceMatch = itemPath.match(/第?(\d{1,2})(回|月|月号)/);
-  if (sequenceMatch) {
-    props.sequence = parseInt(sequenceMatch[1]);
-    props.strSequence = sequenceMatch[0];
-  }
+    strSequence: null
+  };
+  const lowerCaseTitle = props.title.toLowerCase();
+  const lowerCasePaths = itemPath.toLowerCase().split(path.sep);
 
-  if (props.title.endsWith('.mp3')) {
+  // 年(度)を取得します
+  lowerCasePaths.find((path) => {
+    const yearMatch = path.match(/^(\d{4})(年度?)$/);
+    if (yearMatch) {
+      props.year = parseInt(yearMatch[1]);
+      props.strYear = yearMatch[0];
+      return true;
+    }
+    return false;
+  });
+
+  // 学年または級を取得します
+  lowerCasePaths.find((path) => {
+    const gradeMatch = path.match(/^((?<p1>小|中|高)(?<g1>\d))|((?<p2>準)?(?<g2>\d)級)$/);
+    if (gradeMatch && gradeMatch.groups) {
+      props.strGrade = gradeMatch[0];
+      if (gradeMatch.groups.g1) {
+        props.grade = parseInt(gradeMatch.groups.g1);
+        if (gradeMatch.groups.p1 === '中') {
+          props.grade += 6;
+        } else if (gradeMatch.groups.p1 === '高') {
+          props.grade += 9;
+        }
+      } else if (gradeMatch.groups.g2) {
+        props.grade = parseInt(gradeMatch.groups.g2) * 10;
+        if (gradeMatch.groups.p2 === '準') {
+          props.grade += 5;
+        }
+      }
+      return true;
+    }
+    return false;
+  });
+
+  // 実施月または実施回を取得します
+  lowerCasePaths.find((path) => {
+    const sequenceMatch = path.match(/^第?(\d{1,2})(回|月|月号)$/);
+    if (sequenceMatch) {
+      props.sequence = parseInt(sequenceMatch[1]);
+      if (props.strYear?.endsWith('年度') && props.sequence < 4) {
+        props.sequence += 12;
+      }
+      props.strSequence = sequenceMatch[0];
+      return true;
+    }
+    return false;
+  });
+
+  // タイトルを取得します
+  if (lowerCaseTitle.endsWith('.mp3')) {
     if (props.strSequence?.includes('月')) {
-      if (props.title.includes('国語')) {
-        props.title = '国語 聞き取り問題'
+      if (lowerCaseTitle.includes('国語')) {
+        props.title = '国語 聞き取り問題';
+      } else if (lowerCaseTitle.includes('英語')) {
+        props.title = '英語 リスニング問題';
       }
-      else if (props.title.includes('英語')) {
-        props.title = '英語 リスニング問題'
+    } else if (props.strGrade?.match(/準|級/)) {
+      const partMatch = lowerCaseTitle.match(/^p?\dq-?part(\d).mp3$/);
+      if (partMatch) {
+        const part = parseInt(partMatch[1]);
+        props.title = `リスニング音源(Part${part})`;
       }
     }
-  }
-  else if (props.strGrade?.match(/準|級/)) {
-    const m = props.title.match(/^(p?)(\d)q-?part(?<part>\d).mp3$/i);
-    if (m && m.groups) {
-      const part = Number(m.groups.part);
-      props.title = `リスニング音源(Part${part})`;
+  } else if (lowerCaseTitle.endsWith('.pdf')) {
+    // <問題>
+    // 2020-2-1ji-1kyu.pdf
+    // 2020-2-1ji-p2kyu.pdf
+    // <解答>
+    // 1kyu.pdf
+    // p2kyu-sun.pdf
+    // 2kyu-sunc.pdf
+    // 2023-2-p2kyu.pdf
+    const titleMatch = lowerCaseTitle.match(/^(\d{4}-\d-(?<ans>1ji-)?)?p?\dkyu(-sunc?)?.pdf$/);
+    if (titleMatch && titleMatch.groups) {
+      props.title = titleMatch.groups.ans ? '解答' : '問題冊子';
     }
-
   }
 
-
-  return props
+  return props;
 }
-
+const schema = z.object({
+  checked: z.string().array()
+});
 
 export const load = (async ({ parent, params }) => {
   const data = await parent();
@@ -97,48 +152,103 @@ export const load = (async ({ parent, params }) => {
   });
 
   const archive = await db.archive.findUnique({
-    where: { id: params.id }
-  })
+    where: { id: params.id },
+    include: {
+      items: true
+    }
+  });
   if (!archive) error(404, 'Archive not found.');
 
-  const re = /\.(mp3|pdf)$/
-  const diskItems = searchFiles(archive.path, re)
+  const re = /\.(mp3|pdf)$/;
+  const diskItems = searchFiles(archive.root, re, archive.depth);
   try {
-    for (const diskItem of diskItems) {
-      const itemPath = diskItem.replace(archive.path, '')
-      const item = await db.archiveItem.findUnique({
+    await db.$transaction(async (prisma) => {
+      // ディスク上のアイテムとデータベース内のアイテムを比較し、不足しているアイテムを削除します。
+      const missingItems = archive.items.filter(
+        (item) => !diskItems.includes(path.join(archive.root, item.path))
+      );
+      await prisma.archiveItem.deleteMany({
         where: {
-          archiveId_path: {
-            archiveId: archive.id,
-            path: itemPath
+          id: {
+            in: missingItems.map((item) => item.id)
           }
         }
-      })
-      if (!item) {
-        await db.archiveItem.create({
+      });
+
+      // ディスク上にもデータベースにもあるアイテムについては、プロパティを更新します。
+      const existingItems = archive.items.filter((item) =>
+        diskItems.includes(path.join(archive.root, item.path))
+      );
+      for (const item of existingItems) {
+        await prisma.archiveItem.update({
+          where: { id: item.id },
           data: {
-            ...getItemProps(itemPath),
-            archiveId: archive.id
+            ...getItemProps(item.path)
           }
-        })
+        });
       }
-    }
+
+      // ディスク上に存在するがデータベースにないアイテムについては、新たにデータベースに追加します。
+      // この処理により、データベースのアイテムリストが最新の状態に保たれます。
+      const existingItemPaths = archive.items.map((item) => path.join(archive.root, item.path));
+      const newItems = diskItems.filter((diskItem) => !existingItemPaths.includes(diskItem));
+      for (const newItemPath of newItems) {
+        const relativePath = newItemPath.replace(archive.root, '');
+        await prisma.archiveItem.create({
+          data: {
+            archiveId: archive.id,
+            state: 'deny',
+            ...getItemProps(relativePath)
+          }
+        });
+      }
+    });
   } catch (e) {
-    console.error(e)
+    console.error(e);
   }
 
-  const items = Array.from(new Set([
-    ...archive.items.map(i => i.path),
-    ...diskItems
-  ])).map(p => {
-    const foundDb = archive.items.find(i => i.path === p)
-    const foundDisk = diskItems.find(i => i === p)
-    // pathが同じならdb優先
-    if (foundDb && foundDisk) return foundDb
-    // dbにあるがdiskにない
-    if (foundDb) { }
-    // diskにあるがdbにない
-    if (foundDisk) { }
-  })
-  return {};
+  const items = await db.archiveItem.findMany({
+    where: { archiveId: archive.id },
+    orderBy: [{ year: 'desc' }, { sequence: 'desc' }, { grade: 'asc' }, { title: 'asc' }]
+  });
+
+  const checked = items.filter((item) => item.state === 'allow').map((item) => item.id);
+  const form = await superValidate({ checked }, zod(schema));
+
+  return { items, form };
 }) satisfies PageServerLoad;
+
+export const actions = {
+  default: async ({ request, params }) => {
+    const form = await superValidate(request, zod(schema));
+    if (!form.valid) return fail(400, { form });
+
+    try {
+      await db.$transaction(async (prisma) => {
+        // チェックされたアイテムの状態を更新
+        await prisma.archiveItem.updateMany({
+          where: { id: { in: form.data.checked } },
+          data: { state: 'allow' }
+        });
+
+        // チェックされていないアイテムの状態を更新
+        await prisma.archiveItem.updateMany({
+          where: {
+            NOT: {
+              id: { in: form.data.checked }
+            },
+            archiveId: params.id
+          },
+          data: { state: 'deny' }
+        });
+      });
+      return message(form, 'Success!');
+    } catch (e) {
+      console.error(e);
+    }
+
+    return message(form, 'Failed to update the database', {
+      status: 403
+    });
+  }
+};
