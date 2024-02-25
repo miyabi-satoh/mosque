@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { URLS } from '$lib/consts';
-	import type { PageData } from './$types';
 	import { LinkButton } from '$lib';
-	import Icon from '@iconify/svelte';
-	import { SOURCES, TRIGGERS, dndzone } from 'svelte-dnd-action';
-	import { superForm } from 'sveltekit-superforms';
-	import { tick } from 'svelte';
+	import { URLS } from '$lib/consts';
 	import { submittingStore } from '$lib/stores';
+	import Icon from '@iconify/svelte';
+	import { tick } from 'svelte';
+	import { SOURCES, TRIGGERS, dndzone, type DndEvent } from 'svelte-dnd-action';
+	import { superForm } from 'sveltekit-superforms';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 	let elemSubmit: HTMLButtonElement;
@@ -19,7 +19,10 @@
 	});
 	$: $submittingStore = $submitting;
 
-	// eslint-disable-next-line no-undef
+	/**
+	 * ドラッグ操作が行われている際の処理
+	 * @param event CustomEvent<DndEvent<ListItem>>
+	 */
 	function onConsider(event: CustomEvent<DndEvent<ListItem>>) {
 		const {
 			items,
@@ -30,8 +33,10 @@
 			dragDisabled = true;
 		}
 	}
-
-	// eslint-disable-next-line no-undef
+	/**
+	 * ドラッグ操作が完了した際の処理
+	 * @param event CustomEvent<DndEvent<ListItem>>
+	 */
 	async function onFinalize(event: CustomEvent<DndEvent<ListItem>>) {
 		const {
 			items,
@@ -43,24 +48,38 @@
 			dragDisabled = true;
 		}
 
+		// ドラッグ操作により並び順が変更されたかチェックします
 		const before = JSON.stringify($form.orders.map((a) => a.id));
 		const after = JSON.stringify(items.map((a) => a.id));
 		if (before !== after) {
+			// 並び順を更新します
 			for (let i = 0; i < data.archives.length; i++) {
 				data.archives[i].sortOrder = i;
 				$form.orders[i].id = data.archives[i].id;
 				$form.orders[i].sortOrder = data.archives[i].sortOrder;
 			}
+			// form.submit()ではenhanceが正しく機能しないので
+			// button.click()でイベントを発火させます
 			if (elemSubmit) {
 				await tick();
 				elemSubmit.click();
 			}
 		}
 	}
+
+	/**
+	 * ドラッグ操作が開始された際の処理
+	 * @param event Event
+	 */
 	function startDrag(event: Event) {
 		event.preventDefault();
 		dragDisabled = false;
 	}
+
+	/**
+	 * キーボードのキーが押された際の処理
+	 * @param event KeyboardEvent
+	 */
 	function onKeyDown(event: KeyboardEvent) {
 		if ((event.key === 'Enter' || event.key === ' ') && dragDisabled) dragDisabled = false;
 	}
@@ -105,7 +124,9 @@
 						</p>
 						<p class="flex items-center opacity-50">
 							<Icon icon="mdi:files" />
-							<span class="ml-2">0 File(s) registered.</span>
+							<a href={URLS.ADMIN_ARCHIVE_ITEMS(archive.id)} class="anchor ml-2"
+								>{archive._count.items} file(s) are allowed.</a
+							>
 						</p>
 					</div>
 					<div>

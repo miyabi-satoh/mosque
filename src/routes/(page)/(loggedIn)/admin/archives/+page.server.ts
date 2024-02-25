@@ -19,7 +19,14 @@ const schema = z.object({
 
 export const load = (async () => {
 	const archives = await db.archive.findMany({
-		orderBy: [{ sortOrder: 'asc' }, { path: 'asc' }]
+		orderBy: [{ sortOrder: 'asc' }, { path: 'asc' }],
+		include: {
+			_count: {
+				select: {
+					items: { where: { state: 'allow' } }
+				}
+			}
+		}
 	});
 	const orders = archives.map((a) => ({ id: a.id, sortOrder: a.sortOrder }));
 	const form = await superValidate({ orders }, zod(schema));
@@ -33,16 +40,17 @@ export const actions = {
 		if (!form.valid) return fail(400, { form });
 
 		try {
-			for (const order of form.data.orders) {
-				await db.archive.update({
-					where: { id: order.id },
-					data: { sortOrder: order.sortOrder }
-				});
-			}
+			await db.$transaction(async (db) => {
+				for (const order of form.data.orders) {
+					await db.archive.update({
+						where: { id: order.id },
+						data: { sortOrder: order.sortOrder }
+					});
+				}
+			});
 		} catch (e) {
 			console.error(e);
 		}
-
 		return { form };
 	}
 };
