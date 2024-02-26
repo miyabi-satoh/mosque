@@ -22,21 +22,21 @@
 	let selectedSection = '';
 
 	function filterByGrade(src: Item[], grade: string) {
-		console.log(`filterByGrade`, grade);
+		// console.log(`filterByGrade`, grade);
 		if (!grade) {
 			return src;
 		}
 		return src.filter((obj) => obj.strGrade === grade);
 	}
 	function filterByYear(src: Item[], year: string) {
-		console.log(`filterByYear`, year);
+		// console.log(`filterByYear`, year);
 		if (!year) {
 			return src;
 		}
 		return src.filter((obj) => obj.strYear === year);
 	}
 	function filterBySection(src: Item[], section: string) {
-		console.log(`filterBySection`, section);
+		// console.log(`filterBySection`, section);
 		if (!section) {
 			return src;
 		}
@@ -45,7 +45,7 @@
 
 	$: grades = getGradeList(selectedYear, selectedSection);
 	function getGradeList(year: string, section: string) {
-		console.log(`getGradeList`, year, section);
+		// console.log(`getGradeList`, year, section);
 		const filtered = filterByYear(filterBySection(data.items, section), year);
 		const gradeSet = new Set<string | null>();
 		filtered.forEach((obj) => {
@@ -56,7 +56,7 @@
 
 	$: years = getYearList(selectedGrade, selectedSection);
 	function getYearList(grade: string, section: string) {
-		console.log(`getYearList`, grade, section);
+		// console.log(`getYearList`, grade, section);
 		const filtered = filterByGrade(filterBySection(data.items, section), grade);
 		const yearSet = new Set<string | null>();
 		filtered.forEach((obj) => {
@@ -67,7 +67,7 @@
 
 	$: sections = getSectionList(selectedGrade, selectedYear);
 	function getSectionList(grade: string, year: string) {
-		console.log(`getSectionList`, grade, year);
+		// console.log(`getSectionList`, grade, year);
 		const filtered = filterByGrade(filterByYear(data.items, year), grade);
 		const sectionSet = new Set<string | null>();
 		filtered.forEach((obj) => {
@@ -92,7 +92,7 @@
 
 	$: promise = updateItems(selectedGrade, selectedYear, selectedSection);
 	async function updateItems(grade: string, year: string, section: string) {
-		console.log(grade, year, section);
+		// console.log(grade, year, section);
 		if ((hasGrade && !grade) || (hasYear && !year) || (hasSection && !section)) {
 			return [];
 		}
@@ -120,7 +120,7 @@
 				if (res.ok) {
 					continue;
 				} else {
-					console.log(res.statusText);
+					console.error(res.statusText);
 				}
 			} catch (err) {
 				console.error(err);
