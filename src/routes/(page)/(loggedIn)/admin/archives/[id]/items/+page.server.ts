@@ -103,9 +103,9 @@ function getItemProps(itemPath: string) {
 			}
 			props.strSection = sectionMatch[0];
 			return true;
-		} else if (path.match(/^s/i)) {
+		} else if (path.match(/^\[(.*)\]$/i)) {
 			props.section = 0;
-			props.strSection = path.slice(1);
+			props.strSection = path.slice(1, -1);
 			return true;
 		}
 		return false;
