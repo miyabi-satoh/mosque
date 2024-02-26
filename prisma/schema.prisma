@@ -68,7 +68,7 @@ model Session {
   expiresAt DateTime @map("expires_at")
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-  temp_resources TempResource[]
+  // temp_resources TempResource[]
 
   @@index([userId])
   @@map("auth_sessions")
@@ -84,21 +84,21 @@ model Session {
 //   @@map("auth_keys")
 // }
 
-enum ExamTypeEnum {
-  ctest
-  eiken
-  kyote
+// enum ExamTypeEnum {
+//   ctest
+//   eiken
+//   kyote
 
-  @@map("ExamType")
-}
+//   @@map("ExamType")
+// }
 
-model Exam {
-  examType  ExamTypeEnum @id @map("exam_type")
-  name      String
-  sortOrder Int          @map("sort_order")
+// model Exam {
+//   examType  ExamTypeEnum @id @map("exam_type")
+//   name      String
+//   sortOrder Int          @map("sort_order")
 
-  @@map("exams")
-}
+//   @@map("exams")
+// }
 
 enum ArchiveModule {
   common // [表示名]
@@ -140,49 +140,49 @@ model ArchiveItem {
   @@map("archive_items")
 }
 
-model Resource {
-  id         String
-  examType   ExamTypeEnum @map("exam_type")
-  year       Int
-  publisher  String
-  grade      Int
-  numOf      Int          @map("num_of")
-  category   Int
-  title      String
-  shortTitle String       @map("short_title")
-  path       String
+// model Resource {
+//   id         String
+//   examType   ExamTypeEnum @map("exam_type")
+//   year       Int
+//   publisher  String
+//   grade      Int
+//   numOf      Int          @map("num_of")
+//   category   Int
+//   title      String
+//   shortTitle String       @map("short_title")
+//   path       String
 
-  @@id([id, examType])
-  @@index([examType])
-  @@map("resources")
-}
+//   @@id([id, examType])
+//   @@index([examType])
+//   @@map("resources")
+// }
 
-enum ResourceStateEnum {
-  ok
-  new
+// enum ResourceStateEnum {
+//   ok
+//   new
 
-  @@map("ResourceState")
-}
+//   @@map("ResourceState")
+// }
 
-model TempResource {
-  id         String
-  sessionId  String            @map("session_id")
-  session    Session           @relation(references: [id], fields: [sessionId], onDelete: Cascade)
-  state      ResourceStateEnum
-  examType   ExamTypeEnum      @map("exam_type")
-  year       Int
-  publisher  String
-  grade      Int
-  numOf      Int               @map("num_of")
-  category   Int
-  title      String
-  shortTitle String            @map("short_title")
-  path       String
+// model TempResource {
+//   id         String
+//   sessionId  String            @map("session_id")
+//   session    Session           @relation(references: [id], fields: [sessionId], onDelete: Cascade)
+//   state      ResourceStateEnum
+//   examType   ExamTypeEnum      @map("exam_type")
+//   year       Int
+//   publisher  String
+//   grade      Int
+//   numOf      Int               @map("num_of")
+//   category   Int
+//   title      String
+//   shortTitle String            @map("short_title")
+//   path       String
 
-  @@id([id, sessionId])
-  @@index([examType])
-  @@map("temp_resources")
-}
+//   @@id([id, sessionId])
+//   @@index([examType])
+//   @@map("temp_resources")
+// }
 
 model Link {
   id        String @id @default(cuid())

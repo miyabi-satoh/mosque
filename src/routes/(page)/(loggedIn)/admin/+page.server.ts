@@ -1,5 +1,4 @@
 import { URLS } from '$lib/consts';
-import { db } from '$lib/server/db';
 
 import type { PageServerLoad } from './$types';
 
@@ -10,18 +9,18 @@ type MenuT = {
 };
 export const load: PageServerLoad = async () => {
 	const menus: MenuT[] = [];
-	const exam = await db.exam.findMany({
-		orderBy: { sortOrder: 'asc' }
-	});
-	menus.push(
-		...exam.map((e) => {
-			return {
-				href: URLS.ADMIN_ARCHIVE(e.examType),
-				label: `${e.name} ファイル管理`,
-				icon: 'mdi:file-multiple'
-			} satisfies MenuT;
-		})
-	);
+	// const exam = await db.exam.findMany({
+	// 	orderBy: { sortOrder: 'asc' }
+	// });
+	// menus.push(
+	// 	...exam.map((e) => {
+	// 		return {
+	// 			href: URLS.ADMIN_ARCHIVE(e.examType),
+	// 			label: `${e.name} ファイル管理`,
+	// 			icon: 'mdi:file-multiple'
+	// 		} satisfies MenuT;
+	// 	})
+	// );
 	menus.push(
 		{
 			href: URLS.ADMIN_ARCHIVES(),
