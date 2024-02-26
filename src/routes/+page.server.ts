@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 
+import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
 import { deleteSessionCookie, invalidateSession } from '$lib/server/lucia';
 
@@ -10,28 +11,40 @@ type ItemT = {
 	title: string;
 	external: boolean;
 };
+
 export const load = (async () => {
-	const exams = await db.exam.findMany({
-		orderBy: { sortOrder: 'asc' }
-	});
+	// const exams = await db.exam.findMany({
+	// 	orderBy: { sortOrder: 'asc' }
+	// });
 
 	const links = await db.link.findMany({
 		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
 	});
 
+	const archives = await db.archive.findMany({
+		where: { items: { some: { published: true } } },
+		orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }]
+	});
 	const items: ItemT[] = [
-		...exams.map((exam) => {
+		// ...exams.map((exam) => {
+		// 	return {
+		// 		href: `/${exam.examType}`,
+		// 		title: `${exam.name}アーカイブ`,
+		// 		external: false
+		// 	};
+		// }),
+		// {
+		// 	href: '/archives',
+		// 	title: 'その他のアーカイブ',
+		// 	external: false
+		// },
+		...archives.map((archive) => {
 			return {
-				href: `/${exam.examType}`,
-				title: `${exam.name}アーカイブ`,
+				href: URLS.ARCHIVES(archive.path),
+				title: archive.title,
 				external: false
 			};
 		}),
-		{
-			href: '/archives',
-			title: 'その他のアーカイブ',
-			external: false
-		},
 		...links.map((link) => {
 			return {
 				href: link.url,

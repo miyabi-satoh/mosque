@@ -126,7 +126,7 @@
 			.map((obj) => {
 				return {
 					...obj,
-					url: URLS.API_DATA(data.exam.examType, obj.id)
+					url: URLS.API_ARCHIVE_ITEM(data.exam.examType, obj.id)
 				};
 			});
 

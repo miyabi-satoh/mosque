@@ -22,7 +22,7 @@ export const URLS = {
 	BOARD: (channelId: string | undefined = undefined) => `/board${subRoute(channelId)}`,
 	BOARD_CHANNEL: '/board/channel',
 	API_CHANNEL: (channelId: string) => `/api/channel${subRoute(channelId)}`,
-	API_DATA: (examType: string, objId: string) => `/api/data/${examType}/${objId}`,
+	API_ARCHIVE_ITEM: (itemId: string) => `/api/archive/item/${itemId}`,
 	API_FETCH: (url: string) => `/api/fetch?url=${url}`,
 	API_READDIR: `/api/readdir`
 } as const;

@@ -24,8 +24,8 @@ describe('URLSのテスト', () => {
 		expect(URLS.API_CHANNEL('id')).toBe('/api/channel/id');
 	});
 
-	it('URLS.API_DATA', () => {
-		expect(URLS.API_DATA('exam', 'id')).toBe('/api/data/exam/id');
+	it('URLS.API_ARCHIVE_ITEM', () => {
+		expect(URLS.API_ARCHIVE_ITEM('id')).toBe('/api/archive/item/id');
 	});
 
 	it('URLS.API_FETCH', () => {
