@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
 
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 /**
  * 指定されたディレクトリ内のファイルを再帰的に検索します
@@ -147,7 +147,7 @@ const schema = z.object({
 	checked: z.string().array()
 });
 
-export const load = (async ({ parent, params }) => {
+export const load: PageServerLoad = async ({ parent, params }) => {
 	const data = await parent();
 	data.breadcrumbs.push({
 		label: 'Items',
@@ -219,9 +219,9 @@ export const load = (async ({ parent, params }) => {
 	const form = await superValidate({ checked }, zod(schema));
 
 	return { items, form };
-}) satisfies PageServerLoad;
+};
 
-export const actions = {
+export const actions: Actions = {
 	default: async ({ request, params }) => {
 		const form = await superValidate(request, zod(schema));
 		if (!form.valid) return fail(400, { form });

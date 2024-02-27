@@ -19,14 +19,14 @@ const schema = z.object({
 	svg: z.string().nullish()
 });
 
-export const load = (async () => {
+export const load: PageServerLoad = async () => {
 	const form = await superValidate(zod(schema));
 	form.data.svg = 'No data available.';
 
 	return {
 		form
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ request }) => {

@@ -22,7 +22,7 @@ type UserPropT = {
 	fullName: string;
 };
 
-export const load = (async ({ parent }) => {
+export const load: PageServerLoad = async ({ parent }) => {
 	const data = await parent();
 	data.breadcrumbs.push({ label: 'Create', link: URLS.ADMIN_ACCOUNTS_CREATE });
 
@@ -32,7 +32,7 @@ export const load = (async ({ parent }) => {
 		form,
 		csvHeader
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ request }) => {

@@ -16,13 +16,13 @@ const schema = z.object({
 	confirmPassword: z.string().min(1)
 });
 
-export const load = (async ({ parent, params }) => {
+export const load: PageServerLoad = async ({ parent, params }) => {
 	const data = await parent();
 	data.breadcrumbs.push({ label: 'Change Password', link: URLS.PASSWD(params.id) });
 	const form = await superValidate(zod(schema));
 
 	return { form };
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ request, params, locals }) => {

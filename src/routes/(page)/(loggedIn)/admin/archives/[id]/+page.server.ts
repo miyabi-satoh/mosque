@@ -7,7 +7,7 @@ import { URLS } from '$lib/consts';
 import { ArchiveSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
 
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 const schema = ArchiveSchema.pick({
 	depth: true,
@@ -18,7 +18,7 @@ const schema = ArchiveSchema.pick({
 	id: ArchiveSchema.shape.id.optional()
 });
 
-export const load = (async ({ parent, params }) => {
+export const load: PageServerLoad = async ({ parent, params }) => {
 	const data = await parent();
 	data.breadcrumbs.push({
 		label: params.id === 'new' ? 'New' : 'Edit',
@@ -34,9 +34,9 @@ export const load = (async ({ parent, params }) => {
 	if (form.data.depth < 1) form.data.depth = 4;
 
 	return { form };
-}) satisfies PageServerLoad;
+};
 
-export const actions = {
+export const actions: Actions = {
 	default: async ({ request, params }) => {
 		const form = await superValidate(request, zod(schema));
 		if (!form.valid) return fail(400, { form });

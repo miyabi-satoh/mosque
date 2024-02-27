@@ -17,7 +17,7 @@ const schema = z.object({
 	password: z.string().min(1)
 });
 
-export const load = (async ({ parent }) => {
+export const load: PageServerLoad = async ({ parent }) => {
 	const data = await parent();
 	if (data.user) {
 		redirect(302, hasAdminRole(data.user) ? URLS.ADMIN : URLS.BOARD());
@@ -27,7 +27,7 @@ export const load = (async ({ parent }) => {
 	return {
 		form
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ request, cookies }) => {

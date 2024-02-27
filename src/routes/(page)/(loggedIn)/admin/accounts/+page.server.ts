@@ -14,7 +14,7 @@ const schema = z.object({
 	role: UserRoleEnumSchema.nullish()
 });
 
-export const load = (async () => {
+export const load: PageServerLoad = async () => {
 	const users = await db.user.findMany({
 		orderBy: { username: 'asc' }
 	});
@@ -25,10 +25,11 @@ export const load = (async () => {
 		form,
 		users
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ request }) => {
+		// todo: 見直す
 		// validate form data
 		const formData = await request.formData();
 		const postSchema = schema.extend({

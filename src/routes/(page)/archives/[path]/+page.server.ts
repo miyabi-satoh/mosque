@@ -5,7 +5,7 @@ import { db } from '$lib/server/db';
 
 import type { PageServerLoad } from './$types';
 
-export const load = (async ({ params, parent }) => {
+export const load: PageServerLoad = async ({ params, parent }) => {
 	const archive = await db.archive.findUnique({ where: { path: params.path } });
 	if (!archive) {
 		return error(404, 'Archive not found');
@@ -20,4 +20,4 @@ export const load = (async ({ params, parent }) => {
 	});
 
 	return { items };
-}) satisfies PageServerLoad;
+};

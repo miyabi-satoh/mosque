@@ -14,7 +14,7 @@ const schema = z.object({
 	message: z.string().min(1).max(500)
 });
 
-export const load = (async ({ params, parent }) => {
+export const load: PageServerLoad = async ({ params, parent }) => {
 	// get channel
 	const { channelId } = params;
 	const channel = await db.channel.findUnique({
@@ -37,7 +37,7 @@ export const load = (async ({ params, parent }) => {
 		messages,
 		form
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ locals, request, params }) => {

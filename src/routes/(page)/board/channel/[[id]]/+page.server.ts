@@ -16,7 +16,7 @@ const channelSchema = z.object({
 	// private: z.boolean()
 });
 
-export const load = (async ({ params, parent }) => {
+export const load: PageServerLoad = async ({ params, parent }) => {
 	const data = await parent();
 	data.breadcrumbs.push({
 		label: `${params.id ? 'Edit' : 'Create a new'} channel`,
@@ -33,7 +33,7 @@ export const load = (async ({ params, parent }) => {
 	return {
 		form
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ locals, request, params }) => {

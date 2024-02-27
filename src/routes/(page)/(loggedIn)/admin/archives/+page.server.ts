@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { db } from '$lib/server/db';
 
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 const schema = z.object({
 	orders: z
@@ -17,7 +17,7 @@ const schema = z.object({
 		.array()
 });
 
-export const load = (async () => {
+export const load: PageServerLoad = async () => {
 	const archives = await db.archive.findMany({
 		orderBy: [{ sortOrder: 'asc' }, { path: 'asc' }],
 		include: {
@@ -32,9 +32,9 @@ export const load = (async () => {
 	const form = await superValidate({ orders }, zod(schema));
 
 	return { archives, form };
-}) satisfies PageServerLoad;
+};
 
-export const actions = {
+export const actions: Actions = {
 	default: async ({ request }) => {
 		const form = await superValidate(request, zod(schema));
 		if (!form.valid) return fail(400, { form });

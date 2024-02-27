@@ -39,7 +39,7 @@ const userSchema = adminSchema.extend({
 	newPassword: adminSchema.shape.newPassword.optional()
 });
 
-export const load = (async ({ parent, params }) => {
+export const load: PageServerLoad = async ({ parent, params }) => {
 	const data = await parent();
 	data.breadcrumbs.push({ label: 'Edit Profile', link: URLS.PROFILE(params.id) });
 
@@ -67,7 +67,7 @@ export const load = (async ({ parent, params }) => {
 	return {
 		form
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ locals, request, params, cookies }) => {

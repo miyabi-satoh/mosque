@@ -10,7 +10,7 @@ import { URLS } from '$lib/consts';
 import { ArchiveSchema } from '$lib/schemas/zod';
 import { db } from '$lib/server/db';
 
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 const crudSchema = ArchiveSchema.extend({
 	id: ArchiveSchema.shape.id.optional()
@@ -28,15 +28,15 @@ type ItemT = z.infer<typeof itemSchema>;
 // });
 
 function readdir(currentDir: string): ItemT[] {
-	const items: ItemT[] = readdirSync(currentDir)
-		.map((file) => {
+	const items = readdirSync(currentDir)
+		.map((file): ItemT => {
 			const stat = statSync(path.join(currentDir, file));
 			return {
 				name: file,
 				isDir: stat.isDirectory(),
 				size: stat.size,
 				mtime: stat.mtime
-			} satisfies ItemT;
+			};
 		})
 		.sort((a, b) => {
 			if (a.isDir && !b.isDir) return -1;
@@ -60,7 +60,7 @@ function readdir(currentDir: string): ItemT[] {
 
 	return items;
 }
-export const load = (async ({ parent }) => {
+export const load: PageServerLoad = async ({ parent }) => {
 	console.log('load');
 	const id = /*params.id*/ 'dummy';
 
@@ -82,9 +82,9 @@ export const load = (async ({ parent }) => {
 
 	return { currentDir, items, archive };
 	// return { form, archive };
-}) satisfies PageServerLoad;
+};
 
-export const actions = {
+export const actions: Actions = {
 	cd: async () => {
 		console.log('cd');
 		// const id = params.id;

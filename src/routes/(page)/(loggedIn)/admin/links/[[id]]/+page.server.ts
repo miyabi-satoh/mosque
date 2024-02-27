@@ -15,7 +15,7 @@ const schema = z.object({
 	sortOrder: z.number().default(0)
 });
 
-export const load = (async ({ params, parent }) => {
+export const load: PageServerLoad = async ({ params, parent }) => {
 	const links = await db.link.findMany({
 		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
 	});
@@ -33,7 +33,7 @@ export const load = (async ({ params, parent }) => {
 		form,
 		links
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ request, params }) => {
