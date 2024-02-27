@@ -61,7 +61,7 @@ function getItemProps(itemPath: string) {
 
 	// year: 年(度)を取得します
 	paths.find((path) => {
-		const yearMatch = path.match(/^(\d{4})(年度?)$/i);
+		const yearMatch = path.match(/^(\d{4})(年|年度)?$/i);
 		if (yearMatch) {
 			props.year = parseInt(yearMatch[1]);
 			props.strYear = yearMatch[0];
@@ -95,10 +95,10 @@ function getItemProps(itemPath: string) {
 
 	// section: 実施月・実施回・sで始まる文字列を取得します
 	paths.find((path) => {
-		const sectionMatch = path.match(/^第?(\d{1,2})(回|月|月号)$/i);
+		const sectionMatch = path.match(/^第?(\d{1,2})(回|月号?)$/i);
 		if (sectionMatch) {
 			props.section = parseInt(sectionMatch[1]);
-			if (props.strYear?.match(/年度$/i) && props.section < 4) {
+			if (props.strYear?.match(/年度$/i) && sectionMatch[2] != '回' && props.section < 4) {
 				props.section += 12;
 			}
 			props.strSection = sectionMatch[0];
