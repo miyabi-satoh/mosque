@@ -6,13 +6,27 @@ describe('URLSのテスト', () => {
 		expect(URLS.PROFILE('id')).toBe('/profile/id');
 	});
 
-	it('URLS.ADMIN_ARCHIVE', () => {
-		expect(URLS.ADMIN_ARCHIVE('id')).toBe('/admin/id');
+	it('URLS.PASSWD', () => {
+		expect(URLS.PASSWD()).toBe('/passwd');
+		expect(URLS.PASSWD('id')).toBe('/passwd/id');
+	});
+
+	it('URLS.ADMIN_ARCHIVES', () => {
+		expect(URLS.ADMIN_ARCHIVES()).toBe('/admin/archives');
+		expect(URLS.ADMIN_ARCHIVES('id')).toBe('/admin/archives/id');
+	});
+
+	it('URLS.ADMIN_ARCHIVE_ITEMS', () => {
+		expect(URLS.ADMIN_ARCHIVE_ITEMS('id')).toBe('/admin/archives/id/items');
 	});
 
 	it('URLS.ADMIN_LINKS', () => {
 		expect(URLS.ADMIN_LINKS()).toBe('/admin/links');
 		expect(URLS.ADMIN_LINKS('id')).toBe('/admin/links/id');
+	});
+
+	it('URLS.ARCHIVES', () => {
+		expect(URLS.ARCHIVES('id')).toBe('/archives/id');
 	});
 
 	it('URLS.BOARD', () => {
