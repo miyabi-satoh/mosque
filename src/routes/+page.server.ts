@@ -15,7 +15,7 @@ export const load: PageServerLoad = async () => {
 
 	// 外部リンクリストを取得します
 	const links = await db.link.findMany({
-		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
+		orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }]
 	});
 
 	// 取得したリストを配列にします

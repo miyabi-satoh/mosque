@@ -188,7 +188,7 @@ model Link {
   id        String @id @default(cuid())
   url       String
   title     String
-  sortOrder Int    @map("sort_order")
+  sortOrder Int    @default(0) @map("sort_order")
 
   @@map("links")
 }
