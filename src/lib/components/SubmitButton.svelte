@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 
-	let variant = 'variant-ghost-primary';
+	let variant = 'variant-filled-primary';
 	let className = '';
 	export { className as class };
 	export let name: string | undefined = undefined;

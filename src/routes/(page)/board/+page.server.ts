@@ -20,7 +20,7 @@ async function getMessageWithUser(channelId: string) {
 	return message;
 }
 
-export const load = (async () => {
+export const load: PageServerLoad = async () => {
 	const channels: ChannelWithLastMessage[] = await db.channel.findMany({
 		orderBy: { updatedAt: 'desc' }
 	});
@@ -46,4 +46,4 @@ export const load = (async () => {
 	return {
 		channels
 	};
-}) satisfies PageServerLoad;
+};

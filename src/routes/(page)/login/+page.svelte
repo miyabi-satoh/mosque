@@ -7,9 +7,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let data: PageData;
-	const { form, message, errors, submitting, enhance } = superForm(data.form, {
-		taintedMessage: false
-	});
+	const { form, message, errors, submitting, enhance } = superForm(data.form);
 	$: $submittingStore = $submitting;
 
 	let isFocused: boolean = true;

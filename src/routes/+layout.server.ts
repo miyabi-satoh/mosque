@@ -5,17 +5,11 @@ import { hasAdminRole } from '$lib/utils';
 
 import type { LayoutServerLoad } from './$types';
 
-type BreadCrumbT = {
-	label: string;
-	link: string;
-};
-
-export const load = (async ({ locals, request, depends }) => {
+export const load: LayoutServerLoad = async ({ locals, request, depends }) => {
 	depends('auth:session');
 
 	// get session
-	const session = await locals.auth.validate();
-	const user = session?.user;
+	const user = locals.user;
 
 	// enable Board or not
 	const showBoard = isBoardEnabled(user, request.headers.get('User-Agent'));
@@ -32,14 +26,14 @@ export const load = (async ({ locals, request, depends }) => {
 			userMenus.push(['']);
 		}
 		userMenus.push([URLS.PROFILE(), `Edit Profile`, 'mdi:account-edit']);
-		userMenus.push([URLS.PASSWD, `Change Password`, 'mdi:lock']);
+		userMenus.push([URLS.PASSWD(), `Change Password`, 'mdi:lock']);
 		userMenus.push(['']);
 	} else {
 		// create built-in user
 		await createBuiltinUsers();
 	}
 
-	const breadcrumbs: BreadCrumbT[] = [{ label: 'Home', link: '/' }];
+	const breadcrumbs = [{ label: 'Home', link: '/' }];
 
 	return {
 		user,
@@ -47,4 +41,4 @@ export const load = (async ({ locals, request, depends }) => {
 		breadcrumbs,
 		showBoard
 	};
-}) satisfies LayoutServerLoad;
+};

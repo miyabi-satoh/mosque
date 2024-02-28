@@ -18,6 +18,7 @@ export const TransactionIsolationLevelSchema = z.enum([
 export const UserScalarFieldEnumSchema = z.enum([
 	'id',
 	'username',
+	'hashedPassword',
 	'role',
 	'fullName',
 	'displayName',
@@ -27,46 +28,33 @@ export const UserScalarFieldEnumSchema = z.enum([
 	'lastLoginAt'
 ]);
 
-export const SessionScalarFieldEnumSchema = z.enum([
+export const SessionScalarFieldEnumSchema = z.enum(['id', 'userId', 'expiresAt']);
+
+export const ArchiveScalarFieldEnumSchema = z.enum([
 	'id',
-	'user_id',
-	'active_expires',
-	'idle_expires'
-]);
-
-export const KeyScalarFieldEnumSchema = z.enum(['id', 'hashed_password', 'user_id']);
-
-export const ExamScalarFieldEnumSchema = z.enum(['examType', 'name', 'sortOrder']);
-
-export const ResourceScalarFieldEnumSchema = z.enum([
-	'id',
-	'examType',
-	'year',
-	'publisher',
-	'grade',
-	'numOf',
-	'category',
 	'title',
-	'shortTitle',
-	'path'
+	'path',
+	'root',
+	'depth',
+	'sortOrder',
+	'description'
 ]);
 
-export const TempResourceScalarFieldEnumSchema = z.enum([
+export const ArchiveItemScalarFieldEnumSchema = z.enum([
 	'id',
-	'sessionId',
-	'state',
-	'examType',
+	'archiveId',
+	'path',
 	'year',
-	'publisher',
+	'strYear',
 	'grade',
-	'numOf',
-	'category',
+	'strGrade',
+	'section',
+	'strSection',
 	'title',
-	'shortTitle',
-	'path'
+	'published'
 ]);
 
-export const LinkScalarFieldEnumSchema = z.enum(['id', 'url', 'title', 'sortOrder']);
+export const LinkScalarFieldEnumSchema = z.enum(['id', 'url', 'title', 'sortOrder', 'description']);
 
 export const ChannelScalarFieldEnumSchema = z.enum([
 	'id',
@@ -100,14 +88,6 @@ export const UserRoleEnumSchema = z.enum(['USER', 'STAFF', 'ADMIN', 'RETIRED']);
 
 export type UserRoleEnumType = `${z.infer<typeof UserRoleEnumSchema>}`;
 
-export const ExamTypeEnumSchema = z.enum(['ctest', 'eiken', 'kyote']);
-
-export type ExamTypeEnumType = `${z.infer<typeof ExamTypeEnumSchema>}`;
-
-export const ResourceStateEnumSchema = z.enum(['ok', 'new']);
-
-export type ResourceStateEnumType = `${z.infer<typeof ResourceStateEnumSchema>}`;
-
 /////////////////////////////////////////
 // MODELS
 /////////////////////////////////////////
@@ -120,6 +100,7 @@ export const UserSchema = z.object({
 	role: UserRoleEnumSchema,
 	id: z.string(),
 	username: z.string(),
+	hashedPassword: z.string(),
 	fullName: z.string().nullable(),
 	displayName: z.string().nullable(),
 	email: z.string().nullable(),
@@ -136,76 +117,47 @@ export type User = z.infer<typeof UserSchema>;
 
 export const SessionSchema = z.object({
 	id: z.string(),
-	user_id: z.string(),
-	active_expires: z.bigint(),
-	idle_expires: z.bigint()
+	userId: z.string(),
+	expiresAt: z.coerce.date()
 });
 
 export type Session = z.infer<typeof SessionSchema>;
 
 /////////////////////////////////////////
-// KEY SCHEMA
+// ARCHIVE SCHEMA
 /////////////////////////////////////////
 
-export const KeySchema = z.object({
-	id: z.string(),
-	hashed_password: z.string().nullable(),
-	user_id: z.string()
+export const ArchiveSchema = z.object({
+	id: z.string().cuid(),
+	title: z.string().min(1),
+	path: z.string().min(1).toLowerCase(),
+	root: z.string().min(1),
+	depth: z.number().int(),
+	sortOrder: z.number().int(),
+	description: z.string()
 });
 
-export type Key = z.infer<typeof KeySchema>;
+export type Archive = z.infer<typeof ArchiveSchema>;
 
 /////////////////////////////////////////
-// EXAM SCHEMA
+// ARCHIVE ITEM SCHEMA
 /////////////////////////////////////////
 
-export const ExamSchema = z.object({
-	examType: ExamTypeEnumSchema,
-	name: z.string(),
-	sortOrder: z.number().int()
-});
-
-export type Exam = z.infer<typeof ExamSchema>;
-
-/////////////////////////////////////////
-// RESOURCE SCHEMA
-/////////////////////////////////////////
-
-export const ResourceSchema = z.object({
-	examType: ExamTypeEnumSchema,
-	id: z.string(),
-	year: z.number().int(),
-	publisher: z.string(),
-	grade: z.number().int(),
-	numOf: z.number().int(),
-	category: z.number().int(),
+export const ArchiveItemSchema = z.object({
+	id: z.string().cuid(),
+	archiveId: z.string(),
+	path: z.string(),
+	year: z.number().int().nullable(),
+	strYear: z.string().nullable(),
+	grade: z.number().int().nullable(),
+	strGrade: z.string().nullable(),
+	section: z.number().int().nullable(),
+	strSection: z.string().nullable(),
 	title: z.string(),
-	shortTitle: z.string(),
-	path: z.string()
+	published: z.boolean()
 });
 
-export type Resource = z.infer<typeof ResourceSchema>;
-
-/////////////////////////////////////////
-// TEMP RESOURCE SCHEMA
-/////////////////////////////////////////
-
-export const TempResourceSchema = z.object({
-	state: ResourceStateEnumSchema,
-	examType: ExamTypeEnumSchema,
-	id: z.string(),
-	sessionId: z.string(),
-	year: z.number().int(),
-	publisher: z.string(),
-	grade: z.number().int(),
-	numOf: z.number().int(),
-	category: z.number().int(),
-	title: z.string(),
-	shortTitle: z.string(),
-	path: z.string()
-});
-
-export type TempResource = z.infer<typeof TempResourceSchema>;
+export type ArchiveItem = z.infer<typeof ArchiveItemSchema>;
 
 /////////////////////////////////////////
 // LINK SCHEMA
@@ -215,7 +167,8 @@ export const LinkSchema = z.object({
 	id: z.string().cuid(),
 	url: z.string(),
 	title: z.string(),
-	sortOrder: z.number().int()
+	sortOrder: z.number().int(),
+	description: z.string()
 });
 
 export type Link = z.infer<typeof LinkSchema>;

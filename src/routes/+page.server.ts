@@ -1,53 +1,51 @@
 import { redirect } from '@sveltejs/kit';
 
+import { URLS } from '$lib/consts';
 import { db } from '$lib/server/db';
-import { auth } from '$lib/server/lucia';
+import { deleteSessionCookie, invalidateSession } from '$lib/server/lucia';
 
 import type { Actions, PageServerLoad } from './$types';
 
-type ItemT = {
-	href: string;
-	title: string;
-	external: boolean;
-};
-export const load = (async () => {
-	const exams = await db.exam.findMany({
-		orderBy: { sortOrder: 'asc' }
+export const load: PageServerLoad = async () => {
+	// アーカイブリストを取得します
+	const archives = await db.archive.findMany({
+		where: { items: { some: { published: true } } },
+		orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }]
 	});
 
+	// 外部リンクリストを取得します
 	const links = await db.link.findMany({
-		orderBy: [{ sortOrder: 'desc' }, { title: 'asc' }]
+		orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }]
 	});
 
-	const items: ItemT[] = [];
-	exams.forEach((exam) => {
-		items.push({
-			href: `/${exam.examType}`,
-			title: `${exam.name}アーカイブ`,
-			external: false
-		});
-	});
-	links.forEach((link) => {
-		items.push({
-			href: link.url,
-			title: link.title,
-			external: true
-		});
-	});
+	// 取得したリストを配列にします
+	const items = [
+		...archives.map((archive) => {
+			return {
+				href: URLS.ARCHIVES(archive.path),
+				title: archive.title,
+				external: false,
+				description: archive.description
+			};
+		}),
+		...links.map((link) => {
+			return {
+				href: link.url,
+				title: link.title,
+				external: true,
+				description: link.description
+			};
+		})
+	];
 
-	return {
-		items
-	};
-}) satisfies PageServerLoad;
+	return { items };
+};
 
 export const actions: Actions = {
-	logout: async ({ locals }) => {
-		const session = await locals.auth.validate();
-		if (session) {
-			await auth.invalidateSession(session.sessionId); // invalidate session
-			await auth.deleteDeadUserSessions(session.user.userId);
-		}
-		locals.auth.setSession(null); // remove cookie
-		throw redirect(302, '/'); // redirect to root page
+	// ログアウト
+	logout: async ({ locals, cookies }) => {
+		await invalidateSession(locals.session);
+		deleteSessionCookie(cookies);
+		redirect(302, '/'); // redirect to root page
 	}
 };

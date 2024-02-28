@@ -9,7 +9,7 @@ import { FEATURE_BOARD, MAIL_ACCOUNT, MAIL_PASSWORD } from '$env/static/private'
 
 import { isWindows } from '$lib/utils';
 
-export function isBoardEnabled(user: User | undefined, ua: string | null): boolean {
+export function isBoardEnabled(user: User | null | undefined, ua: string | null): boolean {
 	if (dev) return true;
 	if (FEATURE_BOARD === 'true') return !!user || isWindows(ua);
 	return false;

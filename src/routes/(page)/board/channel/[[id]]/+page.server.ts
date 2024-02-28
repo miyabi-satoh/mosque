@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-import { message, superValidate } from 'sveltekit-superforms/server';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
 import { URLS } from '$lib/consts';
@@ -15,7 +16,7 @@ const channelSchema = z.object({
 	// private: z.boolean()
 });
 
-export const load = (async ({ params, parent }) => {
+export const load: PageServerLoad = async ({ params, parent }) => {
 	const data = await parent();
 	data.breadcrumbs.push({
 		label: `${params.id ? 'Edit' : 'Create a new'} channel`,
@@ -25,26 +26,26 @@ export const load = (async ({ params, parent }) => {
 	const channel = params.id
 		? await db.channel.findUnique({
 				where: { id: params.id }
-		  })
+			})
 		: null;
-	const form = await superValidate(channel, channelSchema);
+	const form = await superValidate(channel, zod(channelSchema));
 
 	return {
 		form
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ locals, request, params }) => {
 		// get session
-		const session = await locals.auth.validate();
-		if (!session) {
-			throw redirect(302, '/');
+		// const session = await locals.auth.validate();
+		if (!locals.user) {
+			redirect(302, '/');
 		}
 
 		// validation
 		const formData = await request.formData();
-		const form = await superValidate(formData, channelSchema);
+		const form = await superValidate(formData, zod(channelSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
@@ -58,12 +59,12 @@ export const actions: Actions = {
 					create: {
 						...form.data,
 						private: false,
-						createdBy: session.user.userId,
-						updatedBy: session.user.userId
+						createdBy: locals.user.id,
+						updatedBy: locals.user.id
 					},
 					update: {
 						...form.data,
-						updatedBy: session.user.userId
+						updatedBy: locals.user.id
 					}
 				});
 
@@ -83,7 +84,7 @@ export const actions: Actions = {
 		}
 
 		if (redirectTo) {
-			throw redirect(303, redirectTo);
+			redirect(303, redirectTo);
 		}
 
 		return message(form, 'An error occurred.', {

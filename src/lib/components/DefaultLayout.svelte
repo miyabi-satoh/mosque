@@ -80,7 +80,7 @@
 <AppShell
 	slotFooter="text-surface-500-400-token text-right text-sm m-4 hidden sm:block"
 	slotSidebarLeft="w-0 {data.user ? 'lg:w-64' : ''}"
-	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-4xl"
+	slotPageContent="flex flex-col flex-1 container mx-auto lg:max-w-4xl mb-8"
 >
 	<!-- Header Slot -->
 	<svelte:fragment slot="header">
@@ -115,7 +115,7 @@
 						<span>Login</span>
 					</a>
 				{/if}
-				<LightSwitch />
+				<LightSwitch rounded="rounded-full" />
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
@@ -128,7 +128,7 @@
 	<!-- Breadcrumbs -->
 	<!-- {#key pathname} -->
 	{#if breadcrumbs?.length > 1}
-		<ol class="breadcrumb mx-4 mb-8 text-sm">
+		<ol class="breadcrumb-nonresponsive mx-4 mb-4 text-sm">
 			{#each breadcrumbs as crumb, i}
 				<!-- If crumb index is less than the breadcrumb length minus 1 -->
 				{#if i < breadcrumbs.length - 1}
@@ -144,5 +144,5 @@
 	<slot />
 
 	<!-- Footer Slot -->
-	<svelte:fragment slot="footer">Copyright &copy; 2023 miyabi-satoh.</svelte:fragment>
+	<!-- <svelte:fragment slot="footer">&copy; 2023 miyabi-satoh</svelte:fragment> -->
 </AppShell>

@@ -41,18 +41,18 @@ enum UserRoleEnum {
 }
 
 model User {
-  id          String       @id @unique
-  username    String       @unique
-  role        UserRoleEnum @default(USER)
-  fullName    String?      @map("full_name")
-  displayName String?      @map("display_name")
-  email       String?
-  code        String?      @unique
-  avatar      String?
-  lastLoginAt DateTime?    @map("last_login_at")
+  id             String       @id @unique
+  username       String       @unique
+  hashedPassword String       @map("hashed_password")
+  role           UserRoleEnum @default(USER)
+  fullName       String?      @map("full_name")
+  displayName    String?      @map("display_name")
+  email          String?
+  code           String?      @unique
+  avatar         String?
+  lastLoginAt    DateTime?    @map("last_login_at")
 
-  auth_session   Session[]
-  key            Key[]
+  sessions       Session[]
   Message        Message[]
   channelCreated Channel[]       @relation("channelCreated")
   channelUpdated Channel[]       @relation("channelUpdated")
@@ -62,93 +62,56 @@ model User {
 }
 
 model Session {
-  id             String @id @unique
-  user_id        String
-  active_expires BigInt
-  idle_expires   BigInt
-  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id        String   @id
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-  temp_resources TempResource[]
-
-  @@index([user_id])
+  @@index([userId])
   @@map("auth_sessions")
 }
 
-model Key {
-  id              String  @id @unique
-  hashed_password String?
-  user_id         String
-  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+model Archive {
+  id          String @id @default(cuid())
+  /// @zod.string.min(1)
+  title       String
+  /// @zod.string.min(1).toLowerCase()
+  path        String @unique
+  /// @zod.string.min(1)
+  root        String
+  depth       Int    @default(4)
+  sortOrder   Int    @default(0) @map("sort_order")
+  description String @default("")
 
-  @@index([user_id])
-  @@map("auth_keys")
+  items ArchiveItem[]
+
+  @@map("archives")
 }
 
-enum ExamTypeEnum {
-  ctest
-  eiken
-  kyote
-
-  @@map("ExamType")
-}
-
-model Exam {
-  examType  ExamTypeEnum @id @map("exam_type")
-  name      String
-  sortOrder Int          @map("sort_order")
-
-  @@map("exams")
-}
-
-model Resource {
-  id         String
-  examType   ExamTypeEnum @map("exam_type")
-  year       Int
-  publisher  String
-  grade      Int
-  numOf      Int          @map("num_of")
-  category   Int
-  title      String
-  shortTitle String       @map("short_title")
+model ArchiveItem {
+  id         String  @id @default(cuid())
+  archiveId  String
+  archive    Archive @relation(references: [id], fields: [archiveId], onDelete: Cascade)
   path       String
-
-  @@id([id, examType])
-  @@index([examType])
-  @@map("resources")
-}
-
-enum ResourceStateEnum {
-  ok
-  new
-
-  @@map("ResourceState")
-}
-
-model TempResource {
-  id         String
-  sessionId  String            @map("session_id")
-  session    Session           @relation(references: [id], fields: [sessionId], onDelete: Cascade)
-  state      ResourceStateEnum
-  examType   ExamTypeEnum      @map("exam_type")
-  year       Int
-  publisher  String
-  grade      Int
-  numOf      Int               @map("num_of")
-  category   Int
+  year       Int?
+  strYear    String? @map("str_year")
+  grade      Int?
+  strGrade   String? @map("str_grade")
+  section    Int?
+  strSection String? @map("str_section")
   title      String
-  shortTitle String            @map("short_title")
-  path       String
+  published  Boolean @default(false)
 
-  @@id([id, sessionId])
-  @@index([examType])
-  @@map("temp_resources")
+  @@unique([archiveId, path])
+  @@map("archive_items")
 }
 
 model Link {
-  id        String @id @default(cuid())
-  url       String
-  title     String
-  sortOrder Int    @map("sort_order")
+  id          String @id @default(cuid())
+  url         String
+  title       String
+  sortOrder   Int    @default(0) @map("sort_order")
+  description String @default("")
 
   @@map("links")
 }

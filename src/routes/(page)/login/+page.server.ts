@@ -1,11 +1,13 @@
 import { fail, redirect } from '@sveltejs/kit';
 
-import { LuciaError } from 'lucia';
-import { message, superValidate } from 'sveltekit-superforms/server';
+// import { LuciaError } from 'lucia';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
-import { PROVIDERID_USERNAME, URLS } from '$lib/consts';
-import { auth } from '$lib/server/lucia';
+import { URLS } from '$lib/consts';
+import { db } from '$lib/server/db';
+import { createSessionCookie, lucia, verifyPassword } from '$lib/server/lucia';
 import { hasAdminRole } from '$lib/utils';
 
 import type { Actions, PageServerLoad } from './$types';
@@ -15,53 +17,53 @@ const schema = z.object({
 	password: z.string().min(1)
 });
 
-export const load = (async ({ parent }) => {
+export const load: PageServerLoad = async ({ parent }) => {
 	const data = await parent();
 	if (data.user) {
-		throw redirect(302, hasAdminRole(data.user) ? URLS.ADMIN : URLS.BOARD());
+		redirect(302, hasAdminRole(data.user) ? URLS.ADMIN : URLS.BOARD());
 	}
 
-	const form = await superValidate(schema);
+	const form = await superValidate(zod(schema));
 	return {
 		form
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
-	default: async ({ request, locals }) => {
+	default: async ({ request, cookies }) => {
 		// validate
 		const formData = await request.formData();
-		const form = await superValidate(formData, schema);
+		const form = await superValidate(formData, zod(schema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 		try {
-			const key = await auth.useKey(
-				PROVIDERID_USERNAME,
-				form.data.username.toLowerCase(),
-				form.data.password
-			);
-			await auth.deleteDeadUserSessions(key.userId);
-			await auth.updateUserAttributes(key.userId, {
-				lastLoginAt: new Date()
+			const user = await db.user.findUnique({
+				where: { username: form.data.username.toLowerCase() }
 			});
-			const session = await auth.createSession({
-				userId: key.userId,
-				attributes: {}
-			});
-			locals.auth.setSession(session);
-			return { form };
-		} catch (e) {
-			if (e instanceof LuciaError) {
-				if (e.message === 'AUTH_INVALID_PASSWORD' || e.message === 'AUTH_INVALID_KEY_ID') {
-					return message(form, 'Your login ID or password is incorrect.', {
-						status: 400
+			if (user) {
+				const isValid = await verifyPassword(form.data.password, user.hashedPassword);
+				if (isValid) {
+					await db.user.update({
+						where: { id: user.id },
+						data: { lastLoginAt: new Date() }
 					});
+
+					const session = await lucia.createSession(user.id, {});
+					createSessionCookie(session, cookies);
+					// const sessionCookie = lucia.createSessionCookie(session.id);
+					// cookies.set(sessionCookie.name, sessionCookie.value, {
+					// 	path: '.',
+					// 	...sessionCookie.attributes
+					// });
+					return { form };
 				}
-				console.log({ ...e });
-			} else {
-				console.log(e);
 			}
+			return message(form, 'Your login ID or password is incorrect.', {
+				status: 400
+			});
+		} catch (e) {
+			console.log(e);
 		}
 		return message(form, 'An error occurred.', {
 			status: 400

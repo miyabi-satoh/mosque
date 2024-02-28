@@ -23,6 +23,7 @@
 
 <div
 	class="text-{size} {classes}"
+	class:text-success-500-400-token={usePageStatus && $page.status === 200}
 	class:text-error-500-400-token={!usePageStatus || $page.status >= 400}
 >
 	<slot />

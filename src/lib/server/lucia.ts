@@ -1,54 +1,63 @@
-import { prisma } from '@lucia-auth/adapter-prisma';
-import type { User } from '@prisma/client';
-import { lucia } from 'lucia';
-import { sveltekit } from 'lucia/middleware';
-import 'lucia/polyfill/node';
+import type { Cookies } from '@sveltejs/kit';
 
-import {
-	ACTIVE_PERIOD_MINUTES,
-	ADMIN_NAME,
-	ADMIN_PASS,
-	IDLE_PERIOD_MINUTES
-} from '$env/static/private';
+import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
+import type { User, UserRoleEnum } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { Lucia, TimeSpan, generateId, type Session, type Cookie } from 'lucia';
 
-import { PROVIDERID_USERNAME } from '$lib/consts';
+import { SESSION_EXPIRES_IN_MINUTES, ADMIN_NAME, ADMIN_PASS } from '$env/static/private';
+
 import { db } from '$lib/server/db';
 import { exclude } from '$lib/utils';
 
-// import { dev } from '$app/environment';
+const adapter = new PrismaAdapter(db.session, db.user);
 
-export const auth = lucia({
-	// env: dev ? 'DEV' : 'PROD',
-	env: 'DEV',
-	middleware: sveltekit(),
-	adapter: prisma(db),
-	sessionExpiresIn: {
-		activePeriod: 1000 * 60 * Number(ACTIVE_PERIOD_MINUTES),
-		idlePeriod: 1000 * 60 * Number(IDLE_PERIOD_MINUTES)
-	},
-
+export const lucia = new Lucia(adapter, {
 	getUserAttributes: (data) => {
-		const displayName = ((data) => {
-			if (data.displayName) {
-				return data.displayName;
-			}
-			if (data.fullName) {
-				return data.fullName;
-			}
-			return data.username;
-		})(data);
+		const displayName = data.displayName || data.fullName || data.username;
 
 		const attributes = exclude(data, ['id']);
 		return {
 			...attributes,
 			displayName
+			// userId: data.id
 		};
+	},
+	sessionExpiresIn: new TimeSpan(Number(SESSION_EXPIRES_IN_MINUTES), 'm'),
+	sessionCookie: {
+		attributes: {
+			secure: false
+		}
 	}
 });
 
-export type Auth = typeof auth;
+declare module 'lucia' {
+	interface Register {
+		Lucia: typeof lucia;
+		// DatabaseSessionAttributes: DatabaseSessionAttributes;
+		DatabaseUserAttributes: DatabaseUserAttributes;
+	}
+}
 
-export const defaultUserAttributes: Omit<User, 'id'> = {
+// interface DatabaseSessionAttributes {
+// 	country: string;
+// }
+interface DatabaseUserAttributes {
+	id: string;
+	username: string;
+	hashedPassword: string;
+	role: UserRoleEnum;
+	fullName: string | null;
+	displayName: string | null;
+	email: string | null;
+	code: string | null;
+	avatar: string | null;
+	lastLoginAt: string | null;
+}
+
+// export type Auth = typeof lucia;
+
+export const defaultUserAttributes: Omit<User, 'id' | 'hashedPassword'> = {
 	username: '',
 	role: 'USER',
 	fullName: null,
@@ -58,6 +67,58 @@ export const defaultUserAttributes: Omit<User, 'id'> = {
 	avatar: null,
 	lastLoginAt: null
 } as const;
+
+export async function createUser(username: string, password: string, userData: Partial<User>) {
+	try {
+		const hashedPassword = await hashPassword(password);
+		await db.user.create({
+			data: {
+				...defaultUserAttributes,
+				...userData,
+				hashedPassword,
+				id: generateId(15),
+				username: username.toLowerCase()
+			}
+		});
+		return { success: true };
+	} catch (error) {
+		console.error('ユーザー作成中にエラーが発生しました:', error);
+		return { success: false, error };
+	}
+}
+
+export function hashPassword(password: string) {
+	return bcrypt.hash(password, 10);
+}
+
+export function verifyPassword(password: string, hash: string) {
+	return bcrypt.compare(password, hash);
+}
+
+export async function invalidateSession(session: Session | null): Promise<void> {
+	if (session) {
+		return lucia.invalidateSession(session.id);
+	}
+}
+
+export async function invalidateUserSessions(userId: string): Promise<void> {
+	return lucia.invalidateUserSessions(userId);
+}
+
+export function createSessionCookie(session: Session, cookies: Cookies) {
+	setCookie(cookies, lucia.createSessionCookie(session.id));
+}
+
+export function deleteSessionCookie(cookies: Cookies) {
+	setCookie(cookies, lucia.createBlankSessionCookie());
+}
+
+function setCookie(cookies: Cookies, sessionCookie: Cookie) {
+	cookies.set(sessionCookie.name, sessionCookie.value, {
+		path: '.',
+		...sessionCookie.attributes
+	});
+}
 
 // create built-in users
 export async function createBuiltinUsers(): Promise<void> {
@@ -71,18 +132,9 @@ export async function createBuiltinUsers(): Promise<void> {
 			}
 		];
 		for (const user of users) {
-			await auth.createUser({
-				key: {
-					providerId: PROVIDERID_USERNAME,
-					providerUserId: user.username.toLowerCase(),
-					password: user.password
-				},
-				attributes: {
-					...defaultUserAttributes,
-					username: user.username,
-					fullName: user.username,
-					role: user.role
-				}
+			await createUser(user.username, user.password, {
+				fullName: user.username,
+				role: user.role
 			});
 		}
 	}

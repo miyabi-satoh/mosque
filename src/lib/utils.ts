@@ -1,5 +1,5 @@
 import { format, formatRelative } from 'date-fns';
-import ja from 'date-fns/locale/ja/index.js';
+import { ja } from 'date-fns/locale';
 import type { User } from 'lucia';
 
 // https://note.affi-sapo-sv.com/js-convert-full-width-numbers.php
@@ -22,10 +22,11 @@ export function exclude<T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
 	return objCopy;
 }
 
-export function hasAdminRole(user: User | undefined): boolean {
+export function hasAdminRole(user: User | null | undefined): boolean {
 	return user?.role === 'ADMIN';
 }
-export function hasStaffRole(user: User | undefined): boolean {
+
+export function hasStaffRole(user: User | null | undefined): boolean {
 	return user?.role === 'STAFF' || user?.role === 'ADMIN';
 }
 
