@@ -93,7 +93,7 @@ function getItemProps(itemPath: string) {
 		return false;
 	});
 
-	// section: 実施月・実施回・sで始まる文字列を取得します
+	// section: 実施月・実施回・[]で囲まれた文字列を取得します
 	paths.find((path) => {
 		const sectionMatch = path.match(/^第?(\d{1,2})(回|月号?)$/i);
 		if (sectionMatch) {
