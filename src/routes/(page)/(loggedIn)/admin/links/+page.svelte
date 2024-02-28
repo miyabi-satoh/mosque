@@ -121,7 +121,7 @@
 							{link.title}
 						</h4>
 						<p class="flex items-center opacity-50">
-							<Icon icon="mdi:folder" />
+							<Icon icon="mdi:web" />
 							<span class="ml-2">{link.url}</span>
 						</p>
 					</div>
