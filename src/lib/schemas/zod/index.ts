@@ -36,7 +36,8 @@ export const ArchiveScalarFieldEnumSchema = z.enum([
 	'path',
 	'root',
 	'depth',
-	'sortOrder'
+	'sortOrder',
+	'description'
 ]);
 
 export const ArchiveItemScalarFieldEnumSchema = z.enum([
@@ -53,7 +54,7 @@ export const ArchiveItemScalarFieldEnumSchema = z.enum([
 	'published'
 ]);
 
-export const LinkScalarFieldEnumSchema = z.enum(['id', 'url', 'title', 'sortOrder']);
+export const LinkScalarFieldEnumSchema = z.enum(['id', 'url', 'title', 'sortOrder', 'description']);
 
 export const ChannelScalarFieldEnumSchema = z.enum([
 	'id',
@@ -86,10 +87,6 @@ export const NullsOrderSchema = z.enum(['first', 'last']);
 export const UserRoleEnumSchema = z.enum(['USER', 'STAFF', 'ADMIN', 'RETIRED']);
 
 export type UserRoleEnumType = `${z.infer<typeof UserRoleEnumSchema>}`;
-
-export const ArchiveModuleSchema = z.enum(['common', 'exam', 'kentei']);
-
-export type ArchiveModuleType = `${z.infer<typeof ArchiveModuleSchema>}`;
 
 /////////////////////////////////////////
 // MODELS
@@ -136,7 +133,8 @@ export const ArchiveSchema = z.object({
 	path: z.string().min(1).toLowerCase(),
 	root: z.string().min(1),
 	depth: z.number().int(),
-	sortOrder: z.number().int()
+	sortOrder: z.number().int(),
+	description: z.string()
 });
 
 export type Archive = z.infer<typeof ArchiveSchema>;
@@ -169,7 +167,8 @@ export const LinkSchema = z.object({
 	id: z.string().cuid(),
 	url: z.string(),
 	title: z.string(),
-	sortOrder: z.number().int()
+	sortOrder: z.number().int(),
+	description: z.string()
 });
 
 export type Link = z.infer<typeof LinkSchema>;

@@ -53,7 +53,6 @@ model User {
   lastLoginAt    DateTime?    @map("last_login_at")
 
   sessions       Session[]
-  // key            Key[]
   Message        Message[]
   channelCreated Channel[]       @relation("channelCreated")
   channelUpdated Channel[]       @relation("channelUpdated")
@@ -68,54 +67,21 @@ model Session {
   expiresAt DateTime @map("expires_at")
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-  // temp_resources TempResource[]
-
   @@index([userId])
   @@map("auth_sessions")
 }
 
-// model Key {
-//   id              String  @id @unique
-//   hashed_password String?
-//   user_id         String
-//   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
-
-//   @@index([user_id])
-//   @@map("auth_keys")
-// }
-
-// enum ExamTypeEnum {
-//   ctest
-//   eiken
-//   kyote
-
-//   @@map("ExamType")
-// }
-
-// model Exam {
-//   examType  ExamTypeEnum @id @map("exam_type")
-//   name      String
-//   sortOrder Int          @map("sort_order")
-
-//   @@map("exams")
-// }
-
-enum ArchiveModule {
-  common // [表示名]
-  exam // <年度><学年><月>[表示名]
-  kentei // <年度><実施回><級>[表示名]
-}
-
 model Archive {
-  id        String @id @default(cuid())
+  id          String @id @default(cuid())
   /// @zod.string.min(1)
-  title     String
+  title       String
   /// @zod.string.min(1).toLowerCase()
-  path      String @unique
+  path        String @unique
   /// @zod.string.min(1)
-  root      String
-  depth     Int    @default(4)
-  sortOrder Int    @default(0) @map("sort_order")
+  root        String
+  depth       Int    @default(4)
+  sortOrder   Int    @default(0) @map("sort_order")
+  description String @default("")
 
   items ArchiveItem[]
 
@@ -140,55 +106,12 @@ model ArchiveItem {
   @@map("archive_items")
 }
 
-// model Resource {
-//   id         String
-//   examType   ExamTypeEnum @map("exam_type")
-//   year       Int
-//   publisher  String
-//   grade      Int
-//   numOf      Int          @map("num_of")
-//   category   Int
-//   title      String
-//   shortTitle String       @map("short_title")
-//   path       String
-
-//   @@id([id, examType])
-//   @@index([examType])
-//   @@map("resources")
-// }
-
-// enum ResourceStateEnum {
-//   ok
-//   new
-
-//   @@map("ResourceState")
-// }
-
-// model TempResource {
-//   id         String
-//   sessionId  String            @map("session_id")
-//   session    Session           @relation(references: [id], fields: [sessionId], onDelete: Cascade)
-//   state      ResourceStateEnum
-//   examType   ExamTypeEnum      @map("exam_type")
-//   year       Int
-//   publisher  String
-//   grade      Int
-//   numOf      Int               @map("num_of")
-//   category   Int
-//   title      String
-//   shortTitle String            @map("short_title")
-//   path       String
-
-//   @@id([id, sessionId])
-//   @@index([examType])
-//   @@map("temp_resources")
-// }
-
 model Link {
-  id        String @id @default(cuid())
-  url       String
-  title     String
-  sortOrder Int    @default(0) @map("sort_order")
+  id          String @id @default(cuid())
+  url         String
+  title       String
+  sortOrder   Int    @default(0) @map("sort_order")
+  description String @default("")
 
   @@map("links")
 }

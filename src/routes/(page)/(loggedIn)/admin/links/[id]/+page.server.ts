@@ -11,7 +11,8 @@ import type { Actions, PageServerLoad } from './$types';
 
 const schema = LinkSchema.pick({
 	title: true,
-	url: true
+	url: true,
+	description: true
 }).extend({
 	id: LinkSchema.shape.id.optional()
 });
@@ -40,10 +41,11 @@ export const actions: Actions = {
 
 		try {
 			await db.$transaction(async (prisma) => {
-				const data = {
-					title: form.data.title,
-					url: form.data.url
-				};
+				// const data = {
+				// 	title: form.data.title,
+				// 	url: form.data.url
+				// };
+				const data = form.data;
 
 				if (params.id === 'new') {
 					await prisma.link.create({ data });

@@ -13,7 +13,8 @@ const schema = ArchiveSchema.pick({
 	depth: true,
 	path: true,
 	root: true,
-	title: true
+	title: true,
+	description: true
 }).extend({
 	id: ArchiveSchema.shape.id.optional()
 });
@@ -43,12 +44,14 @@ export const actions: Actions = {
 
 		try {
 			await db.$transaction(async (prisma) => {
-				const data = {
-					depth: form.data.depth,
-					path: form.data.path,
-					root: form.data.root,
-					title: form.data.title
-				};
+				// const data = {
+				// 	depth: form.data.depth,
+				// 	path: form.data.path,
+				// 	root: form.data.root,
+				// 	title: form.data.title,
+				// 	description: form.data.description
+				// };
+				const data = form.data;
 
 				if (params.id === 'new') {
 					await prisma.archive.create({ data });

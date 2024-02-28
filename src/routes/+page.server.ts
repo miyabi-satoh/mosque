@@ -24,14 +24,16 @@ export const load: PageServerLoad = async () => {
 			return {
 				href: URLS.ARCHIVES(archive.path),
 				title: archive.title,
-				external: false
+				external: false,
+				description: archive.description
 			};
 		}),
 		...links.map((link) => {
 			return {
 				href: link.url,
 				title: link.title,
-				external: true
+				external: true,
+				description: link.description
 			};
 		})
 	];

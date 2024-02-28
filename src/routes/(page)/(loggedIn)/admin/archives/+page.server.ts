@@ -19,7 +19,7 @@ const schema = z.object({
 
 export const load: PageServerLoad = async () => {
 	const archives = await db.archive.findMany({
-		orderBy: [{ sortOrder: 'asc' }, { path: 'asc' }],
+		orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
 		include: {
 			_count: {
 				select: {

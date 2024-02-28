@@ -87,6 +87,21 @@
 			{$errors.depth ? $errors.depth[0] : ''}
 		</HelperText>
 	</div>
+	<div>
+		<FormLabel text="Description" constraint={$constraints.description}>
+			<textarea
+				class="textarea"
+				class:input-error={$errors.description}
+				name="description"
+				bind:value={$form.description}
+				disabled={$submitting}
+				{...$constraints.description}
+			/>
+		</FormLabel>
+		<HelperText>
+			{$errors.description ? $errors.description[0] : ''}
+		</HelperText>
+	</div>
 	<div class="flex items-center justify-end pt-4">
 		<div class:hidden={$page.params.id === 'new'} class="flex-1">
 			<DeleteButton />
