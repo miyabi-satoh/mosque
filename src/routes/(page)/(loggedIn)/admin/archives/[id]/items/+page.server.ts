@@ -113,14 +113,16 @@ function getItemProps(itemPath: string) {
 
 	// タイトルを取得します
 	if (props.title.match(/\.mp3$/)) {
-		if (props.strSection?.includes('月')) {
-			if (props.title.includes('国語')) {
-				props.title = '国語 聞き取り問題';
-			} else if (props.title.includes('英語')) {
-				props.title = '英語 リスニング問題';
-			}
+		// if (props.strSection?.match(/月|回/)) {
+		if (props.title.includes('国語')) {
+			props.title = '国語 聞き取り問題';
+		} else if (props.title.includes('英語')) {
+			props.title = '英語 リスニング問題';
+			// }
 		} else if (props.strGrade?.match(/準|級/)) {
-			const partMatch = props.title.match(/^p?\dq-?part(\d).mp3$/i);
+			// P2Q-part1.mp3
+			// 3Q-part21.mp3
+			const partMatch = props.title.match(/^p?\dq-?part(\d)\d?.mp3$/i);
 			if (partMatch) {
 				const part = parseInt(partMatch[1]);
 				props.title = `リスニング音源(Part${part})`;
@@ -130,12 +132,14 @@ function getItemProps(itemPath: string) {
 		// <問題>
 		// 2020-2-1ji-1kyu.pdf
 		// 2020-2-1ji-p2kyu.pdf
+		// 2023-3-1ji-2pkyu.pdf
 		// <解答>
 		// 1kyu.pdf
 		// p2kyu-sun.pdf
 		// 2kyu-sunc.pdf
 		// 2023-2-p2kyu.pdf
-		const titleMatch = props.title.match(/^(\d{4}-\d-(?<ans>1ji-)?)?p?\dkyu(-sunc?)?.pdf$/i);
+		// 2023-3-2pkyu.pdf
+		const titleMatch = props.title.match(/^(\d{4}-\d-(?<ans>1ji-)?)?p?\dp?kyu(-sunc?)?.pdf$/i);
 		if (titleMatch && titleMatch.groups) {
 			props.title = titleMatch.groups.ans ? '解答' : '問題冊子';
 		}
